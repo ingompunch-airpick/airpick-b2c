@@ -1,0 +1,70 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    'Pretendard Variable',
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    sans-serif;
+
+  /* Soft sky palette — unified across the app */
+  --color-sky-bg: #edf4fc;
+  --color-sky-soft: #e4eff9;
+  --color-sky-tint: #d9ebfa;
+  --color-sky-deep: #cce5f8;
+  --color-sky-border: #c8dff5;
+  --color-brand: #3182f6;
+  --color-brand-dark: #1b64da;
+  --color-brand-soft: #e8f2ff;
+  --color-ink: #191f28;
+  --color-muted: #6b7a8a;
+  --color-muted-light: #94a3b8;
+  --color-border: #c8dff5;
+  --color-surface: #e4eff9;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-sky-bg);
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+}
+
+@layer utilities {
+  .text-outline-navy {
+    -webkit-text-stroke: 0.75px #3a7fd8;
+    paint-order: stroke fill;
+    text-shadow:
+      0 1px 0 rgba(42, 111, 212, 0.55),
+      1px 0 0 rgba(42, 111, 212, 0.45),
+      0 -1px 0 rgba(42, 111, 212, 0.45),
+      -1px 0 0 rgba(42, 111, 212, 0.45);
+  }
+
+  .shadow-card {
+    box-shadow: 0 8px 28px rgba(49, 130, 246, 0.1);
+  }
+
+  .shadow-card-strong {
+    box-shadow: 0 10px 32px rgba(49, 130, 246, 0.22);
+  }
+}
