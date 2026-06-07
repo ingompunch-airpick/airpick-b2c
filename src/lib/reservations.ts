@@ -171,7 +171,7 @@ export async function submitReservation(
   const id = createReservationId();
   const now = new Date().toISOString();
 
-  await setDoc(doc(db, 'reservations', id), {
+  const payload: Record<string, unknown> = {
     userId: auth.currentUser?.uid || 'guest',
     companyId,
     companyName,
@@ -192,13 +192,21 @@ export async function submitReservation(
     paymentMethod: 'unpaid',
     isIndoor: search.isIndoor,
     scratchPhotos: { synced: false },
-    departureAirline: form.departureAirline.trim() || undefined,
     departureFlight: form.departureFlight.trim(),
-    arrivalAirline: form.arrivalAirline.trim() || undefined,
     arrivalFlight: form.arrivalFlight.trim(),
-    destination: form.destination.trim() || undefined,
-    customerNotes: form.customerNotes.trim() || undefined,
-  });
+  };
+
+  const departureAirline = form.departureAirline.trim();
+  const arrivalAirline = form.arrivalAirline.trim();
+  const destination = form.destination.trim();
+  const customerNotes = form.customerNotes.trim();
+
+  if (departureAirline) payload.departureAirline = departureAirline;
+  if (arrivalAirline) payload.arrivalAirline = arrivalAirline;
+  if (destination) payload.destination = destination;
+  if (customerNotes) payload.customerNotes = customerNotes;
+
+  await setDoc(doc(db, 'reservations', id), payload);
 
   return id;
 }
