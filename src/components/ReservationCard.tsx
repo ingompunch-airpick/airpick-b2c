@@ -1,9 +1,10 @@
 import { Camera, ChevronRight, ExternalLink, MapPin, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { RESERVATION_STEPS } from '../constants/marketing';
-import type { Reservation } from '../types';
+import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { cn } from '../utils/cn';
+import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { getStatusLabel, getStatusStep } from '../utils/trust';
 
 function formatSchedule(reservation: Reservation): string {
@@ -121,7 +122,13 @@ function PhotoStrip({ photos, emptyLabel }: { photos?: string[]; emptyLabel: str
   );
 }
 
-export default function ReservationCard({ reservation }: { reservation: Reservation }) {
+export default function ReservationCard({
+  reservation,
+  company,
+}: {
+  reservation: Reservation;
+  company?: Company;
+}) {
   const statusLabel = getStatusLabel(reservation.status);
   const insuranceText = reservation.insuranceProvider
     ? `${reservation.insuranceProvider}${
@@ -131,12 +138,11 @@ export default function ReservationCard({ reservation }: { reservation: Reservat
       }`
     : null;
 
-  const checkInPhotos =
-    reservation.checkInPhotos ??
-    (reservation.scratchPhotos?.synced ? reservation.scratchPhotos.urls : undefined);
+  const checkInPhotos = reservation.checkInPhotos;
+  const parkingDisplay = resolveParkingLocationDisplay(reservation, company);
 
   const locationPending =
-    !reservation.parkingLocation &&
+    !parkingDisplay &&
     getStatusStep(reservation.status) < 1;
 
   return (
@@ -167,12 +173,15 @@ export default function ReservationCard({ reservation }: { reservation: Reservat
 
       <div className="mt-4 space-y-2.5">
         <TrustBlock icon={MapPin} title="주차 위치" highlight>
-          {reservation.parkingLocation ? (
+          {parkingDisplay ? (
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-ink">{reservation.parkingLocation}</p>
-              {reservation.parkingLocationUrl && (
+              <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
+              {parkingDisplay.detail && (
+                <p className="text-xs font-medium text-muted">{parkingDisplay.detail}</p>
+              )}
+              {parkingDisplay.mapUrl && (
                 <a
-                  href={reservation.parkingLocationUrl}
+                  href={parkingDisplay.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-xs font-bold text-brand"

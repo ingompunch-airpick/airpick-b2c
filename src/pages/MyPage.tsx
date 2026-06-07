@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { BRAND_SUBLINE, BRAND_TAGLINE } from '../constants/marketing';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
-import { fetchReservationById, lookupReservations } from '../lib/reservations';
-import type { Reservation, ReservationLookupMode } from '../types';
+import { subscribeCompanies } from '../lib/companies';
+import { fetchReservationById, lookupReservations, subscribeReservation } from '../lib/reservations';
+import type { Company, Reservation, ReservationLookupMode } from '../types';
 
 export default function MyPage({
   lastReservationId,
@@ -13,6 +14,7 @@ export default function MyPage({
   onBookParking: () => void;
 }) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [companiesById, setCompaniesById] = useState<Record<string, Company>>({});
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
@@ -29,8 +31,31 @@ export default function MyPage({
   }, [lastReservationId]);
 
   useEffect(() => {
+    const unsub = subscribeCompanies((list) => {
+      setCompaniesById(Object.fromEntries(list.map((c) => [c.id, c])));
+    });
+    return unsub;
+  }, []);
+
+  const companyMap = companiesById;
+
+  useEffect(() => {
     void loadLastReservation();
   }, [loadLastReservation]);
+
+  useEffect(() => {
+    const ids = reservations.map((r) => r.id).filter(Boolean) as string[];
+    if (ids.length === 0) return;
+
+    const unsubs = ids.map((id) =>
+      subscribeReservation(id, (updated) => {
+        if (!updated) return;
+        setReservations((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+      })
+    );
+
+    return () => unsubs.forEach((unsub) => unsub());
+  }, [reservations.map((r) => r.id).join('|')]);
 
   const handleLookup = async (mode: ReservationLookupMode, value: string) => {
     setLoading(true);
@@ -76,7 +101,11 @@ export default function MyPage({
             예약 {reservations.length}건 · 위치 · 사진 · 보험
           </p>
           {reservations.map((reservation) => (
-            <ReservationCard key={reservation.id} reservation={reservation} />
+            <ReservationCard
+              key={reservation.id}
+              reservation={reservation}
+              company={companyMap[reservation.companyId]}
+            />
           ))}
         </div>
       ) : searched && !loading ? (

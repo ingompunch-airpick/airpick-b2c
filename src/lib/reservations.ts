@@ -1,5 +1,5 @@
 import { signInAnonymously } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { fetchCompanyBookingPolicy } from './companies';
 import type { BookingSearch, Reservation, ReservationLookupMode } from '../types';
@@ -7,6 +7,11 @@ import {
   bookingPolicyMessage,
   checkBookingPolicy,
 } from '../utils/bookingPolicy';
+import {
+  getReservationCheckInPhotos,
+  getReservationCheckOutPhotos,
+  type ScratchPhotoSet,
+} from '../utils/reservationPhotos';
 
 export interface BookingForm {
   userName: string;
@@ -22,10 +27,19 @@ export interface BookingForm {
 }
 
 function normalizeReservation(id: string, data: Record<string, unknown>): Reservation {
-  const scratchPhotos = data.scratchPhotos as Reservation['scratchPhotos'] | undefined;
-  const checkInPhotos = Array.isArray(data.checkInPhotos)
-    ? (data.checkInPhotos as string[])
-    : scratchPhotos?.urls;
+  const scratchPhotos = data.scratchPhotos as ScratchPhotoSet | undefined;
+  const images = Array.isArray(data.images) ? (data.images as string[]) : undefined;
+  const rawCheckIn = Array.isArray(data.checkInPhotos) ? (data.checkInPhotos as string[]) : undefined;
+  const rawCheckOut = Array.isArray(data.checkOutPhotos)
+    ? (data.checkOutPhotos as string[])
+    : undefined;
+
+  const checkInPhotos = getReservationCheckInPhotos({
+    checkInPhotos: rawCheckIn,
+    images,
+    scratchPhotos,
+  });
+  const checkOutPhotos = getReservationCheckOutPhotos({ checkOutPhotos: rawCheckOut });
 
   return {
     id,
@@ -46,14 +60,16 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     isIndoor: data.isIndoor !== false,
     createdAt: String(data.createdAt || ''),
     paymentMethod: data.paymentMethod ? String(data.paymentMethod) : undefined,
-    parkingLocation: data.parkingLocation ? String(data.parkingLocation) : undefined,
+    parkingLocation: data.parkingLocation
+      ? String(data.parkingLocation)
+      : undefined,
     parkingLocationUrl: data.parkingLocationUrl ? String(data.parkingLocationUrl) : undefined,
+    parkingSpace: data.parkingSpace ? String(data.parkingSpace) : undefined,
+    images,
     insuranceProvider: data.insuranceProvider ? String(data.insuranceProvider) : undefined,
     insuranceLimit: data.insuranceLimit ? Number(data.insuranceLimit) : undefined,
-    checkInPhotos,
-    checkOutPhotos: Array.isArray(data.checkOutPhotos)
-      ? (data.checkOutPhotos as string[])
-      : undefined,
+    checkInPhotos: checkInPhotos.length ? checkInPhotos : undefined,
+    checkOutPhotos: checkOutPhotos.length ? checkOutPhotos : undefined,
     scratchPhotos,
     departureAirline: data.departureAirline ? String(data.departureAirline) : undefined,
     departureFlight: data.departureFlight ? String(data.departureFlight) : undefined,
@@ -114,6 +130,26 @@ export async function fetchReservationById(id: string): Promise<Reservation | nu
   const snap = await getDoc(doc(db, 'reservations', id));
   if (!snap.exists()) return null;
   return normalizeReservation(snap.id, snap.data() as Record<string, unknown>);
+}
+
+/** B2B 상태·사진 변경을 MY 화면에 실시간 반영 */
+export function subscribeReservation(
+  id: string,
+  onData: (reservation: Reservation | null) => void
+): () => void {
+  return onSnapshot(
+    doc(db, 'reservations', id),
+    (snap) => {
+      if (!snap.exists()) {
+        onData(null);
+        return;
+      }
+      onData(normalizeReservation(snap.id, snap.data() as Record<string, unknown>));
+    },
+    (err) => {
+      console.warn('subscribeReservation failed:', err);
+    }
+  );
 }
 
 export async function lookupReservations(

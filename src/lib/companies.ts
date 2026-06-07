@@ -1,6 +1,7 @@
 import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Company } from '../types';
+import { deriveParkingAddressesFromCompanyData } from '../utils/companyParking';
 import { mergePartnerPricing } from '../utils/pricing';
 
 export interface CompanyBookingPolicy {
@@ -52,6 +53,7 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     hasInsurance: data.hasInsurance !== false,
     insuranceProvider: data.insuranceProvider ? String(data.insuranceProvider) : undefined,
     insuranceLimit: data.insuranceLimit ? Number(data.insuranceLimit) : undefined,
+    ...deriveParkingAddressesFromCompanyData(data),
   };
 
   return mergePartnerPricing(company);

@@ -35,6 +35,12 @@ export interface Company {
   hasInsurance?: boolean;
   insuranceProvider?: string;
   insuranceLimit?: number;
+  /** 손님 MY · 실내 주차장 도로명 주소 */
+  indoorParkingAddress?: string;
+  /** 손님 MY · 실외 주차장 도로명 주소 */
+  outdoorParkingAddress?: string;
+  indoorParkingMapUrl?: string;
+  outdoorParkingMapUrl?: string;
 }
 
 export interface Reservation {
@@ -58,11 +64,20 @@ export interface Reservation {
   paymentMethod?: string;
   parkingLocation?: string;
   parkingLocationUrl?: string;
+  parkingSpace?: string;
+  images?: string[];
   insuranceProvider?: string;
   insuranceLimit?: number;
   checkInPhotos?: string[];
   checkOutPhotos?: string[];
-  scratchPhotos?: { synced?: boolean; urls?: string[] };
+  scratchPhotos?: {
+    synced?: boolean;
+    urls?: string[];
+    front?: string;
+    rear?: string;
+    left?: string;
+    right?: string;
+  };
   departureAirline?: string;
   departureFlight?: string;
   arrivalAirline?: string;
