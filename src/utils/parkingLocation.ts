@@ -1,5 +1,5 @@
 import type { Company, Reservation } from '../types';
-import { buildNaverMapEmbedUrl, buildNaverMapSearchUrl } from './naverMap';
+import { buildNaverMapSearchUrl } from './naverMap';
 
 export { buildNaverMapSearchUrl } from './naverMap';
 
@@ -21,7 +21,6 @@ export interface ParkingLocationDisplay {
   title: string;
   detail?: string;
   mapUrl?: string;
-  mapEmbedUrl?: string;
   lotPhotos?: string[];
 }
 
@@ -68,7 +67,6 @@ export function resolveParkingLocationDisplay(
       title: lot.address,
       detail: zone ? `주차 구역 · ${zone}` : lot.label,
       mapUrl,
-      mapEmbedUrl: buildNaverMapEmbedUrl(lot.address),
       lotPhotos: lot.photos?.length ? lot.photos : undefined,
     };
   }

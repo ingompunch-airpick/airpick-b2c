@@ -196,15 +196,14 @@ export default function ReservationCard({
               <NaverMapPreview
                 address={parkingDisplay.title}
                 mapUrl={parkingDisplay.mapUrl}
-                mapEmbedUrl={parkingDisplay.mapEmbedUrl}
               />
 
               <div>
-                <p className="mb-1.5 text-[11px] font-bold text-muted">주차장 사진</p>
+                <p className="mb-1.5 text-[11px] font-bold text-muted">위치 · 주차장 사진</p>
                 <PhotoStrip
                   photos={parkingDisplay.lotPhotos}
                   size="md"
-                  emptyLabel="주차장 사진이 등록되면 이곳에서 확인할 수 있습니다."
+                  emptyLabel="입구·주차장 사진이 등록되면 이곳에서 확인할 수 있습니다."
                 />
               </div>
             </div>
