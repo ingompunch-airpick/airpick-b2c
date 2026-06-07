@@ -1,9 +1,12 @@
-import { Camera, ChevronRight, MapPin, ShieldCheck } from 'lucide-react';
+import { Camera, ChevronRight, Headphones, MapPin, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
+import ContactActions from './ContactActions';
+import { AIRPICK_SUPPORT } from '../constants/support';
 import { RESERVATION_STEPS } from '../constants/marketing';
 import NaverMapPreview from './NaverMapPreview';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
+import { formatPhoneDisplay } from '../utils/contact';
 import { cn } from '../utils/cn';
 import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
@@ -252,6 +255,23 @@ export default function ReservationCard({
               )}
             </div>
           )}
+        </TrustBlock>
+
+        <TrustBlock icon={Headphones} title="문의">
+          <ContactActions
+            compact
+            companyPhone={company?.phone}
+            companyPhoneLabel={
+              company?.phone ? formatPhoneDisplay(company.phone) : undefined
+            }
+            airpickPhone={AIRPICK_SUPPORT.phone || undefined}
+            airpickPhoneDisplay={
+              AIRPICK_SUPPORT.phoneDisplay ||
+              (AIRPICK_SUPPORT.phone ? formatPhoneDisplay(AIRPICK_SUPPORT.phone) : undefined)
+            }
+            kakaoChannelUrl={AIRPICK_SUPPORT.kakaoChannelUrl || undefined}
+            kakaoLabel={AIRPICK_SUPPORT.kakaoLabel}
+          />
         </TrustBlock>
       </div>
 

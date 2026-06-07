@@ -9,9 +9,11 @@ import type { Company, Reservation, ReservationLookupMode } from '../types';
 export default function MyPage({
   lastReservationId,
   onBookParking,
+  onOpenSupport,
 }: {
   lastReservationId: string | null;
   onBookParking: () => void;
+  onOpenSupport?: () => void;
 }) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [companiesById, setCompaniesById] = useState<Record<string, Company>>({});
@@ -82,6 +84,16 @@ export default function MyPage({
       </section>
 
       <ReservationLookupForm onLookup={handleLookup} loading={loading} />
+
+      {onOpenSupport && (
+        <button
+          type="button"
+          onClick={onOpenSupport}
+          className="w-full rounded-2xl bg-sky-soft py-3 text-center text-xs font-bold text-brand ring-1 ring-sky-border/60"
+        >
+          고객센터 · FAQ · 전화/카톡
+        </button>
+      )}
 
       {lastReservationId && !searched && reservations.length > 0 && (
         <p className="px-1 text-xs font-semibold text-brand">

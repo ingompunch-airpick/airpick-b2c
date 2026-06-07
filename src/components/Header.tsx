@@ -1,7 +1,7 @@
 import { Bell, Menu } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
-export default function Header() {
+export default function Header({ onOpenMenu }: { onOpenMenu?: () => void }) {
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between border-b border-sky-border/80 bg-sky-bg/90 px-4 py-3 backdrop-blur-md">
       <BrandLogo />
@@ -15,6 +15,7 @@ export default function Header() {
         </button>
         <button
           type="button"
+          onClick={onOpenMenu}
           className="rounded-full p-2 text-muted transition-colors hover:bg-sky-soft"
           aria-label="메뉴"
         >

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import AppMenuSheet from './components/AppMenuSheet';
 import BookingModal from './components/BookingModal';
 import BottomNav from './components/BottomNav';
 import Header from './components/Header';
@@ -7,6 +8,7 @@ import ComparePage from './pages/ComparePage';
 import EsimPage from './pages/EsimPage';
 import HomePage from './pages/HomePage';
 import MyPage from './pages/MyPage';
+import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import { defaultBookingSearch } from './utils/dates';
 
@@ -19,6 +21,8 @@ export default function App() {
     null
   );
   const [lastReservationId, setLastReservationId] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
@@ -45,13 +49,13 @@ export default function App() {
       );
     }
     if (tab === 'esim') return <EsimPage />;
-    return <MyPage lastReservationId={lastReservationId} onBookParking={() => setTab('compare')} />;
+    return <MyPage lastReservationId={lastReservationId} onBookParking={() => setTab('compare')} onOpenSupport={() => setSupportOpen(true)} />;
   }, [tab, search, companies, lastReservationId]);
 
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">
       <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
-        <Header />
+        <Header onOpenMenu={() => setMenuOpen(true)} />
         <main className="px-4 py-5">
           {loading && tab === 'compare' ? (
             <p className="py-12 text-center text-sm font-semibold text-muted">
@@ -78,6 +82,15 @@ export default function App() {
           }}
         />
       )}
+
+      {menuOpen && (
+        <AppMenuSheet
+          onClose={() => setMenuOpen(false)}
+          onOpenSupport={() => setSupportOpen(true)}
+        />
+      )}
+
+      {supportOpen && <SupportPage onBack={() => setSupportOpen(false)} />}
     </div>
   );
 }
