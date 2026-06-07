@@ -41,6 +41,9 @@ export interface Company {
   outdoorParkingAddress?: string;
   indoorParkingMapUrl?: string;
   outdoorParkingMapUrl?: string;
+  /** 손님 MY · 주차장 시설 사진 (B2B 등록) */
+  indoorParkingPhotos?: string[];
+  outdoorParkingPhotos?: string[];
 }
 
 export interface Reservation {

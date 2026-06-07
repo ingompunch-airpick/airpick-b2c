@@ -23,9 +23,9 @@ const emptyForm = (): BookingForm => ({
   phone: '',
   carModel: '',
   carNumber: '',
-  departureAirline: '대한항공',
+  departureAirline: '',
   departureFlight: '',
-  arrivalAirline: '대한항공',
+  arrivalAirline: '',
   arrivalFlight: '',
   destination: '',
   customerNotes: '',
@@ -88,7 +88,9 @@ export default function BookingModal({
     form.phone.trim() &&
     form.carModel.trim() &&
     form.carNumber.trim() &&
+    form.departureAirline.trim() &&
     form.departureFlight.trim() &&
+    form.arrivalAirline.trim() &&
     form.arrivalFlight.trim();
 
   const setTerminal = (terminal: Terminal) => {
@@ -356,38 +358,20 @@ export default function BookingModal({
                   className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
                 />
               </label>
-              <label className="block">
-                <span className="mb-1 block text-xs font-bold text-muted">출국 편명 *</span>
-                <input
-                  value={form.departureFlight}
-                  onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase())}
-                  placeholder="KE101"
-                  className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-xs font-bold text-muted">입국 편명 *</span>
-                <input
-                  value={form.arrivalFlight}
-                  onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase())}
-                  placeholder="KE102"
-                  className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
-                />
-              </label>
             </div>
-            <details className="rounded-xl bg-sky-soft px-3 py-2 ring-1 ring-sky-border/50">
-              <summary className="cursor-pointer list-none text-xs font-bold text-muted">
-                항공사 · 여행지 · 요청사항 (선택)
-              </summary>
-              <div className="mt-2 space-y-2 pb-1">
+
+            <div className="space-y-3 border-t border-sky-border/60 pt-3">
+              <div>
+                <p className="mb-2 text-[11px] font-bold text-brand">출국</p>
                 <div className="grid grid-cols-2 gap-2">
                   <label className="block">
-                    <span className="mb-1 block text-[11px] font-bold text-muted">출국 항공사</span>
+                    <span className="mb-1 block text-xs font-bold text-muted">항공사 *</span>
                     <input
                       list="airlines-dep"
                       value={form.departureAirline}
                       onChange={(e) => setFormField('departureAirline', e.target.value)}
-                      className="w-full rounded-xl border border-sky-border bg-sky-bg px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
+                      placeholder="대한항공"
+                      className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
                     />
                     <datalist id="airlines-dep">
                       {AIRLINES.map((a) => (
@@ -396,12 +380,27 @@ export default function BookingModal({
                     </datalist>
                   </label>
                   <label className="block">
-                    <span className="mb-1 block text-[11px] font-bold text-muted">입국 항공사</span>
+                    <span className="mb-1 block text-xs font-bold text-muted">편명 *</span>
+                    <input
+                      value={form.departureFlight}
+                      onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase())}
+                      placeholder="KE101"
+                      className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
+                    />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-[11px] font-bold text-brand">입국</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="block">
+                    <span className="mb-1 block text-xs font-bold text-muted">항공사 *</span>
                     <input
                       list="airlines-arr"
                       value={form.arrivalAirline}
                       onChange={(e) => setFormField('arrivalAirline', e.target.value)}
-                      className="w-full rounded-xl border border-sky-border bg-sky-bg px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
+                      placeholder="대한항공"
+                      className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
                     />
                     <datalist id="airlines-arr">
                       {AIRLINES.map((a) => (
@@ -409,7 +408,24 @@ export default function BookingModal({
                       ))}
                     </datalist>
                   </label>
+                  <label className="block">
+                    <span className="mb-1 block text-xs font-bold text-muted">편명 *</span>
+                    <input
+                      value={form.arrivalFlight}
+                      onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase())}
+                      placeholder="KE102"
+                      className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
+                    />
+                  </label>
                 </div>
+              </div>
+            </div>
+
+            <details className="rounded-xl bg-sky-soft px-3 py-2 ring-1 ring-sky-border/50">
+              <summary className="cursor-pointer list-none text-xs font-bold text-muted">
+                여행지 · 요청사항 (선택)
+              </summary>
+              <div className="mt-2 space-y-2 pb-1">
                 <label className="block">
                   <span className="mb-1 block text-[11px] font-bold text-muted">여행지</span>
                   <input

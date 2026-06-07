@@ -1,10 +1,7 @@
 import type { Company, Reservation } from '../types';
+import { buildNaverMapEmbedUrl, buildNaverMapSearchUrl } from './naverMap';
 
-export function buildNaverMapSearchUrl(address?: string): string | undefined {
-  const trimmed = address?.trim();
-  if (!trimmed) return undefined;
-  return `https://map.naver.com/v5/search/${encodeURIComponent(trimmed)}`;
-}
+export { buildNaverMapSearchUrl } from './naverMap';
 
 const GENERIC_PARKING_LABELS = new Set([
   '실내 주차장',
@@ -20,35 +17,41 @@ export function isGenericParkingLabel(value?: string): boolean {
   return GENERIC_PARKING_LABELS.has(trimmed);
 }
 
+export interface ParkingLocationDisplay {
+  title: string;
+  detail?: string;
+  mapUrl?: string;
+  mapEmbedUrl?: string;
+  lotPhotos?: string[];
+}
+
 export function getCompanyParkingLot(
   company: Company | undefined,
   isIndoor: boolean
-): { address?: string; mapUrl?: string; label: string } {
+): { address?: string; mapUrl?: string; label: string; photos?: string[] } {
   if (isIndoor) {
     const address = company?.indoorParkingAddress?.trim() || undefined;
     return {
       address,
-      mapUrl:
-        company?.indoorParkingMapUrl?.trim() ||
-        buildNaverMapSearchUrl(address),
+      mapUrl: company?.indoorParkingMapUrl?.trim() || buildNaverMapSearchUrl(address),
       label: '실내 주차장',
+      photos: company?.indoorParkingPhotos,
     };
   }
   const address = company?.outdoorParkingAddress?.trim() || undefined;
   return {
     address,
-    mapUrl:
-      company?.outdoorParkingMapUrl?.trim() ||
-      buildNaverMapSearchUrl(address),
+    mapUrl: company?.outdoorParkingMapUrl?.trim() || buildNaverMapSearchUrl(address),
     label: '실외 주차장',
+    photos: company?.outdoorParkingPhotos,
   };
 }
 
-/** 손님 MY에 보여줄 주차장 위치 (업체 주소 + 기사 입력 구역) */
+/** 손님 MY에 보여줄 주차장 위치 (업체 주소 + 기사 입력 구역 + 지도 + 주차장 사진) */
 export function resolveParkingLocationDisplay(
   reservation: Reservation,
   company?: Company
-): { title: string; detail?: string; mapUrl?: string } | null {
+): ParkingLocationDisplay | null {
   const lot = getCompanyParkingLot(company, reservation.isIndoor);
 
   const zoneCandidate =
@@ -60,10 +63,13 @@ export function resolveParkingLocationDisplay(
   const zone = zoneCandidate && !isGenericParkingLabel(zoneCandidate) ? zoneCandidate : undefined;
 
   if (lot.address) {
+    const mapUrl = lot.mapUrl || reservation.parkingLocationUrl;
     return {
       title: lot.address,
       detail: zone ? `주차 구역 · ${zone}` : lot.label,
-      mapUrl: lot.mapUrl || reservation.parkingLocationUrl,
+      mapUrl,
+      mapEmbedUrl: buildNaverMapEmbedUrl(lot.address),
+      lotPhotos: lot.photos?.length ? lot.photos : undefined,
     };
   }
 

@@ -1,6 +1,7 @@
-import { Camera, ChevronRight, ExternalLink, MapPin, ShieldCheck } from 'lucide-react';
+import { Camera, ChevronRight, MapPin, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { RESERVATION_STEPS } from '../constants/marketing';
+import NaverMapPreview from './NaverMapPreview';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { cn } from '../utils/cn';
@@ -98,12 +99,22 @@ function TrustBlock({
   );
 }
 
-function PhotoStrip({ photos, emptyLabel }: { photos?: string[]; emptyLabel: string }) {
+function PhotoStrip({
+  photos,
+  emptyLabel,
+  size = 'sm',
+}: {
+  photos?: string[];
+  emptyLabel: string;
+  size?: 'sm' | 'md';
+}) {
   if (!photos?.length) {
     return (
       <p className="text-xs font-medium leading-relaxed text-muted">{emptyLabel}</p>
     );
   }
+
+  const imgClass = size === 'md' ? 'h-24 w-32' : 'h-16 w-16';
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-1">
@@ -115,7 +126,7 @@ function PhotoStrip({ photos, emptyLabel }: { photos?: string[]; emptyLabel: str
           rel="noopener noreferrer"
           className="block shrink-0 overflow-hidden rounded-xl ring-2 ring-sky-tint"
         >
-          <img src={url} alt="" className="h-16 w-16 object-cover" loading="lazy" />
+          <img src={url} alt="" className={`${imgClass} object-cover`} loading="lazy" />
         </a>
       ))}
     </div>
@@ -174,22 +185,28 @@ export default function ReservationCard({
       <div className="mt-4 space-y-2.5">
         <TrustBlock icon={MapPin} title="주차 위치" highlight>
           {parkingDisplay ? (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
-              {parkingDisplay.detail && (
-                <p className="text-xs font-medium text-muted">{parkingDisplay.detail}</p>
-              )}
-              {parkingDisplay.mapUrl && (
-                <a
-                  href={parkingDisplay.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-brand"
-                >
-                  지도에서 보기
-                  <ExternalLink size={12} />
-                </a>
-              )}
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
+                {parkingDisplay.detail && (
+                  <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
+                )}
+              </div>
+
+              <NaverMapPreview
+                address={parkingDisplay.title}
+                mapUrl={parkingDisplay.mapUrl}
+                mapEmbedUrl={parkingDisplay.mapEmbedUrl}
+              />
+
+              <div>
+                <p className="mb-1.5 text-[11px] font-bold text-muted">주차장 사진</p>
+                <PhotoStrip
+                  photos={parkingDisplay.lotPhotos}
+                  size="md"
+                  emptyLabel="주차장 사진이 등록되면 이곳에서 확인할 수 있습니다."
+                />
+              </div>
             </div>
           ) : (
             <p className="text-xs font-medium leading-relaxed text-muted">
