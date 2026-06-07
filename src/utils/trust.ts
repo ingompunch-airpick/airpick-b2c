@@ -1,15 +1,8 @@
 import type { Company } from '../types';
+import { displayInsuranceBadgeLabel } from './insurance';
 
 export function displayInsuranceLabel(company: Company): string | null {
-  if (company.insuranceProvider) {
-    const limit = company.insuranceLimit
-      ? ` ${Math.round(company.insuranceLimit / 10000)}천만`
-      : '';
-    return `${company.insuranceProvider}${limit}`;
-  }
-  if (company.features.some((f) => /보험|손해/i.test(f))) return '보험 가입';
-  if (company.hasInsurance !== false) return '보험';
-  return null;
+  return displayInsuranceBadgeLabel(company);
 }
 
 /** B2B 기사앱 상태 코드와 B2C MY 타임라인 단계 매핑 */

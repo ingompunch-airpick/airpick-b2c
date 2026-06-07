@@ -1,3 +1,11 @@
+export interface CompanyInsurance {
+  enrolled: boolean;
+  provider?: string;
+  productName?: string;
+  coverageLimitWon?: number;
+  updatedAt?: string;
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -32,8 +40,14 @@ export interface Company {
   status?: string;
   sharesParkingLocation?: boolean;
   sharesPhotos?: boolean;
+  sharesInsurance?: boolean;
+  /** B2B 마스터 — 업체 보험 안내 (표시용) */
+  insurance?: CompanyInsurance;
+  /** @deprecated insurance.enrolled 사용 */
   hasInsurance?: boolean;
+  /** @deprecated insurance.provider 사용 */
   insuranceProvider?: string;
+  /** @deprecated insurance.coverageLimitWon 사용 */
   insuranceLimit?: number;
   /** 손님 MY · 실내 주차장 도로명 주소 */
   indoorParkingAddress?: string;
@@ -69,7 +83,10 @@ export interface Reservation {
   parkingLocationUrl?: string;
   parkingSpace?: string;
   images?: string[];
+  insurance?: CompanyInsurance;
+  /** @deprecated insurance 사용 */
   insuranceProvider?: string;
+  /** @deprecated insurance 사용 */
   insuranceLimit?: number;
   checkInPhotos?: string[];
   checkOutPhotos?: string[];

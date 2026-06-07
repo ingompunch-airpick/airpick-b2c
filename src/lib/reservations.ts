@@ -12,6 +12,7 @@ import {
   getReservationCheckOutPhotos,
   type ScratchPhotoSet,
 } from '../utils/reservationPhotos';
+import { parseInsuranceFromFirestore } from '../utils/insurance';
 
 export interface BookingForm {
   userName: string;
@@ -40,6 +41,7 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     scratchPhotos,
   });
   const checkOutPhotos = getReservationCheckOutPhotos({ checkOutPhotos: rawCheckOut });
+  const insurance = parseInsuranceFromFirestore(data);
 
   return {
     id,
@@ -66,8 +68,11 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     parkingLocationUrl: data.parkingLocationUrl ? String(data.parkingLocationUrl) : undefined,
     parkingSpace: data.parkingSpace ? String(data.parkingSpace) : undefined,
     images,
-    insuranceProvider: data.insuranceProvider ? String(data.insuranceProvider) : undefined,
-    insuranceLimit: data.insuranceLimit ? Number(data.insuranceLimit) : undefined,
+    insurance,
+    insuranceProvider: insurance?.provider ?? (data.insuranceProvider ? String(data.insuranceProvider) : undefined),
+    insuranceLimit:
+      insurance?.coverageLimitWon ??
+      (data.insuranceLimit ? Number(data.insuranceLimit) : undefined),
     checkInPhotos: checkInPhotos.length ? checkInPhotos : undefined,
     checkOutPhotos: checkOutPhotos.length ? checkOutPhotos : undefined,
     scratchPhotos,

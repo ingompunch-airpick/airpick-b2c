@@ -6,6 +6,7 @@ import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { cn } from '../utils/cn';
 import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
+import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
 import { getStatusLabel, getStatusStep } from '../utils/trust';
 
 function formatSchedule(reservation: Reservation): string {
@@ -141,13 +142,7 @@ export default function ReservationCard({
   company?: Company;
 }) {
   const statusLabel = getStatusLabel(reservation.status);
-  const insuranceText = reservation.insuranceProvider
-    ? `${reservation.insuranceProvider}${
-        reservation.insuranceLimit
-          ? ` · 보장 ${Math.round(reservation.insuranceLimit / 10000)}천만원`
-          : ''
-      }`
-    : null;
+  const insuranceDisplay = resolveInsuranceDisplay(reservation, company);
 
   const checkInPhotos = reservation.checkInPhotos;
   const parkingDisplay = resolveParkingLocationDisplay(reservation, company);
@@ -240,12 +235,22 @@ export default function ReservationCard({
         </TrustBlock>
 
         <TrustBlock icon={ShieldCheck} title="보험">
-          {insuranceText ? (
-            <p className="text-sm font-semibold text-ink">{insuranceText}</p>
-          ) : (
+          {insuranceDisplay.status === 'unknown' ? (
             <p className="text-xs font-medium leading-relaxed text-muted">
               업체 보험 가입 정보가 등록되면 이곳에서 확인할 수 있습니다.
             </p>
+          ) : (
+            <div className="space-y-1.5">
+              <p className="text-sm font-semibold text-ink">{insuranceDisplay.summary}</p>
+              {insuranceDisplay.detail && (
+                <p className="text-xs font-medium text-muted">{insuranceDisplay.detail}</p>
+              )}
+              {insuranceDisplay.status === 'enrolled' && (
+                <p className="text-[10px] font-medium leading-relaxed text-muted-light">
+                  {INSURANCE_DISCLAIMER}
+                </p>
+              )}
+            </div>
           )}
         </TrustBlock>
       </div>
