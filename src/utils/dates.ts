@@ -27,6 +27,7 @@ export function defaultBookingSearch() {
     departureTime: '10:00',
     arrivalTime: '10:00',
     terminal: 'T1' as const,
+    arrivalTerminal: 'T1' as const,
     isIndoor: true,
   };
 }

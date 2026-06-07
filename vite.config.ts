@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
-        description: '인천공항 발렛 주차 — 업체 비교·예약',
+        description: '맡긴 차, 어디 있는지까지 — 입고 사진 · 주차 위치 · 보험',
         theme_color: '#3182F6',
         background_color: '#EDF4FC',
         display: 'standalone',

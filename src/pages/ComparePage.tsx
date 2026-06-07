@@ -33,7 +33,9 @@ export default function ComparePage({
     <div className="space-y-4">
       <div className="px-1">
         <h2 className="text-base font-bold text-ink">주차대행</h2>
-        <p className="text-xs font-medium text-muted">날짜·터미널 선택 후 업체를 비교하세요</p>
+        <p className="text-xs font-medium text-muted">
+          가격 비교 후 예약 · 입고 후 위치·사진·보험은 MY에서 확인
+        </p>
       </div>
 
       <SearchPanel search={search} onChange={onSearchChange} onSubmit={() => {}} />
@@ -41,7 +43,7 @@ export default function ComparePage({
       <div className="px-1">
         <h3 className="text-sm font-bold text-ink">업체 가격 비교</h3>
         <p className="text-xs font-medium text-muted">
-          {priced.length}개 업체 · 낮은 가격순 · eSIM 무료는 주차 일수 기준
+          {priced.length}개 업체 · 낮은 가격순 · 제휴 업체 위치·사진·보험 제공
         </p>
       </div>
 

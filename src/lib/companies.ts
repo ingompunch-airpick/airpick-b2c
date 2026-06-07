@@ -1,7 +1,12 @@
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Company } from '../types';
 import { mergePartnerPricing } from '../utils/pricing';
+
+export interface CompanyBookingPolicy {
+  isOpen: boolean;
+  blockedDates: string[];
+}
 
 function normalizeCompany(id: string, data: Record<string, unknown>): Company | null {
   const name = String(data.name || '').trim();
@@ -42,9 +47,26 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     peakEndTime: data.peakEndTime ? String(data.peakEndTime) : undefined,
     peakSurcharge: Number(data.peakSurcharge) || undefined,
     status: data.status ? String(data.status) : 'active',
+    sharesParkingLocation: data.sharesParkingLocation !== false,
+    sharesPhotos: data.sharesPhotos !== false,
+    hasInsurance: data.hasInsurance !== false,
+    insuranceProvider: data.insuranceProvider ? String(data.insuranceProvider) : undefined,
+    insuranceLimit: data.insuranceLimit ? Number(data.insuranceLimit) : undefined,
   };
 
   return mergePartnerPricing(company);
+}
+
+export async function fetchCompanyBookingPolicy(
+  companyId: string
+): Promise<CompanyBookingPolicy | null> {
+  const snap = await getDoc(doc(db, 'companies', companyId));
+  if (!snap.exists()) return null;
+  const data = snap.data() as Record<string, unknown>;
+  return {
+    isOpen: data.isOpen !== false,
+    blockedDates: Array.isArray(data.blockedDates) ? (data.blockedDates as string[]) : [],
+  };
 }
 
 export async function fetchCompanies(): Promise<Company[]> {

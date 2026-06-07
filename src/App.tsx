@@ -45,7 +45,7 @@ export default function App() {
       );
     }
     if (tab === 'esim') return <EsimPage />;
-    return <MyPage lastReservationId={lastReservationId} />;
+    return <MyPage lastReservationId={lastReservationId} onBookParking={() => setTab('compare')} />;
   }, [tab, search, companies, lastReservationId]);
 
   return (

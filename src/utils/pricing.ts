@@ -102,7 +102,21 @@ function checkIsNightSurcharge(timeStr: string, startTime: string, endTime: stri
   }
 }
 
-export function calculatePrice(
+export interface PriceBreakdown {
+  days: number;
+  isIndoor: boolean;
+  basePrice: number;
+  baseDays: number;
+  extraDays: number;
+  extraAmount: number;
+  nightSurcharge: number;
+  nightDetails: string[];
+  t2Surcharge: number;
+  peakSurcharge: number;
+  total: number;
+}
+
+export function getPriceBreakdown(
   company: Company,
   start: string,
   end: string,
@@ -110,48 +124,47 @@ export function calculatePrice(
   isT2: boolean,
   departureTime = '10:00',
   arrivalTime = '10:00'
-): number {
+): PriceBreakdown {
   const priced = mergePartnerPricing(company);
-  const diffDays = getParkingDayCount(start, end);
+  const days = getParkingDayCount(start, end);
 
   let basePrice = 0;
-  let extraPrice = 0;
+  let extraUnit = 0;
   let baseDays = 0;
 
   if (indoor) {
     basePrice = priced.indoorBasePrice ?? priced.base_price ?? 0;
     baseDays = priced.indoorBaseDays ?? priced.base_days ?? 0;
-    extraPrice = priced.indoorExtraPrice ?? priced.extra_day_price ?? 0;
+    extraUnit = priced.indoorExtraPrice ?? priced.extra_day_price ?? 0;
   } else {
     basePrice = priced.outdoorBasePrice ?? priced.base_price ?? 0;
     baseDays = priced.outdoorBaseDays ?? priced.base_days ?? 0;
-    extraPrice = priced.outdoorExtraPrice ?? priced.extra_day_price ?? 0;
+    extraUnit = priced.outdoorExtraPrice ?? priced.extra_day_price ?? 0;
   }
 
-  let calculated = Number(basePrice) || 0;
   const cleanBaseDays = Number(baseDays) || 0;
-  const cleanExtraPrice = Number(extraPrice) || 0;
+  const extraDays = Math.max(0, days - cleanBaseDays);
+  const extraAmount = extraDays * (Number(extraUnit) || 0);
 
-  if (diffDays > cleanBaseDays) {
-    calculated += (diffDays - cleanBaseDays) * cleanExtraPrice;
-  }
-
-  if (isT2 && priced.t2Surcharge) {
-    calculated += Number(priced.t2Surcharge) || 0;
-  }
-
+  let nightSurcharge = 0;
+  const nightDetails: string[] = [];
   if (priced.surchargePrice && priced.surchargeStartTime && priced.surchargeEndTime) {
     const charge = Number(priced.surchargePrice) || 0;
     const startWithTime = `${start} ${departureTime}`;
     const endWithTime = `${end} ${arrivalTime}`;
     if (checkIsNightSurcharge(startWithTime, priced.surchargeStartTime, priced.surchargeEndTime)) {
-      calculated += charge;
+      nightSurcharge += charge;
+      nightDetails.push(`입차 +${charge.toLocaleString()}원`);
     }
     if (checkIsNightSurcharge(endWithTime, priced.surchargeStartTime, priced.surchargeEndTime)) {
-      calculated += charge;
+      nightSurcharge += charge;
+      nightDetails.push(`출차 +${charge.toLocaleString()}원`);
     }
   }
 
+  const t2Surcharge = isT2 && priced.t2Surcharge ? Number(priced.t2Surcharge) || 0 : 0;
+
+  let peakSurcharge = 0;
   if (priced.peakSurcharge && priced.peakStartTime && priced.peakEndTime) {
     try {
       const checkInDateObj = new Date(start);
@@ -164,11 +177,46 @@ export function calculatePrice(
       } else {
         isPeak = checkInMD >= priced.peakStartTime && checkInMD <= priced.peakEndTime;
       }
-      if (isPeak) calculated += Number(priced.peakSurcharge) || 0;
+      if (isPeak) peakSurcharge = Number(priced.peakSurcharge) || 0;
     } catch {
       /* ignore */
     }
   }
 
-  return calculated;
+  const total =
+    (Number(basePrice) || 0) + extraAmount + nightSurcharge + t2Surcharge + peakSurcharge;
+
+  return {
+    days,
+    isIndoor: indoor,
+    basePrice: Number(basePrice) || 0,
+    baseDays: cleanBaseDays,
+    extraDays,
+    extraAmount,
+    nightSurcharge,
+    nightDetails,
+    t2Surcharge,
+    peakSurcharge,
+    total,
+  };
+}
+
+export function calculatePrice(
+  company: Company,
+  start: string,
+  end: string,
+  indoor: boolean,
+  isT2: boolean,
+  departureTime = '10:00',
+  arrivalTime = '10:00'
+): number {
+  return getPriceBreakdown(
+    company,
+    start,
+    end,
+    indoor,
+    isT2,
+    departureTime,
+    arrivalTime
+  ).total;
 }

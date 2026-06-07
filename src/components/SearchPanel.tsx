@@ -52,12 +52,18 @@ export default function SearchPanel({
         />
       </div>
 
-      <div className="mt-2 grid grid-cols-3 gap-2">
+      <div className="mt-2 grid grid-cols-2 gap-2">
         {(['T1', 'T2'] as Terminal[]).map((t) => (
           <button
             key={t}
             type="button"
-            onClick={() => onChange({ ...search, terminal: t })}
+            onClick={() => {
+              const next = { ...search, terminal: t };
+              if (!search.arrivalTerminal || search.arrivalTerminal === search.terminal) {
+                next.arrivalTerminal = t;
+              }
+              onChange(next);
+            }}
             className={cn(
               'rounded-xl py-2 text-xs font-bold transition-colors',
               search.terminal === t
@@ -68,15 +74,28 @@ export default function SearchPanel({
             {t === 'T1' ? '1터미널' : '2터미널'}
           </button>
         ))}
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-2">
         <button
           type="button"
-          onClick={() => onChange({ ...search, isIndoor: !search.isIndoor })}
+          onClick={() => onChange({ ...search, isIndoor: true })}
           className={cn(
             'rounded-xl py-2 text-xs font-bold transition-colors',
-            search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-tint text-ink'
+            search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-bg text-muted'
           )}
         >
-          {search.isIndoor ? '실내' : '실외'}
+          실내
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ ...search, isIndoor: false })}
+          className={cn(
+            'rounded-xl py-2 text-xs font-bold transition-colors',
+            !search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-bg text-muted'
+          )}
+        >
+          실외
         </button>
       </div>
 

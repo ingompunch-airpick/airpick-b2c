@@ -2,6 +2,7 @@ import { ChevronRight, Star } from 'lucide-react';
 import type { Company } from '../types';
 import { cn } from '../utils/cn';
 import { displayCompanyName } from '../utils/display';
+import TrustBadges from './TrustBadges';
 
 export default function CompanyCard({
   company,
@@ -59,7 +60,10 @@ export default function CompanyCard({
           <span>·</span>
           <span>후기 {company.reviews_count}</span>
         </div>
-        <p className="mt-1 text-lg font-bold text-brand tabular-nums">
+        <div className="mt-2">
+          <TrustBadges company={company} />
+        </div>
+        <p className="mt-2 text-lg font-bold text-brand tabular-nums">
           {price.toLocaleString()}원
         </p>
       </div>
