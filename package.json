@@ -1,7 +1,7 @@
 {
   "name": "airpick-b2c",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,9 +9,19 @@
     "lint": "tsc -b --noEmit",
     "preview": "vite preview",
     "deploy:hosting": "npm run build && npx -y firebase-tools@latest deploy --only hosting:airpick-b2c",
-    "deploy:hosting:preview": "npm run build && npx -y firebase-tools@latest hosting:channel:deploy preview --site airpick-b2c --expires 7d"
+    "deploy:hosting:preview": "npm run build && npx -y firebase-tools@latest hosting:channel:deploy preview --site airpick-b2c --expires 7d",
+    "cap:sync": "npm run build && npx cap sync android",
+    "cap:open": "npx cap open android",
+    "android:bundle:debug": "cd android && ./gradlew bundleDebug",
+    "android:bundle:release": "cd android && ./gradlew bundleRelease",
+    "android:aab": "bash scripts/build-android-aab.sh"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/splash-screen": "^8.0.1",
     "clsx": "^2.1.1",
     "firebase": "^12.14.0",
     "lucide-react": "^1.17.0",

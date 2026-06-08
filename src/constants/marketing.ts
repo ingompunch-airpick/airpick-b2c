@@ -14,8 +14,8 @@ export const TRUST_PILLARS = [
   },
   {
     id: 'photos',
-    title: '입·출고 사진',
-    desc: '기사가 찍은 차량 사진을 예약 조회에서 공유',
+    title: '입고 사진',
+    desc: '입고 시 기사가 촬영한 차량 사진을 MY에서 확인',
   },
   {
     id: 'insurance',

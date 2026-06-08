@@ -212,27 +212,11 @@ export default function ReservationCard({
           )}
         </TrustBlock>
 
-        <TrustBlock icon={Camera} title="입·출고 사진">
-          <div className="space-y-3">
-            <div>
-              <p className="mb-1.5 text-[11px] font-bold text-muted">입고</p>
-              <PhotoStrip
-                photos={checkInPhotos}
-                emptyLabel="입고 후 기사가 촬영한 사진이 등록됩니다."
-              />
-            </div>
-            <div>
-              <p className="mb-1.5 text-[11px] font-bold text-muted">출고</p>
-              <PhotoStrip
-                photos={reservation.checkOutPhotos}
-                emptyLabel={
-                  getStatusStep(reservation.status) >= 3
-                    ? '출고 사진을 준비 중입니다.'
-                    : '출고 시 촬영된 사진이 등록됩니다.'
-                }
-              />
-            </div>
-          </div>
+        <TrustBlock icon={Camera} title="입고 사진">
+          <PhotoStrip
+            photos={checkInPhotos}
+            emptyLabel="입고 후 기사가 촬영한 사진이 등록됩니다."
+          />
         </TrustBlock>
 
         <TrustBlock icon={ShieldCheck} title="보험">
