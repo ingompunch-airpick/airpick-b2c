@@ -1,12 +1,10 @@
-import { Camera, ChevronRight, Headphones, MapPin, ShieldCheck } from 'lucide-react';
+import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
-import ContactActions from './ContactActions';
-import { AIRPICK_SUPPORT } from '../constants/support';
 import { RESERVATION_STEPS } from '../constants/marketing';
 import NaverMapPreview from './NaverMapPreview';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
-import { formatPhoneDisplay } from '../utils/contact';
+import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 import { cn } from '../utils/cn';
 import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
@@ -257,21 +255,24 @@ export default function ReservationCard({
           )}
         </TrustBlock>
 
-        <TrustBlock icon={Headphones} title="문의">
-          <ContactActions
-            compact
-            companyPhone={company?.phone}
-            companyPhoneLabel={
-              company?.phone ? formatPhoneDisplay(company.phone) : undefined
-            }
-            airpickPhone={AIRPICK_SUPPORT.phone || undefined}
-            airpickPhoneDisplay={
-              AIRPICK_SUPPORT.phoneDisplay ||
-              (AIRPICK_SUPPORT.phone ? formatPhoneDisplay(AIRPICK_SUPPORT.phone) : undefined)
-            }
-            kakaoChannelUrl={AIRPICK_SUPPORT.kakaoChannelUrl || undefined}
-            kakaoLabel={AIRPICK_SUPPORT.kakaoLabel}
-          />
+        <TrustBlock icon={Headphones} title="업체 문의">
+          {buildTelHref(company?.phone) ? (
+            <a
+              href={buildTelHref(company?.phone)}
+              className="flex items-center justify-center gap-2 rounded-xl bg-sky-tint py-3 text-xs font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
+            >
+              <Phone size={14} strokeWidth={2.25} />
+              {displayCompanyName(reservation.companyName)} ·{' '}
+              {formatPhoneDisplay(company!.phone!)}
+            </a>
+          ) : (
+            <p className="text-xs font-medium leading-relaxed text-muted">
+              업체 연락처가 등록되면 이곳에서 전화 문의할 수 있습니다.
+            </p>
+          )}
+          <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted-light">
+            입·출고, 차량 상태, 예약 변경·취소는 주차장(업체)으로 연락해 주세요.
+          </p>
         </TrustBlock>
       </div>
 

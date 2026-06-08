@@ -91,7 +91,7 @@ export default function MyPage({
           onClick={onOpenSupport}
           className="w-full rounded-2xl bg-sky-soft py-3 text-center text-xs font-bold text-brand ring-1 ring-sky-border/60"
         >
-          고객센터 · FAQ · 전화/카톡
+          자주 묻는 질문
         </button>
       )}
 

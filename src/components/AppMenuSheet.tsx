@@ -1,4 +1,4 @@
-import { ChevronRight, Headphones, X } from 'lucide-react';
+import { ChevronRight, CircleHelp, X } from 'lucide-react';
 
 export default function AppMenuSheet({
   onClose,
@@ -37,8 +37,8 @@ export default function AppMenuSheet({
             className="flex w-full items-center justify-between rounded-2xl bg-sky-bg px-4 py-3.5 text-left ring-1 ring-sky-border/60 transition-colors hover:bg-sky-tint"
           >
             <span className="flex items-center gap-2.5">
-              <Headphones size={18} className="text-brand" strokeWidth={2} />
-              <span className="text-sm font-bold text-ink">고객센터</span>
+              <CircleHelp size={18} className="text-brand" strokeWidth={2} />
+              <span className="text-sm font-bold text-ink">자주 묻는 질문</span>
             </span>
             <ChevronRight size={18} className="text-muted-light" />
           </button>

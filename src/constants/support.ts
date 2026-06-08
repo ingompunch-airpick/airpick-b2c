@@ -1,15 +1,4 @@
-/** 에어픽 고객센터 — 연락처·FAQ (배포 전 phone·kakaoChannelUrl 확인) */
-
-export const AIRPICK_SUPPORT = {
-  /** tel: 링크용 (하이픈 가능) — 에어픽 고객센터 번호 */
-  phone: '010-2556-5746',
-  phoneDisplay: '010-2556-5746',
-  /** 카카오톡 채널 — 1:1 채팅 바로 열기 */
-  kakaoChannelUrl: 'http://pf.kakao.com/_lxhEnn/chat',
-  kakaoLabel: '카카오톡 @airpickup',
-  hours: '평일 09:00 – 18:00',
-  guide: '예약·앱·MY 조회 문의는 에어픽, 입·출고·차량 문의는 해당 주차장으로 연락해 주세요.',
-} as const;
+/** FAQ — MY·메뉴에서 표시 (현장 문의는 각 주차장 담당) */
 
 export interface FaqItem {
   id: string;
@@ -56,7 +45,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         id: 'book-change',
         question: '예약 변경·취소는 어떻게 하나요?',
         answer:
-          'MY에서 예약을 확인한 뒤, 해당 주차장(업체 문의) 또는 에어픽 고객센터(에어픽 문의)로 연락해 주세요.',
+          'MY 예약 카드의 「업체 문의」로 예약하신 주차장에 직접 연락해 주세요.',
       },
     ],
   },
@@ -84,9 +73,9 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
     items: [
       {
         id: 'who',
-        question: '어디로 전화해야 하나요?',
+        question: '어디로 문의해야 하나요?',
         answer:
-          '차량 입·출고, 현장 일정, 차량 상태 → MY 예약 카드의 「업체 문의」. 앱 사용, 예약 접수, MY 조회 → 「에어픽 문의」 또는 고객센터 FAQ 하단 연락처를 이용해 주세요.',
+          '차량 입·출고, 현장 일정, 차량 상태, 예약 변경·취소 → MY 「업체 문의」로 주차장에 전화해 주세요. 앱·MY 조회 방법은 이 FAQ를 참고해 주세요.',
       },
     ],
   },
