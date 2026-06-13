@@ -7,13 +7,14 @@ import { displayCompanyName } from '../utils/display';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 import { cn } from '../utils/cn';
 import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
+import { parkingTypeLabel } from '../utils/parkingType';
 import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
 import { getStatusLabel, getStatusStep } from '../utils/trust';
 
 function formatSchedule(reservation: Reservation): string {
   const dep = reservation.departureDate.replace(/-/g, '.').slice(5);
   const arr = reservation.arrivalDate.replace(/-/g, '.').slice(5);
-  const indoor = reservation.isIndoor ? '실내' : '실외';
+  const indoor = parkingTypeLabel(reservation.isIndoor);
   return `${dep} ${reservation.departureTime} → ${arr} ${reservation.arrivalTime} · ${reservation.departureTerminal} ${indoor}`;
 }
 

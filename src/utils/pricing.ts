@@ -1,4 +1,8 @@
 import type { Company } from '../types';
+import {
+  calculateGayuBasePrice,
+  type PricingTerminal,
+} from './pricingProfiles';
 
 export const WAWA_FEE_DEFAULTS: Partial<Company> = {
   outdoorBasePrice: 40000,
@@ -27,7 +31,33 @@ export function isWawaCompany(companyId?: string, companyName?: string): boolean
   );
 }
 
+export function isGayuCompany(companyId?: string, companyName?: string): boolean {
+  const id = (companyId || '').trim().toLowerCase();
+  const name = (companyName || '').trim().toLowerCase();
+  return (
+    id === 'gayu' ||
+    id === 'gayu_valet' ||
+    id === 'gy' ||
+    name.includes('gayu') ||
+    companyName?.includes('가유') === true
+  );
+}
+
 export function mergePartnerPricing(partner: Company): Company {
+  if (isGayuCompany(partner.id, partner.name)) {
+    return {
+      ...partner,
+      pricingProfile: 'gayu-pricing',
+      supports_indoor: false,
+      supports_outdoor: true,
+      is_indoor: false,
+      isAirpickPartner: partner.isAirpickPartner !== false,
+      surchargePrice: Number(partner.surchargePrice) || 10000,
+      surchargeStartTime: partner.surchargeStartTime || '19:00',
+      surchargeEndTime: partner.surchargeEndTime || '05:00',
+    };
+  }
+
   if (!isWawaCompany(partner.id, partner.name)) {
     return partner;
   }
@@ -72,7 +102,7 @@ export function getParkingDayCount(start: string, end: string): number {
   return Math.max(1, diff + 1);
 }
 
-function checkIsNightSurcharge(timeStr: string, startTime: string, endTime: string): boolean {
+export function checkIsNightSurcharge(timeStr: string, startTime: string, endTime: string): boolean {
   try {
     if (!timeStr || !startTime || !endTime) return false;
 
@@ -123,10 +153,49 @@ export function getPriceBreakdown(
   indoor: boolean,
   isT2: boolean,
   departureTime = '10:00',
-  arrivalTime = '10:00'
+  arrivalTime = '10:00',
+  isCardPayment = false
 ): PriceBreakdown {
   const priced = mergePartnerPricing(company);
   const days = getParkingDayCount(start, end);
+
+  if (isGayuCompany(company.id, company.name) || priced.pricingProfile === 'gayu-pricing') {
+    const terminal: PricingTerminal = isT2 ? '2T' : '1T';
+    const baseTotal = calculateGayuBasePrice(days, terminal);
+    const nightStart = priced.surchargeStartTime || '19:00';
+    const nightEnd = priced.surchargeEndTime || '05:00';
+    const nightFee = Number(priced.surchargePrice) || 10000;
+
+    let nightSurcharge = 0;
+    const nightDetails: string[] = [];
+    if (checkIsNightSurcharge(`${start} ${departureTime}`, nightStart, nightEnd)) {
+      nightSurcharge += nightFee;
+      nightDetails.push(`입차 +${nightFee.toLocaleString()}원`);
+    }
+    if (checkIsNightSurcharge(`${end} ${arrivalTime}`, nightStart, nightEnd)) {
+      nightSurcharge += nightFee;
+      nightDetails.push(`출차 +${nightFee.toLocaleString()}원`);
+    }
+
+    let total = baseTotal + nightSurcharge;
+    if (isCardPayment) {
+      total = Math.floor(total * 1.1);
+    }
+
+    return {
+      days,
+      isIndoor: false,
+      basePrice: baseTotal,
+      baseDays: terminal === '2T' ? 4 : 3,
+      extraDays: Math.max(0, days - (terminal === '2T' ? 4 : 3)),
+      extraAmount: Math.max(0, baseTotal - (terminal === '2T' ? 50000 : 40000)),
+      nightSurcharge,
+      nightDetails,
+      t2Surcharge: 0,
+      peakSurcharge: 0,
+      total,
+    };
+  }
 
   let basePrice = 0;
   let extraUnit = 0;
@@ -208,7 +277,8 @@ export function calculatePrice(
   indoor: boolean,
   isT2: boolean,
   departureTime = '10:00',
-  arrivalTime = '10:00'
+  arrivalTime = '10:00',
+  isCardPayment = false
 ): number {
   return getPriceBreakdown(
     company,
@@ -217,6 +287,7 @@ export function calculatePrice(
     indoor,
     isT2,
     departureTime,
-    arrivalTime
+    arrivalTime,
+    isCardPayment
   ).total;
 }

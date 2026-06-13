@@ -1,6 +1,7 @@
-import { ChevronRight, Star } from 'lucide-react';
+import { ChevronRight, ExternalLink, Star } from 'lucide-react';
 import type { Company } from '../types';
 import { cn } from '../utils/cn';
+import { isAirpickPartner } from '../utils/compareSort';
 import { displayCompanyName } from '../utils/display';
 import TrustBadges from './TrustBadges';
 
@@ -9,13 +10,17 @@ export default function CompanyCard({
   price,
   onSelect,
   layout = 'grid',
+  distanceDetail,
 }: {
   company: Company;
   price: number;
   onSelect: () => void;
   layout?: 'grid' | 'list';
+  /** 거리순 탭에서 터미널까지 거리 표시 */
+  distanceDetail?: string;
 }) {
   const name = displayCompanyName(company.name);
+  const partner = isAirpickPartner(company);
 
   if (layout === 'grid') {
     return (
@@ -53,21 +58,46 @@ export default function CompanyCard({
         loading="lazy"
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-bold text-ink">{name}</p>
-        <div className="mt-1 flex items-center gap-1 text-[11px] font-medium text-muted">
-          <Star size={12} className="fill-amber-400 text-amber-400" />
-          <span>{company.rating.toFixed(1)}</span>
-          <span>·</span>
-          <span>후기 {company.reviews_count}</span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <p className="truncate text-base font-bold text-ink">{name}</p>
+          {partner ? (
+            <span className="shrink-0 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
+              에어픽 예약
+            </span>
+          ) : (
+            <span className="shrink-0 rounded-md bg-sky-tint px-1.5 py-0.5 text-[10px] font-bold text-muted">
+              홈페이지
+            </span>
+          )}
         </div>
-        <div className="mt-2">
-          <TrustBadges company={company} />
-        </div>
-        <p className="mt-2 text-lg font-bold text-brand tabular-nums">
+        {partner && (
+          <div className="mt-1 flex items-center gap-1 text-[11px] font-medium text-muted">
+            <Star size={12} className="fill-amber-400 text-amber-400" />
+            <span>{company.rating.toFixed(1)}</span>
+            <span>·</span>
+            <span>후기 {company.reviews_count}</span>
+          </div>
+        )}
+        {partner && (
+          <div className="mt-2">
+            <TrustBadges company={company} />
+          </div>
+        )}
+        {distanceDetail && (
+          <p className="mt-2 text-[11px] font-semibold text-brand">{distanceDetail}</p>
+        )}
+        <p className={cn('text-lg font-bold text-brand tabular-nums', distanceDetail ? 'mt-1' : 'mt-2')}>
           {price.toLocaleString()}원
         </p>
+        <p className="mt-1 text-[11px] font-semibold text-muted">
+          {partner ? '앱에서 바로 예약' : '업체 홈페이지에서 예약'}
+        </p>
       </div>
-      <ChevronRight size={20} className={cn('shrink-0 text-muted-light')} />
+      {partner ? (
+        <ChevronRight size={20} className={cn('shrink-0 text-muted-light')} />
+      ) : (
+        <ExternalLink size={18} className={cn('shrink-0 text-muted-light')} />
+      )}
     </button>
   );
 }

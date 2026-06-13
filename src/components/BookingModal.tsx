@@ -11,6 +11,7 @@ import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy
 import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
 import { getPriceBreakdown } from '../utils/pricing';
+import { companySupportsIndoor, companySupportsOutdoor, parkingTypeLabel } from '../utils/parkingType';
 
 const AIRLINES = ['대한항공', '아시아나항공', '진에어', '제주항공', '티웨이항공', '에어부산'];
 
@@ -74,7 +75,8 @@ export default function BookingModal({
         search.isIndoor,
         isT2,
         search.departureTime,
-        search.arrivalTime
+        search.arrivalTime,
+        search.isCardPayment === true
       ),
     [company, search, arrivalTerminal, isT2]
   );
@@ -183,7 +185,7 @@ export default function BookingModal({
                   {formatDateDisplay(search.departureDate)} → {formatDateDisplay(search.arrivalDate)}
                 </p>
                 <p className="mt-0.5 text-xs font-semibold text-muted">
-                  {terminalSummary} · {search.isIndoor ? '실내' : '실외'} · {breakdown.days}일
+                  {terminalSummary} · {parkingTypeLabel(search.isIndoor)} · {breakdown.days}일
                 </p>
               </div>
               <button
@@ -292,7 +294,7 @@ export default function BookingModal({
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    disabled={!company.supports_indoor}
+                    disabled={!companySupportsIndoor(company)}
                     onClick={() => setSearch((prev) => ({ ...prev, isIndoor: true }))}
                     className={cn(
                       'rounded-xl py-2 text-xs font-bold transition-colors disabled:opacity-40',
@@ -303,14 +305,14 @@ export default function BookingModal({
                   </button>
                   <button
                     type="button"
-                    disabled={!company.supports_outdoor}
+                    disabled={!companySupportsOutdoor(company)}
                     onClick={() => setSearch((prev) => ({ ...prev, isIndoor: false }))}
                     className={cn(
                       'rounded-xl py-2 text-xs font-bold transition-colors disabled:opacity-40',
                       !search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
                     )}
                   >
-                    실외
+                    야외
                   </button>
                 </div>
               </div>

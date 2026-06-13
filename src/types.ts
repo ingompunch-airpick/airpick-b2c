@@ -51,13 +51,24 @@ export interface Company {
   insuranceLimit?: number;
   /** 손님 MY · 실내 주차장 도로명 주소 */
   indoorParkingAddress?: string;
-  /** 손님 MY · 실외 주차장 도로명 주소 */
+  /** 손님 MY · 야외 주차장 도로명 주소 */
   outdoorParkingAddress?: string;
   indoorParkingMapUrl?: string;
   outdoorParkingMapUrl?: string;
   /** 손님 MY · 주차장 시설 사진 (B2B 등록) */
   indoorParkingPhotos?: string[];
   outdoorParkingPhotos?: string[];
+  /** true(기본): 에어픽 앱에서 바로 예약 · false: 홈페이지 링크만 */
+  isAirpickPartner?: boolean;
+  /** 미입점 업체 예약 페이지 */
+  externalBookingUrl?: string;
+  /** 업체별 요금 산식 (단일) */
+  pricingProfile?: string;
+  /** 실내·야외 요금이 다른 업체 — 검색 조건에 따라 선택 */
+  indoorPricingProfile?: string;
+  outdoorPricingProfile?: string;
+  /** B2B 입력 · 터미널별 현재 주차장 거리 (계약 변경 시 업데이트) */
+  parkingDistances?: CompanyParkingDistances;
 }
 
 export interface Reservation {
@@ -110,6 +121,21 @@ export type ReservationLookupMode = 'carNumber' | 'phone';
 
 export type Terminal = 'T1' | 'T2';
 
+/** Firestore `companies/{id}.parkingDistances.T1|T2` */
+export interface ParkingDistanceEntry {
+  distanceKm: number;
+  driveMinutes?: number;
+  parkingLotName?: string;
+  parkingLotAddress?: string;
+  /** 이 주차장 사용 시작일 (YYYY-MM-DD) */
+  effectiveFrom?: string;
+  updatedAt?: string;
+}
+
+export type CompanyParkingDistances = Partial<Record<Terminal, ParkingDistanceEntry>>;
+
+export type CompareSortMode = 'price' | 'distance';
+
 export interface BookingSearch {
   departureDate: string;
   arrivalDate: string;
@@ -120,6 +146,8 @@ export interface BookingSearch {
   /** 귀국 터미널 — 없으면 terminal과 동일 */
   arrivalTerminal?: Terminal;
   isIndoor: boolean;
+  /** 신용카드 결제 시 미입점 업체 요금 +10% 반영 */
+  isCardPayment?: boolean;
 }
 
 export type AppTab = 'home' | 'compare' | 'esim' | 'my';

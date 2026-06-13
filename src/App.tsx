@@ -44,7 +44,7 @@ export default function App() {
           search={search}
           onSearchChange={setSearch}
           companies={companies}
-          onSelectCompany={(company, price) => setBookingTarget({ company, price })}
+          onBookOnAirpick={(company, price) => setBookingTarget({ company, price })}
         />
       );
     }

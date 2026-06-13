@@ -29,5 +29,6 @@ export function defaultBookingSearch() {
     terminal: 'T1' as const,
     arrivalTerminal: 'T1' as const,
     isIndoor: true,
+    isCardPayment: false,
   };
 }

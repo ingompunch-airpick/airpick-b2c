@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore
 import { db } from '../firebase';
 import type { Company } from '../types';
 import { deriveParkingAddressesFromCompanyData } from '../utils/companyParking';
+import { parseParkingDistancesFromFirestore } from '../utils/parkingDistances';
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { mergePartnerPricing } from '../utils/pricing';
 
@@ -54,10 +55,20 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     sharesParkingLocation: data.sharesParkingLocation !== false,
     sharesPhotos: data.sharesPhotos !== false,
     sharesInsurance: data.sharesInsurance !== false,
+    isAirpickPartner: data.isAirpickPartner !== false,
+    externalBookingUrl: data.externalBookingUrl ? String(data.externalBookingUrl) : undefined,
+    pricingProfile: data.pricingProfile ? String(data.pricingProfile) : undefined,
+    indoorPricingProfile: data.indoorPricingProfile
+      ? String(data.indoorPricingProfile)
+      : undefined,
+    outdoorPricingProfile: data.outdoorPricingProfile
+      ? String(data.outdoorPricingProfile)
+      : undefined,
     insurance,
     hasInsurance: insurance?.enrolled,
     insuranceProvider: insurance?.provider,
     insuranceLimit: insurance?.coverageLimitWon,
+    parkingDistances: parseParkingDistancesFromFirestore(data),
     ...deriveParkingAddressesFromCompanyData(data),
   };
 

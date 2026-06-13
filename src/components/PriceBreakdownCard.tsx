@@ -1,4 +1,5 @@
 import type { PriceBreakdown } from '../utils/pricing';
+import { parkingTypeLabel } from '../utils/parkingType';
 import { cn } from '../utils/cn';
 
 export default function PriceBreakdownCard({ breakdown }: { breakdown: PriceBreakdown }) {
@@ -11,7 +12,7 @@ export default function PriceBreakdownCard({ breakdown }: { breakdown: PriceBrea
       <div className="space-y-1.5 text-[12px]">
         <div className="flex justify-between gap-3 font-semibold text-ink">
           <span>
-            {breakdown.isIndoor ? '실내' : '실외'} 주차 (기본 {breakdown.baseDays}일)
+            {parkingTypeLabel(breakdown.isIndoor)} 주차 (기본 {breakdown.baseDays}일)
           </span>
           <span className="shrink-0 tabular-nums">{breakdown.basePrice.toLocaleString()}원</span>
         </div>

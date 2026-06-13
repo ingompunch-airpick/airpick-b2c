@@ -1,12 +1,15 @@
 import type { Company, Reservation } from '../types';
 import { buildNaverMapSearchUrl } from './naverMap';
+import { PARKING_LABEL_INDOOR, PARKING_LABEL_OUTDOOR } from './parkingType';
 
 export { buildNaverMapSearchUrl } from './naverMap';
 
 const GENERIC_PARKING_LABELS = new Set([
   '실내 주차장',
+  '야외 주차장',
   '실외 주차장',
   '실내',
+  '야외',
   '실외',
   '미지정',
 ]);
@@ -33,7 +36,7 @@ export function getCompanyParkingLot(
     return {
       address,
       mapUrl: company?.indoorParkingMapUrl?.trim() || buildNaverMapSearchUrl(address),
-      label: '실내 주차장',
+      label: `${PARKING_LABEL_INDOOR} 주차장`,
       photos: company?.indoorParkingPhotos,
     };
   }
@@ -41,7 +44,7 @@ export function getCompanyParkingLot(
   return {
     address,
     mapUrl: company?.outdoorParkingMapUrl?.trim() || buildNaverMapSearchUrl(address),
-    label: '실외 주차장',
+    label: `${PARKING_LABEL_OUTDOOR} 주차장`,
     photos: company?.outdoorParkingPhotos,
   };
 }
