@@ -1,4 +1,5 @@
 import type { Company } from '../types';
+import { todayYmd } from './dates';
 
 export const ACTUAL_PRICING_RULES: Record<
   string,
@@ -93,6 +94,181 @@ export const ACTUAL_PRICING_RULES: Record<
     extraPricePerDay2T: 10000,
     extraFee2T: 20000,
   },
+  /** 베이스캠프 — 1~4일 고정, 5일째부터 일할증 · 심야할증 없음 */
+  'basecamp-outdoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 50000,
+    extraPricePerDay1T: 5000,
+    baseDays2T: 4,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 5000,
+    extraFee2T: 0,
+  },
+  'basecamp-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 70000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 세븐주차 — 실내 · 1~4일 고정, 5일째 +1만/일 · T2 금액에 주차대행료 1만 포함 */
+  'seven-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 70000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 쿠파킹 — 실내 · T1: 1~4일 6만 / T2: 1~3일 6만·4일째 +1만/일 */
+  'cou-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 3,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 넘버원 — T1 야외 4일 5만/+5천 · 실내 4일 6만/+1만 · T2 +1.5만 */
+  'numberone-outdoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 50000,
+    extraPricePerDay1T: 5000,
+    baseDays2T: 4,
+    basePrice2T: 65000,
+    extraPricePerDay2T: 5000,
+    extraFee2T: 0,
+  },
+  'numberone-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 75000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 명품 — T1 기본 · T2 +2만 (2T 터미널) */
+  'myeongpum-outdoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 50000,
+    extraPricePerDay1T: 5000,
+    baseDays2T: 4,
+    basePrice2T: 50000,
+    extraPricePerDay2T: 5000,
+    extraFee2T: 20000,
+  },
+  'myeongpum-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 20000,
+  },
+  /** 에어25시 — T1/T2 기본 동일 · T2 이용 +1만 */
+  'air25-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 10000,
+  },
+  'air25-outdoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 50000,
+    extraPricePerDay1T: 5000,
+    baseDays2T: 4,
+    basePrice2T: 50000,
+    extraPricePerDay2T: 5000,
+    extraFee2T: 10000,
+  },
+  /** 청호 실내 — T1 기준 · T2 입출 각 +1만 */
+  'chungho-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 20000,
+  },
+  /** 로얄파킹 실내 — 1~4일 6만 · 5일째 +1만 · T2 입출 각 +1만 */
+  'royal-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 20000,
+  },
+  /** 큐브 — T1 4일 4.5만 · T2 4일 5만 · 5일째 +5천/일 */
+  'cube-valet-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 45000,
+    extraPricePerDay1T: 5000,
+    baseDays2T: 4,
+    basePrice2T: 50000,
+    extraPricePerDay2T: 5000,
+    extraFee2T: 0,
+  },
+  /** 블루파킹 실내 — T1 4일 6만 · T2 4일 7만 · 5일째 +1만/일 */
+  'blue-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 70000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 미래주차 실내 — T1 4일 6만 · T2 4일 8만 · 5일째 +1만/일 */
+  'mirae-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 80000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 플러스 — T1/T2 동일 · 야외 4일 4만 · 실내 4일 5만 · 5일째 +1만/일 */
+  'plus-outdoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 40000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 40000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  'plus-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 50000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 50000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
+  /** 차차 실내 — 1~4일 6만 · 5일째 +1만/일 · T1/T2 동일 */
+  'chacha-indoor-pricing': {
+    baseDays1T: 4,
+    basePrice1T: 60000,
+    extraPricePerDay1T: 10000,
+    baseDays2T: 4,
+    basePrice2T: 60000,
+    extraPricePerDay2T: 10000,
+    extraFee2T: 0,
+  },
 };
 
 export type PricingTerminal = '1T' | '2T';
@@ -170,6 +346,113 @@ export const PROFILE_NIGHT_SURCHARGE_CONFIG: Record<string, NightSurchargeConfig
       { startTime: '23:00', endTime: '04:00', fee1T: 20000, fee2T: 20000 },
     ],
   },
+  'seven-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+    arrivalTiers: [{ startTime: '18:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'fly-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [
+      { startTime: '03:00', endTime: '04:59', fee1T: 10000 },
+      { startTime: '19:00', endTime: '21:59', fee1T: 10000 },
+      { startTime: '22:00', endTime: '02:59', fee1T: 15000 },
+    ],
+  },
+  'numberone-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'numberone-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'hyundai-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:30', endTime: '05:00', fee1T: 15000 }],
+  },
+  'hyundai-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:30', endTime: '05:00', fee1T: 15000 }],
+  },
+  'myeongpum-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'myeongpum-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'air25-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'air25-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'chungho-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'chungho-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'royal-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:00', endTime: '05:00', fee1T: 10000 }],
+  },
+  'royal-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:00', endTime: '05:00', fee1T: 10000 }],
+  },
+  'onmaeum-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:30', fee1T: 10000 }],
+    arrivalTiers: [{ startTime: '19:00', endTime: '05:30', fee1T: 10000 }],
+  },
+  'cube-valet-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'blue-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '18:00', endTime: '05:00', fee1T: 15000, fee2T: 20000 }],
+  },
+  'mirae-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'plus-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'plus-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 15000 }],
+  },
+  'chacha-indoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 10000 }],
+    arrivalTiers: [{ startTime: '18:40', endTime: '05:00', fee1T: 10000 }],
+  },
+  'chacha-outdoor-pricing': {
+    mode: 'per_trip',
+    departureTiers: [{ startTime: '19:00', endTime: '05:00', fee1T: 10000 }],
+    arrivalTiers: [{ startTime: '18:40', endTime: '05:00', fee1T: 10000 }],
+  },
+};
+
+/** 입차일이 오늘이면 추가 (현대주차 당일 접수 +1만) */
+export const PROFILE_SAME_DAY_BOOKING_FEE: Record<string, number> = {
+  'hyundai-outdoor-pricing': 10000,
+  'hyundai-indoor-pricing': 10000,
+};
+
+/** 입차월 12·1·2월 추가 (큐브 겨울철 +5천) */
+export const PROFILE_WINTER_DEPARTURE_FEE: Record<string, number> = {
+  'cube-valet-pricing': 5000,
 };
 
 /** @deprecated PROFILE_NIGHT_SURCHARGE_CONFIG 사용 */
@@ -240,6 +523,29 @@ function addProfileNightSurcharges(
     extra += nightFeeForDateTime(arrDateTime, terminal, arrivalTiers, check);
   }
   return total + extra;
+}
+
+function addSameDayBookingFee(
+  profileId: string,
+  total: number,
+  options?: RealParkingPriceOptions
+): number {
+  const fee = PROFILE_SAME_DAY_BOOKING_FEE[profileId];
+  if (!fee || !options?.departureDate) return total;
+  if (options.departureDate === todayYmd()) return total + fee;
+  return total;
+}
+
+function addWinterDepartureFee(
+  profileId: string,
+  total: number,
+  options?: RealParkingPriceOptions
+): number {
+  const fee = PROFILE_WINTER_DEPARTURE_FEE[profileId];
+  if (!fee || !options?.departureDate) return total;
+  const month = Number(options.departureDate.split('-')[1]);
+  if (month === 12 || month === 1 || month === 2) return total + fee;
+  return total;
 }
 
 /** 가유(GY) 입점 — 1T: 3일 40,000 + 4일째 5,000/일 · 2T: 4일 50,000, 5일 60,000 + 6일째 5,000/일 */
@@ -315,6 +621,53 @@ export function calculateOnairIndoorBasePrice(totalDays: number): number {
   return 60000 + (totalDays - 4) * 10000;
 }
 
+/** 현대주차 야외 — 1~2일 3만 · 3일 4.5만 · 4일째 +5,000/일 */
+export function calculateHyundaiOutdoorBasePrice(totalDays: number): number {
+  if (totalDays <= 0) return 0;
+  if (totalDays <= 2) return 30000;
+  if (totalDays === 3) return 45000;
+  return 50000 + (totalDays - 4) * 5000;
+}
+
+/** 현대주차 실내 — 1~2일 5만 · 3일 6만 · 4일째 +10,000/일 */
+export function calculateHyundaiIndoorBasePrice(totalDays: number): number {
+  if (totalDays <= 0) return 0;
+  if (totalDays <= 2) return 50000;
+  if (totalDays === 3) return 60000;
+  return 70000 + (totalDays - 4) * 10000;
+}
+
+/** 청호 야외 — 1~4일 5만 · 5일 6만 · 6일째 +5,000/일 */
+export function calculateChunghoOutdoorBasePrice(totalDays: number): number {
+  if (totalDays <= 0) return 0;
+  if (totalDays <= 4) return 50000;
+  if (totalDays === 5) return 60000;
+  return 60000 + (totalDays - 5) * 5000;
+}
+
+/** 로얄파킹 야외 — 1~3일 4만 · 4일째 +5,000/일 */
+export function calculateRoyalOutdoorBasePrice(totalDays: number): number {
+  if (totalDays <= 0) return 0;
+  if (totalDays <= 3) return 40000;
+  return 40000 + (totalDays - 3) * 5000;
+}
+
+/** 온마음 야외 — 1~3일 3.5만 · 4일 4만 · 5일째 +5,000/일 · T1/T2 동일 */
+export function calculateOnmaeumOutdoorBasePrice(totalDays: number): number {
+  if (totalDays <= 0) return 0;
+  if (totalDays <= 3) return 35000;
+  if (totalDays === 4) return 40000;
+  return 40000 + (totalDays - 4) * 5000;
+}
+
+/** 차차 야외 — 1~4일 4만 · 5일 5만 · 6일째 +5,000/일 */
+export function calculateChachaOutdoorBasePrice(totalDays: number): number {
+  if (totalDays <= 0) return 0;
+  if (totalDays <= 4) return 40000;
+  if (totalDays === 5) return 50000;
+  return 50000 + (totalDays - 5) * 5000;
+}
+
 export function calculateRealParkingPrice(
   profileId: string,
   totalDays: number,
@@ -329,9 +682,27 @@ export function calculateRealParkingPrice(
 
   if (profileId === 'atelier-outdoor-pricing') {
     totalPrice = calculateAtelierOutdoorBasePrice(totalDays);
+  } else if (profileId === 'fly-outdoor-pricing') {
+    totalPrice = calculateAtelierOutdoorBasePrice(totalDays);
+    if (terminal === '2T') additionalFee = 20000;
   } else if (profileId === 'onair-indoor-pricing') {
     totalPrice = calculateOnairIndoorBasePrice(totalDays);
     if (terminal === '2T') additionalFee = 20000;
+  } else if (profileId === 'hyundai-outdoor-pricing') {
+    totalPrice = calculateHyundaiOutdoorBasePrice(totalDays);
+    if (terminal === '2T') additionalFee = 10000;
+  } else if (profileId === 'hyundai-indoor-pricing') {
+    totalPrice = calculateHyundaiIndoorBasePrice(totalDays);
+    if (terminal === '2T') additionalFee = 10000;
+  } else if (profileId === 'chungho-outdoor-pricing') {
+    totalPrice = calculateChunghoOutdoorBasePrice(totalDays);
+    if (terminal === '2T') additionalFee = 20000;
+  } else if (profileId === 'royal-outdoor-pricing') {
+    totalPrice = calculateRoyalOutdoorBasePrice(totalDays);
+  } else if (profileId === 'onmaeum-outdoor-pricing') {
+    totalPrice = calculateOnmaeumOutdoorBasePrice(totalDays);
+  } else if (profileId === 'chacha-outdoor-pricing') {
+    totalPrice = calculateChachaOutdoorBasePrice(totalDays);
   } else {
     const rule = ACTUAL_PRICING_RULES[profileId];
     if (!rule) return 0;
@@ -361,6 +732,8 @@ export function calculateRealParkingPrice(
 
   totalPrice += additionalFee;
   totalPrice = addProfileNightSurcharges(profileId, terminal, totalPrice, options);
+  totalPrice = addSameDayBookingFee(profileId, totalPrice, options);
+  totalPrice = addWinterDepartureFee(profileId, totalPrice, options);
 
   if (isCard) {
     totalPrice = Math.floor(totalPrice * 1.1);
