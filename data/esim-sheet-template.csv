@@ -1,0 +1,27 @@
+id,partnerName,partnerUrl,countryCode,dataPlan,speed,days,type,price,description,isActive
+partner-a-jp-1gb-lte-7d-esim,제휴사 A,https://,JP,1gb,lte,7,esim,6900,QR 즉시 발송 · 참고가,true
+partner-b-jp-1gb-lte-7d-esim,제휴사 B,https://,JP,1gb,lte,7,esim,7200,참고가,true
+partner-c-jp-1gb-lte-7d-esim,제휴사 C,https://,JP,1gb,lte,7,esim,7500,참고가,true
+partner-a-jp-1gb-5g-7d-esim,제휴사 A,https://,JP,1gb,5g,7,esim,8900,5G 지역 한정,true
+partner-b-jp-1gb-5g-7d-esim,제휴사 B,https://,JP,1gb,5g,7,esim,9200,,true
+partner-a-jp-2gb-lte-7d-esim,제휴사 A,https://,JP,2gb,lte,7,esim,9900,,true
+partner-b-jp-2gb-lte-7d-esim,제휴사 B,https://,JP,2gb,lte,7,esim,10200,,true
+partner-a-jp-unlimited-lte-7d-esim,제휴사 A,https://,JP,unlimited,lte,7,esim,14900,FUP 3Mbps,true
+partner-a-jp-1gb-lte-10d-esim,제휴사 A,https://,JP,1gb,lte,10,esim,8900,,true
+partner-a-jp-1gb-lte-14d-esim,제휴사 A,https://,JP,1gb,lte,14,esim,11900,,true
+partner-c-jp-1gb-lte-7d-usim,제휴사 C,https://,JP,1gb,lte,7,usim,7900,인천 T1·T2 수령,true
+partner-a-th-1gb-lte-7d-esim,제휴사 A,https://,TH,1gb,lte,7,esim,5900,,true
+partner-b-th-1gb-lte-7d-esim,제휴사 B,https://,TH,1gb,lte,7,esim,6200,,true
+partner-a-th-2gb-lte-10d-esim,제휴사 A,https://,TH,2gb,lte,10,esim,8900,,true
+partner-a-vn-2gb-lte-10d-esim,제휴사 A,https://,VN,2gb,lte,10,esim,8900,,true
+partner-b-vn-2gb-lte-10d-esim,제휴사 B,https://,VN,2gb,lte,10,esim,9400,,true
+partner-a-ph-1gb-lte-7d-esim,제휴사 A,https://,PH,1gb,lte,7,esim,6500,,true
+partner-a-us-1gb-lte-15d-esim,제휴사 A,https://,US,1gb,lte,15,esim,12900,AT&T·T-Mobile,true
+partner-b-us-1gb-lte-15d-esim,제휴사 B,https://,US,1gb,lte,15,esim,13500,,true
+partner-a-us-2gb-5g-15d-esim,제휴사 A,https://,US,2gb,5g,15,esim,18900,,true
+partner-a-eu-1gb-lte-14d-esim,제휴사 A,https://,EU,1gb,lte,14,esim,14900,EU 33개국,true
+partner-b-eu-1gb-lte-14d-esim,제휴사 B,https://,EU,1gb,lte,14,esim,15400,,true
+partner-a-tw-1gb-lte-7d-esim,제휴사 A,https://,TW,1gb,lte,7,esim,7900,,true
+partner-a-cn-1gb-lte-7d-esim,제휴사 A,https://,CN,1gb,lte,7,esim,9900,,true
+partner-a-au-1gb-lte-10d-esim,제휴사 A,https://,AU,1gb,lte,10,esim,11900,,true
+partner-x-template,제휴사명,https://,JP,1gb,lte,7,esim,0,복사 후 수정 · isActive=false 권장,false

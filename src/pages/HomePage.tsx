@@ -1,20 +1,36 @@
-import TrustPromise from '../components/TrustPromise';
-import EsimBonusCard from '../components/EsimBonusCard';
+import { Car, Smartphone } from 'lucide-react';
+import HomeCategoryCard from '../components/HomeCategoryCard';
 import HomeHero from '../components/HomeHero';
-import type { BookingSearch } from '../types';
+import { HOME_ESIM, HOME_PARKING } from '../constants/marketing';
 
 export default function HomePage({
-  search,
-  onBookNow,
+  onCompareParking,
+  onCompareEsim,
 }: {
-  search: BookingSearch;
-  onBookNow: () => void;
+  onCompareParking: () => void;
+  onCompareEsim: () => void;
 }) {
   return (
-    <div className="space-y-5 pb-1">
-      <EsimBonusCard search={search} onBookNow={onBookNow} />
+    <div className="space-y-4 pb-1">
       <HomeHero />
-      <TrustPromise />
+
+      <HomeCategoryCard
+        headline={HOME_PARKING.headline}
+        highlights={HOME_PARKING.highlights}
+        cta={HOME_PARKING.cta}
+        onCta={onCompareParking}
+        icon={Car}
+        featured
+      />
+
+      <HomeCategoryCard
+        label={HOME_ESIM.label}
+        hook={HOME_ESIM.hook}
+        highlights={HOME_ESIM.highlights}
+        cta={HOME_ESIM.cta}
+        onCta={onCompareEsim}
+        icon={Smartphone}
+      />
     </div>
   );
 }

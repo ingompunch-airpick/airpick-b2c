@@ -143,10 +143,11 @@ export default function MyPage({
       <section className="rounded-3xl bg-sky-soft p-5 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
         <h2 className="text-sm font-bold text-ink">유심·eSIM</h2>
         <p className="mt-1 text-xs font-medium text-muted">
-          구매·발급 내역은 결제 연동 후 이곳에서 확인할 수 있습니다.
+          제휴사 요금 비교 후 해당 사이트에서 구매합니다. 주차 예약과 별도이며, 주문·개통
+          내역은 제휴사에서 확인해 주세요.
         </p>
         <p className="mt-3 rounded-2xl bg-sky-tint px-4 py-3 text-sm text-muted">
-          주문 내역이 없습니다
+          유심 탭에서 제휴 요금을 비교할 수 있습니다.
         </p>
       </section>
     </div>

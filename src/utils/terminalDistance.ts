@@ -61,3 +61,18 @@ export function terminalDistanceSubtitle(search: BookingSearch, count: number): 
   const terminalLabel = search.terminal === 'T1' ? '1터미널' : '2터미널';
   return `${count}곳 · ${terminalLabel}까지 주차장 거리순 · 에어픽 인증 입점`;
 }
+
+/** 주소 뒤에 B2B 등록 터미널 거리(km) 붙이기 */
+export function formatAddressWithTerminalDistance(
+  address: string,
+  company: Company,
+  terminal: Terminal
+): string {
+  const trimmed = address.trim();
+  if (!trimmed) return trimmed;
+
+  const km = getTerminalDistanceKm(company, terminal);
+  if (km == null) return trimmed;
+
+  return `${trimmed} · ${formatTerminalDistanceLabel(km, terminal)}`;
+}

@@ -1,0 +1,62 @@
+================================================================================
+에어픽 유심/eSIM — 구글 시트 템플릿 (제휴 전 수기 관리)
+================================================================================
+
+■ 시트 탭 구성 (3탭 권장)
+--------------------------------------------------------------------------------
+  [1] offers      ← 앱 연동 (이 CSV만 export / sync)
+  [2] partners    ← 제휴사 메모 (앱 X, 운영용)
+  [3] countries   ← 국가 코드 참고 (앱 X)
+
+■ 1) 구글 시트 만들기
+--------------------------------------------------------------------------------
+  1. sheets.new → 이름: 「에어픽 유심 eSIM 제휴」
+  2. 파일 → 가져오기 → 업로드
+     - data/esim-sheet-template.csv  → 탭 이름 「offers」
+     - data/esim-sheet-partners.csv   → 탭 「partners」
+     - data/esim-sheet-countries.csv  → 탭 「countries」
+
+■ 2) offers 탭 — 컬럼 설명 (1행 헤더 고정)
+--------------------------------------------------------------------------------
+  id            고유키 (예: partner-a-jp-1gb-lte-7d-esim)
+  partnerName   화면에 보이는 제휴사명
+  partnerUrl    제휴 랜딩 URL (비우면 「제휴 링크 등록 전」)
+  countryCode   JP / US / TH / VN / PH / CN / TW / EU / AU
+  dataPlan      1gb | 2gb | unlimited
+  speed         lte | 5g
+  days          3, 5, 7, 10, 14, 15, 30 (앱 필터와 동일 숫자)
+  type          esim | usim
+  price         비교용 참고가 (원, 숫자만)
+  description   카드/상세에 보일 한 줄 (선택)
+  isActive      true = 앱 노출 | false = 숨김
+
+  id 규칙: partner-{a|b|c}-{국가}-{용량}-{속도}-{일수}d-{esim|usim}
+
+■ 3) 채우는 순서 (제휴 전)
+--------------------------------------------------------------------------------
+  ① partners 탭에 후보 2~3곳 이름·연락처 적기
+  ② offers 탭에서 「일본 · 7일 · 1GB · LTE · eSIM」 같은 인기 조합만
+     제휴사 A/B/C 가격 3줄씩 입력 (약 20~30행)
+  ③ partnerUrl 은 사이트 URL 넣어두고, 제휴 링크 받으면 교체
+  ④ price 는 제휴사 페이지 참고가 (주 1~2회 갱신)
+
+■ 4) 앱에 반영
+--------------------------------------------------------------------------------
+  방법 A — CSV 다운로드
+    offers 탭 → 파일 → 다운로드 → CSV
+    → data/esim-offers.csv 로 저장 (덮어쓰기)
+    → npm run sync:esim
+    → npm run deploy:hosting (배포 시)
+
+  방법 B — 구글 시트 URL (선택)
+    offers 탭만 CSV export URL 복사
+    ESIM_SHEET_CSV_URL="https://docs.google.com/spreadsheets/d/ID/export?format=csv&gid=GID" npm run sync:esim
+
+  ※ gid = offers 탭 URL의 #gid= 숫자
+
+■ 5) 제휴 확정 후
+--------------------------------------------------------------------------------
+  - partnerUrl → 어필리에이트 딥링크로 교체
+  - 제휴사 feed/API 생기면 sync 스크립트 확장 검토
+
+================================================================================

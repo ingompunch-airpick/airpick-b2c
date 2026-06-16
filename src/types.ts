@@ -152,15 +152,42 @@ export interface BookingSearch {
 
 export type AppTab = 'home' | 'compare' | 'esim' | 'my';
 
+export interface CompanyReview {
+  id: string;
+  companyId: string;
+  rating: number;
+  body?: string;
+  authorMask: string;
+  createdAt: string;
+}
+
+export type EsimDataPlan = '1gb' | '2gb' | 'unlimited';
+export type EsimSpeed = 'lte' | '5g';
+export type EsimSimType = 'esim' | 'usim';
+
+export interface EsimSearch {
+  countryCode: string;
+  dataPlan: EsimDataPlan;
+  speed: EsimSpeed;
+  days: number;
+  simType: EsimSimType;
+}
+
 export interface EsimProduct {
   id: string;
+  /** 제휴사 표시명 */
+  partnerName: string;
+  /** 제휴사 구매·상세 랜딩 URL */
+  partnerUrl: string;
   name: string;
   region: string;
-  regionCode: string;
-  dataLabel: string;
+  countryCode: string;
+  dataPlan: EsimDataPlan;
+  speed: EsimSpeed;
   days: number;
+  /** 비교용 참고가 (제휴사 실결제가와 다를 수 있음) */
   price: number;
-  type: 'esim' | 'usim';
+  type: EsimSimType;
   description?: string;
   isActive?: boolean;
 }

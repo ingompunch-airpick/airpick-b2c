@@ -1,63 +1,93 @@
-import { useState } from 'react';
+import { ExternalLink } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
-import { getEsimProducts } from '../lib/esim';
-import type { EsimProduct } from '../types';
+import EsimSearchPanel from '../components/EsimSearchPanel';
+import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
+import type { EsimProduct, EsimSearch } from '../types';
+import {
+  formatEsimDataPlan,
+  formatEsimSimType,
+  formatEsimSpeed,
+} from '../utils/esimLabels';
+import { defaultEsimSearch } from '../utils/esimSearch';
 
 export default function EsimPage() {
-  const products = getEsimProducts();
+  const [search, setSearch] = useState<EsimSearch>(defaultEsimSearch);
   const [selected, setSelected] = useState<EsimProduct | null>(null);
 
+  const offers = useMemo(() => compareEsimOffers(search), [search]);
+
+  const handleGoPartner = () => {
+    if (!selected) return;
+    openPartnerOffer(selected);
+    setSelected(null);
+  };
+
   return (
-    <div className="space-y-4">
-      <section className="rounded-3xl bg-gradient-to-br from-sky-tint to-sky-soft p-5 shadow-[0_4px_16px_rgba(49,130,246,0.1)]">
-        <p className="text-xs font-bold text-brand">에어픽 직판</p>
-        <h1 className="mt-1 text-xl font-bold leading-tight text-ink">
-          유심·eSIM
-        </h1>
-        <p className="mt-2 text-sm font-medium text-muted">
-          결제 후 QR·개통 안내를 바로 받을 수 있습니다
+    <div className="space-y-5">
+      <EsimSearchPanel search={search} onChange={setSearch} />
+
+      {offers.length > 0 && (
+        <p className="px-1 text-xs font-medium text-muted">
+          {offers.length}곳 · 가격 낮은 순
         </p>
-      </section>
+      )}
 
-      <div className="px-1">
-        <h2 className="text-sm font-bold text-ink">인기 요금제</h2>
-        <p className="text-xs font-medium text-muted">{products.length}개 상품</p>
-      </div>
-
-      <div className="space-y-3">
-        {products.map((product) => (
-          <EsimProductCard
-            key={product.id}
-            product={product}
-            onSelect={() => setSelected(product)}
-          />
-        ))}
-      </div>
+      {offers.length === 0 ? (
+        <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+          선택하신 조건의 제휴 요금이 아직 없습니다.
+          <br />
+          <span className="mt-1 inline-block text-xs">다른 일수·요금제를 선택해 보세요.</span>
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {offers.map((product, index) => (
+            <EsimProductCard
+              key={product.id}
+              product={product}
+              rank={index + 1}
+              onSelect={() => setSelected(product)}
+            />
+          ))}
+        </div>
+      )}
 
       {selected && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">
           <div className="w-full max-w-lg rounded-3xl bg-sky-soft p-5 shadow-xl">
             <p className="text-xs font-bold text-brand">
-              {selected.type === 'esim' ? 'eSIM' : '유심'} · {selected.region}
+              {formatEsimSimType(selected.type)} · {selected.region}
             </p>
-            <h2 className="mt-1 text-lg font-bold text-ink">{selected.name}</h2>
+            <h2 className="mt-1 text-lg font-bold text-ink">{selected.partnerName}</h2>
             <p className="mt-1 text-sm text-muted">
-              {selected.dataLabel} · {selected.days}일
+              {formatEsimDataPlan(selected.dataPlan)} · {formatEsimSpeed(selected.speed)} ·{' '}
+              {selected.days}일
             </p>
             {selected.description && (
               <p className="mt-2 text-sm text-muted">{selected.description}</p>
             )}
             <p className="mt-3 text-xl font-bold text-brand tabular-nums">
               {selected.price.toLocaleString()}원
+              <span className="ml-1 text-sm font-semibold text-muted">참고가</span>
+            </p>
+            <p className="mt-2 text-[11px] font-medium leading-relaxed text-muted">
+              제휴사 <span className="font-bold text-ink">{selected.partnerName}</span>
+              에서 최종 요금·결제·개통이 진행됩니다.
             </p>
             <button
               type="button"
-              disabled={selected.type === 'usim'}
-              className="mt-4 w-full rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-50"
-              onClick={() => alert('결제·발급 기능은 준비 중입니다.')}
+              disabled={!selected.partnerUrl?.trim()}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-50"
+              onClick={handleGoPartner}
             >
-              {selected.type === 'usim' ? '현장 수령 준비 중' : '구매하기'}
+              제휴사에서 보기
+              <ExternalLink size={16} />
             </button>
+            {!selected.partnerUrl?.trim() && (
+              <p className="mt-2 text-center text-[11px] font-semibold text-muted">
+                제휴 링크 등록 후 이용할 수 있습니다.
+              </p>
+            )}
             <button
               type="button"
               onClick={() => setSelected(null)}

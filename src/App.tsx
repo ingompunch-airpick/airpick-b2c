@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import AppMenuSheet from './components/AppMenuSheet';
 import BookingModal from './components/BookingModal';
 import BottomNav from './components/BottomNav';
+import CompanyDetailSheet from './components/CompanyDetailSheet';
 import Header from './components/Header';
 import { subscribeCompanies } from './lib/companies';
 import ComparePage from './pages/ComparePage';
@@ -17,6 +18,9 @@ export default function App() {
   const [search, setSearch] = useState<BookingSearch>(defaultBookingSearch);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
+  const [partnerDetail, setPartnerDetail] = useState<{ company: Company; price: number } | null>(
+    null
+  );
   const [bookingTarget, setBookingTarget] = useState<{ company: Company; price: number } | null>(
     null
   );
@@ -35,7 +39,10 @@ export default function App() {
   const page = useMemo(() => {
     if (tab === 'home') {
       return (
-        <HomePage search={search} onBookNow={() => setTab('compare')} />
+        <HomePage
+          onCompareParking={() => setTab('compare')}
+          onCompareEsim={() => setTab('esim')}
+        />
       );
     }
     if (tab === 'compare') {
@@ -44,7 +51,7 @@ export default function App() {
           search={search}
           onSearchChange={setSearch}
           companies={companies}
-          onBookOnAirpick={(company, price) => setBookingTarget({ company, price })}
+          onBookOnAirpick={(company, price) => setPartnerDetail({ company, price })}
         />
       );
     }
@@ -67,6 +74,19 @@ export default function App() {
         </main>
       </div>
       <BottomNav active={tab} onChange={setTab} />
+
+      {partnerDetail && (
+        <CompanyDetailSheet
+          company={partnerDetail.company}
+          price={partnerDetail.price}
+          search={search}
+          onClose={() => setPartnerDetail(null)}
+          onBook={() => {
+            setBookingTarget(partnerDetail);
+            setPartnerDetail(null);
+          }}
+        />
+      )}
 
       {bookingTarget && (
         <BookingModal

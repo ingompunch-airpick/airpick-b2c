@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CompanyCard from '../components/CompanyCard';
 import SearchPanel from '../components/SearchPanel';
 import { mergeParkingCompareCompanies, openExternalBooking } from '../lib/parkingCompare';
+import {
+  fetchReviewSnapshotsByCompanyIds,
+  type CompanyReviewSnapshot,
+} from '../lib/reviews';
 import type { BookingSearch, Company, CompareSortMode } from '../types';
 import {
   buildParkingCompareSections,
@@ -55,6 +59,7 @@ function CompareSection({
   onSelect,
   distanceMode,
   terminal,
+  reviewSnapshots,
 }: {
   title: string;
   subtitle: string;
@@ -62,6 +67,7 @@ function CompareSection({
   onSelect: (company: Company, price: number) => void;
   distanceMode?: boolean;
   terminal?: BookingSearch['terminal'];
+  reviewSnapshots: Record<string, CompanyReviewSnapshot>;
 }) {
   if (items.length === 0) return null;
 
@@ -79,6 +85,7 @@ function CompareSection({
             price={price}
             layout="list"
             onSelect={() => onSelect(company, price)}
+            reviewSnapshot={reviewSnapshots[company.id]}
             distanceDetail={
               distanceMode && terminal
                 ? formatTerminalDistanceDetail(company, terminal) ??
@@ -104,10 +111,28 @@ export default function ComparePage({
   onBookOnAirpick: (company: Company, price: number) => void;
 }) {
   const [sortMode, setSortMode] = useState<CompareSortMode>('price');
+  const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
+    {}
+  );
   const merged = mergeParkingCompareCompanies(companies);
   const { partners, externals } = buildParkingCompareSections(merged, search);
   const distancePartners = buildPartnerDistanceList(merged, search);
   const totalCount = partners.length + externals.length;
+
+  const partnerIds = useMemo(
+    () => [...new Set([...partners, ...distancePartners].map(({ company }) => company.id))],
+    [partners, distancePartners]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchReviewSnapshotsByCompanyIds(partnerIds).then((snapshots) => {
+      if (!cancelled) setReviewSnapshots(snapshots);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [partnerIds.join('|')]);
 
   const handleSelect = (company: Company, price: number) => {
     if (isAirpickPartner(company)) {
@@ -119,14 +144,7 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
-      <div className="px-1">
-        <h2 className="text-base font-bold text-ink">주차대행 비교</h2>
-        <p className="text-xs font-medium text-muted">
-          에어픽 입점 {partners.length}곳 · 비교 참고 {externals.length}곳
-        </p>
-      </div>
-
-      <SearchPanel search={search} onChange={onSearchChange} onSubmit={() => {}} />
+      <SearchPanel search={search} onChange={onSearchChange} />
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 
@@ -143,6 +161,7 @@ export default function ComparePage({
             subtitle={`${partners.length}곳 · 낮은 가격순`}
             items={partners}
             onSelect={handleSelect}
+            reviewSnapshots={reviewSnapshots}
           />
 
           <CompareSection
@@ -150,6 +169,7 @@ export default function ComparePage({
             subtitle={`${externals.length}곳 · 낮은 가격순 · 신용카드 결제 시 업체별 +10%`}
             items={externals}
             onSelect={handleSelect}
+            reviewSnapshots={reviewSnapshots}
           />
         </>
       ) : (
@@ -166,6 +186,7 @@ export default function ComparePage({
               onSelect={handleSelect}
               distanceMode
               terminal={search.terminal}
+              reviewSnapshots={reviewSnapshots}
             />
           )}
           <p className="px-1 text-center text-[11px] font-medium text-muted">
