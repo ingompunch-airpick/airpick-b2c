@@ -1,14 +1,13 @@
 import { ESIM_PARTNER_OFFERS } from '../config/esimPartnerOffers';
 import type { EsimProduct, EsimSearch } from '../types';
 
-/** 선택 조건에 맞는 제휴 요금 · 가격 낮은 순 */
+/** 선택 조건에 맞는 제휴 요금 · 가격 낮은 순 (속도는 필터 없이 모두 포함) */
 export function compareEsimOffers(search: EsimSearch): EsimProduct[] {
   return ESIM_PARTNER_OFFERS.filter((p) => p.isActive !== false)
+    .filter((p) => p.type === search.simType)
     .filter((p) => p.countryCode === search.countryCode)
     .filter((p) => p.dataPlan === search.dataPlan)
-    .filter((p) => p.speed === search.speed)
     .filter((p) => p.days === search.days)
-    .filter((p) => p.type === search.simType)
     .sort((a, b) => a.price - b.price);
 }
 

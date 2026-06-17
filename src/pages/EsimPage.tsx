@@ -2,10 +2,14 @@ import { ExternalLink } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
+import { ESIM_OFFERS_UPDATED_AT } from '../config/esimPartnerOffers';
+import { getEsimCountryName } from '../config/esimCountries';
 import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
 import type { EsimProduct, EsimSearch } from '../types';
 import {
   formatEsimDataPlan,
+  formatEsimOffersUpdatedAt,
+  formatEsimSearchSummary,
   formatEsimSimType,
   formatEsimSpeed,
 } from '../utils/esimLabels';
@@ -16,6 +20,7 @@ export default function EsimPage() {
   const [selected, setSelected] = useState<EsimProduct | null>(null);
 
   const offers = useMemo(() => compareEsimOffers(search), [search]);
+  const updatedLabel = formatEsimOffersUpdatedAt(ESIM_OFFERS_UPDATED_AT);
 
   const handleGoPartner = () => {
     if (!selected) return;
@@ -27,20 +32,30 @@ export default function EsimPage() {
     <div className="space-y-5">
       <EsimSearchPanel search={search} onChange={setSearch} />
 
-      {offers.length > 0 && (
-        <p className="px-1 text-xs font-medium text-muted">
-          {offers.length}곳 · 가격 낮은 순
-        </p>
-      )}
+      <div className="flex items-start justify-between gap-3 px-1">
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-muted">{formatEsimSearchSummary(search)}</p>
+          {offers.length > 0 && (
+            <p className="mt-1 text-xs font-bold text-ink">{offers.length}곳 · 가격 낮은 순</p>
+          )}
+        </div>
+        {updatedLabel && (
+          <p className="shrink-0 pt-0.5 text-right text-[10px] font-medium leading-snug text-muted">
+            마지막 수정
+            <br />
+            <span className="tabular-nums text-muted-light">{updatedLabel}</span>
+          </p>
+        )}
+      </div>
 
       {offers.length === 0 ? (
         <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
           선택하신 조건의 제휴 요금이 아직 없습니다.
           <br />
-          <span className="mt-1 inline-block text-xs">다른 일수·요금제를 선택해 보세요.</span>
+          <span className="mt-1 inline-block text-xs">다른 용량·일수를 선택해 보세요.</span>
         </p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {offers.map((product, index) => (
             <EsimProductCard
               key={product.id}
@@ -56,7 +71,8 @@ export default function EsimPage() {
         <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">
           <div className="w-full max-w-lg rounded-3xl bg-sky-soft p-5 shadow-xl">
             <p className="text-xs font-bold text-brand">
-              {formatEsimSimType(selected.type)} · {selected.region}
+              {formatEsimSimType(selected.type)} ·{' '}
+              {selected.region || getEsimCountryName(selected.countryCode)}
             </p>
             <h2 className="mt-1 text-lg font-bold text-ink">{selected.partnerName}</h2>
             <p className="mt-1 text-sm text-muted">

@@ -161,16 +161,16 @@ export interface CompanyReview {
   createdAt: string;
 }
 
-export type EsimDataPlan = '1gb' | '2gb' | 'unlimited';
+export type EsimDataPlan = '500mb' | '1gb' | '2gb' | '3gb' | '4gb' | '5gb' | 'unlimited';
 export type EsimSpeed = 'lte' | '5g';
 export type EsimSimType = 'esim' | 'usim';
 
+/** 유심 탭 필터 — 유형 · 나라 · 용량 · 일수 */
 export interface EsimSearch {
+  simType: EsimSimType;
   countryCode: string;
   dataPlan: EsimDataPlan;
-  speed: EsimSpeed;
   days: number;
-  simType: EsimSimType;
 }
 
 export interface EsimProduct {

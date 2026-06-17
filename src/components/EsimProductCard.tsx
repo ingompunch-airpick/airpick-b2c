@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import type { EsimProduct } from '../types';
 import { cn } from '../utils/cn';
-import { formatEsimDataPlan, formatEsimSimType, formatEsimSpeed } from '../utils/esimLabels';
+import { formatEsimSpeed } from '../utils/esimLabels';
 
 export default function EsimProductCard({
   product,
@@ -10,7 +10,6 @@ export default function EsimProductCard({
 }: {
   product: EsimProduct;
   onSelect: () => void;
-  /** 가격순 순위 (1부터) */
   rank?: number;
 }) {
   const hasLink = !!product.partnerUrl?.trim();
@@ -26,19 +25,11 @@ export default function EsimProductCard({
           {rank}
         </div>
       )}
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-tint text-xs font-bold text-brand">
-        {product.countryCode}
-      </div>
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <p className="truncate text-base font-bold text-ink">{product.partnerName}</p>
-          <span className="shrink-0 rounded-md bg-sky-deep px-1.5 py-0.5 text-[10px] font-semibold text-brand">
-            {formatEsimSimType(product.type)}
-          </span>
-        </div>
+        <p className="truncate text-base font-bold text-ink">{product.partnerName}</p>
         <p className="mt-0.5 text-xs font-medium text-muted">
-          {formatEsimDataPlan(product.dataPlan)} · {formatEsimSpeed(product.speed)} ·{' '}
-          {product.days}일
+          {formatEsimSpeed(product.speed)}
+          {product.description ? ` · ${product.description}` : ''}
         </p>
         <p className="mt-1 text-lg font-bold text-brand tabular-nums">
           {product.price.toLocaleString()}원
