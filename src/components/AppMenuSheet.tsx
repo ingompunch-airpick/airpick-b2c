@@ -1,4 +1,29 @@
-import { ChevronRight, CircleHelp, X } from 'lucide-react';
+import { ChevronRight, CircleHelp, Mail, X } from 'lucide-react';
+import { openPartnerInquiryEmail } from '../constants/partnerContact';
+
+function MenuItem({
+  label,
+  icon: Icon,
+  onClick,
+}: {
+  label: string;
+  icon: typeof CircleHelp;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center justify-between rounded-2xl bg-sky-bg px-4 py-3.5 text-left ring-1 ring-sky-border/60 transition-colors hover:bg-sky-tint"
+    >
+      <span className="flex min-w-0 items-center gap-2.5">
+        <Icon size={18} className="shrink-0 text-brand" strokeWidth={2} />
+        <span className="text-sm font-bold text-ink">{label}</span>
+      </span>
+      <ChevronRight size={18} className="shrink-0 text-muted-light" />
+    </button>
+  );
+}
 
 export default function AppMenuSheet({
   onClose,
@@ -27,21 +52,24 @@ export default function AppMenuSheet({
             <X size={20} />
           </button>
         </div>
-        <nav className="flex-1 p-3">
-          <button
-            type="button"
+
+        <nav className="space-y-2 p-3">
+          <MenuItem
+            label="자주 묻는 질문"
+            icon={CircleHelp}
             onClick={() => {
               onClose();
               onOpenSupport();
             }}
-            className="flex w-full items-center justify-between rounded-2xl bg-sky-bg px-4 py-3.5 text-left ring-1 ring-sky-border/60 transition-colors hover:bg-sky-tint"
-          >
-            <span className="flex items-center gap-2.5">
-              <CircleHelp size={18} className="text-brand" strokeWidth={2} />
-              <span className="text-sm font-bold text-ink">자주 묻는 질문</span>
-            </span>
-            <ChevronRight size={18} className="text-muted-light" />
-          </button>
+          />
+          <MenuItem
+            label="주차/유심 입점 제휴 문의"
+            icon={Mail}
+            onClick={() => {
+              onClose();
+              openPartnerInquiryEmail();
+            }}
+          />
         </nav>
       </div>
     </div>
