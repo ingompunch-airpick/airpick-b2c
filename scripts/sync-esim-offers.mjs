@@ -1,17 +1,12 @@
 /**
  * 유심/eSIM 제휴 요금 — 구글 시트(CSV) → esimPartnerOffers.generated.ts
  *
- * 【시트 구조】
- *   partners 탭     → data/esim/partners.csv
- *   USIMSA_esim     → data/esim/offers/usimsa_esim.csv
- *   USIMSA_usim     → data/esim/offers/usimsa_usim.csv
- *   DOKKEBI_esim    → data/esim/offers/dokkebi_esim.csv
- *   … (파일명: {partnerId}_{esim|usim}.csv)
+ * partners 탭     → data/esim/partners.csv
+ * usimsa_esim     → data/esim/offers/usimsa_esim.csv
+ * dokkebi_esim    → data/esim/offers/dokkebi_esim.csv
+ * (파일명: {partnerId}_{esim|usim}.csv)
  *
- * 【요금 탭 컬럼】 countryCode, dataPlan, days, price, description
- *   type·speed는 파일명·기본값(lte)으로 처리
- *
- *   npm run sync:esim
+ * 요금 탭 컬럼: countryCode, dataPlan, days, price, description
  */
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -228,34 +223,6 @@ function parsePartners(rows) {
   return byId;
 }
 
-async function loadLegacyOffers() {
-  const csv = await loadTextFromPathOrUrl(legacyCsvPath, 'ESIM_SHEET_CSV_URL');
-  const rows = parseCsv(csv.replace(/^\uFEFF/, ''));
-  if (rows.length < 2) throw new Error('Legacy CSV empty');
-
-  const header = rows[0].map((h) => h.trim());
-  const idx = Object.fromEntries(header.map((h, i) => [h, i]));
-  const offers = [];
-
-  for (let r = 1; r < rows.length; r++) {
-    const cells = rows[r];
-    if (!cells.some((c) => c.trim())) continue;
-    const get = (col) => (cells[idx[col]] ?? '').trim();
-    if (!get('id')) continue;
-
-    offers.push(
-      parseOfferRow(get, r + 1, {
-        partnerId: get('partnerName').toLowerCase().replace(/\s/g, '-'),
-        partnerName: get('partnerName'),
-        partnerUrl: get('partnerUrl'),
-        simType: get('type').toLowerCase(),
-      })
-    );
-  }
-
-  return { offers, sourceLabel: 'data/esim-offers.csv (legacy)' };
-}
-
 async function loadPartnerTabOffers() {
   const partnersCsv = await loadTextFromPathOrUrl(partnersCsvPath, 'ESIM_PARTNERS_CSV_URL');
   const partnerById = parsePartners(parseCsv(partnersCsv.replace(/^\uFEFF/, '')));
@@ -268,7 +235,7 @@ async function loadPartnerTabOffers() {
 
   if (offerFiles.length === 0) {
     throw new Error(
-      `No offer files in data/esim/offers/. Expected names like usimsa_esim.csv, dokkebi_esim.csv`
+      'No offer files in data/esim/offers/. Expected usimsa_esim.csv, dokkebi_esim.csv, etc.'
     );
   }
 
@@ -286,11 +253,7 @@ async function loadPartnerTabOffers() {
 
     const csv = await readFile(path.join(offersDir, fileName), 'utf8');
     const rows = parseCsv(csv.replace(/^\uFEFF/, ''));
-    const partnerOffers = rowsToPartnerOffers(
-      rows,
-      { ...meta, simType },
-      fileName
-    );
+    const partnerOffers = rowsToPartnerOffers(rows, { ...meta, simType }, fileName);
     console.log(`  ${meta.partnerName} (${simType}): ${partnerOffers.length} offers ← ${fileName}`);
     offers.push(...partnerOffers);
   }
@@ -321,12 +284,11 @@ function generateTs(offers, sourceLabel) {
 }
 
 async function main() {
-  const usePartnerTabs = await fileExists(partnersCsvPath);
+  if (!(await fileExists(partnersCsvPath))) {
+    throw new Error('Missing data/esim/partners.csv');
+  }
 
-  const { offers, sourceLabel } = usePartnerTabs
-    ? await loadPartnerTabOffers()
-    : await loadLegacyOffers();
-
+  const { offers, sourceLabel } = await loadPartnerTabOffers();
   if (offers.length === 0) {
     throw new Error('No offers found. Check price column and CSV file names.');
   }

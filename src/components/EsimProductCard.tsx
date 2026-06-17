@@ -7,12 +7,10 @@ export default function EsimProductCard({
   product,
   onSelect,
   rank,
-  compact,
 }: {
   product: EsimProduct;
   onSelect: () => void;
   rank?: number;
-  compact?: boolean;
 }) {
   const hasLink = !!product.partnerUrl?.trim();
 
@@ -20,10 +18,7 @@ export default function EsimProductCard({
     <button
       type="button"
       onClick={onSelect}
-      className={cn(
-        'flex w-full items-center gap-3 rounded-2xl bg-sky-soft text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition hover:bg-sky-tint',
-        compact ? 'p-3' : 'p-4'
-      )}
+      className="flex w-full items-center gap-3 rounded-2xl bg-sky-soft p-4 text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition hover:bg-sky-tint"
     >
       {rank != null && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-tint text-xs font-bold text-brand">

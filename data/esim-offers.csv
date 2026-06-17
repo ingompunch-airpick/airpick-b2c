@@ -1,0 +1,11 @@
+id,partnerName,partnerUrl,countryCode,dataPlan,speed,days,type,price,description,isActive
+partner-a-jp-1gb-lte-7d-esim,제휴사 A,,JP,1gb,lte,7,esim,6900,QR 즉시 발송,true
+partner-b-jp-1gb-lte-7d-esim,제휴사 B,,JP,1gb,lte,7,esim,7200,SoftBank·Docomo,true
+partner-c-jp-1gb-lte-7d-esim,제휴사 C,,JP,1gb,lte,7,esim,7500,,true
+partner-a-jp-1gb-5g-7d-esim,제휴사 A,,JP,1gb,5g,7,esim,8900,5G 지역 한정,true
+partner-a-jp-2gb-lte-7d-esim,제휴사 A,,JP,2gb,lte,7,esim,9900,,true
+partner-a-jp-unlimited-lte-7d-esim,제휴사 A,,JP,unlimited,lte,7,esim,14900,FUP 3Mbps,true
+partner-c-jp-1gb-lte-7d-usim,제휴사 C,,JP,1gb,lte,7,usim,7900,인천공항 T1·T2 수령,true
+partner-a-th-1gb-lte-7d-esim,제휴사 A,,TH,1gb,lte,7,esim,5900,,true
+partner-b-th-1gb-lte-7d-esim,제휴사 B,,TH,1gb,lte,7,esim,6200,,true
+partner-a-us-1gb-lte-15d-esim,제휴사 A,,US,1gb,lte,15,esim,12900,AT&T·T-Mobile,true

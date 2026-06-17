@@ -2,18 +2,18 @@ import { ExternalLink } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
-import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
 import { ESIM_OFFERS_UPDATED_AT } from '../config/esimPartnerOffers';
+import { getEsimCountryName } from '../config/esimCountries';
+import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
 import type { EsimProduct, EsimSearch } from '../types';
 import {
   formatEsimDataPlan,
+  formatEsimOffersUpdatedAt,
+  formatEsimSearchSummary,
   formatEsimSimType,
   formatEsimSpeed,
-  formatEsimSearchSummary,
-  formatEsimOffersUpdatedAt,
 } from '../utils/esimLabels';
 import { defaultEsimSearch } from '../utils/esimSearch';
-import { getEsimCountryName } from '../config/esimCountries';
 
 export default function EsimPage() {
   const [search, setSearch] = useState<EsimSearch>(defaultEsimSearch);

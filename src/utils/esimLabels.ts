@@ -49,7 +49,6 @@ export function formatEsimSearchSummary(search: EsimSearch): string {
   ].join(' · ');
 }
 
-/** 요금 CSV sync 시각 → 화면 표시 */
 export function formatEsimOffersUpdatedAt(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
