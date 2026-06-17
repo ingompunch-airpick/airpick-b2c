@@ -1,4 +1,3 @@
-import { MapPin, Search } from 'lucide-react';
 import DateField from './DateField';
 import TimeField from './TimeField';
 import type { BookingSearch, Terminal } from '../types';
@@ -10,12 +9,10 @@ import { parkingTypeLabel } from '../utils/parkingType';
 export default function SearchPanel({
   search,
   onChange,
-  onSubmit,
   compact = false,
 }: {
   search: BookingSearch;
   onChange: (next: BookingSearch) => void;
-  onSubmit: () => void;
   compact?: boolean;
 }) {
   const days = getParkingDayCount(search.departureDate, search.arrivalDate);
@@ -28,11 +25,6 @@ export default function SearchPanel({
         compact ? 'p-3' : 'p-4'
       )}
     >
-      <div className="mb-3 flex items-center gap-2 rounded-xl bg-sky-tint px-3 py-2.5">
-        <Search size={18} className="shrink-0 text-brand" />
-        <span className="text-sm font-bold text-ink">언제 주차하시나요?</span>
-      </div>
-
       <div className="grid grid-cols-2 gap-2">
         <DateField
           label="입고(출국)"
@@ -122,17 +114,6 @@ export default function SearchPanel({
       <p className="mt-1 text-center text-[10px] font-medium text-muted-light">
         입·출차 시간 기준 야간 할증 포함
       </p>
-
-      {!compact && (
-        <button
-          type="button"
-          onClick={onSubmit}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
-        >
-          <MapPin size={16} />
-          업체 가격 비교하기
-        </button>
-      )}
     </div>
   );
 }

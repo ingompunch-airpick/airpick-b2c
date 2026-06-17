@@ -1,10 +1,36 @@
+import { BookOpen, ChevronRight, HelpCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { BRAND_SUBLINE, BRAND_TAGLINE } from '../constants/marketing';
+import { openPartnerInquiryEmail } from '../constants/partnerContact';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
 import { subscribeCompanies } from '../lib/companies';
 import { fetchReservationById, lookupReservations, subscribeReservation } from '../lib/reservations';
 import type { Company, Reservation, ReservationLookupMode } from '../types';
+
+function MyMenuButton({
+  label,
+  icon: Icon,
+  onClick,
+}: {
+  label: string;
+  icon: typeof HelpCircle;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center justify-between rounded-2xl bg-sky-soft px-4 py-3.5 text-left ring-1 ring-sky-border/60 transition-colors hover:bg-sky-tint"
+    >
+      <span className="flex min-w-0 items-center gap-2.5">
+        <Icon size={18} className="shrink-0 text-brand" strokeWidth={2} />
+        <span className="text-sm font-bold text-ink">{label}</span>
+      </span>
+      <ChevronRight size={18} className="shrink-0 text-muted-light" />
+    </button>
+  );
+}
 
 export default function MyPage({
   lastReservationId,
@@ -75,8 +101,12 @@ export default function MyPage({
     }
   };
 
+  const showComingSoon = (title: string) => {
+    window.alert(`${title}\n\n준비 중입니다.`);
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-8">
       <section className="rounded-3xl bg-gradient-to-br from-sky-tint to-sky-soft p-5 shadow-[0_4px_16px_rgba(49,130,246,0.1)]">
         <p className="text-xs font-bold text-brand">MY · 내 예약</p>
         <h1 className="mt-1 text-xl font-bold leading-tight text-ink">{BRAND_TAGLINE}</h1>
@@ -85,15 +115,21 @@ export default function MyPage({
 
       <ReservationLookupForm onLookup={handleLookup} loading={loading} />
 
-      {onOpenSupport && (
-        <button
-          type="button"
-          onClick={onOpenSupport}
-          className="w-full rounded-2xl bg-sky-soft py-3 text-center text-xs font-bold text-brand ring-1 ring-sky-border/60"
-        >
-          자주 묻는 질문
-        </button>
-      )}
+      <div className="space-y-2">
+        {onOpenSupport && (
+          <MyMenuButton label="자주 묻는 질문" icon={HelpCircle} onClick={onOpenSupport} />
+        )}
+        <MyMenuButton
+          label="초보자를 위한 유심/eSIM 이용 가이드"
+          icon={BookOpen}
+          onClick={() => showComingSoon('초보자를 위한 유심/eSIM 이용 가이드')}
+        />
+        <MyMenuButton
+          label="유심 관련 자주 묻는 질문(FAQ)"
+          icon={HelpCircle}
+          onClick={() => showComingSoon('유심 관련 자주 묻는 질문')}
+        />
+      </div>
 
       {lastReservationId && !searched && reservations.length > 0 && (
         <p className="px-1 text-xs font-semibold text-brand">
@@ -143,12 +179,23 @@ export default function MyPage({
       <section className="rounded-3xl bg-sky-soft p-5 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
         <h2 className="text-sm font-bold text-ink">유심·eSIM</h2>
         <p className="mt-1 text-xs font-medium text-muted">
-          구매·발급 내역은 결제 연동 후 이곳에서 확인할 수 있습니다.
+          제휴사 요금 비교 후 해당 사이트에서 구매합니다. 주차 예약과 별도이며, 주문·개통
+          내역은 제휴사에서 확인해 주세요.
         </p>
         <p className="mt-3 rounded-2xl bg-sky-tint px-4 py-3 text-sm text-muted">
-          주문 내역이 없습니다
+          유심 탭에서 제휴 요금을 비교할 수 있습니다.
         </p>
       </section>
+
+      <div className="pt-2 text-center">
+        <button
+          type="button"
+          onClick={openPartnerInquiryEmail}
+          className="text-[11px] font-medium text-muted-light underline-offset-2 hover:text-muted hover:underline"
+        >
+          ✉️ 비즈니스 / 입점 제휴 문의
+        </button>
+      </div>
     </div>
   );
 }

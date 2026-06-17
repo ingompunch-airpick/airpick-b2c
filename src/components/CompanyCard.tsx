@@ -1,4 +1,5 @@
 import { ChevronRight, ExternalLink, Star } from 'lucide-react';
+import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { Company } from '../types';
 import { cn } from '../utils/cn';
 import { isAirpickPartner } from '../utils/compareSort';
@@ -11,6 +12,7 @@ export default function CompanyCard({
   onSelect,
   layout = 'grid',
   distanceDetail,
+  reviewSnapshot,
 }: {
   company: Company;
   price: number;
@@ -18,6 +20,8 @@ export default function CompanyCard({
   layout?: 'grid' | 'list';
   /** 거리순 탭에서 터미널까지 거리 표시 */
   distanceDetail?: string;
+  /** reviews 컬렉션 기준 — 없으면 후기 미표시 */
+  reviewSnapshot?: CompanyReviewSnapshot;
 }) {
   const name = displayCompanyName(company.name);
   const partner = isAirpickPartner(company);
@@ -70,12 +74,12 @@ export default function CompanyCard({
             </span>
           )}
         </div>
-        {partner && (
+        {partner && reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null && (
           <div className="mt-1 flex items-center gap-1 text-[11px] font-medium text-muted">
             <Star size={12} className="fill-amber-400 text-amber-400" />
-            <span>{company.rating.toFixed(1)}</span>
+            <span>{reviewSnapshot.averageRating.toFixed(1)}</span>
             <span>·</span>
-            <span>후기 {company.reviews_count}</span>
+            <span>후기 {reviewSnapshot.count}</span>
           </div>
         )}
         {partner && (
@@ -90,7 +94,7 @@ export default function CompanyCard({
           {price.toLocaleString()}원
         </p>
         <p className="mt-1 text-[11px] font-semibold text-muted">
-          {partner ? '앱에서 바로 예약' : '업체 홈페이지에서 예약'}
+          {partner ? '업체 보기 · 예약' : '업체 홈페이지에서 예약'}
         </p>
       </div>
       {partner ? (

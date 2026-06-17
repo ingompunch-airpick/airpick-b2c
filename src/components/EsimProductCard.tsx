@@ -1,37 +1,50 @@
-import { ChevronRight } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import type { EsimProduct } from '../types';
+import { cn } from '../utils/cn';
+import { formatEsimSpeed } from '../utils/esimLabels';
 
 export default function EsimProductCard({
   product,
   onSelect,
+  rank,
+  compact,
 }: {
   product: EsimProduct;
   onSelect: () => void;
+  rank?: number;
+  compact?: boolean;
 }) {
+  const hasLink = !!product.partnerUrl?.trim();
+
   return (
     <button
       type="button"
       onClick={onSelect}
-      className="flex w-full items-center gap-3 rounded-2xl bg-sky-soft p-4 text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition hover:bg-sky-tint"
+      className={cn(
+        'flex w-full items-center gap-3 rounded-2xl bg-sky-soft text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition hover:bg-sky-tint',
+        compact ? 'p-3' : 'p-4'
+      )}
     >
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-tint text-xs font-bold text-brand">
-        {product.regionCode}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="truncate text-base font-bold text-ink">{product.name}</p>
-          <span className="shrink-0 rounded-md bg-sky-deep px-1.5 py-0.5 text-[10px] font-semibold text-brand">
-            {product.type === 'esim' ? 'eSIM' : '유심'}
-          </span>
+      {rank != null && (
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-tint text-xs font-bold text-brand">
+          {rank}
         </div>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-base font-bold text-ink">{product.partnerName}</p>
         <p className="mt-0.5 text-xs font-medium text-muted">
-          {product.dataLabel} · {product.days}일
+          {formatEsimSpeed(product.speed)}
+          {product.description ? ` · ${product.description}` : ''}
         </p>
         <p className="mt-1 text-lg font-bold text-brand tabular-nums">
           {product.price.toLocaleString()}원
+          <span className="ml-1 text-[11px] font-semibold text-muted">참고가</span>
         </p>
       </div>
-      <ChevronRight size={20} className="shrink-0 text-muted-light" />
+      <ExternalLink
+        size={18}
+        className={cn('shrink-0', hasLink ? 'text-brand' : 'text-muted-light')}
+      />
     </button>
   );
 }
