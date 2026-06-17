@@ -1,18 +1,19 @@
-name: Deploy B2C to Firebase Hosting
+name: Sync eSIM from Google Sheet and deploy
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    # 매시 정각 (UTC) — 한국 시간 기준 약 1시간마다
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 concurrency:
-  group: deploy-firebase-hosting
+  group: sync-esim-deploy
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  sync-deploy:
     runs-on: ubuntu-latest
+    if: hashFiles('data/esim/sheets.json') != ''
     steps:
       - uses: actions/checkout@v4
 
@@ -22,7 +23,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: test -f data/esim/sheets.json && npm run sync:esim || true
+      - run: npm run sync:esim
       - run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0

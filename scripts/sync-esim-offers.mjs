@@ -14,9 +14,9 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
-const legacyCsvPath = path.join(root, 'data/esim-offers.csv');
 const partnersCsvPath = path.join(root, 'data/esim/partners.csv');
 const offersDir = path.join(root, 'data/esim/offers');
+const sheetsConfigPath = path.join(root, 'data/esim/sheets.json');
 const outPath = path.join(root, 'src/config/esimPartnerOffers.generated.ts');
 
 const VALID_DATA_PLANS = new Set(['500mb', '1gb', '2gb', '3gb', '4gb', '5gb', 'unlimited']);
@@ -223,42 +223,113 @@ function parsePartners(rows) {
   return byId;
 }
 
+async function loadSheetConfig() {
+  if (!(await fileExists(sheetsConfigPath))) return null;
+  return JSON.parse(await readFile(sheetsConfigPath, 'utf8'));
+}
+
+function gvizCsvUrl(spreadsheetId, sheetName) {
+  return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+}
+
+/** sheets.json — spreadsheetId + 탭 이름 또는 export URL */
+function resolveSheetSources(config) {
+  if (!config) return null;
+
+  const id = config.spreadsheetId?.trim();
+  let partnersUrl = config.partners?.trim();
+  /** @type {Record<string, string>} */
+  let offerUrls = { ...(config.offers ?? {}) };
+
+  if (id && config.partnersSheet) {
+    partnersUrl = gvizCsvUrl(id, config.partnersSheet);
+  }
+  if (id && config.offerSheets) {
+    offerUrls = {};
+    for (const [fileKey, sheetName] of Object.entries(config.offerSheets)) {
+      offerUrls[fileKey] = gvizCsvUrl(id, String(sheetName));
+    }
+  }
+
+  if (!partnersUrl || Object.keys(offerUrls).length === 0) return null;
+  return { partnersUrl, offerUrls };
+}
+
+async function fetchCsv(url, label) {
+  console.log(`Fetching ${label}…`);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`CSV fetch failed (${label}): ${res.status}`);
+  return res.text();
+}
+
 async function loadPartnerTabOffers() {
-  const partnersCsv = await loadTextFromPathOrUrl(partnersCsvPath, 'ESIM_PARTNERS_CSV_URL');
+  const sheetConfig = await loadSheetConfig();
+  const resolved = resolveSheetSources(sheetConfig);
+
+  const partnersCsv = resolved?.partnersUrl
+    ? await fetchCsv(resolved.partnersUrl, 'partners (Google Sheet)')
+    : await loadTextFromPathOrUrl(partnersCsvPath, 'ESIM_PARTNERS_CSV_URL');
+
   const partnerById = parsePartners(parseCsv(partnersCsv.replace(/^\uFEFF/, '')));
   if (partnerById.size === 0) throw new Error('No active partners in partners.csv');
 
-  const entries = await readdir(offersDir);
-  const offerFiles = entries
-    .filter((name) => OFFER_FILE_RE.test(name))
-    .sort((a, b) => a.localeCompare(b));
+  /** @type {{ fileName: string, csv: string }[]} */
+  let offerSources = [];
 
-  if (offerFiles.length === 0) {
-    throw new Error(
-      'No offer files in data/esim/offers/. Expected usimsa_esim.csv, dokkebi_esim.csv, etc.'
+  if (resolved?.offerUrls) {
+    for (const [key, url] of Object.entries(resolved.offerUrls)) {
+      if (!url || String(url).includes('여기에')) continue;
+      offerSources.push({
+        fileName: `${key}.csv`,
+        csv: await fetchCsv(url, key),
+      });
+    }
+  }
+
+  if (offerSources.length === 0) {
+    const entries = await readdir(offersDir);
+    const offerFiles = entries
+      .filter((name) => OFFER_FILE_RE.test(name))
+      .sort((a, b) => a.localeCompare(b));
+
+    if (offerFiles.length === 0) {
+      throw new Error(
+        'No offers. Add data/esim/sheets.json (Google Sheet URLs) or CSV files in data/esim/offers/'
+      );
+    }
+
+    offerSources = await Promise.all(
+      offerFiles.map(async (fileName) => ({
+        fileName,
+        csv: await readFile(path.join(offersDir, fileName), 'utf8'),
+      }))
     );
   }
 
   const offers = [];
+  const sourceLabel = resolved
+    ? 'Google Sheet (data/esim/sheets.json)'
+    : 'data/esim/partners + offers/*_{esim|usim}.csv';
 
-  for (const fileName of offerFiles) {
+  for (const { fileName, csv } of offerSources) {
     const match = fileName.match(OFFER_FILE_RE);
+    if (!match) continue;
+
     const partnerId = match[1].toLowerCase();
     const simType = match[2].toLowerCase();
     const meta = partnerById.get(partnerId);
     if (!meta) {
-      console.warn(`  skip ${fileName}: partnerId "${partnerId}" not in partners.csv`);
+      console.warn(`  skip ${fileName}: partnerId "${partnerId}" not in partners`);
       continue;
     }
 
-    const csv = await readFile(path.join(offersDir, fileName), 'utf8');
     const rows = parseCsv(csv.replace(/^\uFEFF/, ''));
     const partnerOffers = rowsToPartnerOffers(rows, { ...meta, simType }, fileName);
     console.log(`  ${meta.partnerName} (${simType}): ${partnerOffers.length} offers ← ${fileName}`);
     offers.push(...partnerOffers);
   }
 
-  return { offers, sourceLabel: 'data/esim/partners + offers/*_{esim|usim}.csv' };
+  return { offers, sourceLabel };
 }
 
 function generateTs(offers, sourceLabel) {
@@ -284,8 +355,10 @@ function generateTs(offers, sourceLabel) {
 }
 
 async function main() {
-  if (!(await fileExists(partnersCsvPath))) {
-    throw new Error('Missing data/esim/partners.csv');
+  const sheetConfig = await loadSheetConfig();
+  const resolved = resolveSheetSources(sheetConfig);
+  if (!resolved && !(await fileExists(partnersCsvPath))) {
+    throw new Error('Missing data/esim/partners.csv or data/esim/sheets.json');
   }
 
   const { offers, sourceLabel } = await loadPartnerTabOffers();

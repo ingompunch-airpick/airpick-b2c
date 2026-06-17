@@ -1,0 +1,8 @@
+{
+  "spreadsheetId": "구글시트_ID",
+  "partnersSheet": "partners",
+  "offerSheets": {
+    "usimsa_esim": "usimsa_esim",
+    "dokkebi_esim": "dokkebi_esim"
+  }
+}
