@@ -22,26 +22,6 @@ export const HOME_ESIM = {
   cta: '요금 비교',
 } as const;
 
-export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';
-
-export const TRUST_PILLARS = [
-  {
-    id: 'location',
-    title: '주차 위치',
-    desc: '입고 후 주차장 위치를 MY에서 바로 확인',
-  },
-  {
-    id: 'photos',
-    title: '입고 사진',
-    desc: '입고 시 기사가 촬영한 차량 사진을 MY에서 확인',
-  },
-  {
-    id: 'insurance',
-    title: '보험',
-    desc: '가입 여부·보장 한도를 미리 확인',
-  },
-] as const;
-
 export const TRUST_BADGES = [
   { id: 'location', label: '위치 공유' },
   { id: 'photos', label: '사진 공유' },

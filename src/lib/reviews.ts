@@ -109,8 +109,3 @@ export function formatReviewDate(iso: string): string {
   if (d.length < 10) return d;
   return d.replace(/-/g, '.');
 }
-
-export function formatReviewSummary(snapshot: CompanyReviewSnapshot): string | null {
-  if (snapshot.count <= 0 || snapshot.averageRating == null) return null;
-  return `${snapshot.averageRating.toFixed(1)} · 후기 ${snapshot.count}`;
-}

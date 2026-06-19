@@ -251,6 +251,3 @@ export const externalParkingCompanies: Company[] = [
     supports_outdoor: true,
   }),
 ];
-
-/** @deprecated externalParkingCompanies 사용 */
-export const EXTERNAL_PARKING_COMPANIES = externalParkingCompanies;

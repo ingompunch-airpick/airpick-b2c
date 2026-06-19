@@ -3,6 +3,10 @@
   "partnersSheet": "partners",
   "offerSheets": {
     "usimsa_esim": "usimsa_esim",
-    "dokkebi_esim": "dokkebi_esim"
+    "usimsa_usim": "usimsa_usim",
+    "dokkebi_esim": "dokkebi_esim",
+    "dokkebi_usim": "dokkebi_usim",
+    "dosirak_esim": "dosirak_esim",
+    "maaltalk_esim": "maaltalk_esim"
   }
 }
