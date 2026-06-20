@@ -54,6 +54,7 @@ export default function App() {
     if (tab === 'home') {
       return (
         <HomePage
+          companies={companies}
           onCompareParking={() => {
             trackCtaClick('compare_parking', 'home');
             setTab('compare');

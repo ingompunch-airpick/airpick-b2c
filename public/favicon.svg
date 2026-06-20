@@ -1,4 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="16" fill="#D9EBFA"/>
-  <text x="32" y="42" text-anchor="middle" fill="#3182F6" font-size="24" font-weight="800" font-family="system-ui,sans-serif">A</text>
+  <rect width="64" height="64" rx="14" fill="#3182F6"/>
+  <path
+    fill="#000"
+    d="M12 46c8-10 16-14 24-12l-3 2 2 5-8 3-5-8-10 10z"
+  />
+  <path
+    fill="#fff"
+    d="M34 18l12 6-4 2 3 8-6-1-2-7-3 1-2-9z"
+  />
 </svg>

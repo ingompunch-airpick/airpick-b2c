@@ -27,21 +27,33 @@ export const PARKING_EXTERNAL_SECTION = {
   subtitleNote: '요금 참고용 · 예약·후기·추적 미제공',
 } as const;
 
-/** 홈 — 여행 준비 전체 인트로 */
-export const HOME_PLATFORM_LINE = '여행 준비, 한 번에';
+/** 홈 — Hero 카피 (3초 이해 · 전환 중심) */
+export const HOME_EYEBROW = '인천공항 주차대행 · eSIM 가격비교';
 
-export const HOME_PLATFORM_SUB = '인천공항 · 주차대행 · 유심 · eSIM';
+export const HOME_HEADLINE = '최저가부터 안전한 업체까지 한 번에 비교';
+
+export const HOME_SUBLINE =
+  '출국 일정만 입력하면 요금과 조건을 나란히 보고, 입점 업체는 바로 예약할 수 있어요.';
+
+/** Hero 신뢰 카드 상단 문구 */
+export const HOME_STATS_TITLE = '한눈에 보는 비교 규모';
 
 export const HOME_PARKING = {
-  headline: '주차대행 · 업체 요금, 한 번에',
-  highlights: ['보험·주차 위치 확인', '입고 사진·위치 확인', '앱 바로 예약'],
-  cta: '가격 비교',
+  headline: '주차대행 · 업체 요금 비교',
+  highlights: ['T1·T2·야간 할증', '실내·야외 견적', '입점 업체 바로 예약'],
+  cta: '주차대행 비교하기',
 } as const;
 
+/** @deprecated HOME_EYEBROW 사용 */
+export const HOME_PLATFORM_LINE = HOME_HEADLINE;
+
+/** @deprecated HOME_EYEBROW 사용 */
+export const HOME_PLATFORM_SUB = HOME_EYEBROW;
+
 export const HOME_ESIM = {
-  headline: '유심·eSIM · 제휴 요금, 가격순',
-  highlights: ['나라·용량·일수', 'eSIM·USIM', '제휴사 최저가'],
-  cta: '요금 비교',
+  headline: '유심·eSIM · 제휴 요금 비교',
+  highlights: ['제휴사별 요금', '나라·용량·일수', '최저가순 정렬'],
+  cta: 'eSIM 요금 비교하기',
 } as const;
 
 export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';
