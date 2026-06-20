@@ -1,5 +1,7 @@
 /** FAQ — 예약 탭·메뉴에서 표시 (현장 문의는 각 주차장 담당) */
 
+import { PARKING_TAB_LABEL } from './marketing';
+
 export interface FaqItem {
   id: string;
   question: string;
@@ -39,7 +41,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         id: 'book-how',
         question: '예약은 어떻게 하나요?',
         answer:
-          '주차 탭에서 입·출국 일정과 터미널·실내/야외를 선택한 뒤 업체 가격을 비교하고 예약 접수를 완료하면 됩니다. 결제는 현장 결제입니다.',
+          `${PARKING_TAB_LABEL} 탭에서 입·출국 일정과 터미널·실내/야외를 선택한 뒤 업체 가격을 비교하고 예약 접수를 완료하면 됩니다. 결제는 현장 결제입니다.`,
       },
       {
         id: 'book-change',

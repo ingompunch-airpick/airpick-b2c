@@ -1,4 +1,5 @@
 import { externalParkingCompanies } from '../config/externalParkingCompanies';
+import { trackOutboundClick, hostFromUrl } from './analytics';
 import type { Company } from '../types';
 
 /** Firestore 입점 업체 + 비교용 외부 업체 목록 */
@@ -21,5 +22,11 @@ export function openExternalBooking(company: Company): void {
     window.alert('예약 페이지 URL이 등록되지 않았습니다.');
     return;
   }
+  trackOutboundClick({
+    category: 'parking_external',
+    destination: hostFromUrl(url),
+    itemId: company.id,
+    itemName: company.name,
+  });
   window.open(url, '_blank', 'noopener,noreferrer');
 }

@@ -1,13 +1,17 @@
 /** 에어픽 B2C 마케팅 — 위치 · 사진 · 보험 통일 카피 */
 
-/** 주차대행 — 예약 · 비교 탭 카피 */
-export const BRAND_TAGLINE = '맡긴 차, 어디 있는지까지';
+/** 하단 네비 · 가이드 등에서 쓰는 탭 이름 (주차장과 구분) */
+export const PARKING_TAB_LABEL = '주차대행';
+
+/** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
+export const BRAND_TAGLINE = '맡긴 차, 사진·위치까지';
 
 /** 예약 탭 · 입점 예약 안내 */
 export const BRAND_SUBLINE =
   '에어픽 입점 예약 · 입고 사진 · 주차 위치 · 보험 — 예약 탭에서 확인';
 
-export const PARKING_PLATFORM_SUB = '주차대행 · 인천공항';
+/** 주차대행 탭 상단 — 공항만 표기 (탭명에 주차대행 이미 있음) */
+export const PARKING_PLATFORM_SUB = '인천공항';
 
 /** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
 export const PARKING_COMPARE_DESC = '전 업체 가격 비교 · 입점은 예약 탭에서 맡긴 차 확인';
@@ -26,7 +30,7 @@ export const PARKING_EXTERNAL_SECTION = {
 /** 홈 — 여행 준비 전체 인트로 */
 export const HOME_PLATFORM_LINE = '여행 준비, 한 번에';
 
-export const HOME_PLATFORM_SUB = '인천공항 · 주차 · 유심 · eSIM';
+export const HOME_PLATFORM_SUB = '인천공항 · 주차대행 · 유심 · eSIM';
 
 export const HOME_PARKING = {
   headline: '주차대행 · 업체 요금, 한 번에',
@@ -40,7 +44,6 @@ export const HOME_ESIM = {
   cta: '요금 비교',
 } as const;
 
-<<<<<<< HEAD
 export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';
 
 export const TRUST_PILLARS = [
@@ -61,8 +64,6 @@ export const TRUST_PILLARS = [
   },
 ] as const;
 
-=======
->>>>>>> 767317ccd45ea45121d1bb75b5483399c25261ff
 export const TRUST_BADGES = [
   { id: 'location', label: '위치 공유' },
   { id: 'photos', label: '사진 공유' },

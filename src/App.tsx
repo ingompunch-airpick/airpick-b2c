@@ -5,6 +5,12 @@ import BottomNav from './components/BottomNav';
 import CompanyDetailSheet from './components/CompanyDetailSheet';
 import Header from './components/Header';
 import { subscribeCompanies } from './lib/companies';
+import {
+  trackCtaClick,
+  trackParkingBookComplete,
+  trackParkingBookStart,
+  trackTabView,
+} from './lib/analytics';
 import ComparePage from './pages/ComparePage';
 import EsimPage from './pages/EsimPage';
 import EsimGuidePage from './pages/EsimGuidePage';
@@ -40,12 +46,22 @@ export default function App() {
     return unsub;
   }, []);
 
+  useEffect(() => {
+    trackTabView(tab);
+  }, [tab]);
+
   const page = useMemo(() => {
     if (tab === 'home') {
       return (
         <HomePage
-          onCompareParking={() => setTab('compare')}
-          onCompareEsim={() => setTab('esim')}
+          onCompareParking={() => {
+            trackCtaClick('compare_parking', 'home');
+            setTab('compare');
+          }}
+          onCompareEsim={() => {
+            trackCtaClick('compare_esim', 'home');
+            setTab('esim');
+          }}
         />
       );
     }
@@ -63,10 +79,22 @@ export default function App() {
     return (
       <MyPage
         lastReservationId={lastReservationId}
-        onBookParking={() => setTab('compare')}
-        onOpenSupport={() => setSupportOpen(true)}
-        onOpenParkingGuide={() => setParkingGuideOpen(true)}
-        onOpenEsimGuide={() => setEsimGuideOpen(true)}
+        onBookParking={() => {
+          trackCtaClick('compare_parking', 'reservation');
+          setTab('compare');
+        }}
+        onOpenSupport={() => {
+          trackCtaClick('open_faq', 'reservation');
+          setSupportOpen(true);
+        }}
+        onOpenParkingGuide={() => {
+          trackCtaClick('open_parking_guide', 'reservation');
+          setParkingGuideOpen(true);
+        }}
+        onOpenEsimGuide={() => {
+          trackCtaClick('open_esim_guide', 'reservation');
+          setEsimGuideOpen(true);
+        }}
       />
     );
   }, [tab, search, companies, lastReservationId]);
@@ -94,6 +122,7 @@ export default function App() {
           search={search}
           onClose={() => setPartnerDetail(null)}
           onBook={() => {
+            trackParkingBookStart(partnerDetail.company.id, partnerDetail.company.name);
             setBookingTarget(partnerDetail);
             setPartnerDetail(null);
           }}
@@ -107,6 +136,7 @@ export default function App() {
           price={bookingTarget.price}
           onClose={() => setBookingTarget(null)}
           onSuccess={(id) => {
+            trackParkingBookComplete(bookingTarget.company.id, bookingTarget.company.name);
             setLastReservationId(id);
             setBookingTarget(null);
             setTab('my');
@@ -118,7 +148,10 @@ export default function App() {
       {menuOpen && (
         <AppMenuSheet
           onClose={() => setMenuOpen(false)}
-          onOpenSupport={() => setSupportOpen(true)}
+          onOpenSupport={() => {
+            trackCtaClick('open_faq', 'menu');
+            setSupportOpen(true);
+          }}
         />
       )}
 

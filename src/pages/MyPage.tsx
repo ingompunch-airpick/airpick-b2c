@@ -1,6 +1,6 @@
 import { BookOpen, Car, ChevronRight, HelpCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { BRAND_SUBLINE, BRAND_TAGLINE } from '../constants/marketing';
+import { BRAND_SUBLINE, BRAND_TAGLINE, PARKING_TAB_LABEL } from '../constants/marketing';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
 import { subscribeCompanies } from '../lib/companies';
@@ -150,7 +150,7 @@ export default function MyPage({
             onClick={onBookParking}
             className="mt-4 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white"
           >
-            주차 탭에서 예약하기
+            {PARKING_TAB_LABEL} 탭에서 예약하기
           </button>
         </div>
       ) : !loading && !lastReservationId ? (

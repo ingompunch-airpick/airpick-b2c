@@ -1,9 +1,11 @@
+import { PARKING_TAB_LABEL } from './marketing';
+
 /** 주차대행 이용 가이드 — 예약 탭 */
 export const PARKING_GUIDE_STEPS = [
   {
     id: 'compare',
-    title: '1. 주차 탭에서 업체·요금 비교',
-    body: '하단 「주차」 탭 → 입·출국 일정, 터미널, 실내/야외를 선택하면 업체별 요금이 표시됩니다. 입점 업체는 앱에서 바로 예약할 수 있습니다.',
+    title: `1. ${PARKING_TAB_LABEL} 탭에서 업체·요금 비교`,
+    body: `하단 「${PARKING_TAB_LABEL}」 탭 → 입·출국 일정, 터미널, 실내/야외를 선택하면 업체별 요금이 표시됩니다. 입점 업체는 앱에서 바로 예약할 수 있습니다.`,
   },
   {
     id: 'book',
