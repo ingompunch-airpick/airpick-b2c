@@ -63,7 +63,7 @@ export default function AppMenuSheet({
             }}
           />
           <MenuItem
-            label="주차/유심 입점 제휴 문의"
+            label="입점 · 제휴 문의 (주차 / 유심·eSIM)"
             icon={Mail}
             onClick={() => {
               onClose();

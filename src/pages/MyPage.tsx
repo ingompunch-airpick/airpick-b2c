@@ -1,7 +1,6 @@
-import { BookOpen, ChevronRight, HelpCircle } from 'lucide-react';
+import { BookOpen, Car, ChevronRight, HelpCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { BRAND_SUBLINE, BRAND_TAGLINE } from '../constants/marketing';
-import { openPartnerInquiryEmail } from '../constants/partnerContact';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
 import { subscribeCompanies } from '../lib/companies';
@@ -36,10 +35,14 @@ export default function MyPage({
   lastReservationId,
   onBookParking,
   onOpenSupport,
+  onOpenParkingGuide,
+  onOpenEsimGuide,
 }: {
   lastReservationId: string | null;
   onBookParking: () => void;
   onOpenSupport?: () => void;
+  onOpenParkingGuide?: () => void;
+  onOpenEsimGuide?: () => void;
 }) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [companiesById, setCompaniesById] = useState<Record<string, Company>>({});
@@ -101,35 +104,15 @@ export default function MyPage({
     }
   };
 
-  const showComingSoon = (title: string) => {
-    window.alert(`${title}\n\n준비 중입니다.`);
-  };
-
   return (
     <div className="space-y-4 pb-8">
       <section className="rounded-3xl bg-gradient-to-br from-sky-tint to-sky-soft p-5 shadow-[0_4px_16px_rgba(49,130,246,0.1)]">
-        <p className="text-xs font-bold text-brand">MY · 내 예약</p>
+        <p className="text-xs font-bold text-brand">예약 · 맡긴 차 확인</p>
         <h1 className="mt-1 text-xl font-bold leading-tight text-ink">{BRAND_TAGLINE}</h1>
         <p className="mt-2 text-sm font-medium text-muted">{BRAND_SUBLINE}</p>
       </section>
 
       <ReservationLookupForm onLookup={handleLookup} loading={loading} />
-
-      <div className="space-y-2">
-        {onOpenSupport && (
-          <MyMenuButton label="자주 묻는 질문" icon={HelpCircle} onClick={onOpenSupport} />
-        )}
-        <MyMenuButton
-          label="초보자를 위한 유심/eSIM 이용 가이드"
-          icon={BookOpen}
-          onClick={() => showComingSoon('초보자를 위한 유심/eSIM 이용 가이드')}
-        />
-        <MyMenuButton
-          label="유심 관련 자주 묻는 질문(FAQ)"
-          icon={HelpCircle}
-          onClick={() => showComingSoon('유심 관련 자주 묻는 질문')}
-        />
-      </div>
 
       {lastReservationId && !searched && reservations.length > 0 && (
         <p className="px-1 text-xs font-semibold text-brand">
@@ -176,25 +159,21 @@ export default function MyPage({
         </p>
       ) : null}
 
-      <section className="rounded-3xl bg-sky-soft p-5 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-        <h2 className="text-sm font-bold text-ink">유심·eSIM</h2>
-        <p className="mt-1 text-xs font-medium text-muted">
-          제휴사 요금 비교 후 해당 사이트에서 구매합니다. 주차 예약과 별도이며, 주문·개통
-          내역은 제휴사에서 확인해 주세요.
-        </p>
-        <p className="mt-3 rounded-2xl bg-sky-tint px-4 py-3 text-sm text-muted">
-          유심 탭에서 제휴 요금을 비교할 수 있습니다.
-        </p>
-      </section>
-
-      <div className="pt-2 text-center">
-        <button
-          type="button"
-          onClick={openPartnerInquiryEmail}
-          className="text-[11px] font-medium text-muted-light underline-offset-2 hover:text-muted hover:underline"
-        >
-          ✉️ 비즈니스 / 입점 제휴 문의
-        </button>
+      <div className="space-y-2">
+        <p className="px-1 text-[11px] font-bold text-muted">이용 가이드 · FAQ</p>
+        <MyMenuButton
+          label="주차대행 이용 가이드"
+          icon={Car}
+          onClick={() => onOpenParkingGuide?.()}
+        />
+        <MyMenuButton
+          label="유심·eSIM 이용 가이드"
+          icon={BookOpen}
+          onClick={() => onOpenEsimGuide?.()}
+        />
+        {onOpenSupport && (
+          <MyMenuButton label="자주 묻는 질문" icon={HelpCircle} onClick={onOpenSupport} />
+        )}
       </div>
     </div>
   );

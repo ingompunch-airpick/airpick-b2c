@@ -24,8 +24,7 @@ export default function HomePage({
       />
 
       <HomeCategoryCard
-        label={HOME_ESIM.label}
-        hook={HOME_ESIM.hook}
+        headline={HOME_ESIM.headline}
         highlights={HOME_ESIM.highlights}
         cta={HOME_ESIM.cta}
         onCta={onCompareEsim}

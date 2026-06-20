@@ -7,8 +7,10 @@ import Header from './components/Header';
 import { subscribeCompanies } from './lib/companies';
 import ComparePage from './pages/ComparePage';
 import EsimPage from './pages/EsimPage';
+import EsimGuidePage from './pages/EsimGuidePage';
 import HomePage from './pages/HomePage';
 import MyPage from './pages/MyPage';
+import ParkingGuidePage from './pages/ParkingGuidePage';
 import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import { defaultBookingSearch } from './utils/dates';
@@ -27,6 +29,8 @@ export default function App() {
   const [lastReservationId, setLastReservationId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [esimGuideOpen, setEsimGuideOpen] = useState(false);
+  const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
 
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
@@ -56,7 +60,15 @@ export default function App() {
       );
     }
     if (tab === 'esim') return <EsimPage />;
-    return <MyPage lastReservationId={lastReservationId} onBookParking={() => setTab('compare')} onOpenSupport={() => setSupportOpen(true)} />;
+    return (
+      <MyPage
+        lastReservationId={lastReservationId}
+        onBookParking={() => setTab('compare')}
+        onOpenSupport={() => setSupportOpen(true)}
+        onOpenParkingGuide={() => setParkingGuideOpen(true)}
+        onOpenEsimGuide={() => setEsimGuideOpen(true)}
+      />
+    );
   }, [tab, search, companies, lastReservationId]);
 
   return (
@@ -111,6 +123,10 @@ export default function App() {
       )}
 
       {supportOpen && <SupportPage onBack={() => setSupportOpen(false)} />}
+
+      {esimGuideOpen && <EsimGuidePage onBack={() => setEsimGuideOpen(false)} />}
+
+      {parkingGuideOpen && <ParkingGuidePage onBack={() => setParkingGuideOpen(false)} />}
     </div>
   );
 }

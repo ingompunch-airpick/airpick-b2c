@@ -202,7 +202,7 @@ export default function CompanyDetailSheet({
                 <p className="rounded-xl bg-sky-bg px-4 py-6 text-center text-xs leading-relaxed text-muted ring-1 ring-sky-border/50">
                   아직 등록된 후기가 없습니다.
                   <br />
-                  이용 후 MY에서 작성할 수 있습니다.
+                  이용 후 예약 탭에서 작성할 수 있습니다.
                 </p>
               )}
             </div>

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # 매시 정각 (UTC) — 시트 가격 변경 시 자동 sync + 배포
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +25,11 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: test -f data/esim/sheets.json && npm run sync:esim || true
+
+      - name: Sync eSIM offers from Google Sheet
+        if: hashFiles('data/esim/sheets.json') != ''
+        run: npm run sync:esim
+
       - run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0

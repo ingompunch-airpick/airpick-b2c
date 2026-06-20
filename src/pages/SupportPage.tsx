@@ -1,7 +1,23 @@
 import { ChevronLeft, CircleHelp } from 'lucide-react';
+import { ESIM_FAQ_CATEGORY } from '../constants/esimSupport';
+import type { FaqCategory } from '../constants/support';
 import { FAQ_CATEGORIES } from '../constants/support';
 
-export default function SupportPage({ onBack }: { onBack: () => void }) {
+const ALL_FAQ_CATEGORIES: FaqCategory[] = [...FAQ_CATEGORIES, ESIM_FAQ_CATEGORY];
+
+export default function SupportPage({
+  onBack,
+  categories = ALL_FAQ_CATEGORIES,
+  title = '자주 묻는 질문',
+  heroTitle = '앱·예약·조회 FAQ',
+  heroDescription = '입·출고, 차량 상태, 현장 일정 등은 예약하신 주차장(업체)으로 문의해 주세요.',
+}: {
+  onBack: () => void;
+  categories?: FaqCategory[];
+  title?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+}) {
   return (
     <div className="fixed inset-0 z-[70] flex flex-col bg-sky-bg">
       <header className="flex shrink-0 items-center gap-2 border-b border-sky-border/80 bg-sky-bg/95 px-2 py-3 backdrop-blur-md">
@@ -13,7 +29,7 @@ export default function SupportPage({ onBack }: { onBack: () => void }) {
         >
           <ChevronLeft size={22} />
         </button>
-        <h1 className="text-base font-bold text-ink">자주 묻는 질문</h1>
+        <h1 className="text-base font-bold text-ink">{title}</h1>
       </header>
 
       <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto px-4 py-5 pb-8">
@@ -24,17 +40,15 @@ export default function SupportPage({ onBack }: { onBack: () => void }) {
             </div>
             <div>
               <p className="text-xs font-bold text-brand">에어픽 안내</p>
-              <p className="text-sm font-bold text-ink">앱·예약·MY 이용 FAQ</p>
+              <p className="text-sm font-bold text-ink">{heroTitle}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
-            입·출고, 차량 상태, 현장 일정 등은 예약하신 주차장(업체)으로 문의해 주세요.
-          </p>
+          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{heroDescription}</p>
         </section>
 
         <section className="mt-5">
           <div className="mt-1 space-y-4">
-            {FAQ_CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <div key={category.id}>
                 <p className="mb-2 px-0.5 text-[11px] font-bold text-brand">{category.label}</p>
                 <div className="space-y-2">

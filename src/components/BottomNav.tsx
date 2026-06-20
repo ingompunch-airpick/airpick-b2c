@@ -1,4 +1,4 @@
-import { Home, LayoutGrid, Smartphone, User } from 'lucide-react';
+import { ClipboardList, Home, LayoutGrid, Smartphone } from 'lucide-react';
 import type { AppTab } from '../types';
 import { cn } from '../utils/cn';
 
@@ -6,7 +6,7 @@ const tabs: { id: AppTab; label: string; icon: typeof Home }[] = [
   { id: 'home', label: '홈', icon: Home },
   { id: 'compare', label: '주차', icon: LayoutGrid },
   { id: 'esim', label: '유심', icon: Smartphone },
-  { id: 'my', label: 'MY', icon: User },
+  { id: 'my', label: '예약', icon: ClipboardList },
 ];
 
 export default function BottomNav({

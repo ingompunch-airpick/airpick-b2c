@@ -1,7 +1,7 @@
 {
   "name": "에어픽",
   "short_name": "에어픽",
-  "description": "인천공항 발렛 주차 업체 비교·예약",
+  "description": "인천공항 여행 준비 — 주차대행·유심·eSIM 비교",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

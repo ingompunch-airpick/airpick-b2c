@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import CompanyCard from '../components/CompanyCard';
+import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
+import {
+  BRAND_TAGLINE,
+  PARKING_COMPARE_DESC,
+  PARKING_EXTERNAL_SECTION,
+  PARKING_PARTNER_SECTION,
+  PARKING_PLATFORM_SUB,
+} from '../constants/marketing';
 import { mergeParkingCompareCompanies, openExternalBooking } from '../lib/parkingCompare';
 import {
   fetchReviewSnapshotsByCompanyIds,
@@ -144,6 +152,7 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
+      <PageHero sub={PARKING_PLATFORM_SUB} line={BRAND_TAGLINE} desc={PARKING_COMPARE_DESC} />
       <SearchPanel search={search} onChange={onSearchChange} />
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
@@ -157,16 +166,16 @@ export default function ComparePage({
       ) : sortMode === 'price' ? (
         <>
           <CompareSection
-            title="에어픽 입점 · 바로 예약"
-            subtitle={`${partners.length}곳 · 낮은 가격순`}
+            title={PARKING_PARTNER_SECTION.title}
+            subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 낮은 가격순`}
             items={partners}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
           />
 
           <CompareSection
-            title="가격 비교 · 홈페이지 이동"
-            subtitle={`${externals.length}곳 · 낮은 가격순 · 신용카드 결제 시 업체별 +10%`}
+            title={PARKING_EXTERNAL_SECTION.title}
+            subtitle={`${PARKING_EXTERNAL_SECTION.subtitleNote} · ${externals.length}곳 · 낮은 가격순 · 신용카드 결제 시 업체별 +10%`}
             items={externals}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
@@ -180,8 +189,8 @@ export default function ComparePage({
             </p>
           ) : (
             <CompareSection
-              title="에어픽 입점 · 거리순"
-              subtitle={terminalDistanceSubtitle(search, distancePartners.length)}
+              title={PARKING_PARTNER_SECTION.titleDistance}
+              subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${terminalDistanceSubtitle(search, distancePartners.length)}`}
               items={distancePartners}
               onSelect={handleSelect}
               distanceMode
