@@ -4,7 +4,7 @@ export default function BrandLogo() {
       <img
         src="/brand-logo.png"
         alt="AirPick 에어픽"
-        className="h-10 w-auto select-none"
+        className="block h-18 w-auto select-none"
         draggable={false}
       />
     </div>

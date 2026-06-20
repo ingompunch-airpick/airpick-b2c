@@ -8,7 +8,7 @@ export default function PageHero({
   desc?: string;
 }) {
   return (
-    <section className="px-1 pt-1">
+    <section className="px-1">
       <p className="text-xs font-semibold text-muted">{sub}</p>
       <h1 className="mt-1.5 text-[1.75rem] font-bold leading-[1.2] tracking-tight text-ink">
         {line}

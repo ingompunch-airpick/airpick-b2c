@@ -103,7 +103,7 @@ export default function App() {
     <div className="min-h-dvh bg-sky-bg text-ink">
       <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
         <Header onOpenMenu={() => setMenuOpen(true)} />
-        <main className="px-4 py-5">
+        <main className="px-4 pt-1 pb-5">
           {loading && tab === 'compare' ? (
             <p className="py-12 text-center text-sm font-semibold text-muted">
               제휴 업체 불러오는 중…
