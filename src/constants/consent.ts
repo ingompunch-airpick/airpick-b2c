@@ -40,9 +40,6 @@ export const WAWA_TERMS_OF_SERVICE = {
   checkbox: '와와 이용약관의 내용을 모두 확인하였으며, 이에 동의합니다. (필수)',
 };
 
-/** @deprecated Use WAWA_TERMS_OF_SERVICE */
-export const TERMS_OF_SERVICE = WAWA_TERMS_OF_SERVICE;
-
 export const PRIVACY_CONSENT = {
   title: '개인정보 수집 및 이용 (필수)',
   purpose:

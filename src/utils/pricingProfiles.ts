@@ -455,11 +455,6 @@ export const PROFILE_WINTER_DEPARTURE_FEE: Record<string, number> = {
   'cube-valet-pricing': 5000,
 };
 
-/** @deprecated PROFILE_NIGHT_SURCHARGE_CONFIG 사용 */
-export const PROFILE_NIGHT_SURCHARGE_TIERS = Object.fromEntries(
-  Object.entries(PROFILE_NIGHT_SURCHARGE_CONFIG).map(([id, cfg]) => [id, cfg.departureTiers])
-) as Record<string, NightSurchargeTier[]>;
-
 export interface RealParkingPriceOptions {
   departureDate?: string;
   arrivalDate?: string;

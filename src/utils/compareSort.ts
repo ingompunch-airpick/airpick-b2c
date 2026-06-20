@@ -125,12 +125,3 @@ export function buildPartnerDistanceList(
     }))
   );
 }
-
-/** @deprecated buildParkingCompareSections 사용 */
-export function buildParkingCompareList(
-  companies: Company[],
-  search: BookingSearch
-): PricedCompany[] {
-  const { partners, externals } = buildParkingCompareSections(companies, search);
-  return [...partners, ...externals];
-}

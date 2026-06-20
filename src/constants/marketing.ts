@@ -40,6 +40,7 @@ export const HOME_ESIM = {
   cta: '요금 비교',
 } as const;
 
+<<<<<<< HEAD
 export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';
 
 export const TRUST_PILLARS = [
@@ -60,6 +61,8 @@ export const TRUST_PILLARS = [
   },
 ] as const;
 
+=======
+>>>>>>> 767317ccd45ea45121d1bb75b5483399c25261ff
 export const TRUST_BADGES = [
   { id: 'location', label: '위치 공유' },
   { id: 'photos', label: '사진 공유' },
