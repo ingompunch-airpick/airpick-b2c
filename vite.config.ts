@@ -9,7 +9,22 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon-48.png', 'favicon-32.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: [
+        'robots.txt',
+        'naver1d9bbd9fd5d41de5108741bfcea9902c.html',
+        'favicon-48.png',
+        'favicon-32.png',
+        'icon-192.png',
+        'icon-512.png',
+      ],
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,txt,webmanifest}'],
+        navigateFallbackDenylist: [
+          /^\/robots\.txt$/,
+          /^\/naver[\w-]+\.html$/,
+          /^\/sitemap\.xml$/,
+        ],
+      },
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
