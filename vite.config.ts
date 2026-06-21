@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'favicon-32.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon-48.png', 'favicon-32.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
