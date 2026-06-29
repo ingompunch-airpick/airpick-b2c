@@ -4,6 +4,7 @@ import BookingModal from './components/BookingModal';
 import BottomNav from './components/BottomNav';
 import CompanyDetailSheet from './components/CompanyDetailSheet';
 import Header from './components/Header';
+import SiteFooter from './components/SiteFooter';
 import { subscribeCompanies } from './lib/companies';
 import {
   trackCtaClick,
@@ -17,6 +18,7 @@ import EsimGuidePage from './pages/EsimGuidePage';
 import HomePage from './pages/HomePage';
 import MyPage from './pages/MyPage';
 import ParkingGuidePage from './pages/ParkingGuidePage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import { defaultBookingSearch } from './utils/dates';
@@ -37,6 +39,7 @@ export default function App() {
   const [supportOpen, setSupportOpen] = useState(false);
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
@@ -112,6 +115,7 @@ export default function App() {
           ) : (
             page
           )}
+          <SiteFooter onOpenPrivacy={() => setPrivacyOpen(true)} />
         </main>
       </div>
       <BottomNav active={tab} onChange={setTab} />
@@ -161,6 +165,8 @@ export default function App() {
       {esimGuideOpen && <EsimGuidePage onBack={() => setEsimGuideOpen(false)} />}
 
       {parkingGuideOpen && <ParkingGuidePage onBack={() => setParkingGuideOpen(false)} />}
+
+      {privacyOpen && <PrivacyPolicyPage onBack={() => setPrivacyOpen(false)} />}
     </div>
   );
 }
