@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
 
       - name: Sync eSIM offers from Google Sheet
-        if: hashFiles('data/esim/sheets.json') != ''
+        if: github.event_name != 'push' && hashFiles('data/esim/sheets.json') != ''
         run: npm run sync:esim
 
       - run: npm run build
