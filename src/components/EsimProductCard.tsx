@@ -1,7 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import type { EsimProduct } from '../types';
 import { cn } from '../utils/cn';
-import { formatEsimSpeed } from '../utils/esimLabels';
 
 export default function EsimProductCard({
   product,
@@ -27,10 +26,9 @@ export default function EsimProductCard({
       )}
       <div className="min-w-0 flex-1">
         <p className="truncate text-base font-bold text-ink">{product.partnerName}</p>
-        <p className="mt-0.5 text-xs font-medium text-muted">
-          {formatEsimSpeed(product.speed)}
-          {product.description ? ` · ${product.description}` : ''}
-        </p>
+        {product.description ? (
+          <p className="mt-0.5 line-clamp-2 text-xs font-medium text-muted">{product.description}</p>
+        ) : null}
         <p className="mt-1 text-lg font-bold text-brand tabular-nums">
           {product.price.toLocaleString()}원
           <span className="ml-1 text-[11px] font-semibold text-muted">참고가</span>

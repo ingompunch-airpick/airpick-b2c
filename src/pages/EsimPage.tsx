@@ -11,7 +11,6 @@ import {
   formatEsimOffersUpdatedAt,
   formatEsimSearchSummary,
   formatEsimSimType,
-  formatEsimSpeed,
 } from '../utils/esimLabels';
 import { defaultEsimSearch } from '../utils/esimSearch';
 
@@ -76,8 +75,7 @@ export default function EsimPage() {
             </p>
             <h2 className="mt-1 text-lg font-bold text-ink">{selected.partnerName}</h2>
             <p className="mt-1 text-sm text-muted">
-              {formatEsimDataPlan(selected.dataPlan)} · {formatEsimSpeed(selected.speed)} ·{' '}
-              {selected.days}일
+              {formatEsimDataPlan(selected.dataPlan)} · {selected.days}일
             </p>
             {selected.description && (
               <p className="mt-2 text-sm text-muted">{selected.description}</p>
