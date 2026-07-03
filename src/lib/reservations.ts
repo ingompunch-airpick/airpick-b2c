@@ -160,44 +160,44 @@ export function subscribeReservation(
   );
 }
 
+type RawReservationDoc = { id: string; data: Record<string, unknown> };
+
+function reservationPasswordMatches(data: Record<string, unknown>, password: string): boolean {
+  const stored = String(data.reservationPassword ?? '').trim();
+  return stored !== '' && stored === password;
+}
+
 export async function lookupReservations(
   mode: ReservationLookupMode,
-  value: string
+  value: string,
+  password: string
 ): Promise<Reservation[]> {
   await ensureAnonymousAuth();
   const field = mode === 'carNumber' ? 'carNumber' : 'phone';
   const trimmed = value.trim();
-  if (!trimmed) return [];
+  const pw = password.trim();
+  if (!trimmed || !/^\d{4}$/.test(pw)) return [];
 
-  const snap = await getDocs(
-    query(collection(db, 'reservations'), where(field, '==', trimmed))
-  );
-
-  let list = snap.docs.map((d) =>
-    normalizeReservation(d.id, d.data() as Record<string, unknown>)
-  );
-
-  if (list.length === 0 && mode === 'phone') {
-    const digits = trimmed.replace(/\D/g, '');
-    const altSnap = await getDocs(
-      query(collection(db, 'reservations'), where(field, '==', digits))
+  const runQuery = async (needle: string): Promise<RawReservationDoc[]> => {
+    const snap = await getDocs(
+      query(collection(db, 'reservations'), where(field, '==', needle))
     );
-    list = altSnap.docs.map((d) =>
-      normalizeReservation(d.id, d.data() as Record<string, unknown>)
-    );
+    return snap.docs.map((d) => ({ id: d.id, data: d.data() as Record<string, unknown> }));
+  };
+
+  let docs = await runQuery(trimmed);
+
+  if (docs.length === 0 && mode === 'phone') {
+    docs = await runQuery(trimmed.replace(/\D/g, ''));
   }
 
-  if (list.length === 0 && mode === 'carNumber') {
-    const compact = trimmed.replace(/\s/g, '');
-    const altSnap = await getDocs(
-      query(collection(db, 'reservations'), where(field, '==', compact))
-    );
-    list = altSnap.docs.map((d) =>
-      normalizeReservation(d.id, d.data() as Record<string, unknown>)
-    );
+  if (docs.length === 0 && mode === 'carNumber') {
+    docs = await runQuery(trimmed.replace(/\s/g, ''));
   }
 
-  return list
+  return docs
+    .filter((d) => reservationPasswordMatches(d.data, pw))
+    .map((d) => normalizeReservation(d.id, d.data))
     .filter((r) => matchesLookup(mode, r, value))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }

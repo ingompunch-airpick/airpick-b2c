@@ -88,12 +88,12 @@ export default function MyPage({
     return () => unsubs.forEach((unsub) => unsub());
   }, [reservations.map((r) => r.id).join('|')]);
 
-  const handleLookup = async (mode: ReservationLookupMode, value: string) => {
+  const handleLookup = async (mode: ReservationLookupMode, value: string, password: string) => {
     setLoading(true);
     setError('');
     setSearched(true);
     try {
-      const list = await lookupReservations(mode, value);
+      const list = await lookupReservations(mode, value, password);
       setReservations(list);
     } catch (err) {
       console.error(err);
@@ -143,7 +143,7 @@ export default function MyPage({
         <div className="rounded-2xl bg-sky-soft px-4 py-8 text-center shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
           <p className="text-sm font-bold text-ink">일치하는 예약이 없습니다</p>
           <p className="mt-1 text-xs font-medium text-muted">
-            예약 시 입력한 차량번호 또는 연락처를 확인해 주세요
+            차량번호(또는 연락처)와 예약 비밀번호 4자리를 확인해 주세요
           </p>
           <button
             type="button"
@@ -155,7 +155,7 @@ export default function MyPage({
         </div>
       ) : !loading && !lastReservationId ? (
         <p className="rounded-2xl bg-sky-tint px-4 py-3 text-center text-sm text-muted">
-          차량번호 또는 연락처로 예약을 조회해 보세요
+          차량번호(또는 연락처)와 예약 비밀번호로 예약을 조회해 보세요
         </p>
       ) : null}
 
