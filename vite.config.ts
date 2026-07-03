@@ -54,5 +54,12 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    proxy: {
+      '/api/receipt': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/receipt/, '/getReceipt'),
+      },
+    },
   },
 });

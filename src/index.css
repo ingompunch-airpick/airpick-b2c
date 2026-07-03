@@ -68,3 +68,9 @@
     box-shadow: 0 10px 32px rgba(49, 130, 246, 0.22);
   }
 }
+
+@media print {
+  body {
+    background: #fff !important;
+  }
+}

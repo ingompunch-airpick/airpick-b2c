@@ -10,6 +10,7 @@
     "sync:esim": "node scripts/sync-esim-offers.mjs",
     "preview": "vite preview",
     "deploy:hosting": "npm run build && npx -y firebase-tools@latest deploy --only hosting:airpick-b2c",
+    "deploy:functions": "cd functions && npm run build && cd .. && npx -y firebase-tools@latest deploy --only functions",
     "deploy:hosting:preview": "npm run build && npx -y firebase-tools@latest hosting:channel:deploy preview --site airpick-b2c --expires 7d",
     "cap:sync": "npm run build && npx cap sync android",
     "cap:open": "npx cap open android",

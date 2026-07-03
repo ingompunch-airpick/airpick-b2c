@@ -13,6 +13,8 @@ import {
   type ScratchPhotoSet,
 } from '../utils/reservationPhotos';
 import { parseInsuranceFromFirestore } from '../utils/insurance';
+import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
+import { createReceiptToken } from '../utils/receiptToken';
 
 export interface BookingForm {
   userName: string;
@@ -229,7 +231,9 @@ export async function submitReservation(
     totalPrice,
     status: 'pending',
     createdAt: now,
-    createdBy: 'airpick-b2c',
+    createdBy: RESERVATION_CREATED_BY.AIRPICK_B2C,
+    notifyOnCreate: true,
+    receiptToken: createReceiptToken(),
     paymentMethod: 'unpaid',
     isIndoor: search.isIndoor,
     scratchPhotos: { synced: false },
