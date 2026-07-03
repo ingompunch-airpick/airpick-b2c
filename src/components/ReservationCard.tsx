@@ -1,6 +1,6 @@
 import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { RESERVATION_STEPS } from '../constants/marketing';
+import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
 import NaverMapPreview from './NaverMapPreview';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
@@ -10,6 +10,7 @@ import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
 import { getStatusLabel, getStatusStep } from '../utils/trust';
+import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 
 function formatSchedule(reservation: Reservation): string {
   const dep = reservation.departureDate.replace(/-/g, '.').slice(5);
@@ -139,12 +140,15 @@ function PhotoStrip({
 export default function ReservationCard({
   reservation,
   company,
+  onBookAirpick,
 }: {
   reservation: Reservation;
   company?: Company;
+  onBookAirpick?: () => void;
 }) {
   const statusLabel = getStatusLabel(reservation.status);
   const insuranceDisplay = resolveInsuranceDisplay(reservation, company);
+  const trackingAccess = hasAirpickTrackingAccess(reservation);
 
   const checkInPhotos = reservation.checkInPhotos;
   const parkingDisplay = resolveParkingLocationDisplay(reservation, company);
@@ -180,65 +184,85 @@ export default function ReservationCard({
       <StatusTimeline status={reservation.status} />
 
       <div className="mt-4 space-y-2.5">
-        <TrustBlock icon={MapPin} title="주차 위치" highlight>
-          {parkingDisplay ? (
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
-                {parkingDisplay.detail && (
-                  <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
-                )}
-              </div>
+        {trackingAccess ? (
+          <>
+            <TrustBlock icon={MapPin} title="주차 위치" highlight>
+              {parkingDisplay ? (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
+                    {parkingDisplay.detail && (
+                      <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
+                    )}
+                  </div>
 
-              <NaverMapPreview
-                address={parkingDisplay.title}
-                mapUrl={parkingDisplay.mapUrl}
-              />
+                  <NaverMapPreview
+                    address={parkingDisplay.title}
+                    mapUrl={parkingDisplay.mapUrl}
+                  />
 
-              <div>
-                <p className="mb-1.5 text-[11px] font-bold text-muted">위치 · 주차장 사진</p>
-                <PhotoStrip
-                  photos={parkingDisplay.lotPhotos}
-                  size="md"
-                  emptyLabel="입구·주차장 사진이 등록되면 이곳에서 확인할 수 있습니다."
-                />
-              </div>
-            </div>
-          ) : (
-            <p className="text-xs font-medium leading-relaxed text-muted">
-              {locationPending
-                ? '입고 후 주차장 위치가 등록되면 이곳에서 확인할 수 있습니다.'
-                : '주차 위치 정보를 준비 중입니다.'}
-            </p>
-          )}
-        </TrustBlock>
-
-        <TrustBlock icon={Camera} title="입고 사진">
-          <PhotoStrip
-            photos={checkInPhotos}
-            emptyLabel="입고 후 기사가 촬영한 사진이 등록됩니다."
-          />
-        </TrustBlock>
-
-        <TrustBlock icon={ShieldCheck} title="보험">
-          {insuranceDisplay.status === 'unknown' ? (
-            <p className="text-xs font-medium leading-relaxed text-muted">
-              업체 보험 가입 정보가 등록되면 이곳에서 확인할 수 있습니다.
-            </p>
-          ) : (
-            <div className="space-y-1.5">
-              <p className="text-sm font-semibold text-ink">{insuranceDisplay.summary}</p>
-              {insuranceDisplay.detail && (
-                <p className="text-xs font-medium text-muted">{insuranceDisplay.detail}</p>
-              )}
-              {insuranceDisplay.status === 'enrolled' && (
-                <p className="text-[10px] font-medium leading-relaxed text-muted-light">
-                  {INSURANCE_DISCLAIMER}
+                  <div>
+                    <p className="mb-1.5 text-[11px] font-bold text-muted">위치 · 주차장 사진</p>
+                    <PhotoStrip
+                      photos={parkingDisplay.lotPhotos}
+                      size="md"
+                      emptyLabel="입구·주차장 사진이 등록되면 이곳에서 확인할 수 있습니다."
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs font-medium leading-relaxed text-muted">
+                  {locationPending
+                    ? '입고 후 주차장 위치가 등록되면 이곳에서 확인할 수 있습니다.'
+                    : '주차 위치 정보를 준비 중입니다.'}
                 </p>
               )}
-            </div>
-          )}
-        </TrustBlock>
+            </TrustBlock>
+
+            <TrustBlock icon={Camera} title="입고 사진">
+              <PhotoStrip
+                photos={checkInPhotos}
+                emptyLabel="입고 후 기사가 촬영한 사진이 등록됩니다."
+              />
+            </TrustBlock>
+
+            <TrustBlock icon={ShieldCheck} title="보험">
+              {insuranceDisplay.status === 'unknown' ? (
+                <p className="text-xs font-medium leading-relaxed text-muted">
+                  업체 보험 가입 정보가 등록되면 이곳에서 확인할 수 있습니다.
+                </p>
+              ) : (
+                <div className="space-y-1.5">
+                  <p className="text-sm font-semibold text-ink">{insuranceDisplay.summary}</p>
+                  {insuranceDisplay.detail && (
+                    <p className="text-xs font-medium text-muted">{insuranceDisplay.detail}</p>
+                  )}
+                  {insuranceDisplay.status === 'enrolled' && (
+                    <p className="text-[10px] font-medium leading-relaxed text-muted-light">
+                      {INSURANCE_DISCLAIMER}
+                    </p>
+                  )}
+                </div>
+              )}
+            </TrustBlock>
+          </>
+        ) : (
+          <div className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
+            <p className="text-sm font-bold text-ink">{AIRPICK_TRACKING_UPSELL.title}</p>
+            <p className="mt-1.5 text-xs font-medium leading-relaxed text-muted">
+              {AIRPICK_TRACKING_UPSELL.body}
+            </p>
+            {onBookAirpick && (
+              <button
+                type="button"
+                onClick={onBookAirpick}
+                className="mt-3 w-full rounded-xl bg-brand py-2.5 text-xs font-bold text-white"
+              >
+                {AIRPICK_TRACKING_UPSELL.cta}
+              </button>
+            )}
+          </div>
+        )}
 
         <TrustBlock icon={Headphones} title="업체 문의">
           {buildTelHref(company?.phone) ? (

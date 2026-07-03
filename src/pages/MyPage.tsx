@@ -136,6 +136,7 @@ export default function MyPage({
               key={reservation.id}
               reservation={reservation}
               company={companyMap[reservation.companyId]}
+              onBookAirpick={onBookParking}
             />
           ))}
         </div>

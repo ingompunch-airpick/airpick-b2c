@@ -1,4 +1,4 @@
-import airlinesCatalog from '../../public/shared/airlines.json';
+import airlinesCatalog from './airlines.json';
 
 export type AirlineGroupId = 'domestic' | 'international' | 'other';
 

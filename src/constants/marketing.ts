@@ -27,6 +27,13 @@ export const PARKING_EXTERNAL_SECTION = {
   subtitleNote: '요금 참고용 · 예약·후기·추적 미제공',
 } as const;
 
+/** 업체 홈페이지 예약 — 에어픽 전용 추적 안내 */
+export const AIRPICK_TRACKING_UPSELL = {
+  title: '입고 위치·사진은 에어픽 예약 전용',
+  body: '에어픽에서 직접 예약하시면 입고 후 주차 위치·사진·보험을 이곳에서 확인할 수 있어요.',
+  cta: '에어픽에서 예약하기',
+} as const;
+
 /** 홈 — Hero 카피 (3초 이해 · 전환 중심) */
 export const HOME_EYEBROW = '인천공항 주차대행 · eSIM 가격비교';
 

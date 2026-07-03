@@ -115,6 +115,8 @@ export interface Reservation {
   arrivalFlight?: string;
   destination?: string;
   customerNotes?: string;
+  /** airpick-b2c | homepage | b2b — 신뢰 정보(위치·사진) 노출 구분 */
+  createdBy?: string;
 }
 
 export type ReservationLookupMode = 'carNumber' | 'phone';

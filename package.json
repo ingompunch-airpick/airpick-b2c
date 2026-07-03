@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npm run sync:airlines && vite",
+    "build": "npm run sync:airlines && tsc -b && vite build",
     "lint": "tsc -b --noEmit",
+    "sync:airlines": "cp src/constants/airlines.json public/shared/airlines.json",
     "sync:esim": "node scripts/sync-esim-offers.mjs",
     "preview": "vite preview",
     "deploy:hosting": "npm run build && npx -y firebase-tools@latest deploy --only hosting:airpick-b2c",

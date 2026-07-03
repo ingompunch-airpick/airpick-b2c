@@ -85,6 +85,7 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     arrivalFlight: data.arrivalFlight ? String(data.arrivalFlight) : undefined,
     destination: data.destination ? String(data.destination) : undefined,
     customerNotes: data.customerNotes ? String(data.customerNotes) : undefined,
+    createdBy: data.createdBy ? String(data.createdBy) : undefined,
   };
 }
 
