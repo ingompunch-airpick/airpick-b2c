@@ -4,6 +4,7 @@ import BookingConsent from './BookingConsent';
 import DateField from './DateField';
 import PriceBreakdownCard from './PriceBreakdownCard';
 import TimeField from './TimeField';
+import AirlineSelect from './AirlineSelect';
 import { PARKING_TAB_LABEL } from '../constants/marketing';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { displayCompanyName } from '../utils/display';
@@ -13,8 +14,7 @@ import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
 import { getPriceBreakdown } from '../utils/pricing';
 import { companySupportsIndoor, companySupportsOutdoor, parkingTypeLabel } from '../utils/parkingType';
-
-const AIRLINES = ['대한항공', '아시아나항공', '진에어', '제주항공', '티웨이항공', '에어부산'];
+import { formatPhoneInput } from '../utils/contact';
 
 function terminalLabel(t: Terminal) {
   return t === 'T1' ? '1터미널' : '2터미널';
@@ -31,6 +31,7 @@ const emptyForm = (): BookingForm => ({
   arrivalFlight: '',
   destination: '',
   customerNotes: '',
+  reservationPassword: '',
 });
 
 export default function BookingModal({
@@ -94,7 +95,8 @@ export default function BookingModal({
     form.departureAirline.trim() &&
     form.departureFlight.trim() &&
     form.arrivalAirline.trim() &&
-    form.arrivalFlight.trim();
+    form.arrivalFlight.trim() &&
+    /^\d{4}$/.test(form.reservationPassword.trim());
 
   const setTerminal = (terminal: Terminal) => {
     setSearch((prev) => ({
@@ -337,8 +339,10 @@ export default function BookingModal({
               <label className="block">
                 <span className="mb-1 block text-xs font-bold text-muted">연락처 *</span>
                 <input
+                  type="tel"
+                  inputMode="tel"
                   value={form.phone}
-                  onChange={(e) => setFormField('phone', e.target.value)}
+                  onChange={(e) => setFormField('phone', formatPhoneInput(e.target.value))}
                   placeholder="010-1234-5678"
                   className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
                 />
@@ -367,21 +371,12 @@ export default function BookingModal({
               <div>
                 <p className="mb-2 text-[11px] font-bold text-brand">출국</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className="block">
-                    <span className="mb-1 block text-xs font-bold text-muted">항공사 *</span>
-                    <input
-                      list="airlines-dep"
-                      value={form.departureAirline}
-                      onChange={(e) => setFormField('departureAirline', e.target.value)}
-                      placeholder="대한항공"
-                      className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
-                    />
-                    <datalist id="airlines-dep">
-                      {AIRLINES.map((a) => (
-                        <option key={a} value={a} />
-                      ))}
-                    </datalist>
-                  </label>
+                  <AirlineSelect
+                    label="항공사"
+                    required
+                    value={form.departureAirline}
+                    onChange={(departureAirline) => setFormField('departureAirline', departureAirline)}
+                  />
                   <label className="block">
                     <span className="mb-1 block text-xs font-bold text-muted">편명 *</span>
                     <input
@@ -396,21 +391,12 @@ export default function BookingModal({
               <div>
                 <p className="mb-2 text-[11px] font-bold text-brand">입국</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className="block">
-                    <span className="mb-1 block text-xs font-bold text-muted">항공사 *</span>
-                    <input
-                      list="airlines-arr"
-                      value={form.arrivalAirline}
-                      onChange={(e) => setFormField('arrivalAirline', e.target.value)}
-                      placeholder="대한항공"
-                      className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
-                    />
-                    <datalist id="airlines-arr">
-                      {AIRLINES.map((a) => (
-                        <option key={a} value={a} />
-                      ))}
-                    </datalist>
-                  </label>
+                  <AirlineSelect
+                    label="항공사"
+                    required
+                    value={form.arrivalAirline}
+                    onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
+                  />
                   <label className="block">
                     <span className="mb-1 block text-xs font-bold text-muted">편명 *</span>
                     <input
@@ -424,31 +410,41 @@ export default function BookingModal({
               </div>
             </div>
 
-            <details className="rounded-xl bg-sky-soft px-3 py-2 ring-1 ring-sky-border/50">
-              <summary className="cursor-pointer list-none text-xs font-bold text-muted">
-                여행지 · 요청사항 (선택)
-              </summary>
-              <div className="mt-2 space-y-2 pb-1">
-                <label className="block">
-                  <span className="mb-1 block text-[11px] font-bold text-muted">여행지</span>
-                  <input
-                    value={form.destination}
-                    onChange={(e) => setFormField('destination', e.target.value)}
-                    placeholder="오사카, 싱가포르"
-                    className="w-full rounded-xl border border-sky-border bg-sky-bg px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-1 block text-[11px] font-bold text-muted">기사님께 전달할 메시지</span>
-                  <textarea
-                    value={form.customerNotes}
-                    onChange={(e) => setFormField('customerNotes', e.target.value)}
-                    rows={2}
-                    className="w-full resize-none rounded-xl border border-sky-border bg-sky-bg px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
-                  />
-                </label>
-              </div>
-            </details>
+            <div className="space-y-2 border-t border-sky-border/60 pt-3">
+              <label className="block">
+                <span className="mb-1 block text-xs font-bold text-muted">여행지</span>
+                <input
+                  value={form.destination}
+                  onChange={(e) => setFormField('destination', e.target.value)}
+                  placeholder="오사카, 싱가포르"
+                  className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-bold text-muted">예약 비밀번호 (4자리) *</span>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={4}
+                  value={form.reservationPassword}
+                  onChange={(e) =>
+                    setFormField('reservationPassword', e.target.value.replace(/\D/g, '').slice(0, 4))
+                  }
+                  placeholder="예약 확인·취소용"
+                  className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-bold text-muted">기사님께 전달할 메시지 (선택)</span>
+                <textarea
+                  value={form.customerNotes}
+                  onChange={(e) => setFormField('customerNotes', e.target.value)}
+                  rows={2}
+                  className="w-full resize-none rounded-xl border border-sky-border bg-sky-soft px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
+                />
+              </label>
+            </div>
           </section>
 
           <BookingConsent

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "collection": "reservations",
+  "createdBy": {
+    "airpickB2c": "airpick-b2c",
+    "homepage": "homepage",
+    "b2b": "b2b"
+  },
+  "requiredFields": [
+    "companyId",
+    "companyName",
+    "userName",
+    "phone",
+    "carModel",
+    "carNumber",
+    "departureDate",
+    "departureTime",
+    "departureTerminal",
+    "arrivalDate",
+    "arrivalTime",
+    "arrivalTerminal",
+    "departureAirline",
+    "departureFlight",
+    "arrivalAirline",
+    "arrivalFlight",
+    "reservationPassword",
+    "totalPrice",
+    "status",
+    "createdAt",
+    "createdBy",
+    "receiptToken",
+    "notifyOnCreate"
+  ],
+  "optionalFields": [
+    "destination",
+    "customerNotes",
+    "departureAirlineCustom",
+    "arrivalAirlineCustom"
+  ],
+  "defaults": {
+    "status": "pending",
+    "paymentMethod": "unpaid",
+    "notifyOnCreate": true,
+    "scratchPhotos": { "synced": false }
+  },
+  "validation": {
+    "reservationPassword": {
+      "pattern": "^\\d{4}$",
+      "message": "예약 비밀번호는 숫자 4자리입니다."
+    },
+    "phone": {
+      "message": "휴대폰 번호를 입력해 주세요."
+    }
+  },
+  "sharedAssets": {
+    "airlines": "/shared/airlines.json",
+    "submitModule": "/shared/submit-homepage-reservation.mjs"
+  }
+}

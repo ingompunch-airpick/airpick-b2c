@@ -27,6 +27,7 @@ export interface BookingForm {
   arrivalFlight: string;
   destination: string;
   customerNotes: string;
+  reservationPassword: string;
 }
 
 function normalizeReservation(id: string, data: Record<string, unknown>): Reservation {
@@ -250,6 +251,7 @@ export async function submitReservation(
   if (arrivalAirline) payload.arrivalAirline = arrivalAirline;
   if (destination) payload.destination = destination;
   if (customerNotes) payload.customerNotes = customerNotes;
+  payload.reservationPassword = form.reservationPassword.trim();
 
   await setDoc(doc(db, 'reservations', id), payload);
 

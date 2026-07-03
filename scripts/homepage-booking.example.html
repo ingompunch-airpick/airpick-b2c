@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>에어픽 홈페이지 예약 연동 예시</title>
+  </head>
+  <body>
+  <!--
+    AI Studio에 붙여넣을 때 참고용 스니펫입니다.
+    UI는 각 홈페이지 디자인대로, 아래 URL만 공통으로 사용하세요.
+  -->
+  <script type="module">
+    import { fetchAirlines, validateHomepageReservation, buildHomepageReservationPayload, createReservationId } from 'https://airpick-b2c.web.app/shared/submit-homepage-reservation.mjs';
+    import { collection, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+  // 1) 항공사 select
+  const { airlines } = await fetchAirlines();
+  const select = document.querySelector('#departure-airline');
+  for (const a of airlines) {
+    const opt = document.createElement('option');
+    opt.value = a.allowCustom ? 'other' : a.name;
+    opt.textContent = a.name;
+    select.appendChild(opt);
+  }
+
+  // 2) 예약 제출 (db는 페이지에서 initializeApp 후 getFirestore())
+  async function onSubmit(db, form, search, totalPrice) {
+    const err = validateHomepageReservation({ form, search });
+    if (err) { alert(err); return; }
+    const id = createReservationId();
+    const payload = buildHomepageReservationPayload({
+      companyId: 'wawa',
+      companyName: '와와발렛',
+      form,
+      search,
+      totalPrice,
+    });
+    await setDoc(doc(collection(db, 'reservations'), id), payload);
+    return id;
+  }
+  </script>
+  </body>
+</html>

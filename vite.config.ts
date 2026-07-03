@@ -11,6 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: [
         'robots.txt',
+        'shared/airlines.json',
+        'shared/reservation-schema.json',
+        'shared/submit-homepage-reservation.mjs',
         'naver1d9bbd9fd5d41de5108741bfcea9902c.html',
         'favicon-48.png',
         'favicon-32.png',
