@@ -431,7 +431,6 @@ export default function BookingModal({
                   onChange={(e) =>
                     setFormField('reservationPassword', e.target.value.replace(/\D/g, '').slice(0, 4))
                   }
-                  placeholder="예약 확인·취소용"
                   className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
                 />
               </label>
