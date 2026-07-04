@@ -1,16 +1,9 @@
 import { signInAnonymously } from 'firebase/auth';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+
+const LOOKUP_API_PATH = '/api/reservation-lookup';
+const CANCEL_API_PATH = '/api/reservation-cancel';
 import { fetchCompanyBookingPolicy } from './companies';
 import type { BookingSearch, Reservation, ReservationLookupMode } from '../types';
 import {
@@ -99,22 +92,6 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
   };
 }
 
-function normalizeLookupValue(mode: ReservationLookupMode, value: string): string {
-  const trimmed = value.trim();
-  if (mode === 'phone') return trimmed.replace(/\D/g, '');
-  return trimmed.replace(/\s/g, '');
-}
-
-function matchesLookup(mode: ReservationLookupMode, reservation: Reservation, value: string): boolean {
-  const normalized = normalizeLookupValue(mode, value);
-  if (!normalized) return false;
-  const target =
-    mode === 'phone'
-      ? reservation.phone.replace(/\D/g, '')
-      : reservation.carNumber.replace(/\s/g, '');
-  return target === normalized;
-}
-
 export function createReservationId(): string {
   return `res_${Date.now()}`;
 }
@@ -172,79 +149,67 @@ export function subscribeReservation(
   );
 }
 
-type RawReservationDoc = { id: string; data: Record<string, unknown> };
-
-function reservationPasswordMatches(data: Record<string, unknown>, password: string): boolean {
-  const stored = String(data.reservationPassword ?? '').trim();
-  return stored !== '' && stored === password;
-}
-
+/**
+ * 예약 조회 — 서버(Cloud Function)에서 비밀번호를 검증하고
+ * 민감 필드를 제거한 데이터만 반환한다. 비번이 틀리면 빈 배열이 온다.
+ */
 export async function lookupReservations(
   mode: ReservationLookupMode,
   value: string,
   password: string
 ): Promise<Reservation[]> {
-  await ensureAnonymousAuth();
-  const field = mode === 'carNumber' ? 'carNumber' : 'phone';
   const trimmed = value.trim();
   const pw = password.trim();
   if (!trimmed || !/^\d{4}$/.test(pw)) return [];
 
-  const runQuery = async (needle: string): Promise<RawReservationDoc[]> => {
-    const snap = await getDocs(
-      query(collection(db, 'reservations'), where(field, '==', needle))
-    );
-    return snap.docs.map((d) => ({ id: d.id, data: d.data() as Record<string, unknown> }));
+  const res = await fetch(LOOKUP_API_PATH, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode, value: trimmed, password: pw }),
+  });
+  if (!res.ok) return [];
+
+  const json = (await res.json()) as {
+    reservations?: Array<{ id: string; data: Record<string, unknown> }>;
   };
-
-  let docs = await runQuery(trimmed);
-
-  if (docs.length === 0 && mode === 'phone') {
-    docs = await runQuery(trimmed.replace(/\D/g, ''));
-  }
-
-  if (docs.length === 0 && mode === 'carNumber') {
-    docs = await runQuery(trimmed.replace(/\s/g, ''));
-  }
-
-  return docs
-    .filter((d) => reservationPasswordMatches(d.data, pw))
-    .map((d) => normalizeReservation(d.id, d.data))
-    .filter((r) => matchesLookup(mode, r, value))
+  return (json.reservations ?? [])
+    .map((r) => normalizeReservation(r.id, r.data))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 /**
- * 고객 셀프 취소 — 비밀번호 검증 후 status: cancelled.
- * MVP: 클라이언트에서 검증·기록. 추후 Cloud Function으로 이관 예정.
+ * 고객 셀프 취소 — 서버(Cloud Function)에서 비밀번호를 검증한 뒤
+ * status: cancelled 로 변경한다.
  */
 export async function cancelReservation(id: string, password: string): Promise<void> {
-  await ensureAnonymousAuth();
   const pw = password.trim();
   if (!/^\d{4}$/.test(pw)) {
     throw new Error('예약 비밀번호 4자리를 확인해 주세요.');
   }
 
-  const ref = doc(db, 'reservations', id);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    throw new Error('예약을 찾을 수 없습니다.');
-  }
-
-  const data = snap.data() as Record<string, unknown>;
-  const stored = String(data.reservationPassword ?? '').trim();
-  if (!stored || stored !== pw) {
-    throw new Error('예약 비밀번호가 일치하지 않습니다.');
-  }
-  if (String(data.status ?? '') === 'cancelled') {
-    throw new Error('이미 취소된 예약입니다.');
-  }
-
-  await updateDoc(ref, {
-    status: 'cancelled',
-    cancelledAt: new Date().toISOString(),
-    cancelledBy: 'customer',
+  const res = await fetch(CANCEL_API_PATH, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, password: pw }),
   });
+  if (res.ok) return;
+
+  let error = '';
+  try {
+    error = ((await res.json()) as { error?: string }).error ?? '';
+  } catch {
+    error = '';
+  }
+  switch (error) {
+    case 'invalid_password':
+      throw new Error('예약 비밀번호가 일치하지 않습니다.');
+    case 'already_cancelled':
+      throw new Error('이미 취소된 예약입니다.');
+    case 'not_found':
+      throw new Error('예약을 찾을 수 없습니다.');
+    default:
+      throw new Error('예약 취소에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+  }
 }
 
 export async function submitReservation(

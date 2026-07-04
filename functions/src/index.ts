@@ -3,6 +3,8 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 
 import { onReservationCreatedNotify } from './triggers/onReservationCreated';
 import { getReceipt } from './api/getReceipt';
+import { lookupReservation } from './api/lookupReservation';
+import { cancelReservation } from './api/cancelReservation';
 
 admin.initializeApp();
 
@@ -11,4 +13,4 @@ setGlobalOptions({
   maxInstances: 10,
 });
 
-export { onReservationCreatedNotify, getReceipt };
+export { onReservationCreatedNotify, getReceipt, lookupReservation, cancelReservation };

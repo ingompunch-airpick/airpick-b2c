@@ -36,6 +36,20 @@
         }
       },
       {
+        "source": "/api/reservation-lookup",
+        "function": {
+          "functionId": "lookupReservation",
+          "region": "asia-northeast3"
+        }
+      },
+      {
+        "source": "/api/reservation-cancel",
+        "function": {
+          "functionId": "cancelReservation",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
