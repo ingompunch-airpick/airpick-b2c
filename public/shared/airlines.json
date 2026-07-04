@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03",
+  "updatedAt": "2026-07-04",
   "groups": [
     { "id": "domestic", "label": "국내 항공사" },
     { "id": "international", "label": "국제선 (인천 자주 이용)" },
@@ -25,7 +25,7 @@
     { "id": "china-southern", "name": "중국남방항공", "group": "international" },
     { "id": "thai", "name": "태국항공", "group": "international" },
     { "id": "cathay-pacific", "name": "캐세이퍼시픽", "group": "international" },
-    { "id": "cathay-dragon", "name": "홍콩항공", "group": "international" },
+    { "id": "hong-kong-airlines", "name": "홍콩항공", "group": "international" },
     { "id": "eva-air", "name": "에바항공", "group": "international" },
     { "id": "china-airlines", "name": "중화항공", "group": "international" },
     { "id": "philippine-airlines", "name": "필리핀항공", "group": "international" },
@@ -38,7 +38,7 @@
     { "id": "turkish", "name": "터키항공", "group": "international" },
     { "id": "delta", "name": "델타항공", "group": "international" },
     { "id": "united", "name": "유나이티드항공", "group": "international" },
-    { "id": "american", "name": "아메리칭항공", "group": "international" },
+    { "id": "american", "name": "아메리칸항공", "group": "international" },
     { "id": "air-canada", "name": "에어캐나다", "group": "international" },
     { "id": "air-france", "name": "에어프랑스", "group": "international" },
     { "id": "lufthansa", "name": "루프트한자", "group": "international" },
