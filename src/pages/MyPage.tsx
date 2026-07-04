@@ -4,7 +4,12 @@ import { BRAND_SUBLINE, BRAND_TAGLINE, PARKING_TAB_LABEL } from '../constants/ma
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
 import { subscribeCompanies } from '../lib/companies';
-import { fetchReservationById, lookupReservations, subscribeReservation } from '../lib/reservations';
+import {
+  cancelReservation,
+  fetchReservationById,
+  lookupReservations,
+  subscribeReservation,
+} from '../lib/reservations';
 import type { Company, Reservation, ReservationLookupMode } from '../types';
 
 function MyMenuButton({
@@ -137,6 +142,7 @@ export default function MyPage({
               reservation={reservation}
               company={companyMap[reservation.companyId]}
               onBookAirpick={onBookParking}
+              onCancel={(password) => cancelReservation(reservation.id, password)}
             />
           ))}
         </div>

@@ -145,7 +145,6 @@ export default function App() {
             setLastReservationId(id);
             setBookingTarget(null);
             setTab('my');
-            alert(`예약이 접수되었습니다.\n예약번호: ${id}`);
           }}
         />
       )}

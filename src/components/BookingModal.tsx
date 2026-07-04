@@ -1,4 +1,4 @@
-import { ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, ClipboardList, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import BookingConsent from './BookingConsent';
 import DateField from './DateField';
@@ -61,6 +61,7 @@ export default function BookingModal({
   const [editSchedule, setEditSchedule] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [completedId, setCompletedId] = useState<string | null>(null);
 
   const arrivalTerminal = differentArrivalTerminal
     ? (search.arrivalTerminal ?? search.terminal)
@@ -134,7 +135,8 @@ export default function BookingModal({
         payload.departureDate,
         payload.arrivalDate,
         company.isOpen !== false,
-        company.blockedDates ?? []
+        company.blockedDates ?? [],
+        company.sameDayBookingBlocked === true
       );
       if (!localCheck.allowed) {
         setError(bookingPolicyMessage(localCheck, payload.departureDate, payload.arrivalDate));
@@ -148,7 +150,7 @@ export default function BookingModal({
         form,
         breakdown.total
       );
-      onSuccess(id);
+      setCompletedId(id);
     } catch (err) {
       console.error(err);
       setError(
@@ -162,6 +164,75 @@ export default function BookingModal({
       setLoading(false);
     }
   };
+
+  if (completedId) {
+    return (
+      <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">
+        <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-sky-soft p-6 text-center shadow-xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand/10">
+            <Check size={32} className="text-brand" strokeWidth={3} />
+          </div>
+          <h2 className="mt-4 text-xl font-bold text-ink">예약이 접수되었습니다</h2>
+          <p className="mt-1.5 text-sm font-medium text-muted">
+            {displayCompanyName(company.name)} · {breakdown.days}일 주차
+          </p>
+
+          <dl className="mt-5 space-y-2.5 rounded-2xl bg-sky-bg p-4 text-left ring-1 ring-sky-border/70">
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-xs font-semibold text-muted">예약번호</dt>
+              <dd className="font-mono text-sm font-bold text-ink">
+                {completedId.replace('res_', '')}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-xs font-semibold text-muted">일정</dt>
+              <dd className="text-sm font-bold text-ink tabular-nums">
+                {formatDateDisplay(search.departureDate)} → {formatDateDisplay(search.arrivalDate)}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-xs font-semibold text-muted">차량번호</dt>
+              <dd className="text-sm font-bold text-ink">{form.carNumber}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 border-t border-sky-border/60 pt-2.5">
+              <dt className="text-xs font-semibold text-muted">결제 예정 금액</dt>
+              <dd className="text-base font-bold text-brand tabular-nums">
+                {breakdown.total.toLocaleString()}원
+              </dd>
+            </div>
+          </dl>
+
+          <div className="mt-4 rounded-2xl bg-brand/5 p-4 text-left ring-1 ring-brand/15">
+            <p className="text-sm font-bold text-ink">예약 비밀번호를 꼭 기억해 주세요</p>
+            <p className="mt-1.5 text-xs font-medium leading-relaxed text-muted">
+              입력하신 4자리 비밀번호
+              <span className="mx-1 rounded-md bg-white px-2 py-0.5 font-mono text-sm font-bold tracking-widest text-brand ring-1 ring-brand/20">
+                {form.reservationPassword}
+              </span>
+              는 <span className="font-bold text-ink">예약 탭</span>에서 차량번호와 함께 입력해야
+              입고 위치·사진을 확인할 수 있어요.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => onSuccess(completedId)}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
+          >
+            <ClipboardList size={16} strokeWidth={2.25} />
+            예약 내역 보기
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-2 w-full py-2 text-sm font-semibold text-muted"
+          >
+            닫기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">

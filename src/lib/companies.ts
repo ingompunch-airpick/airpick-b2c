@@ -9,6 +9,7 @@ import { mergePartnerPricing } from '../utils/pricing';
 export interface CompanyBookingPolicy {
   isOpen: boolean;
   blockedDates: string[];
+  sameDayBookingBlocked: boolean;
 }
 
 function normalizeCompany(id: string, data: Record<string, unknown>): Company | null {
@@ -38,6 +39,9 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     representative: data.representative ? String(data.representative) : undefined,
     isOpen: data.isOpen !== false,
     blockedDates: Array.isArray(data.blockedDates) ? (data.blockedDates as string[]) : [],
+    cancelCutoffHours:
+      typeof data.cancelCutoffHours === 'number' ? data.cancelCutoffHours : undefined,
+    sameDayBookingBlocked: data.sameDayBookingBlocked === true,
     outdoorBasePrice: Number(data.outdoorBasePrice) || undefined,
     outdoorBaseDays: Number(data.outdoorBaseDays) || undefined,
     outdoorExtraPrice: Number(data.outdoorExtraPrice) || undefined,
@@ -84,6 +88,7 @@ export async function fetchCompanyBookingPolicy(
   return {
     isOpen: data.isOpen !== false,
     blockedDates: Array.isArray(data.blockedDates) ? (data.blockedDates as string[]) : [],
+    sameDayBookingBlocked: data.sameDayBookingBlocked === true,
   };
 }
 

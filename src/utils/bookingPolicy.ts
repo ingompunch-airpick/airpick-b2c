@@ -1,4 +1,4 @@
-import { formatDateDisplay } from './dates';
+import { formatDateDisplay, todayYmd } from './dates';
 
 /** 입고일~출고일 사이 모든 날짜 (YYYY-MM-DD, 로컬 기준) */
 export function datesInRange(startYmd: string, endYmd: string): string[] {
@@ -29,15 +29,21 @@ export function datesInRange(startYmd: string, endYmd: string): string[] {
 export type BookingPolicyCheck =
   | { allowed: true }
   | { allowed: false; reason: 'closed' }
+  | { allowed: false; reason: 'same_day' }
   | { allowed: false; reason: 'blocked'; blockedDates: string[] };
 
 export function checkBookingPolicy(
   departureDate: string,
   arrivalDate: string,
   isOpen: boolean,
-  blockedDates: string[]
+  blockedDates: string[],
+  sameDayBookingBlocked = false
 ): BookingPolicyCheck {
   if (!isOpen) return { allowed: false, reason: 'closed' };
+
+  if (sameDayBookingBlocked && departureDate === todayYmd()) {
+    return { allowed: false, reason: 'same_day' };
+  }
 
   const span = datesInRange(departureDate, arrivalDate);
   const blocked = span.filter((d) => blockedDates.includes(d));
@@ -55,6 +61,10 @@ export function bookingPolicyMessage(
 ): string {
   if (check.reason === 'closed') {
     return '현재 이 업체는 전체 예약이 마감된 상태입니다.';
+  }
+
+  if (check.reason === 'same_day') {
+    return '이 업체는 당일 예약을 받지 않습니다. 다른 날짜를 선택하거나 업체로 문의해 주세요.';
   }
 
   const dep = formatDateDisplay(departureDate);

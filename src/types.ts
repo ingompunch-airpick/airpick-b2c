@@ -38,6 +38,10 @@ export interface Company {
   peakEndTime?: string;
   peakSurcharge?: number;
   status?: string;
+  /** 손님 셀프 취소 마감 — 입고 O시간 전 (미지정 시 기본값) */
+  cancelCutoffHours?: number;
+  /** true면 입고일이 오늘인 예약 차단 (B2B 설정) */
+  sameDayBookingBlocked?: boolean;
   sharesParkingLocation?: boolean;
   sharesPhotos?: boolean;
   sharesInsurance?: boolean;

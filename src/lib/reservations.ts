@@ -1,5 +1,15 @@
 import { signInAnonymously } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { fetchCompanyBookingPolicy } from './companies';
 import type { BookingSearch, Reservation, ReservationLookupMode } from '../types';
@@ -127,7 +137,8 @@ export async function assertBookingAllowed(
     departureDate,
     arrivalDate,
     policy.isOpen,
-    policy.blockedDates
+    policy.blockedDates,
+    policy.sameDayBookingBlocked
   );
   if (!check.allowed) {
     throw new Error(bookingPolicyMessage(check, departureDate, arrivalDate));
@@ -201,6 +212,39 @@ export async function lookupReservations(
     .map((d) => normalizeReservation(d.id, d.data))
     .filter((r) => matchesLookup(mode, r, value))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+/**
+ * 고객 셀프 취소 — 비밀번호 검증 후 status: cancelled.
+ * MVP: 클라이언트에서 검증·기록. 추후 Cloud Function으로 이관 예정.
+ */
+export async function cancelReservation(id: string, password: string): Promise<void> {
+  await ensureAnonymousAuth();
+  const pw = password.trim();
+  if (!/^\d{4}$/.test(pw)) {
+    throw new Error('예약 비밀번호 4자리를 확인해 주세요.');
+  }
+
+  const ref = doc(db, 'reservations', id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    throw new Error('예약을 찾을 수 없습니다.');
+  }
+
+  const data = snap.data() as Record<string, unknown>;
+  const stored = String(data.reservationPassword ?? '').trim();
+  if (!stored || stored !== pw) {
+    throw new Error('예약 비밀번호가 일치하지 않습니다.');
+  }
+  if (String(data.status ?? '') === 'cancelled') {
+    throw new Error('이미 취소된 예약입니다.');
+  }
+
+  await updateDoc(ref, {
+    status: 'cancelled',
+    cancelledAt: new Date().toISOString(),
+    cancelledBy: 'customer',
+  });
 }
 
 export async function submitReservation(
