@@ -11,12 +11,16 @@ const modes: { id: ReservationLookupMode; label: string; placeholder: string }[]
 export default function ReservationLookupForm({
   onLookup,
   loading,
+  initialMode,
+  initialValue,
 }: {
   onLookup: (mode: ReservationLookupMode, value: string, password: string) => void;
   loading?: boolean;
+  initialMode?: ReservationLookupMode;
+  initialValue?: string;
 }) {
-  const [mode, setMode] = useState<ReservationLookupMode>('carNumber');
-  const [value, setValue] = useState('');
+  const [mode, setMode] = useState<ReservationLookupMode>(initialMode ?? 'carNumber');
+  const [value, setValue] = useState(initialValue ?? '');
   const [password, setPassword] = useState('');
 
   const active = modes.find((m) => m.id === mode)!;

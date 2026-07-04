@@ -1,4 +1,4 @@
-import { PRIVACY_CONSENT, WAWA_TERMS_OF_SERVICE, type TermsArticle } from '../constants/consent';
+import { PRIVACY_CONSENT, AIRPICK_TERMS_OF_SERVICE, type TermsArticle } from '../constants/consent';
 import { cn } from '../utils/cn';
 
 function TermsArticleBlock({ article }: { article: TermsArticle }) {
@@ -38,9 +38,9 @@ export default function BookingConsent({
       <p className="text-xs font-bold text-brand">약관 동의</p>
 
       <div className="rounded-2xl bg-sky-bg p-3 ring-1 ring-sky-border/70">
-        <p className="text-[11px] font-bold text-ink">{WAWA_TERMS_OF_SERVICE.title}</p>
+        <p className="text-[11px] font-bold text-ink">{AIRPICK_TERMS_OF_SERVICE.title}</p>
         <div className="mt-2 max-h-44 overflow-y-auto rounded-xl bg-sky-soft p-2.5 text-[10px] leading-relaxed text-muted">
-          {WAWA_TERMS_OF_SERVICE.articles.map((article) => (
+          {AIRPICK_TERMS_OF_SERVICE.articles.map((article) => (
             <TermsArticleBlock key={article.heading} article={article} />
           ))}
         </div>
@@ -51,7 +51,7 @@ export default function BookingConsent({
             onChange={(e) => onAgreedTermsChange(e.target.checked)}
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
           />
-          <span className="text-[11px] font-semibold text-ink">{WAWA_TERMS_OF_SERVICE.checkbox}</span>
+          <span className="text-[11px] font-semibold text-ink">{AIRPICK_TERMS_OF_SERVICE.checkbox}</span>
         </label>
       </div>
 

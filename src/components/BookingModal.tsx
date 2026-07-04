@@ -15,6 +15,7 @@ import { cn } from '../utils/cn';
 import { getPriceBreakdown } from '../utils/pricing';
 import { companySupportsIndoor, companySupportsOutdoor, parkingTypeLabel } from '../utils/parkingType';
 import { formatPhoneInput } from '../utils/contact';
+import { saveRecentReservation } from '../utils/recentReservation';
 
 function terminalLabel(t: Terminal) {
   return t === 'T1' ? '1터미널' : '2터미널';
@@ -150,6 +151,11 @@ export default function BookingModal({
         form,
         breakdown.total
       );
+      saveRecentReservation({
+        id,
+        carNumber: form.carNumber.trim(),
+        arrivalDate: payload.arrivalDate,
+      });
       setCompletedId(id);
     } catch (err) {
       console.error(err);

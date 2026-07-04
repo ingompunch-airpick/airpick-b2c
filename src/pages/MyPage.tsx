@@ -11,6 +11,7 @@ import {
   subscribeReservation,
 } from '../lib/reservations';
 import type { Company, Reservation, ReservationLookupMode } from '../types';
+import { clearRecentReservation, getRecentReservation } from '../utils/recentReservation';
 
 function MyMenuButton({
   label,
@@ -54,6 +55,13 @@ export default function MyPage({
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
+  const [recentCarNumber] = useState(() => getRecentReservation()?.carNumber ?? '');
+
+  const handleCancel = async (reservation: Reservation, password: string) => {
+    await cancelReservation(reservation.id, password);
+    setReservations((prev) => prev.filter((r) => r.id !== reservation.id));
+    if (getRecentReservation()?.id === reservation.id) clearRecentReservation();
+  };
 
   const loadLastReservation = useCallback(async () => {
     if (!lastReservationId) return;
@@ -117,7 +125,12 @@ export default function MyPage({
         <p className="mt-2 text-sm font-medium text-muted">{BRAND_SUBLINE}</p>
       </section>
 
-      <ReservationLookupForm onLookup={handleLookup} loading={loading} />
+      <ReservationLookupForm
+        onLookup={handleLookup}
+        loading={loading}
+        initialMode={recentCarNumber ? 'carNumber' : undefined}
+        initialValue={recentCarNumber || undefined}
+      />
 
       {lastReservationId && !searched && reservations.length > 0 && (
         <p className="px-1 text-xs font-semibold text-brand">
@@ -142,7 +155,7 @@ export default function MyPage({
               reservation={reservation}
               company={companyMap[reservation.companyId]}
               onBookAirpick={onBookParking}
-              onCancel={(password) => cancelReservation(reservation.id, password)}
+              onCancel={(password) => handleCancel(reservation, password)}
             />
           ))}
         </div>

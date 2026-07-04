@@ -5,6 +5,7 @@ import { formatPhoneDisplay } from '../utils/contact';
 
 const COLLECTED_ITEMS = [
   '성함, 휴대폰번호, 차량기종, 차량번호',
+  '예약 비밀번호(4자리, 예약 조회·취소 확인용)',
   '입·출국 일시, 터미널, 항공편 정보(입력 시)',
   '여행지, 요청사항(입력 시)',
   '서비스 이용 기록, 접속 로그, 쿠키(자동 수집될 수 있음)',
@@ -46,7 +47,7 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
         <PolicySection title="1. 개인정보의 처리 목적">
           회사는 다음 목적을 위해 개인정보를 처리합니다.
           <ul className="mt-2 list-disc space-y-1 pl-4">
-            <li>주차대행 예약 접수·조회 및 제휴 업체 연동</li>
+            <li>주차대행 예약 접수·조회·취소 및 제휴 업체 연동</li>
             <li>고객 상담, 문의·민원 처리</li>
             <li>서비스 개선, 부정 이용 방지, 법령상 의무 이행</li>
           </ul>

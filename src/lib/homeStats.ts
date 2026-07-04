@@ -11,7 +11,9 @@ export type HomeTrustStat = {
 /** 홈 Hero 숫자 — 주차(Firestore+코드)·eSIM(시트 sync) 등록과 연동 */
 export function buildHomeTrustStats(firestoreCompanies: Company[]): HomeTrustStat[] {
   const parkingCount = mergeParkingCompareCompanies(firestoreCompanies).length;
-  const esimCount = ESIM_PARTNER_OFFERS.filter((o) => o.isActive !== false).length;
+  const esimPartnerCount = new Set(
+    ESIM_PARTNER_OFFERS.filter((o) => o.isActive !== false).map((o) => o.partnerName)
+  ).size;
   const partnerCount = firestoreCompanies.filter((c) => c.isAirpickPartner !== false).length;
 
   return [
@@ -21,13 +23,13 @@ export function buildHomeTrustStats(firestoreCompanies: Company[]): HomeTrustSta
       hint: '입점·미입점 포함',
     },
     {
-      value: String(esimCount),
-      label: 'eSIM·유심 요금',
-      hint: '제휴사별 비교',
+      value: String(esimPartnerCount),
+      label: 'eSIM 제휴사',
+      hint: '요금 비교',
     },
     {
       value: String(partnerCount),
-      label: '입점 업체',
+      label: '주차대행 입점 업체',
       hint: '바로 예약·추적',
     },
   ];
