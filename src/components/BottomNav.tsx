@@ -1,12 +1,12 @@
 import { ClipboardList, Home, LayoutGrid, Smartphone } from 'lucide-react';
 import type { AppTab } from '../types';
-import { PARKING_TAB_LABEL } from '../constants/marketing';
+import { PARKING_TAB_LABEL, ESIM_TAB_LABEL } from '../constants/marketing';
 import { cn } from '../utils/cn';
 
 const tabs: { id: AppTab; label: string; icon: typeof Home }[] = [
   { id: 'home', label: '홈', icon: Home },
   { id: 'compare', label: PARKING_TAB_LABEL, icon: LayoutGrid },
-  { id: 'esim', label: '유심', icon: Smartphone },
+  { id: 'esim', label: ESIM_TAB_LABEL, icon: Smartphone },
   { id: 'my', label: '예약', icon: ClipboardList },
 ];
 

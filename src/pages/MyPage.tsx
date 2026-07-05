@@ -1,6 +1,6 @@
 import { BookOpen, Car, ChevronRight, HelpCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { BRAND_SUBLINE, BRAND_TAGLINE, PARKING_TAB_LABEL } from '../constants/marketing';
+import { BRAND_SUBLINE, BRAND_TAGLINE, ESIM_GUIDE_TITLE, PARKING_TAB_LABEL } from '../constants/marketing';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
 import { subscribeCompanies } from '../lib/companies';
@@ -187,7 +187,7 @@ export default function MyPage({
           onClick={() => onOpenParkingGuide?.()}
         />
         <MyMenuButton
-          label="유심·eSIM 이용 가이드"
+          label={ESIM_GUIDE_TITLE}
           icon={BookOpen}
           onClick={() => onOpenEsimGuide?.()}
         />

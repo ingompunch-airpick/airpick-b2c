@@ -1,4 +1,5 @@
 import { ESIM_PARTNER_OFFERS } from '../config/esimPartnerOffers';
+import { ESIM_STATS_LABEL } from '../constants/marketing';
 import { mergeParkingCompareCompanies } from './parkingCompare';
 import type { Company } from '../types';
 
@@ -24,7 +25,7 @@ export function buildHomeTrustStats(firestoreCompanies: Company[]): HomeTrustSta
     },
     {
       value: String(esimPartnerCount),
-      label: 'eSIM 제휴사',
+      label: ESIM_STATS_LABEL,
       hint: '요금 비교',
     },
     {

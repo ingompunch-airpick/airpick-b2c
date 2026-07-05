@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ComparePageSkeleton, HomePageSkeleton } from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
 import BookingModal from './components/BookingModal';
 import BottomNav from './components/BottomNav';
@@ -108,10 +109,10 @@ export default function App() {
       <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
         <Header onOpenMenu={() => setMenuOpen(true)} />
         <main className="px-4 pt-1 pb-5">
-          {loading && tab === 'compare' ? (
-            <p className="py-12 text-center text-sm font-semibold text-muted">
-              제휴 업체 불러오는 중…
-            </p>
+          {loading && tab === 'home' ? (
+            <HomePageSkeleton />
+          ) : loading && tab === 'compare' ? (
+            <ComparePageSkeleton />
           ) : (
             page
           )}

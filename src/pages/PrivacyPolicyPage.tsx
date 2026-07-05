@@ -1,6 +1,7 @@
 import { ChevronLeft, Shield } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { COMPANY_LEGAL } from '../constants/companyLegal';
+import { ESIM_TAB_LABEL } from '../constants/marketing';
 import { formatPhoneDisplay } from '../utils/contact';
 
 const COLLECTED_ITEMS = [
@@ -68,7 +69,7 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
 
         <PolicySection title="4. 개인정보의 제3자 제공">
           주차대행 예약의 이행을 위해 이용자가 선택한 <strong className="font-bold text-ink">입점 제휴
-          업체</strong>에 예약에 필요한 정보가 제공될 수 있습니다. eSIM·유심 비교의 경우 제휴사
+          업체</strong>에 예약에 필요한 정보가 제공될 수 있습니다. {ESIM_TAB_LABEL} 비교의 경우 제휴사
           사이트로 이동하여 별도로 처리됩니다.
         </PolicySection>
 

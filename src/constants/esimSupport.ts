@@ -1,11 +1,12 @@
 import type { FaqCategory } from './support';
+import { ESIM_TAB_LABEL } from './marketing';
 
 /** 초보자 유심/eSIM 이용 가이드 — 예약 탭 */
 export const ESIM_GUIDE_STEPS = [
   {
     id: 'compare',
-    title: '1. 유심 탭에서 요금 비교',
-    body: '하단 「유심」 탭 → eSIM·USIM, 나라, 용량, 일수를 선택하면 제휴사별 가격이 낮은 순으로 표시됩니다.',
+    title: `1. ${ESIM_TAB_LABEL} 탭에서 요금 비교`,
+    body: `하단 「${ESIM_TAB_LABEL}」 탭 → eSIM·유심, 나라, 용량, 일수를 선택하면 제휴사별 가격이 낮은 순으로 표시됩니다.`,
   },
   {
     id: 'esim-vs-usim',
@@ -26,7 +27,7 @@ export const ESIM_GUIDE_STEPS = [
 
 export const ESIM_FAQ_CATEGORY: FaqCategory = {
   id: 'esim',
-  label: '유심·eSIM',
+  label: ESIM_TAB_LABEL,
   items: [
     {
       id: 'esim-buy-here',
@@ -50,7 +51,7 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
       id: 'esim-update',
       question: '요금은 언제 업데이트되나요?',
       answer:
-        '유심 탭 상단 「마지막 수정」 날짜를 참고해 주세요. 제휴사 요금은 수시로 변동될 수 있습니다.',
+        `${ESIM_TAB_LABEL} 탭 상단 「마지막 수정」 날짜를 참고해 주세요. 제휴사 요금은 수시로 변동될 수 있습니다.`,
     },
     {
       id: 'esim-support',

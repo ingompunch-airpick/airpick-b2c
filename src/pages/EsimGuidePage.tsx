@@ -1,5 +1,6 @@
 import { ChevronLeft, BookOpen } from 'lucide-react';
 import { ESIM_GUIDE_STEPS } from '../constants/esimSupport';
+import { ESIM_GUIDE_TITLE } from '../constants/marketing';
 
 export default function EsimGuidePage({ onBack }: { onBack: () => void }) {
   return (
@@ -13,7 +14,7 @@ export default function EsimGuidePage({ onBack }: { onBack: () => void }) {
         >
           <ChevronLeft size={22} />
         </button>
-        <h1 className="text-base font-bold text-ink">유심·eSIM 이용 가이드</h1>
+        <h1 className="text-base font-bold text-ink">{ESIM_GUIDE_TITLE}</h1>
       </header>
 
       <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto px-4 py-5 pb-8">

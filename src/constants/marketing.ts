@@ -3,6 +3,11 @@
 /** 하단 네비 · 가이드 등에서 쓰는 탭 이름 (주차장과 구분) */
 export const PARKING_TAB_LABEL = '주차대행';
 
+/** 유심·eSIM — 탭·Hero·통계 등 사용자-facing 통일 라벨 */
+export const ESIM_TAB_LABEL = '유심·eSIM';
+export const ESIM_STATS_LABEL = `${ESIM_TAB_LABEL} 제휴사`;
+export const ESIM_GUIDE_TITLE = `${ESIM_TAB_LABEL} 이용 가이드`;
+
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
 export const BRAND_TAGLINE = '맡긴 차, 사진·위치까지';
 
@@ -35,7 +40,7 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /** 홈 — Hero 카피 (3초 이해 · 전환 중심) */
-export const HOME_EYEBROW = '인천공항 주차대행 · eSIM 가격비교';
+export const HOME_EYEBROW = `인천공항 주차대행 · ${ESIM_TAB_LABEL} 가격비교`;
 
 export const HOME_HEADLINE = '최저가부터 안전한 업체까지 한 번에 비교';
 
@@ -58,9 +63,9 @@ export const HOME_PLATFORM_LINE = HOME_HEADLINE;
 export const HOME_PLATFORM_SUB = HOME_EYEBROW;
 
 export const HOME_ESIM = {
-  headline: '유심·eSIM · 제휴 요금 비교',
+  headline: `${ESIM_TAB_LABEL} · 제휴 요금 비교`,
   highlights: ['제휴사별 요금', '나라·용량·일수', '최저가순 정렬'],
-  cta: 'eSIM 요금 비교하기',
+  cta: `${ESIM_TAB_LABEL} 요금 비교하기`,
 } as const;
 
 export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';
