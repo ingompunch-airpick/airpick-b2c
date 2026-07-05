@@ -43,19 +43,13 @@ export function resolveAlimtalkMessage(
     };
   }
 
-  if (createdBy === RESERVATION_CREATED_BY.HOMEPAGE) {
-    return {
-      kind: 'partner-homepage',
-      brandLabel: companyName,
-      templateParameter: {
-        ...baseParams,
-        브랜드: companyName,
-      },
-    };
-  }
+  // 제휴 업체 명의: 홈페이지 · B2B 현장접수 · 레거시(createdBy 없음)
+  const isPartnerSource =
+    createdBy === RESERVATION_CREATED_BY.HOMEPAGE ||
+    createdBy === RESERVATION_CREATED_BY.B2B ||
+    (!createdBy && !!reservation.companyId);
 
-  // 레거시 홈페이지: createdBy 없이 companyId만 있는 경우 → 제휴사명 템플릿
-  if (reservation.companyId && createdBy !== RESERVATION_CREATED_BY.B2B) {
+  if (isPartnerSource) {
     return {
       kind: 'partner-homepage',
       brandLabel: companyName,
