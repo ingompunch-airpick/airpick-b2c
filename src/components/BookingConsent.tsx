@@ -1,6 +1,6 @@
 import {
   AIRPICK_PLATFORM_TERMS,
-  BOOKING_TERMS_CHECKBOX,
+  buildBookingTermsCheckbox,
   buildParkingServiceTerms,
   INTERMEDIARY_DISCLAIMER,
   PRIVACY_CONSENT,
@@ -43,6 +43,7 @@ export default function BookingConsent({
   providerName?: string;
 }) {
   const parkingServiceTerms = buildParkingServiceTerms(providerName);
+  const termsCheckboxLabel = buildBookingTermsCheckbox(providerName);
   return (
     <section className="space-y-3">
       <p className="text-xs font-bold text-brand">약관 동의</p>
@@ -71,7 +72,7 @@ export default function BookingConsent({
             onChange={(e) => onAgreedTermsChange(e.target.checked)}
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
           />
-          <span className="text-[11px] font-semibold text-ink">{BOOKING_TERMS_CHECKBOX}</span>
+          <span className="text-[11px] font-semibold text-ink">{termsCheckboxLabel}</span>
         </label>
       </div>
 

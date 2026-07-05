@@ -112,8 +112,10 @@ export function buildParkingServiceTerms(providerName?: string) {
   };
 }
 
-export const BOOKING_TERMS_CHECKBOX =
-  '위 에어픽 서비스(중개) 이용약관과 주차대행 서비스 이용약관을 모두 확인하였으며, 이에 동의합니다. (필수)';
+export function buildBookingTermsCheckbox(providerName?: string): string {
+  const provider = providerName?.trim() || '제휴 업체';
+  return `위 에어픽 서비스(중개) 이용약관과 ${provider} 주차대행 서비스 이용약관에 모두 동의합니다. (필수)`;
+}
 
 export const PRIVACY_CONSENT = {
   title: '개인정보 수집 및 이용 (필수)',
