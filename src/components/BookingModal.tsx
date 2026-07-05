@@ -57,8 +57,10 @@ export default function BookingModal({
       initialSearch.arrivalTerminal !== initialSearch.terminal
   );
   const [form, setForm] = useState<BookingForm>(emptyForm);
-  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [agreedPlatformTerms, setAgreedPlatformTerms] = useState(false);
+  const [agreedServiceTerms, setAgreedServiceTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
+  const [agreedThirdParty, setAgreedThirdParty] = useState(false);
   const [editSchedule, setEditSchedule] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -88,8 +90,10 @@ export default function BookingModal({
   const today = todayYmd();
 
   const canSubmit =
-    agreedTerms &&
+    agreedPlatformTerms &&
+    agreedServiceTerms &&
     agreedPrivacy &&
+    agreedThirdParty &&
     form.userName.trim() &&
     form.phone.trim() &&
     form.carModel.trim() &&
@@ -524,10 +528,14 @@ export default function BookingModal({
           </section>
 
           <BookingConsent
-            agreedTerms={agreedTerms}
+            agreedPlatformTerms={agreedPlatformTerms}
+            agreedServiceTerms={agreedServiceTerms}
             agreedPrivacy={agreedPrivacy}
-            onAgreedTermsChange={setAgreedTerms}
+            agreedThirdParty={agreedThirdParty}
+            onAgreedPlatformTermsChange={setAgreedPlatformTerms}
+            onAgreedServiceTermsChange={setAgreedServiceTerms}
             onAgreedPrivacyChange={setAgreedPrivacy}
+            onAgreedThirdPartyChange={setAgreedThirdParty}
             providerName={displayCompanyName(company.name)}
           />
 

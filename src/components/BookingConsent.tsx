@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react';
 import {
   AIRPICK_PLATFORM_TERMS,
-  buildBookingTermsCheckbox,
   buildParkingServiceTerms,
+  buildThirdPartyPrivacyConsent,
   INTERMEDIARY_DISCLAIMER,
   PRIVACY_CONSENT,
   type TermsArticle,
@@ -29,83 +30,158 @@ function TermsArticleBlock({ article }: { article: TermsArticle }) {
   );
 }
 
+function ConsentCheckbox({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+}) {
+  return (
+    <label className="flex items-start gap-2">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
+      />
+      <span className="text-[11px] font-semibold text-ink">{label}</span>
+    </label>
+  );
+}
+
+function ConsentDetailBlock({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl bg-sky-bg p-3 ring-1 ring-sky-border/70">
+      <p className="text-[11px] font-bold text-ink">{title}</p>
+      <div className="mt-2 max-h-40 overflow-y-auto rounded-xl bg-sky-soft p-2.5 text-[10px] leading-relaxed text-muted">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function BookingConsent({
-  agreedTerms,
+  agreedPlatformTerms,
+  agreedServiceTerms,
   agreedPrivacy,
-  onAgreedTermsChange,
+  agreedThirdParty,
+  onAgreedPlatformTermsChange,
+  onAgreedServiceTermsChange,
   onAgreedPrivacyChange,
+  onAgreedThirdPartyChange,
   providerName,
 }: {
-  agreedTerms: boolean;
+  agreedPlatformTerms: boolean;
+  agreedServiceTerms: boolean;
   agreedPrivacy: boolean;
-  onAgreedTermsChange: (v: boolean) => void;
+  agreedThirdParty: boolean;
+  onAgreedPlatformTermsChange: (v: boolean) => void;
+  onAgreedServiceTermsChange: (v: boolean) => void;
   onAgreedPrivacyChange: (v: boolean) => void;
+  onAgreedThirdPartyChange: (v: boolean) => void;
   providerName?: string;
 }) {
   const parkingServiceTerms = buildParkingServiceTerms(providerName);
-  const termsCheckboxLabel = buildBookingTermsCheckbox(providerName);
+  const thirdPartyPrivacy = buildThirdPartyPrivacyConsent(providerName);
+  const allAgreed =
+    agreedPlatformTerms && agreedServiceTerms && agreedPrivacy && agreedThirdParty;
+
   return (
     <section className="space-y-3">
-      <p className="text-xs font-bold text-brand">약관 동의</p>
+      <p className="text-xs font-bold text-brand">약관·개인정보 동의</p>
 
-      <p className="rounded-xl bg-amber-50 px-3 py-2 text-[10px] font-semibold leading-relaxed text-amber-700 ring-1 ring-amber-100">
-        {INTERMEDIARY_DISCLAIMER}
-      </p>
-
-      <div className="rounded-2xl bg-sky-bg p-3 ring-1 ring-sky-border/70">
-        <div className="max-h-52 overflow-y-auto rounded-xl bg-sky-soft p-2.5 text-[10px] leading-relaxed text-muted">
-          <p className="mb-2 text-[11px] font-bold text-ink">{AIRPICK_PLATFORM_TERMS.title}</p>
-          {AIRPICK_PLATFORM_TERMS.articles.map((article) => (
-            <TermsArticleBlock key={article.heading} article={article} />
-          ))}
-          <p className="mb-2 mt-3 border-t border-sky-border/60 pt-3 text-[11px] font-bold text-ink">
-            {parkingServiceTerms.title}
+      <div className="space-y-1.5 rounded-xl bg-amber-50 px-3 py-2.5 ring-1 ring-amber-100">
+        {INTERMEDIARY_DISCLAIMER.map((line) => (
+          <p key={line} className="text-[10px] font-semibold leading-relaxed text-amber-800">
+            {line}
           </p>
-          {parkingServiceTerms.articles.map((article) => (
-            <TermsArticleBlock key={article.heading} article={article} />
-          ))}
-        </div>
-        <label className="mt-2 flex items-start gap-2">
-          <input
-            type="checkbox"
-            checked={agreedTerms}
-            onChange={(e) => onAgreedTermsChange(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
-          />
-          <span className="text-[11px] font-semibold text-ink">{termsCheckboxLabel}</span>
-        </label>
+        ))}
       </div>
 
-      <div className="rounded-2xl bg-sky-bg p-3 ring-1 ring-sky-border/70">
-        <p className="text-[11px] font-bold text-ink">{PRIVACY_CONSENT.title}</p>
-        <div className="mt-2 rounded-xl bg-sky-soft p-2.5 text-[10px] leading-relaxed text-muted">
-          <p>
-            <span className="font-bold text-ink">수집 목적: </span>
-            {PRIVACY_CONSENT.purpose}
-          </p>
-          <p className="mt-1">
-            <span className="font-bold text-ink">수집 항목: </span>
-            {PRIVACY_CONSENT.items.join(', ')}
-          </p>
-          <p className="mt-1">
-            <span className="font-bold text-ink">보유 기간: </span>
-            {PRIVACY_CONSENT.retention}
-          </p>
-        </div>
-        <label className="mt-2 flex items-start gap-2">
-          <input
-            type="checkbox"
-            checked={agreedPrivacy}
-            onChange={(e) => onAgreedPrivacyChange(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
-          />
-          <span className="text-[11px] font-semibold text-ink">{PRIVACY_CONSENT.checkbox}</span>
-        </label>
-      </div>
+      <ConsentDetailBlock title={AIRPICK_PLATFORM_TERMS.title}>
+        {AIRPICK_PLATFORM_TERMS.articles.map((article) => (
+          <TermsArticleBlock key={article.heading} article={article} />
+        ))}
+      </ConsentDetailBlock>
+      <ConsentCheckbox
+        checked={agreedPlatformTerms}
+        onChange={onAgreedPlatformTermsChange}
+        label={AIRPICK_PLATFORM_TERMS.checkbox}
+      />
 
-      {!agreedTerms || !agreedPrivacy ? (
+      <ConsentDetailBlock title={parkingServiceTerms.title}>
+        {parkingServiceTerms.articles.map((article) => (
+          <TermsArticleBlock key={article.heading} article={article} />
+        ))}
+      </ConsentDetailBlock>
+      <ConsentCheckbox
+        checked={agreedServiceTerms}
+        onChange={onAgreedServiceTermsChange}
+        label={parkingServiceTerms.checkbox}
+      />
+
+      <ConsentDetailBlock title={PRIVACY_CONSENT.title}>
+        <p>
+          <span className="font-bold text-ink">수집주체: </span>
+          {PRIVACY_CONSENT.controller}
+        </p>
+        <p className="mt-1.5">
+          <span className="font-bold text-ink">수집목적: </span>
+          {PRIVACY_CONSENT.purposes.join(', ')}
+        </p>
+        <p className="mt-1.5">
+          <span className="font-bold text-ink">수집항목: </span>
+          {PRIVACY_CONSENT.items.join(', ')}
+        </p>
+        <p className="mt-1.5">
+          <span className="font-bold text-ink">보유 및 이용기간: </span>
+          {PRIVACY_CONSENT.retention}
+        </p>
+        <p className="mt-1.5">{PRIVACY_CONSENT.notice}</p>
+      </ConsentDetailBlock>
+      <ConsentCheckbox
+        checked={agreedPrivacy}
+        onChange={onAgreedPrivacyChange}
+        label={PRIVACY_CONSENT.checkbox}
+      />
+
+      <ConsentDetailBlock title={thirdPartyPrivacy.title}>
+        <p>
+          <span className="font-bold text-ink">제공받는 자: </span>
+          {thirdPartyPrivacy.recipient}
+        </p>
+        <p className="mt-1.5">
+          <span className="font-bold text-ink">제공목적: </span>
+          {thirdPartyPrivacy.purposes.join(', ')}
+        </p>
+        <p className="mt-1.5">
+          <span className="font-bold text-ink">제공항목: </span>
+          {thirdPartyPrivacy.items.join(', ')}
+        </p>
+        <p className="mt-1.5">
+          <span className="font-bold text-ink">보유기간: </span>
+          {thirdPartyPrivacy.retention}
+        </p>
+        <p className="mt-1.5">{thirdPartyPrivacy.notice}</p>
+      </ConsentDetailBlock>
+      <ConsentCheckbox
+        checked={agreedThirdParty}
+        onChange={onAgreedThirdPartyChange}
+        label={thirdPartyPrivacy.checkbox}
+      />
+
+      {!allAgreed ? (
         <p className={cn('text-[10px] font-semibold text-muted')}>
-          약관·개인정보 동의 후 예약을 접수할 수 있습니다.
+          약관·개인정보 4항목 모두 동의 후 예약을 접수할 수 있습니다.
         </p>
       ) : null}
     </section>
