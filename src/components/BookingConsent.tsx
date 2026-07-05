@@ -1,8 +1,8 @@
 import {
   AIRPICK_PLATFORM_TERMS,
   BOOKING_TERMS_CHECKBOX,
+  buildParkingServiceTerms,
   INTERMEDIARY_DISCLAIMER,
-  PARKING_SERVICE_TERMS,
   PRIVACY_CONSENT,
   type TermsArticle,
 } from '../constants/consent';
@@ -34,12 +34,15 @@ export default function BookingConsent({
   agreedPrivacy,
   onAgreedTermsChange,
   onAgreedPrivacyChange,
+  providerName,
 }: {
   agreedTerms: boolean;
   agreedPrivacy: boolean;
   onAgreedTermsChange: (v: boolean) => void;
   onAgreedPrivacyChange: (v: boolean) => void;
+  providerName?: string;
 }) {
+  const parkingServiceTerms = buildParkingServiceTerms(providerName);
   return (
     <section className="space-y-3">
       <p className="text-xs font-bold text-brand">약관 동의</p>
@@ -55,9 +58,9 @@ export default function BookingConsent({
             <TermsArticleBlock key={article.heading} article={article} />
           ))}
           <p className="mb-2 mt-3 border-t border-sky-border/60 pt-3 text-[11px] font-bold text-ink">
-            {PARKING_SERVICE_TERMS.title}
+            {parkingServiceTerms.title}
           </p>
-          {PARKING_SERVICE_TERMS.articles.map((article) => (
+          {parkingServiceTerms.articles.map((article) => (
             <TermsArticleBlock key={article.heading} article={article} />
           ))}
         </div>

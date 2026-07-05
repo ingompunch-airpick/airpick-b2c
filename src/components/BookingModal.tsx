@@ -528,6 +528,7 @@ export default function BookingModal({
             agreedPrivacy={agreedPrivacy}
             onAgreedTermsChange={setAgreedTerms}
             onAgreedPrivacyChange={setAgreedPrivacy}
+            providerName={displayCompanyName(company.name)}
           />
 
           {error && <p className="text-xs font-semibold text-rose-500">{error}</p>}

@@ -61,17 +61,20 @@ export const AIRPICK_PLATFORM_TERMS = {
 /**
  * ② 주차대행 서비스 이용약관 (초안)
  * 서비스 제공·이행·보상 주체 = 고객이 선택한 제휴 업체 (에어픽 아님).
+ * 예약한 업체명을 제목·제1조에 주입해 계약 당사자를 명확히 한다.
  * ⚠️ 정식 시행 전 법률 검토 권장. 구체 요금·보상은 제휴 업체 정책을 따른다.
  */
-export const PARKING_SERVICE_TERMS = {
-  title: '② 주차대행 서비스 이용약관 (제공: 제휴 업체) (필수)',
-  articles: [
-    {
-      heading: '제1조 (서비스 제공 주체)',
-      paragraphs: [
-        '본 약관에 따른 주차대행 서비스는 고객이 예약 시 선택한 제휴 업체가 제공·이행하며, 계약 당사자는 고객과 해당 제휴 업체입니다.',
-      ],
-    },
+export function buildParkingServiceTerms(providerName?: string) {
+  const provider = providerName?.trim() || '제휴 업체';
+  return {
+    title: `② ${provider} 주차대행 이용약관 (필수)`,
+    articles: [
+      {
+        heading: '제1조 (서비스 제공 주체)',
+        paragraphs: [
+          `본 약관에 따른 주차대행 서비스는 고객이 예약 시 선택한 ${provider}가 제공·이행하며, 계약 당사자는 고객과 ${provider}입니다.`,
+        ],
+      },
     {
       heading: '제2조 (서비스 제공의 시작과 종료)',
       paragraphs: [
@@ -104,9 +107,10 @@ export const PARKING_SERVICE_TERMS = {
         '⑤ 차량 내부 귀중품 및 물품 분실에 대해서는 책임지지 않으므로, 귀중품은 반드시 사전에 회수해 주세요.',
       ],
       note: '• 구체적인 보상 기준·한도는 예약하신 제휴 업체의 보험 및 정책을 따릅니다.',
-    },
-  ] satisfies TermsArticle[],
-};
+      },
+    ] satisfies TermsArticle[],
+  };
+}
 
 export const BOOKING_TERMS_CHECKBOX =
   '위 에어픽 서비스(중개) 이용약관과 주차대행 서비스 이용약관을 모두 확인하였으며, 이에 동의합니다. (필수)';
