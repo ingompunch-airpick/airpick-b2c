@@ -1,0 +1,144 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ─────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** B2B 본사 Firebase Auth 계정 (Anonymous 아님) */
+    function isPlatformAdmin() {
+      return isSignedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email in [
+          'drive5746@gmail.com',
+          'ingompunch@gmail.com'
+        ];
+    }
+
+    function isValidCompanyId(companyId) {
+      return companyId.matches('^[a-z0-9_]{1,64}$');
+    }
+
+    /** 하위 업체(B2C 전용) — parentCompanyId로 대표 companies 문서에 연결 */
+    function isSubOperatorCompanyData(data, companyId) {
+      return data.keys().hasAll(['parentCompanyId', 'isOperatorPrimary'])
+        && data.isOperatorPrimary == false
+        && data.parentCompanyId is string
+        && isValidCompanyId(data.parentCompanyId)
+        && data.parentCompanyId != companyId;
+    }
+
+    function subOperatorParentExists(data) {
+      return exists(/databases/$(database)/documents/companies/$(data.parentCompanyId));
+    }
+
+    function isSubOperatorCreate(companyId) {
+      return isSignedIn()
+        && isValidCompanyId(companyId)
+        && isSubOperatorCompanyData(request.resource.data, companyId)
+        && subOperatorParentExists(request.resource.data);
+    }
+
+    function isSubOperatorDelete() {
+      return isSignedIn()
+        && resource.data.keys().hasAll(['parentCompanyId'])
+        && resource.data.parentCompanyId is string
+        && resource.data.parentCompanyId.size() > 0
+        && isValidCompanyId(resource.data.parentCompanyId);
+    }
+
+    function isValidReservationId(reservationId) {
+      return reservationId.matches('^[a-zA-Z0-9_-]{1,128}$');
+    }
+
+    function reservationCoreFieldsValid(data) {
+      return data.keys().hasAll(['status', 'createdAt'])
+        && data.status is string
+        && data.status.size() > 0
+        && data.status.size() <= 64
+        && data.createdAt is string
+        && data.createdAt.size() > 0
+        && data.createdAt.size() <= 40;
+    }
+
+    function reservationCompanyIdValid(data) {
+      return !('companyId' in data)
+        || (data.companyId is string
+            && data.companyId.size() > 0
+            && data.companyId.size() <= 64);
+    }
+
+    function reservationTotalPriceValid(data) {
+      return !('totalPrice' in data)
+        || (data.totalPrice is number && data.totalPrice >= 0);
+    }
+
+    function validReservationWrite() {
+      return reservationCoreFieldsValid(request.resource.data)
+        && reservationCompanyIdValid(request.resource.data)
+        && reservationTotalPriceValid(request.resource.data);
+    }
+
+    /**
+     * 보안·생성 필드는 최초 생성 후 클라이언트가 변경할 수 없다.
+     * (비밀번호 탈취·접수증 위조·출처 위변조 방지. B2B 상태/사진 수정은 영향 없음.)
+     * 취소·비번검증 등 정당한 변경은 Cloud Functions(admin)가 규칙을 우회해 처리.
+     */
+    function reservationProtectedFieldsUnchanged() {
+      return !request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(['reservationPassword', 'receiptToken', 'createdBy', 'createdAt', 'userId']);
+    }
+
+    // ── reservations (홈페이지 · B2C · B2B 공유) ───────────────────────────
+
+    match /reservations/{reservationId} {
+      // 조회: B2C 고객·B2B 파트너(둘 다 익명)·본사 모두 필요.
+      // 개별 예약 목록 조회는 서버 함수(admin)를 통한 비밀번호 검증도 병행한다.
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && isValidReservationId(reservationId)
+        && validReservationWrite();
+
+      // 수정: 상태·사진·주차위치 등은 허용, 보안·생성 필드 변경은 금지.
+      allow update: if isSignedIn()
+        && isValidReservationId(reservationId)
+        && validReservationWrite()
+        && reservationProtectedFieldsUnchanged();
+
+      // 삭제: 본사 관리자만 (고객·파트너는 상태 변경으로 취소).
+      allow delete: if isPlatformAdmin() && isValidReservationId(reservationId);
+    }
+
+    // ── companies (요금·마감 — B2C/홈 read, B2B write) ─────────────────────
+
+    match /companies/{companyId} {
+      // 요금·마감 조회: 로그인 전에도 B2C/홈에서 읽을 수 있도록 공개 read
+      allow read: if true;
+      allow create: if isPlatformAdmin() && isValidCompanyId(companyId)
+        || isSubOperatorCreate(companyId);
+      // blockedDates·isOpen·요금 등 — Anonymous 로그인 후 제휴업체 B2B 수정
+      allow update: if isSignedIn() && isValidCompanyId(companyId);
+      allow delete: if isPlatformAdmin() && isValidCompanyId(companyId)
+        || isSubOperatorDelete();
+    }
+
+    // ── system_settings (본사 레거시 마감) ────────────────────────────────
+
+    match /system_settings/{settingId} {
+      allow read: if isSignedIn();
+      allow write: if isPlatformAdmin();
+    }
+
+    // ── parking_lots (미사용 컬렉션 — 관리자만) ───────────────────────────
+
+    match /parking_lots/{lotId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+  }
+}
