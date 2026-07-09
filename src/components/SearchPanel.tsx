@@ -106,10 +106,44 @@ export default function SearchPanel({
         </button>
       </div>
 
+      <button
+        type="button"
+        onClick={() => onChange({ ...search, faceToFace: !search.faceToFace })}
+        className={cn(
+          'mt-2 flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-colors',
+          search.faceToFace ? 'bg-sky-deep' : 'bg-sky-bg'
+        )}
+      >
+        <span className="flex flex-col">
+          <span
+            className={cn('text-xs font-bold', search.faceToFace ? 'text-brand' : 'text-ink')}
+          >
+            대면 입고 희망
+          </span>
+          <span className="text-[10px] font-medium text-muted">
+            출국장 앞에서 기사에게 직접 인계 (에어픽 입점 업체)
+          </span>
+        </span>
+        <span
+          className={cn(
+            'relative h-5 w-9 shrink-0 rounded-full transition-colors',
+            search.faceToFace ? 'bg-brand' : 'bg-muted-light'
+          )}
+        >
+          <span
+            className={cn(
+              'absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform',
+              search.faceToFace ? 'translate-x-4' : 'translate-x-0.5'
+            )}
+          />
+        </span>
+      </button>
+
       <p className="mt-2 text-center text-[11px] font-semibold text-muted">
         총 <span className="font-bold text-brand">{days}일</span> · {search.departureTime} →{' '}
         {search.arrivalTime} · {search.terminal} ·{' '}
         {search.isIndoor ? parkingTypeLabel(true) : parkingTypeLabel(false)}
+        {search.faceToFace ? ' · 대면' : ''}
       </p>
       <p className="mt-1 text-center text-[10px] font-medium text-muted-light">
         입·출차 시간 기준 야간 할증 포함

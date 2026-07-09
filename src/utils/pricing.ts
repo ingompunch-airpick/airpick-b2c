@@ -143,6 +143,8 @@ export interface PriceBreakdown {
   nightDetails: string[];
   t2Surcharge: number;
   peakSurcharge: number;
+  /** 발렛(직접 인계) 추가요금 — 없으면 0 */
+  valetFee: number;
   total: number;
 }
 
@@ -154,7 +156,9 @@ export function getPriceBreakdown(
   isT2: boolean,
   departureTime = '10:00',
   arrivalTime = '10:00',
-  isCardPayment = false
+  isCardPayment = false,
+  /** 발렛(직접 인계) 추가요금 — 카드 할증과 무관하게 합계에 그대로 더함 */
+  valetFee = 0
 ): PriceBreakdown {
   const priced = mergePartnerPricing(company);
   const days = getParkingDayCount(start, end);
@@ -181,6 +185,7 @@ export function getPriceBreakdown(
     if (isCardPayment) {
       total = Math.floor(total * 1.1);
     }
+    total += valetFee;
 
     return {
       days,
@@ -193,6 +198,7 @@ export function getPriceBreakdown(
       nightDetails,
       t2Surcharge: 0,
       peakSurcharge: 0,
+      valetFee,
       total,
     };
   }
@@ -231,6 +237,7 @@ export function getPriceBreakdown(
     }
   }
 
+  /** T2 할증은 입고·출고 중 한쪽이라도 T2면 1회만 부과 */
   const t2Surcharge = isT2 && priced.t2Surcharge ? Number(priced.t2Surcharge) || 0 : 0;
 
   let peakSurcharge = 0;
@@ -253,7 +260,12 @@ export function getPriceBreakdown(
   }
 
   const total =
-    (Number(basePrice) || 0) + extraAmount + nightSurcharge + t2Surcharge + peakSurcharge;
+    (Number(basePrice) || 0) +
+    extraAmount +
+    nightSurcharge +
+    t2Surcharge +
+    peakSurcharge +
+    valetFee;
 
   return {
     days,
@@ -266,6 +278,7 @@ export function getPriceBreakdown(
     nightDetails,
     t2Surcharge,
     peakSurcharge,
+    valetFee,
     total,
   };
 }

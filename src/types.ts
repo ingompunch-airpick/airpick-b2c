@@ -34,6 +34,9 @@ export interface Company {
   surchargeEndTime?: string;
   surchargePrice?: number;
   t2Surcharge?: number;
+  /** 발렛(직접 인계) 추가요금 — 터미널별. 있으면 가격에 포함 */
+  valetFeeT1?: number;
+  valetFeeT2?: number;
   peakStartTime?: string;
   peakEndTime?: string;
   peakSurcharge?: number;
@@ -121,6 +124,10 @@ export interface Reservation {
   customerNotes?: string;
   /** airpick-b2c | homepage | b2b — 신뢰 정보(위치·사진) 노출 구분 */
   createdBy?: string;
+  /** 손님이 대면(출국장 앞 직접 인계) 입고를 요청함 (입점 예약) */
+  faceToFace?: boolean;
+  /** 대면 입고 발렛비 (totalPrice에 이미 포함) */
+  valetFee?: number;
 }
 
 export type ReservationLookupMode = 'carNumber' | 'phone';
@@ -154,6 +161,8 @@ export interface BookingSearch {
   isIndoor: boolean;
   /** 신용카드 결제 시 미입점 업체 요금 +10% 반영 */
   isCardPayment?: boolean;
+  /** 입점 업체 대면(출국장 앞 직접 인계) 입고 희망 — 대면 가능 업체 우선·발렛비 합산 */
+  faceToFace?: boolean;
 }
 
 export type AppTab = 'home' | 'compare' | 'esim' | 'my';

@@ -19,6 +19,7 @@ import {
   buildParkingCompareSections,
   buildPartnerDistanceList,
   isAirpickPartner,
+  sectionHasFaceToFace,
   type PricedCompany,
 } from '../utils/compareSort';
 import {
@@ -27,6 +28,7 @@ import {
   getTerminalDistanceKm,
   terminalDistanceSubtitle,
 } from '../utils/terminalDistance';
+import { companyValetFee } from '../utils/parkingType';
 import { cn } from '../utils/cn';
 
 function SortTabs({
@@ -68,6 +70,7 @@ function CompareSection({
   distanceMode,
   terminal,
   reviewSnapshots,
+  faceToFaceMode = false,
 }: {
   title: string;
   subtitle: string;
@@ -76,6 +79,7 @@ function CompareSection({
   distanceMode?: boolean;
   terminal?: BookingSearch['terminal'];
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
+  faceToFaceMode?: boolean;
 }) {
   if (items.length === 0) return null;
 
@@ -94,6 +98,8 @@ function CompareSection({
             layout="list"
             onSelect={() => onSelect(company, price)}
             reviewSnapshot={reviewSnapshots[company.id]}
+            valetFee={terminal ? companyValetFee(company, terminal) : null}
+            faceToFaceMode={faceToFaceMode}
             distanceDetail={
               distanceMode && terminal
                 ? formatTerminalDistanceDetail(company, terminal) ??
@@ -126,6 +132,9 @@ export default function ComparePage({
   const { partners, externals } = buildParkingCompareSections(merged, search);
   const distancePartners = buildPartnerDistanceList(merged, search);
   const totalCount = partners.length + externals.length;
+
+  /** 대면 UI는 입점 섹션에만 적용 (대면 가능 입점이 있을 때) */
+  const partnerFaceToFace = !!search.faceToFace && sectionHasFaceToFace(partners, search.terminal);
 
   const partnerIds = useMemo(
     () => [...new Set([...partners, ...distancePartners].map(({ company }) => company.id))],
@@ -167,18 +176,25 @@ export default function ComparePage({
         <>
           <CompareSection
             title={PARKING_PARTNER_SECTION.title}
-            subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 낮은 가격순`}
+            subtitle={
+              partnerFaceToFace
+                ? `${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 대면 가능 업체 우선 · 대면비 포함가`
+                : `${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 낮은 가격순`
+            }
             items={partners}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
+            terminal={search.terminal}
+            faceToFaceMode={partnerFaceToFace}
           />
 
           <CompareSection
             title={PARKING_EXTERNAL_SECTION.title}
-            subtitle={`${PARKING_EXTERNAL_SECTION.subtitleNote} · ${externals.length}곳 · 낮은 가격순 · 신용카드 결제 시 업체별 +10%`}
+            subtitle={`${PARKING_EXTERNAL_SECTION.subtitleNote} · ${externals.length}곳 · 낮은 가격순`}
             items={externals}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
+            terminal={search.terminal}
           />
         </>
       ) : (

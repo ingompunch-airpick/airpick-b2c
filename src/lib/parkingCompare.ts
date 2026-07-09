@@ -1,8 +1,11 @@
-import { externalParkingCompanies } from '../config/externalParkingCompanies';
+import { externalParkingCompanies } from '../config/externalParkingCompanies.generated';
 import { trackOutboundClick, hostFromUrl } from './analytics';
 import type { Company } from '../types';
 
-/** Firestore 입점 업체 + 비교용 외부 업체 목록 */
+/**
+ * 주차 비교 목록 — Firestore 입점 업체 + 구글 시트 미입점 업체(sync 생성).
+ * 같은 id는 입점(Firestore) 우선.
+ */
 export function mergeParkingCompareCompanies(firestoreCompanies: Company[]): Company[] {
   const partners = firestoreCompanies.map((c) => ({
     ...c,

@@ -65,6 +65,14 @@ export default function PriceBreakdownCard({ breakdown }: { breakdown: PriceBrea
             </span>
           </div>
         )}
+        {breakdown.valetFee > 0 && (
+          <div className="flex justify-between gap-3 font-semibold text-ink">
+            <span>대면 입고</span>
+            <span className="shrink-0 tabular-nums text-brand">
+              +{breakdown.valetFee.toLocaleString()}원
+            </span>
+          </div>
+        )}
         <div className="flex justify-between gap-3 border-t border-sky-border/60 pt-2 text-sm font-bold text-ink">
           <span>최종 합계</span>
           <span className="shrink-0 tabular-nums text-brand">

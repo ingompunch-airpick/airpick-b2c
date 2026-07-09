@@ -1,12 +1,7 @@
 import type { BookingSearch, Company, Terminal } from '../types';
-import { companyMatchesSearch } from './parkingType';
+import { companyMatchesSearch, companyValetFee } from './parkingType';
 import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany } from './pricing';
-import {
-  calculateGayuParkingPrice,
-  calculateRealParkingPrice,
-  resolveCompanyPricingProfile,
-  type PricingTerminal,
-} from './pricingProfiles';
+import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
 import {
   getTerminalDistanceKm,
   sortPartnersByTerminalDistance,
@@ -34,8 +29,9 @@ export function calculateComparePrice(company: Company, search: BookingSearch): 
   /** 비교 화면은 현금·계좌 기준 (카드 결제 시 현장 +10%) */
   const isCard = false;
 
+  let base: number;
   if (isGayuCompany(company.id, company.name) || company.pricingProfile === 'gayu-pricing') {
-    return calculateGayuParkingPrice({
+    base = calculateGayuParkingPrice({
       totalDays,
       terminal,
       isCard,
@@ -45,30 +41,32 @@ export function calculateComparePrice(company: Company, search: BookingSearch): 
       arrivalTime: search.arrivalTime,
       checkNightSurcharge: checkIsNightSurcharge,
     });
+  } else {
+    /** 출국·귀국 중 한쪽이라도 T2면 T2 할증 1회 부과 */
+    const isT2 = search.terminal === 'T2' || (search.arrivalTerminal ?? search.terminal) === 'T2';
+    base = calculatePrice(
+      company,
+      search.departureDate,
+      search.arrivalDate,
+      search.isIndoor,
+      isT2,
+      search.departureTime,
+      search.arrivalTime,
+      isCard
+    );
   }
 
-  const profileId = resolveCompanyPricingProfile(company, search.isIndoor);
-  if (profileId) {
-    return calculateRealParkingPrice(profileId, totalDays, terminal, isCard, {
-      departureDate: search.departureDate,
-      arrivalDate: search.arrivalDate,
-      departureTime: search.departureTime,
-      arrivalTime: search.arrivalTime,
-      checkNightSurcharge: checkIsNightSurcharge,
-    });
+  /**
+   * 발렛비 반영:
+   * - 미입점(홈페이지 이동): 항상 가격에 포함
+   * - 입점(에어픽 예약): 손님이 대면(faceToFace) 선택 시에만 포함
+   */
+  const valet = companyValetFee(company, search.terminal);
+  if (valet != null && (!isAirpickPartner(company) || search.faceToFace)) {
+    base += valet;
   }
 
-  const isT2 = search.terminal === 'T2';
-  return calculatePrice(
-    company,
-    search.departureDate,
-    search.arrivalDate,
-    search.isIndoor,
-    isT2,
-    search.departureTime,
-    search.arrivalTime,
-    isCard
-  );
+  return base;
 }
 
 export function priceCompaniesForSearch(
@@ -98,13 +96,30 @@ export interface ParkingCompareSections {
   externals: PricedCompany[];
 }
 
-/** 입점 업체 먼저(그룹 내 최저가순) → 그 아래 비입점 업체 */
+/** 대면 희망 시: 대면 가능 입점 업체를 상단으로(그 안에서 최저가순) */
+function sortPartnersForSearch(items: PricedCompany[], search: BookingSearch): PricedCompany[] {
+  const byPrice = sortByPrice(items);
+  if (!search.faceToFace) return byPrice;
+  const capable = byPrice.filter((it) => companyValetFee(it.company, search.terminal) != null);
+  const rest = byPrice.filter((it) => companyValetFee(it.company, search.terminal) == null);
+  return [...capable, ...rest];
+}
+
+/** 섹션에 해당 터미널 대면 가능 업체가 하나라도 있는지 */
+export function sectionHasFaceToFace(items: PricedCompany[], terminal: Terminal): boolean {
+  return items.some((item) => companyValetFee(item.company, terminal) != null);
+}
+
+/**
+ * 입점 업체 먼저(그룹 내 최저가순) → 그 아래 비입점 업체.
+ * 입점만 대면 희망 시 대면 가능 업체를 상단으로 정렬한다.
+ */
 export function buildParkingCompareSections(
   companies: Company[],
   search: BookingSearch
 ): ParkingCompareSections {
   const priced = priceCompaniesForSearch(companies, search);
-  const partners = sortByPrice(priced.filter((item) => isAirpickPartner(item.company)));
+  const partners = sortPartnersForSearch(priced.filter((item) => isAirpickPartner(item.company)), search);
   const externals = sortByPrice(priced.filter((item) => !isAirpickPartner(item.company)));
   return { partners, externals };
 }

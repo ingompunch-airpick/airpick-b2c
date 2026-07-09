@@ -52,6 +52,8 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     surchargeEndTime: data.surchargeEndTime ? String(data.surchargeEndTime) : undefined,
     surchargePrice: Number(data.surchargePrice) || undefined,
     t2Surcharge: Number(data.t2Surcharge) || undefined,
+    valetFeeT1: typeof data.valetFeeT1 === 'number' ? data.valetFeeT1 : undefined,
+    valetFeeT2: typeof data.valetFeeT2 === 'number' ? data.valetFeeT2 : undefined,
     peakStartTime: data.peakStartTime ? String(data.peakStartTime) : undefined,
     peakEndTime: data.peakEndTime ? String(data.peakEndTime) : undefined,
     peakSurcharge: Number(data.peakSurcharge) || undefined,

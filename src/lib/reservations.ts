@@ -89,6 +89,8 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     destination: data.destination ? String(data.destination) : undefined,
     customerNotes: data.customerNotes ? String(data.customerNotes) : undefined,
     createdBy: data.createdBy ? String(data.createdBy) : undefined,
+    faceToFace: data.faceToFace === true,
+    valetFee: typeof data.valetFee === 'number' ? data.valetFee : undefined,
   };
 }
 
@@ -217,7 +219,9 @@ export async function submitReservation(
   companyName: string,
   search: BookingSearch,
   form: BookingForm,
-  totalPrice: number
+  totalPrice: number,
+  /** 대면 입고가 실제 적용된 경우에만 전달 (업체 미지원 시 undefined) */
+  faceToFace?: { valetFee: number }
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
@@ -262,6 +266,12 @@ export async function submitReservation(
   if (destination) payload.destination = destination;
   if (customerNotes) payload.customerNotes = customerNotes;
   payload.reservationPassword = form.reservationPassword.trim();
+
+  /** 대면 입고 요청 — B2B 기사 앱에서 대면 인계 여부·발렛비 표시 */
+  if (faceToFace) {
+    payload.faceToFace = true;
+    payload.valetFee = faceToFace.valetFee;
+  }
 
   await setDoc(doc(db, 'reservations', id), payload);
 

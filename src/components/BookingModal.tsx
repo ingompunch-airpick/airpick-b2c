@@ -13,7 +13,12 @@ import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy
 import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
 import { getPriceBreakdown } from '../utils/pricing';
-import { companySupportsIndoor, companySupportsOutdoor, parkingTypeLabel } from '../utils/parkingType';
+import {
+  companySupportsIndoor,
+  companySupportsOutdoor,
+  companyValetFee,
+  parkingTypeLabel,
+} from '../utils/parkingType';
 import { formatPhoneInput } from '../utils/contact';
 import { saveRecentReservation } from '../utils/recentReservation';
 
@@ -70,7 +75,13 @@ export default function BookingModal({
     ? (search.arrivalTerminal ?? search.terminal)
     : search.terminal;
 
+  /** 출국·귀국 중 한쪽이라도 T2면 T2 할증 1회 부과 */
   const isT2 = search.terminal === 'T2' || arrivalTerminal === 'T2';
+
+  /** 입점 예약 모달 — 손님이 대면 선택 + 업체가 해당 터미널 발렛 제공 시 발렛비 포함 */
+  const valetFeeRaw = companyValetFee(company, search.terminal);
+  const faceToFaceApplied = search.faceToFace === true && valetFeeRaw !== null;
+  const valetFee = faceToFaceApplied ? valetFeeRaw ?? 0 : 0;
 
   const breakdown = useMemo(
     () =>
@@ -82,9 +93,10 @@ export default function BookingModal({
         isT2,
         search.departureTime,
         search.arrivalTime,
-        search.isCardPayment === true
+        search.isCardPayment === true,
+        valetFee
       ),
-    [company, search, arrivalTerminal, isT2]
+    [company, search, arrivalTerminal, isT2, valetFee]
   );
 
   const today = todayYmd();
@@ -153,7 +165,8 @@ export default function BookingModal({
         company.name,
         payload,
         form,
-        breakdown.total
+        breakdown.total,
+        faceToFaceApplied ? { valetFee } : undefined
       );
       saveRecentReservation({
         id,
@@ -204,6 +217,14 @@ export default function BookingModal({
               <dt className="text-xs font-semibold text-muted">차량번호</dt>
               <dd className="text-sm font-bold text-ink">{form.carNumber}</dd>
             </div>
+            {faceToFaceApplied && (
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-xs font-semibold text-muted">대면 입고</dt>
+                <dd className="text-sm font-bold text-brand">
+                  요청{valetFee > 0 ? ` · +${valetFee.toLocaleString()}원` : ' · 무료'}
+                </dd>
+              </div>
+            )}
             <div className="flex items-center justify-between gap-4 border-t border-sky-border/60 pt-2.5">
               <dt className="text-xs font-semibold text-muted">결제 예정 금액</dt>
               <dd className="text-base font-bold text-brand tabular-nums">

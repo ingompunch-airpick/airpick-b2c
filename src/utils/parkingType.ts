@@ -1,9 +1,15 @@
-import type { BookingSearch, Company } from '../types';
+import type { BookingSearch, Company, Terminal } from '../types';
 import { isGayuCompany } from './pricing';
 
 /** UI·문구 통일 — 실외/야외 혼용 금지 */
 export const PARKING_LABEL_INDOOR = '실내';
 export const PARKING_LABEL_OUTDOOR = '야외';
+
+/** 해당 터미널 발렛(직접 인계) 추가요금 — 없으면 null */
+export function companyValetFee(company: Company, terminal: Terminal): number | null {
+  const fee = terminal === 'T2' ? company.valetFeeT2 : company.valetFeeT1;
+  return typeof fee === 'number' ? fee : null;
+}
 
 export function parkingTypeLabel(isIndoor: boolean): string {
   return isIndoor ? PARKING_LABEL_INDOOR : PARKING_LABEL_OUTDOOR;
