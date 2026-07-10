@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import BookingConsent from './BookingConsent';
 import DateField from './DateField';
 import PriceBreakdownCard from './PriceBreakdownCard';
+import TerminalFields from './TerminalFields';
 import TimeField from './TimeField';
 import AirlineSelect from './AirlineSelect';
 import { PARKING_TAB_LABEL } from '../constants/marketing';
@@ -21,10 +22,7 @@ import {
 } from '../utils/parkingType';
 import { formatPhoneInput } from '../utils/contact';
 import { saveRecentReservation } from '../utils/recentReservation';
-
-function terminalLabel(t: Terminal) {
-  return t === 'T1' ? '1터미널' : '2터미널';
-}
+import { formatTerminalSummary } from '../utils/terminalLabels';
 
 const emptyForm = (): BookingForm => ({
   userName: '',
@@ -128,10 +126,19 @@ export default function BookingModal({
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const terminalSummary =
-    search.terminal === arrivalTerminal
-      ? terminalLabel(search.terminal)
-      : `${terminalLabel(search.terminal)} → ${terminalLabel(arrivalTerminal)}`;
+  const terminalSummary = formatTerminalSummary(search.terminal, arrivalTerminal);
+
+  const handleDifferentArrival = (checked: boolean) => {
+    setDifferentArrivalTerminal(checked);
+    if (!checked) {
+      setSearch((prev) => ({ ...prev, arrivalTerminal: prev.terminal }));
+      return;
+    }
+    setSearch((prev) => ({
+      ...prev,
+      arrivalTerminal: prev.terminal === 'T1' ? 'T2' : 'T1',
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,6 +219,10 @@ export default function BookingModal({
               <dd className="text-sm font-bold text-ink tabular-nums">
                 {formatDateDisplay(search.departureDate)} → {formatDateDisplay(search.arrivalDate)}
               </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-xs font-semibold text-muted">터미널</dt>
+              <dd className="text-sm font-bold text-ink">{terminalSummary}</dd>
             </div>
             <div className="flex items-center justify-between gap-4">
               <dt className="text-xs font-semibold text-muted">차량번호</dt>
@@ -319,6 +330,18 @@ export default function BookingModal({
               />
             </div>
 
+            <div className="mt-3 border-t border-sky-border/60 pt-3">
+              <TerminalFields
+                departure={search.terminal}
+                arrival={arrivalTerminal}
+                differentArrival={differentArrivalTerminal}
+                onDepartureChange={setTerminal}
+                onDifferentArrivalChange={handleDifferentArrival}
+                onArrivalChange={(t) => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
+                inactiveClassName="bg-sky-soft text-muted"
+              />
+            </div>
+
             {editSchedule && (
               <div className="mt-3 space-y-3 border-t border-sky-border/60 pt-3">
                 <div className="grid grid-cols-2 gap-2">
@@ -343,57 +366,6 @@ export default function BookingModal({
                     onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}
                   />
                 </div>
-
-                <p className="text-[11px] font-bold text-muted">출국 터미널</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['T1', 'T2'] as Terminal[]).map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => setTerminal(t)}
-                      className={cn(
-                        'rounded-xl py-2 text-xs font-bold transition-colors',
-                        search.terminal === t ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-                      )}
-                    >
-                      {terminalLabel(t)}
-                    </button>
-                  ))}
-                </div>
-
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={differentArrivalTerminal}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      setDifferentArrivalTerminal(checked);
-                      if (!checked) {
-                        setSearch((prev) => ({ ...prev, arrivalTerminal: prev.terminal }));
-                      }
-                    }}
-                    className="h-4 w-4 rounded border-sky-border text-brand"
-                  />
-                  <span className="text-[11px] font-semibold text-muted">귀국 터미널이 다릅니다</span>
-                </label>
-
-                {differentArrivalTerminal && (
-                  <div className="grid grid-cols-2 gap-2">
-                    {(['T1', 'T2'] as Terminal[]).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
-                        className={cn(
-                          'rounded-xl py-2 text-xs font-bold transition-colors',
-                          arrivalTerminal === t ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-                        )}
-                      >
-                        {terminalLabel(t)}
-                      </button>
-                    ))}
-                  </div>
-                )}
 
                 <p className="text-[11px] font-bold text-muted">주차 공간</p>
                 <div className="grid grid-cols-2 gap-2">
