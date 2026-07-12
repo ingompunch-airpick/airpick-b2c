@@ -18,8 +18,14 @@ export const BRAND_SUBLINE =
 /** 주차대행 탭 상단 — 공항만 표기 (탭명에 주차대행 이미 있음) */
 export const PARKING_PLATFORM_SUB = '인천공항';
 
+/** 주차 비교 허브 H1 (SEO·화면 공통) */
+export const PARKING_COMPARE_H1 = '인천공항 주차대행 가격비교';
+
 /** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
-export const PARKING_COMPARE_DESC = '전 업체 가격 비교 · 입점은 예약 탭에서 맡긴 차 확인';
+export const PARKING_COMPARE_DESC =
+  '전 업체 요금 비교 · 입점은 보험·거리 확인 후 예약 · 맡긴 뒤 위치·사진';
+
+export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 가격비교 · 에어픽';
 
 export const PARKING_PARTNER_SECTION = {
   title: '에어픽 입점 · 바로 예약',

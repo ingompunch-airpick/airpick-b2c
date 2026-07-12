@@ -237,7 +237,7 @@
       },
       {
         "source": "/parking",
-        "destination": "/index.html"
+        "destination": "/parking.html"
       },
       {
         "source": "/esim",

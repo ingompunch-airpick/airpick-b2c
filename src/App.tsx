@@ -22,6 +22,10 @@ import ParkingGuidePage from './pages/ParkingGuidePage';
 import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
+  ESIM_TAB_LABEL,
+  PARKING_COMPARE_DOCUMENT_TITLE,
+} from './constants/marketing';
+import {
   clearReviewQueryParam,
   readInitialTab,
   readReviewReservationId,
@@ -29,6 +33,13 @@ import {
   tabFromPathname,
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
+
+const DOCUMENT_TITLE: Record<AppTab, string> = {
+  home: '에어픽 · 주차대행·유심·eSIM 비교',
+  compare: PARKING_COMPARE_DOCUMENT_TITLE,
+  esim: `${ESIM_TAB_LABEL} 요금비교 · 에어픽`,
+  my: '예약 조회 · 에어픽',
+};
 
 export default function App() {
   const [tab, setTabState] = useState<AppTab>(() => readInitialTab());
@@ -65,6 +76,7 @@ export default function App() {
 
   useEffect(() => {
     trackTabView(tab);
+    document.title = DOCUMENT_TITLE[tab];
   }, [tab]);
 
   useEffect(() => {

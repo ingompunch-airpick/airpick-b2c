@@ -2,11 +2,40 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
+
+/** /parking → parking.html (dev · preview) */
+function parkingHtmlRewrite() {
+  const rewrite = (
+    req: { url?: string },
+    _res: unknown,
+    next: () => void
+  ) => {
+    const url = req.url ?? '';
+    if (url === '/parking' || url.startsWith('/parking?')) {
+      req.url = url.replace(/^\/parking/, '/parking.html');
+    }
+    next();
+  };
+  return {
+    name: 'parking-html-rewrite',
+    configureServer(server: { middlewares: { use: (fn: typeof rewrite) => void } }) {
+      server.middlewares.use(rewrite);
+    },
+    configurePreviewServer(server: { middlewares: { use: (fn: typeof rewrite) => void } }) {
+      server.middlewares.use(rewrite);
+    },
+  };
+}
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    parkingHtmlRewrite(),
     VitePWA({
       // 새 SW가 오면 바로 활성화 → 다음 로드부터 최신 셸
       registerType: 'autoUpdate',
@@ -18,7 +47,7 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         // HTML은 index.html만(폴백용). about/faq/privacy·검증·sitemap 등은 제외
-        globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', 'index.html'],
+        globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', 'index.html', 'parking.html'],
         globIgnores: [
           '**/about/**',
           '**/faq/**',
@@ -112,6 +141,14 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(rootDir, 'index.html'),
+        parking: path.resolve(rootDir, 'parking.html'),
+      },
+    },
+  },
   server: {
     port: 5173,
     host: true,

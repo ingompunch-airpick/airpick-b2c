@@ -3,8 +3,8 @@ import CompanyCard from '../components/CompanyCard';
 import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
 import {
-  BRAND_TAGLINE,
   PARKING_COMPARE_DESC,
+  PARKING_COMPARE_H1,
   PARKING_EXTERNAL_SECTION,
   PARKING_PARTNER_SECTION,
   PARKING_PLATFORM_SUB,
@@ -166,7 +166,7 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
-      <PageHero sub={PARKING_PLATFORM_SUB} line={BRAND_TAGLINE} desc={PARKING_COMPARE_DESC} />
+      <PageHero sub={PARKING_PLATFORM_SUB} line={PARKING_COMPARE_H1} desc={PARKING_COMPARE_DESC} />
       <SearchPanel search={search} onChange={onSearchChange} />
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
