@@ -4,6 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // ── Helpers ─────────────────────────────────────────────────────────────
+    // 정본: docs/FIRESTORE_RULES_CANONICAL.md — B2B·B2C 동일 유지, rules 배포는 한곳에서만
 
     function isSignedIn() {
       return request.auth != null;
@@ -23,7 +24,6 @@ service cloud.firestore {
       return companyId.matches('^[a-z0-9_]{1,64}$');
     }
 
-    /** 하위 업체(B2C 전용) — parentCompanyId로 대표 companies 문서에 연결 */
     function isSubOperatorCompanyData(data, companyId) {
       return data.keys().hasAll(['parentCompanyId', 'isOperatorPrimary'])
         && data.isOperatorPrimary == false
@@ -49,6 +49,36 @@ service cloud.firestore {
         && resource.data.parentCompanyId is string
         && resource.data.parentCompanyId.size() > 0
         && isValidCompanyId(resource.data.parentCompanyId);
+    }
+
+    /** 가맹점이 덮어쓰면 안 되는 B2C MY 보험·위치·사진 필드 (최고관리자만) */
+    function touchesHqOnlyParkingFields() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'facilityType',
+        'is_indoor',
+        'supports_indoor',
+        'supports_outdoor',
+        'features',
+        'indoorParkingAddress',
+        'outdoorParkingAddress',
+        'indoorParkingLat',
+        'indoorParkingLng',
+        'outdoorParkingLat',
+        'outdoorParkingLng',
+        'parkingLots',
+        'parkingDistances',
+        'parkingDistancesIndoor',
+        'parkingDistancesOutdoor',
+        'image_url',
+        'image_urls',
+        'sharesParkingLocation',
+        'sharesPhotos',
+        'insurance',
+        'hasInsurance',
+        'insuranceProvider',
+        'insuranceLimit',
+        'sharesInsurance'
+      ]);
     }
 
     function isValidReservationId(reservationId) {
@@ -85,63 +115,68 @@ service cloud.firestore {
 
     /**
      * 보안·생성 필드는 최초 생성 후 클라이언트가 변경할 수 없다.
-     * (비밀번호 탈취·접수증 위조·출처 위변조 방지. B2B 상태/사진 수정은 영향 없음.)
-     * 취소·비번검증 등 정당한 변경은 Cloud Functions(admin)가 규칙을 우회해 처리.
+     * 취소·비번 검증 등 정당한 변경은 Cloud Functions(admin)가 규칙을 우회해 처리.
      */
     function reservationProtectedFieldsUnchanged() {
       return !request.resource.data.diff(resource.data).affectedKeys()
         .hasAny(['reservationPassword', 'receiptToken', 'createdBy', 'createdAt', 'userId']);
     }
 
-    // ── reservations (홈페이지 · B2C · B2B 공유) ───────────────────────────
+    // ── reservations ───────────────────────────────────────────────────────
 
     match /reservations/{reservationId} {
-      // 조회: B2C 고객·B2B 파트너(둘 다 익명)·본사 모두 필요.
-      // 개별 예약 목록 조회는 서버 함수(admin)를 통한 비밀번호 검증도 병행한다.
       allow read: if isSignedIn();
 
       allow create: if isSignedIn()
         && isValidReservationId(reservationId)
         && validReservationWrite();
 
-      // 수정: 상태·사진·주차위치 등은 허용, 보안·생성 필드 변경은 금지.
       allow update: if isSignedIn()
         && isValidReservationId(reservationId)
         && validReservationWrite()
         && reservationProtectedFieldsUnchanged();
 
-      // 삭제: 본사 관리자만 (고객·파트너는 상태 변경으로 취소).
+      // 고객·파트너는 상태 변경으로 취소. 문서 삭제는 본사만.
       allow delete: if isPlatformAdmin() && isValidReservationId(reservationId);
     }
 
-    // ── companies (요금·마감 — B2C/홈 read, B2B write) ─────────────────────
+    match /storage_retention/{reservationId} {
+      allow read, write: if false;
+    }
+
+    // ── companies ──────────────────────────────────────────────────────────
 
     match /companies/{companyId} {
-      // 요금·마감 조회: 로그인 전에도 B2C/홈에서 읽을 수 있도록 공개 read
       allow read: if true;
+
       allow create: if isPlatformAdmin() && isValidCompanyId(companyId)
         || isSubOperatorCreate(companyId);
-      // blockedDates·isOpen·요금 등 — Anonymous 로그인 후 제휴업체 B2B 수정
-      allow update: if isSignedIn() && isValidCompanyId(companyId);
+
+      // 가맹점: 요금·대면·직원·마감 등만
+      // 보험·주소·핀·거리·사진·시설유형: 최고관리자만
+      allow update: if isSignedIn() && isValidCompanyId(companyId)
+        && (
+          isPlatformAdmin()
+          || !touchesHqOnlyParkingFields()
+        );
+
       allow delete: if isPlatformAdmin() && isValidCompanyId(companyId)
         || isSubOperatorDelete();
     }
 
-    // ── system_settings (본사 레거시 마감) ────────────────────────────────
+    // ── system_settings / parking_lots ─────────────────────────────────────
 
     match /system_settings/{settingId} {
       allow read: if isSignedIn();
       allow write: if isPlatformAdmin();
     }
 
-    // ── parking_lots (미사용 컬렉션 — 관리자만) ───────────────────────────
-
     match /parking_lots/{lotId} {
       allow read: if true;
       allow write: if isPlatformAdmin();
     }
 
-    // ── reviews (입점 업체 후기 — 공개 published만 클라이언트 읽기) ─────────
+    // ── reviews (후기 — 쓰기는 Cloud Functions만) ─────────────────────────
 
     match /reviews/{reviewId} {
       allow read: if isSignedIn() && resource.data.status == 'published';
