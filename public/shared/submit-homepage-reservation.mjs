@@ -100,7 +100,6 @@ export function buildHomepageReservationPayload({
     status: 'pending',
     createdAt: new Date().toISOString(),
     createdBy: CREATED_BY_HOMEPAGE,
-    notifyOnCreate: true,
     receiptToken: createReceiptToken(),
     paymentMethod: 'unpaid',
     isIndoor: search.isIndoor !== false,

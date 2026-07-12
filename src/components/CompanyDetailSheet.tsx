@@ -122,8 +122,14 @@ export default function CompanyDetailSheet({
   const reviewAverage = reviewSnapshot?.averageRating;
 
   return (
-    <div className="fixed inset-0 z-[55] flex items-end justify-center bg-sky-deep/60 backdrop-blur-sm sm:items-center sm:p-4">
-      <div className="flex max-h-[92dvh] w-full max-w-lg flex-col rounded-t-3xl bg-sky-soft shadow-xl sm:rounded-3xl">
+    <div className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center sm:p-4">
+      <button
+        type="button"
+        className="absolute inset-0 bg-sky-deep/50"
+        aria-label="닫기"
+        onClick={onClose}
+      />
+      <div className="relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl">
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-sky-border/50 px-5 py-4">
           <div className="flex min-w-0 gap-3">
             <img
@@ -209,7 +215,7 @@ export default function CompanyDetailSheet({
           </section>
         </div>
 
-        <div className="shrink-0 border-t border-sky-border/50 bg-sky-soft px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
             onClick={onBook}

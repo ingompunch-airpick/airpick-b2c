@@ -6,16 +6,23 @@ import {
   reservationPasswordMatches,
   sanitizeReservation,
 } from '../reservations/publicReservation';
+import { carNumberLookupNeedles } from '../utils/carNumber';
+import { normalizeKoreanPhone } from '../utils/phone';
 
 type LookupMode = 'carNumber' | 'phone';
 
 function lookupNeedles(mode: LookupMode, value: string): string[] {
+  if (mode === 'carNumber') return carNumberLookupNeedles(value);
   const trimmed = value.trim();
-  const variants =
-    mode === 'phone'
-      ? [trimmed, trimmed.replace(/\D/g, '')]
-      : [trimmed, trimmed.replace(/\s/g, '')];
-  return [...new Set(variants.filter(Boolean))];
+  const digits = trimmed.replace(/\D/g, '');
+  const needles = [trimmed, digits];
+  const intl = normalizeKoreanPhone(trimmed);
+  if (intl) {
+    needles.push(intl);
+    // 저장 형태가 010-... / 010... 인 경우도 커버
+    if (intl.startsWith('82')) needles.push(`0${intl.slice(2)}`);
+  }
+  return [...new Set(needles.filter(Boolean))];
 }
 
 /**

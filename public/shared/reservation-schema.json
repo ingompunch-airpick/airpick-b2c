@@ -28,8 +28,7 @@
     "status",
     "createdAt",
     "createdBy",
-    "receiptToken",
-    "notifyOnCreate"
+    "receiptToken"
   ],
   "optionalFields": [
     "destination",
@@ -40,7 +39,6 @@
   "defaults": {
     "status": "pending",
     "paymentMethod": "unpaid",
-    "notifyOnCreate": true,
     "scratchPhotos": { "synced": false }
   },
   "validation": {

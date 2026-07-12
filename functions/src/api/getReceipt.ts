@@ -26,25 +26,43 @@ export const getReceipt = onRequest(
 
     const id = String(req.query.id ?? '').trim();
     const token = String(req.query.t ?? '').trim();
-    if (!id || !token) {
+    if (!token) {
       res.status(400).json({ error: 'missing_params' });
       return;
     }
 
     try {
-      const snap = await admin.firestore().doc(`reservations/${id}`).get();
-      if (!snap.exists) {
-        res.status(404).json({ error: 'not_found' });
-        return;
+      let snap: FirebaseFirestore.DocumentSnapshot | null = null;
+
+      if (id) {
+        const byId = await admin.firestore().doc(`reservations/${id}`).get();
+        if (!byId.exists) {
+          res.status(404).json({ error: 'not_found' });
+          return;
+        }
+        const data = byId.data() as Record<string, unknown>;
+        const storedToken = String(data.receiptToken ?? '');
+        if (!tokenMatches(storedToken, token)) {
+          res.status(403).json({ error: 'invalid_token' });
+          return;
+        }
+        snap = byId;
+      } else {
+        // `/r/{receiptToken}` 폴백 — 토큰만으로 조회 (알림톡·구형 링크)
+        const q = await admin
+          .firestore()
+          .collection('reservations')
+          .where('receiptToken', '==', token)
+          .limit(1)
+          .get();
+        if (q.empty) {
+          res.status(404).json({ error: 'not_found' });
+          return;
+        }
+        snap = q.docs[0];
       }
 
       const data = snap.data() as Record<string, unknown>;
-      const storedToken = String(data.receiptToken ?? '');
-      if (!tokenMatches(storedToken, token)) {
-        res.status(403).json({ error: 'invalid_token' });
-        return;
-      }
-
       res.set('Cache-Control', 'private, no-store');
       res.json(toReceiptPublic(snap.id, data));
     } catch (err) {

@@ -13,6 +13,12 @@ functions/node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
+!.env.example
+functions/.env
+functions/.env.*
+!functions/.env.example
 
 # Firebase deploy cache (매 배포마다 변경 · 추적 불필요)
 .firebase/

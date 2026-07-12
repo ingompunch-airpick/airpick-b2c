@@ -58,7 +58,6 @@ export default function App() {
     if (tab === 'home') {
       return (
         <HomePage
-          companies={companies}
           onCompareParking={() => {
             trackCtaClick('compare_parking', 'home');
             setTab('compare');
@@ -140,11 +139,15 @@ export default function App() {
           company={bookingTarget.company}
           search={search}
           price={bookingTarget.price}
-          onClose={() => setBookingTarget(null)}
+          onClose={() => {
+            setBookingTarget(null);
+            setPartnerDetail(null);
+          }}
           onSuccess={(id) => {
             trackParkingBookComplete(bookingTarget.company.id, bookingTarget.company.name);
             setLastReservationId(id);
             setBookingTarget(null);
+            setPartnerDetail(null);
             setTab('my');
           }}
         />

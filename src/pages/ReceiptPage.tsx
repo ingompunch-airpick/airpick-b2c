@@ -27,15 +27,14 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = getReceiptTokenFromLocation();
-    if (!token) {
-      setError('missing_token');
-      setLoading(false);
-      return;
-    }
+    // `/r/{id}?t={token}` 또는 `/r/{token}` (토큰만 path)
+    const queryToken = getReceiptTokenFromLocation();
+    const lookup = queryToken
+      ? fetchPublicReceipt(reservationId, queryToken)
+      : fetchPublicReceipt(reservationId);
 
     let cancelled = false;
-    void fetchPublicReceipt(reservationId, token).then((data) => {
+    void lookup.then((data) => {
       if (cancelled) return;
       if (!data) {
         setError('not_found');

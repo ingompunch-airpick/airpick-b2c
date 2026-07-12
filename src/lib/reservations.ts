@@ -18,6 +18,7 @@ import {
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
 import { createReceiptToken } from '../utils/receiptToken';
+import { normalizeCarNumber } from '../utils/carNumber';
 
 export interface BookingForm {
   userName: string;
@@ -235,7 +236,7 @@ export async function submitReservation(
     companyName,
     userName: form.userName.trim(),
     carModel: form.carModel.trim(),
-    carNumber: form.carNumber.trim(),
+    carNumber: normalizeCarNumber(form.carNumber),
     phone: form.phone.trim(),
     departureDate: search.departureDate,
     departureTime: search.departureTime,
@@ -247,7 +248,6 @@ export async function submitReservation(
     status: 'pending',
     createdAt: now,
     createdBy: RESERVATION_CREATED_BY.AIRPICK_B2C,
-    notifyOnCreate: true,
     receiptToken: createReceiptToken(),
     paymentMethod: 'unpaid',
     isIndoor: search.isIndoor,

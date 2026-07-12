@@ -197,12 +197,21 @@ export default function BookingModal({
 
   if (completedId) {
     return (
-      <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">
-        <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-sky-soft p-6 text-center shadow-xl">
+      <div className="fixed inset-0 z-[80] flex items-end justify-center p-4 sm:items-center">
+        {/* 배경만 분리 — 카드 클릭이 backdrop에 먹히지 않도록 */}
+        <div className="absolute inset-0 bg-sky-deep/50" aria-hidden />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="booking-complete-title"
+          className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 text-center shadow-xl"
+        >
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand/10">
             <Check size={32} className="text-brand" strokeWidth={3} />
           </div>
-          <h2 className="mt-4 text-xl font-bold text-ink">예약이 접수되었습니다</h2>
+          <h2 id="booking-complete-title" className="mt-4 text-xl font-bold text-ink">
+            예약이 접수되었습니다
+          </h2>
           <p className="mt-1.5 text-sm font-medium text-muted">
             {displayCompanyName(company.name)} · {breakdown.days}일 주차
           </p>
@@ -277,8 +286,13 @@ export default function BookingModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-sky-soft p-5 shadow-xl">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center p-4 sm:items-center">
+      <div className="absolute inset-0 bg-sky-deep/50" aria-hidden />
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-5 shadow-xl"
+      >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-xs font-bold text-brand">에어픽 예약</p>
