@@ -8,25 +8,29 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      // 새 SW가 오면 바로 활성화 → 다음 로드부터 최신 셸
       registerType: 'autoUpdate',
       devOptions: {
         enabled: false,
       },
-      includeAssets: [
-        'robots.txt',
-        'sitemap.xml',
-        'seo.css',
-        'shared/airlines.json',
-        'shared/reservation-schema.json',
-        'shared/submit-homepage-reservation.mjs',
-        'naver1d9bbd9fd5d41de5108741bfcea9902c.html',
-        'favicon-48.png',
-        'favicon-32.png',
-        'icon-192.png',
-        'icon-512.png',
-      ],
+      // 아이콘만 precache. robots/sitemap/SEO HTML은 SW에 넣지 않음(구버전 고착 방지)
+      includeAssets: ['favicon-48.png', 'favicon-32.png', 'icon-192.png', 'icon-512.png'],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,txt,webmanifest,xml}'],
+        cleanupOutdatedCaches: true,
+        // HTML은 index.html만(폴백용). about/faq/privacy·검증·sitemap 등은 제외
+        globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', 'index.html'],
+        globIgnores: [
+          '**/about/**',
+          '**/faq/**',
+          '**/privacy/**',
+          '**/robots.txt',
+          '**/sitemap.xml',
+          '**/seo.css',
+          '**/naver*.html',
+          '**/google*.html',
+          '**/shared/**',
+        ],
+        navigateFallback: 'index.html',
         navigateFallbackDenylist: [
           /^\/robots\.txt$/,
           /^\/sitemap\.xml$/,
@@ -35,7 +39,43 @@ export default defineConfig({
           /^\/faq(?:\/|$)/,
           /^\/privacy(?:\/|$)/,
           /^\/admin(?:\/|$)/,
+          /^\/api(?:\/|$)/,
           /^\/naver[\w-]+\.html$/,
+          /^\/google[\w-]+\.html$/,
+        ],
+        runtimeCaching: [
+          // 해시된 빌드 에셋 — 오래 캐시 (파일명 해시로 버전 분리)
+          {
+            urlPattern: /\/assets\/.+\.(?:js|css)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'build-assets',
+              expiration: {
+                maxEntries: 64,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          // 정적 SEO·검증 파일 — SW 캐시 금지 (항상 네트워크)
+          {
+            urlPattern: /\/(?:robots\.txt|sitemap\.xml|seo\.css|(?:naver|google)[\w-]+\.html)$/i,
+            handler: 'NetworkOnly',
+          },
+          // about/faq/privacy 정적 HTML — 네트워크 우선, 최대 1시간
+          {
+            urlPattern: /\/(?:about|faq|privacy)(?:\/|$)/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'seo-html',
+              networkTimeoutSeconds: 3,
+              expiration: {
+                maxEntries: 12,
+                maxAgeSeconds: 60 * 60,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
       },
       manifest: {
