@@ -1,0 +1,243 @@
+/* SEO 정적 페이지 공통 — 앱 sky 팔레트와 맞춤 */
+:root {
+  --sky-bg: #edf4fc;
+  --sky-soft: #e4eff9;
+  --sky-tint: #d9ebfa;
+  --sky-border: #c8dff5;
+  --brand: #3182f6;
+  --brand-dark: #1b64da;
+  --ink: #191f28;
+  --muted: #6b7a8a;
+  --muted-light: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family:
+    'Pretendard Variable',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    sans-serif;
+  background: var(--sky-bg);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.wrap {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+
+.topnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--sky-border) 80%, transparent);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.topnav .brand {
+  color: var(--brand);
+  font-size: 0.9375rem;
+  margin-right: auto;
+}
+
+.hero {
+  border-radius: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--sky-tint), var(--sky-soft));
+  box-shadow: 0 4px 16px rgba(49, 130, 246, 0.1);
+}
+
+.hero .eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.hero h1 {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.hero p {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.section {
+  margin-top: 1.5rem;
+}
+
+.section h2 {
+  margin: 0 0 0.5rem;
+  padding: 0 0.125rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.card {
+  border-radius: 1rem;
+  padding: 0.875rem 1rem;
+  background: var(--sky-soft);
+  border: 1px solid color-mix(in srgb, var(--sky-border) 60%, transparent);
+}
+
+.card + .card {
+  margin-top: 0.75rem;
+}
+
+.card.accent {
+  background: #fff;
+  border: 2px solid color-mix(in srgb, var(--brand) 25%, transparent);
+  box-shadow: 0 2px 10px rgba(49, 130, 246, 0.08);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.card.accent h3 {
+  color: var(--brand);
+}
+
+.card p,
+.card li {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.card p {
+  margin: 0.375rem 0 0;
+}
+
+.card ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.card li + li {
+  margin-top: 0.35rem;
+}
+
+.dl {
+  margin: 0;
+}
+
+.dl div {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.dl div + div {
+  margin-top: 0.35rem;
+}
+
+.dl dt {
+  flex: 0 0 6rem;
+  color: var(--muted);
+}
+
+.dl dd {
+  margin: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+details.faq {
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--sky-soft);
+  border: 1px solid color-mix(in srgb, var(--sky-border) 60%, transparent);
+}
+
+details.faq + details.faq {
+  margin-top: 0.5rem;
+}
+
+details.faq summary {
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  list-style: none;
+}
+
+details.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+details.faq p {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.cat-label {
+  margin: 1rem 0 0.5rem;
+  padding: 0 0.125rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.footer-note {
+  margin-top: 2rem;
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--muted-light);
+}
+
+.cta {
+  display: inline-flex;
+  margin-top: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--brand);
+  color: #fff !important;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.cta:hover {
+  background: var(--brand-dark);
+}

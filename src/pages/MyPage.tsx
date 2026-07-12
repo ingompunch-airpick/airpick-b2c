@@ -10,6 +10,7 @@ import {
   lookupReservations,
   subscribeReservation,
 } from '../lib/reservations';
+import { submitCompanyReview } from '../lib/reviews';
 import type { Company, Reservation, ReservationLookupMode } from '../types';
 import { clearRecentReservation, getRecentReservation } from '../utils/recentReservation';
 
@@ -56,11 +57,24 @@ export default function MyPage({
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
   const [recentCarNumber] = useState(() => getRecentReservation()?.carNumber ?? '');
+  const [lookupPassword, setLookupPassword] = useState('');
 
   const handleCancel = async (reservation: Reservation, password: string) => {
     await cancelReservation(reservation.id, password);
     setReservations((prev) => prev.filter((r) => r.id !== reservation.id));
     if (getRecentReservation()?.id === reservation.id) clearRecentReservation();
+  };
+
+  const handleSubmitReview = async (
+    reservation: Reservation,
+    password: string,
+    rating: number,
+    body: string
+  ) => {
+    await submitCompanyReview(reservation.id, password, rating, body);
+    setReservations((prev) =>
+      prev.map((r) => (r.id === reservation.id ? { ...r, hasReview: true } : r))
+    );
   };
 
   const loadLastReservation = useCallback(async () => {
@@ -94,7 +108,13 @@ export default function MyPage({
     const unsubs = ids.map((id) =>
       subscribeReservation(id, (updated) => {
         if (!updated) return;
-        setReservations((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+        setReservations((prev) =>
+          prev.map((r) =>
+            r.id === updated.id
+              ? { ...updated, hasReview: r.hasReview === true || updated.hasReview === true }
+              : r
+          )
+        );
       })
     );
 
@@ -105,6 +125,7 @@ export default function MyPage({
     setLoading(true);
     setError('');
     setSearched(true);
+    setLookupPassword(password);
     try {
       const list = await lookupReservations(mode, value, password);
       setReservations(list);
@@ -156,6 +177,10 @@ export default function MyPage({
               company={companyMap[reservation.companyId]}
               onBookAirpick={onBookParking}
               onCancel={(password) => handleCancel(reservation, password)}
+              lookupPassword={lookupPassword}
+              onSubmitReview={(password, rating, body) =>
+                handleSubmitReview(reservation, password, rating, body)
+              }
             />
           ))}
         </div>

@@ -92,6 +92,7 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     createdBy: data.createdBy ? String(data.createdBy) : undefined,
     faceToFace: data.faceToFace === true,
     valetFee: typeof data.valetFee === 'number' ? data.valetFee : undefined,
+    hasReview: data.hasReview === true,
   };
 }
 

@@ -19,13 +19,13 @@ import EsimGuidePage from './pages/EsimGuidePage';
 import HomePage from './pages/HomePage';
 import MyPage from './pages/MyPage';
 import ParkingGuidePage from './pages/ParkingGuidePage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
+import { readInitialTab, syncUrlToTab, tabFromPathname } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
 
 export default function App() {
-  const [tab, setTab] = useState<AppTab>('home');
+  const [tab, setTabState] = useState<AppTab>(() => readInitialTab());
   const [search, setSearch] = useState<BookingSearch>(defaultBookingSearch);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,11 @@ export default function App() {
   const [supportOpen, setSupportOpen] = useState(false);
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
-  const [privacyOpen, setPrivacyOpen] = useState(false);
+
+  const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
+    setTabState(next);
+    syncUrlToTab(next, mode);
+  };
 
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
@@ -53,6 +57,24 @@ export default function App() {
   useEffect(() => {
     trackTabView(tab);
   }, [tab]);
+
+  useEffect(() => {
+    // 알 수 없는 path로 들어오면 홈으로 정리
+    if (tabFromPathname(window.location.pathname) == null) {
+      syncUrlToTab('home', 'replace');
+      setTabState('home');
+    }
+
+    const onPopState = () => {
+      const next = tabFromPathname(window.location.pathname) ?? 'home';
+      setTabState(next);
+      if (tabFromPathname(window.location.pathname) == null) {
+        syncUrlToTab('home', 'replace');
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   const page = useMemo(() => {
     if (tab === 'home') {
@@ -115,10 +137,10 @@ export default function App() {
           ) : (
             page
           )}
-          <SiteFooter onOpenPrivacy={() => setPrivacyOpen(true)} />
+          <SiteFooter />
         </main>
       </div>
-      <BottomNav active={tab} onChange={setTab} />
+      <BottomNav active={tab} onChange={(next) => setTab(next)} />
 
       {partnerDetail && (
         <CompanyDetailSheet
@@ -168,8 +190,6 @@ export default function App() {
       {esimGuideOpen && <EsimGuidePage onBack={() => setEsimGuideOpen(false)} />}
 
       {parkingGuideOpen && <ParkingGuidePage onBack={() => setParkingGuideOpen(false)} />}
-
-      {privacyOpen && <PrivacyPolicyPage onBack={() => setPrivacyOpen(false)} />}
     </div>
   );
 }

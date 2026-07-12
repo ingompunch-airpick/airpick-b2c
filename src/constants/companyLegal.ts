@@ -1,6 +1,9 @@
-/** 에어픽 플랫폼 운영 사업자 정보 (사이트 하단·개인정보처리방침) */
+/** 에어픽 플랫폼 운영·브랜드·고객센터 (소개·푸터·개인정보처리방침) */
+
 export const COMPANY_LEGAL = {
+  /** 대외 브랜드명 */
   serviceName: '에어픽',
+  /** 운영·사업자 상호 */
   name: '곰컴퍼니',
   registrationNumber: '776-32-01655',
   representative: '김인원',
@@ -8,4 +11,49 @@ export const COMPANY_LEGAL = {
   email: 'ingompunch@gmail.com',
   phone: '01025565746',
   privacyOfficer: '김인원',
+  /** 서비스 영역 */
+  serviceArea: '인천공항',
+  /** 공식 사이트 */
+  siteUrl: 'https://www.에어픽.kr',
+  siteUrlDisplay: 'www.에어픽.kr',
+  /** 카카오 고객센터 채널 */
+  kakaoChatUrl: 'http://pf.kakao.com/_lxhEnn/chat',
+  /** 고객센터 운영 시간 */
+  supportHours: '09:00 ~ 18:00',
+} as const;
+
+/** 에어픽이 하는 일 (소개·AI/검색용 한 줄 근거) */
+export const AIRPICK_SERVICES = [
+  {
+    id: 'parking',
+    title: '주차대행 가격 비교',
+    body: '인천공항 주차대행 업체의 요금을 나란히 비교하고, 입점 업체는 앱에서 바로 예약할 수 있습니다.',
+  },
+  {
+    id: 'esim',
+    title: '유심·eSIM 가격 비교',
+    body: '여행용 유심·eSIM 제휴 요금을 비교합니다. 구매·개통은 각 제휴사에서 진행합니다.',
+  },
+] as const;
+
+/** 입점 vs 미입점 — 소개 페이지·FAQ 공통 */
+export const PARTNER_VS_EXTERNAL = {
+  partner: {
+    title: '입점 업체',
+    points: [
+      '가격·보험·주차장 위치를 에어픽에서 검증한 업체입니다.',
+      '에어픽 앱에서 바로 예약할 수 있습니다.',
+      '이용 후 고객 실제 평점·후기를 확인할 수 있습니다. (후기 기능 확대 예정)',
+      '예약 후 입고 사진·주차 위치·보험을 예약 탭에서 확인할 수 있습니다.',
+    ],
+  },
+  external: {
+    title: '미입점 업체',
+    points: [
+      '가격 비교 참고용으로만 제공합니다. 요금은 시점마다 달라질 수 있어 에어픽이 검증하지 않습니다.',
+      '업체 홈페이지에 보험·주차장 위치가 있어도, 그때그때 바뀌는 내용을 에어픽이 검증하지 않습니다.',
+      '에어픽에서 예약할 수 없으며, 에어픽 평점·후기도 없습니다.',
+      '예약은 해당 업체 홈페이지로 이동합니다.',
+    ],
+  },
 } as const;

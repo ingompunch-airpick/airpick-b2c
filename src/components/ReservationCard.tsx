@@ -1,7 +1,8 @@
-import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck, XCircle } from 'lucide-react';
+import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
 import NaverMapPreview from './NaverMapPreview';
+import ReviewWriteModal from './ReviewWriteModal';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
@@ -12,6 +13,7 @@ import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insuranc
 import { getStatusLabel, getStatusStep } from '../utils/trust';
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import { getCancelEligibility } from '../utils/reservationCancel';
+import { isReservationReviewable } from '../lib/reviews';
 
 function formatSchedule(reservation: Reservation): string {
   const dep = reservation.departureDate.replace(/-/g, '.').slice(5);
@@ -143,11 +145,15 @@ export default function ReservationCard({
   company,
   onBookAirpick,
   onCancel,
+  onSubmitReview,
+  lookupPassword = '',
 }: {
   reservation: Reservation;
   company?: Company;
   onBookAirpick?: () => void;
   onCancel?: (password: string) => Promise<void>;
+  onSubmitReview?: (password: string, rating: number, body: string) => Promise<void>;
+  lookupPassword?: string;
 }) {
   const statusLabel = getStatusLabel(reservation.status);
   const insuranceDisplay = resolveInsuranceDisplay(reservation, company);
@@ -161,6 +167,12 @@ export default function ReservationCard({
   const [cancelPw, setCancelPw] = useState('');
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState('');
+  const [reviewOpen, setReviewOpen] = useState(false);
+
+  const canWriteReview =
+    Boolean(onSubmitReview) &&
+    isReservationReviewable(reservation.status) &&
+    reservation.hasReview !== true;
 
   const handleCancel = async () => {
     if (!onCancel || !/^\d{4}$/.test(cancelPw)) return;
@@ -309,6 +321,26 @@ export default function ReservationCard({
         </TrustBlock>
       </div>
 
+      {reservation.hasReview === true && isReservationReviewable(reservation.status) && (
+        <p className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-xs font-bold text-amber-700 ring-1 ring-amber-100">
+          <Star size={14} className="fill-amber-400 text-amber-400" strokeWidth={2} />
+          후기 작성 완료
+        </p>
+      )}
+
+      {canWriteReview && (
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={() => setReviewOpen(true)}
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand py-2.5 text-xs font-bold text-white"
+          >
+            <Star size={14} strokeWidth={2.25} />
+            후기 작성
+          </button>
+        </div>
+      )}
+
       {reservation.status !== 'cancelled' && onCancel && cancelEligibility.cancellable && (
         <div className="mt-3">
           {!cancelOpen ? (
@@ -389,6 +421,18 @@ export default function ReservationCard({
           </div>
         </dl>
       </details>
+
+      {reviewOpen && onSubmitReview && (
+        <ReviewWriteModal
+          companyName={displayCompanyName(reservation.companyName)}
+          initialPassword={lookupPassword}
+          onClose={() => setReviewOpen(false)}
+          onSubmit={async (password, rating, body) => {
+            await onSubmitReview(password, rating, body);
+            setReviewOpen(false);
+          }}
+        />
+      )}
     </article>
   );
 }

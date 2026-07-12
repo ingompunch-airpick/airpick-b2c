@@ -1,4 +1,4 @@
-import { ChevronRight, CircleHelp, Mail, X } from 'lucide-react';
+import { Building2, ChevronRight, CircleHelp, Mail, X } from 'lucide-react';
 import { openPartnerInquiryEmail } from '../constants/partnerContact';
 
 function MenuItem({
@@ -54,6 +54,14 @@ export default function AppMenuSheet({
         </div>
 
         <nav className="space-y-2 p-3">
+          <MenuItem
+            label="에어픽 소개"
+            icon={Building2}
+            onClick={() => {
+              onClose();
+              window.location.assign('/about/');
+            }}
+          />
           <MenuItem
             label="자주 묻는 질문"
             icon={CircleHelp}

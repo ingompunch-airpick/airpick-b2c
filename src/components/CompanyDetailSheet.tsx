@@ -91,6 +91,56 @@ export default function CompanyDetailSheet({
     };
   }, [company.id]);
 
+  useEffect(() => {
+    if (!reviewSnapshot || reviewSnapshot.count <= 0 || reviewSnapshot.averageRating == null) {
+      return;
+    }
+
+    const scriptId = `ld-company-review-${company.id}`;
+    document.getElementById(scriptId)?.remove();
+
+    const reviewsLd = reviewSnapshot.recent.map((review) => ({
+      '@type': 'Review',
+      author: {
+        '@type': 'Person',
+        name: review.authorMask || '익명',
+      },
+      datePublished: review.createdAt.slice(0, 10) || undefined,
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: review.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      ...(review.body?.trim() ? { reviewBody: review.body.trim() } : {}),
+    }));
+
+    const payload = {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      name,
+      url: 'https://www.에어픽.kr/parking',
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: reviewSnapshot.averageRating,
+        reviewCount: reviewSnapshot.count,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      ...(reviewsLd.length > 0 ? { review: reviewsLd } : {}),
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = scriptId;
+    script.text = JSON.stringify(payload);
+    document.head.appendChild(script);
+
+    return () => {
+      document.getElementById(scriptId)?.remove();
+    };
+  }, [company.id, name, reviewSnapshot]);
+
   const terminals =
     company.terminals?.length > 0 ? company.terminals.join(' · ') : 'T1 · T2';
 

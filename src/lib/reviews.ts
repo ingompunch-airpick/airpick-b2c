@@ -109,3 +109,60 @@ export function formatReviewDate(iso: string): string {
   if (d.length < 10) return d;
   return d.replace(/-/g, '.');
 }
+
+const REVIEW_API_PATH = '/api/reservation-review';
+
+/** 출고 완료 예약 → 입점 업체 후기 작성 (Cloud Function) */
+export async function submitCompanyReview(
+  reservationId: string,
+  password: string,
+  rating: number,
+  body?: string
+): Promise<void> {
+  const pw = password.trim();
+  if (!/^\d{4}$/.test(pw)) {
+    throw new Error('예약 비밀번호 4자리를 확인해 주세요.');
+  }
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    throw new Error('별점을 선택해 주세요.');
+  }
+
+  const res = await fetch(REVIEW_API_PATH, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: reservationId,
+      password: pw,
+      rating,
+      body: body?.trim() ? body.trim().slice(0, 200) : undefined,
+    }),
+  });
+  if (res.ok) return;
+
+  let error = '';
+  try {
+    error = ((await res.json()) as { error?: string }).error ?? '';
+  } catch {
+    error = '';
+  }
+  switch (error) {
+    case 'invalid_password':
+      throw new Error('예약 비밀번호가 일치하지 않습니다.');
+    case 'already_reviewed':
+      throw new Error('이미 후기를 작성한 예약입니다.');
+    case 'not_reviewable':
+      throw new Error('출고가 완료된 예약만 후기를 작성할 수 있습니다.');
+    case 'not_partner':
+      throw new Error('에어픽 입점 업체 예약만 후기를 작성할 수 있습니다.');
+    case 'not_found':
+      throw new Error('예약을 찾을 수 없습니다.');
+    case 'invalid_rating':
+      throw new Error('별점을 선택해 주세요.');
+    default:
+      throw new Error('후기 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
+export function isReservationReviewable(status: string): boolean {
+  return status === 'checked_out' || status === 'completed_out';
+}

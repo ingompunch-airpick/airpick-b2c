@@ -128,6 +128,8 @@ export interface Reservation {
   faceToFace?: boolean;
   /** 대면 입고 발렛비 (totalPrice에 이미 포함) */
   valetFee?: number;
+  /** 출고 완료 예약에 대한 업체 후기 작성 여부 (lookup API) */
+  hasReview?: boolean;
 }
 
 export type ReservationLookupMode = 'carNumber' | 'phone';

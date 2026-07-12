@@ -140,5 +140,12 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isPlatformAdmin();
     }
+
+    // ── reviews (입점 업체 후기 — 공개 published만 클라이언트 읽기) ─────────
+
+    match /reviews/{reviewId} {
+      allow read: if isSignedIn() && resource.data.status == 'published';
+      allow create, update, delete: if false;
+    }
   }
 }

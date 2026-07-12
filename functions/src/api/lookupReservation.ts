@@ -72,9 +72,23 @@ export const lookupReservation = onRequest(
         }
       }
 
-      const reservations = [...seen.entries()]
-        .filter(([, data]) => reservationPasswordMatches(data.reservationPassword, password))
-        .map(([id, data]) => ({ id, data: sanitizeReservation(data) }));
+      const matched = [...seen.entries()].filter(([, data]) =>
+        reservationPasswordMatches(data.reservationPassword, password)
+      );
+
+      const db = admin.firestore();
+      const reservations = await Promise.all(
+        matched.map(async ([id, data]) => {
+          const reviewSnap = await db.doc(`reviews/${id}`).get();
+          return {
+            id,
+            data: {
+              ...sanitizeReservation(data),
+              hasReview: reviewSnap.exists,
+            },
+          };
+        })
+      );
 
       res.set('Cache-Control', 'private, no-store');
       res.json({ reservations });

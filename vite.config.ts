@@ -14,6 +14,8 @@ export default defineConfig({
       },
       includeAssets: [
         'robots.txt',
+        'sitemap.xml',
+        'seo.css',
         'shared/airlines.json',
         'shared/reservation-schema.json',
         'shared/submit-homepage-reservation.mjs',
@@ -24,11 +26,15 @@ export default defineConfig({
         'icon-512.png',
       ],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,txt,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,txt,webmanifest,xml}'],
         navigateFallbackDenylist: [
           /^\/robots\.txt$/,
-          /^\/naver[\w-]+\.html$/,
           /^\/sitemap\.xml$/,
+          /^\/seo\.css$/,
+          /^\/about(?:\/|$)/,
+          /^\/faq(?:\/|$)/,
+          /^\/privacy(?:\/|$)/,
+          /^\/naver[\w-]+\.html$/,
         ],
       },
       manifest: {
@@ -65,6 +71,21 @@ export default defineConfig({
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/receipt/, '/getReceipt'),
+      },
+      '/api/reservation-lookup': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/reservation-lookup/, '/lookupReservation'),
+      },
+      '/api/reservation-cancel': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/reservation-cancel/, '/cancelReservation'),
+      },
+      '/api/reservation-review': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/reservation-review/, '/submitReview'),
       },
     },
   },

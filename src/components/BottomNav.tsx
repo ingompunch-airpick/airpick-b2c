@@ -1,6 +1,7 @@
 import { ClipboardList, Home, LayoutGrid, Smartphone } from 'lucide-react';
 import type { AppTab } from '../types';
 import { PARKING_TAB_LABEL, ESIM_TAB_LABEL } from '../constants/marketing';
+import { pathFromTab } from '../utils/appPath';
 import { cn } from '../utils/cn';
 
 const tabs: { id: AppTab; label: string; icon: typeof Home }[] = [
@@ -22,11 +23,17 @@ export default function BottomNav({
       <div className="mx-auto flex max-w-lg items-stretch justify-around">
         {tabs.map(({ id, label, icon: Icon }) => {
           const isActive = active === id;
+          const href = pathFromTab(id);
           return (
-            <button
+            <a
               key={id}
-              type="button"
-              onClick={() => onChange(id)}
+              href={href}
+              aria-current={isActive ? 'page' : undefined}
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                e.preventDefault();
+                onChange(id);
+              }}
               className={cn(
                 'flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors',
                 isActive ? 'text-brand' : 'text-muted-light'
@@ -34,7 +41,7 @@ export default function BottomNav({
             >
               <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
               <span>{label}</span>
-            </button>
+            </a>
           );
         })}
       </div>
