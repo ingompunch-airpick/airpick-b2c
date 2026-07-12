@@ -7,6 +7,33 @@
     "site": "airpick-b2c",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "redirects": [
+      {
+        "source": "/parking/",
+        "destination": "/parking",
+        "type": 301
+      },
+      {
+        "source": "/esim/",
+        "destination": "/esim",
+        "type": 301
+      },
+      {
+        "source": "/my/",
+        "destination": "/my",
+        "type": 301
+      },
+      {
+        "source": "/r/:id/",
+        "destination": "/r/:id",
+        "type": 301
+      },
+      {
+        "source": "/admin/reviews/",
+        "destination": "/admin/reviews",
+        "type": 301
+      }
+    ],
     "headers": [
       {
         "source": "/assets/**",
@@ -18,7 +45,34 @@
         ]
       },
       {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/404.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/canonical-host.js",
         "headers": [
           {
             "key": "Cache-Control",
@@ -182,7 +236,23 @@
         }
       },
       {
-        "source": "**",
+        "source": "/parking",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/esim",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/my",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/r/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/admin/reviews",
         "destination": "/index.html"
       }
     ]

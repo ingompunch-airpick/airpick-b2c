@@ -31,6 +31,15 @@ export default defineConfig({
           '**/shared/**',
         ],
         navigateFallback: 'index.html',
+        // 알려진 앱 경로만 SPA 폴백 — 그 외는 네트워크(Hosting 404)로
+        navigateFallbackAllowlist: [
+          /^\/$/,
+          /^\/parking$/,
+          /^\/esim$/,
+          /^\/my$/,
+          /^\/r\/[^/]+$/,
+          /^\/admin\/reviews$/,
+        ],
         navigateFallbackDenylist: [
           /^\/robots\.txt$/,
           /^\/sitemap\.xml$/,
@@ -38,7 +47,6 @@ export default defineConfig({
           /^\/about(?:\/|$)/,
           /^\/faq(?:\/|$)/,
           /^\/privacy(?:\/|$)/,
-          /^\/admin(?:\/|$)/,
           /^\/api(?:\/|$)/,
           /^\/naver[\w-]+\.html$/,
           /^\/google[\w-]+\.html$/,
