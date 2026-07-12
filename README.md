@@ -16,6 +16,13 @@
 
 **공통 백엔드:** Firebase 프로젝트 `airpick-reservation`
 
+### Firestore · Storage 규칙
+
+- `firestore.rules`는 **B2B(`airpick2-b-to-b`)와 동일**해야 합니다.
+- **rules 배포는 B2B에서만** 하세요. B2C에서 `firebase deploy --only firestore` 하면 잠금이 풀리거나 어긋날 수 있습니다.
+- 동기화: B2B `firestore.rules`를 이 repo로 복사한 뒤 커밋.
+
+
 ```
                     ┌─────────────────────┐
                     │  Firebase           │
