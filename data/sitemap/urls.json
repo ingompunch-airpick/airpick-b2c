@@ -1,0 +1,60 @@
+{
+  "comment": "사이트맵 소스. 경로만 적으면 scripts/generate-sitemap.mjs 가 public/sitemap.xml 을 갱신한다. /my · /r/* · /admin 은 넣지 말 것.",
+  "baseUrl": "https://www.xn--oh5b1bw17d.kr",
+  "urls": [
+    {
+      "path": "/",
+      "changefreq": "daily",
+      "priority": 1.0,
+      "note": "홈 · 비교 허브 진입"
+    },
+    {
+      "path": "/parking",
+      "changefreq": "daily",
+      "priority": 0.9,
+      "note": "주차대행 비교"
+    },
+    {
+      "path": "/esim",
+      "changefreq": "daily",
+      "priority": 0.9,
+      "note": "유심·eSIM 비교"
+    },
+    {
+      "path": "/about/",
+      "changefreq": "monthly",
+      "priority": 0.8,
+      "note": "소개 (정적 HTML)"
+    },
+    {
+      "path": "/faq/",
+      "changefreq": "monthly",
+      "priority": 0.8,
+      "note": "FAQ (정적 HTML)"
+    },
+    {
+      "path": "/privacy/",
+      "changefreq": "yearly",
+      "priority": 0.4,
+      "note": "개인정보처리방침 (정적 HTML)"
+    }
+  ],
+  "planned": [
+    {
+      "path": "/guides/parking-compare/",
+      "note": "P1 — 인천공항 주차대행 비교 가이드 (URL·정적 HTML 생긴 뒤 urls로 이동)"
+    },
+    {
+      "path": "/guides/t1-t2-distance/",
+      "note": "P1 — T1/T2 거리·고르는 법"
+    },
+    {
+      "path": "/guides/parking-insurance/",
+      "note": "P1 — 보험 있는 주차대행"
+    },
+    {
+      "path": "/guides/esim-beginner/",
+      "note": "P1 — 유심/eSIM 초보 가이드"
+    }
+  ]
+}

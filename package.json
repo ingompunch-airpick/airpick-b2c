@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "npm run sync:airlines && vite",
-    "build": "npm run sync:airlines && tsc -b && vite build",
+    "build": "npm run sitemap && npm run sync:airlines && tsc -b && vite build",
     "lint": "tsc -b --noEmit",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "sync:airlines": "cp src/constants/airlines.json public/shared/airlines.json",
     "sync:esim": "node scripts/sync-esim-offers.mjs",
     "sync:parking": "node scripts/sync-parking.mjs",
