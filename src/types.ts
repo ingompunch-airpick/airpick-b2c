@@ -19,6 +19,8 @@ export interface Company {
   reviews_count: number;
   features: string[];
   image_url: string;
+  /** B2B 주차장 갤러리 (첫 장 ≈ image_url) */
+  image_urls?: string[];
   terminals: string[];
   phone?: string;
   representative?: string;

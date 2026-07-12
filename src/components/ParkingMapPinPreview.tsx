@@ -50,15 +50,16 @@ export default function ParkingMapPinPreview({
         </p>
       )}
 
+      {/* 핀 없을 때는 큰 CTA 대신 작은 링크 — 거리는 카드 본문에 이미 표시 */}
       {!hasPin && href && (
         <a
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-xl bg-sky-tint py-2.5 text-xs font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand underline-offset-2 hover:underline"
         >
-          <MapPin size={14} strokeWidth={2.25} />
-          지도에서 보기
+          <MapPin size={12} strokeWidth={2.25} />
+          지도에서 위치 확인
         </a>
       )}
     </div>

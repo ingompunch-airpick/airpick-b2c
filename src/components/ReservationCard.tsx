@@ -1,7 +1,7 @@
 import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
-import NaverMapPreview from './NaverMapPreview';
+import ParkingMapPinPreview from './ParkingMapPinPreview';
 import ReviewWriteModal from './ReviewWriteModal';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
@@ -121,21 +121,31 @@ function PhotoStrip({
     );
   }
 
-  const imgClass = size === 'md' ? 'h-24 w-32' : 'h-16 w-16';
+  const imgClass =
+    size === 'md'
+      ? 'h-28 w-[9.5rem] sm:h-32 sm:w-40'
+      : 'h-16 w-16';
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
-      {photos.map((url) => (
+    <div className="-mx-0.5 flex gap-2 overflow-x-auto px-0.5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {photos.map((url, index) => (
         <a
-          key={url}
+          key={`${url}_${index}`}
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block shrink-0 overflow-hidden rounded-xl ring-2 ring-sky-tint"
+          className="block shrink-0 overflow-hidden rounded-xl ring-1 ring-sky-border/60 shadow-sm"
         >
-          <img src={url} alt="" className={`${imgClass} object-cover`} loading="lazy" />
+          <img
+            src={url}
+            alt={`주차장 사진 ${index + 1}`}
+            className={`${imgClass} object-cover`}
+            loading="lazy"
+          />
         </a>
       ))}
+      {/* 다음 장이 살짝 보이도록 오른쪽 여백 */}
+      {photos.length > 1 && <div className="w-6 shrink-0" aria-hidden />}
     </div>
   );
 }
@@ -245,11 +255,19 @@ export default function ReservationCard({
                     {parkingDisplay.detail && (
                       <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
                     )}
+                    {parkingDisplay.terminalDistanceLabel && (
+                      <p className="mt-1.5 text-sm font-bold text-brand">
+                        {parkingDisplay.terminalDistanceLabel}
+                      </p>
+                    )}
                   </div>
 
-                  <NaverMapPreview
+                  <ParkingMapPinPreview
                     address={parkingDisplay.title}
                     mapUrl={parkingDisplay.mapUrl}
+                    lat={parkingDisplay.lat}
+                    lng={parkingDisplay.lng}
+                    distanceLabel={undefined}
                   />
 
                   <div>

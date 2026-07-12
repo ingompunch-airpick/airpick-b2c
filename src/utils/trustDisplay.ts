@@ -51,7 +51,11 @@ export function companyHasParkingLocation(company: Company): boolean {
 export function companyHasParkingPhotos(company: Company): boolean {
   const indoor = company.indoorParkingPhotos?.length || 0;
   const outdoor = company.outdoorParkingPhotos?.length || 0;
-  return indoor + outdoor > 0;
+  const gallery = company.image_urls?.length || 0;
+  const hasPrimary =
+    !!company.image_url?.trim() &&
+    !company.image_url.includes('photo-1542282088-fe8426682b8f');
+  return indoor + outdoor + gallery > 0 || hasPrimary;
 }
 
 export function shouldShowLocationBadge(company: Company): boolean {

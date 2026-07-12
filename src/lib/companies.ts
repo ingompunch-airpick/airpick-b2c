@@ -19,6 +19,19 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
 
   const insurance = parseInsuranceFromFirestore(data);
 
+  const imageUrlsRaw = Array.isArray(data.image_urls)
+    ? (data.image_urls as unknown[])
+        .map((u) => String(u || '').trim())
+        .filter(Boolean)
+    : [];
+  const primaryImage = String(data.image_url || '').trim();
+  const image_urls =
+    imageUrlsRaw.length > 0
+      ? imageUrlsRaw
+      : primaryImage
+        ? [primaryImage]
+        : undefined;
+
   const company: Company = {
     id,
     name,
@@ -32,8 +45,9 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     reviews_count: Number(data.reviews_count) || 0,
     features: Array.isArray(data.features) ? (data.features as string[]) : [],
     image_url:
-      String(data.image_url || '') ||
+      primaryImage ||
       'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80',
+    image_urls,
     terminals: Array.isArray(data.terminals) ? (data.terminals as string[]) : ['T1', 'T2'],
     phone: data.phone ? String(data.phone) : undefined,
     representative: data.representative ? String(data.representative) : undefined,
