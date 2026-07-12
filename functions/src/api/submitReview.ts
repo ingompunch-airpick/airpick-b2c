@@ -3,6 +3,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions';
 
 import { reservationPasswordMatches } from '../reservations/publicReservation';
+import { recomputeCompanyRating } from '../reviews/aggregate';
 
 const REVIEWABLE_STATUSES = new Set(['checked_out', 'completed_out']);
 const BODY_MAX = 200;
@@ -13,34 +14,6 @@ function maskAuthorName(name: string): string {
   if (t.length === 1) return '*';
   if (t.length === 2) return `${t[0]}*`;
   return `${t[0]}*${t.slice(-1)}`;
-}
-
-async function recomputeCompanyRating(
-  db: admin.firestore.Firestore,
-  companyId: string
-): Promise<{ rating: number; reviews_count: number }> {
-  const snap = await db
-    .collection('reviews')
-    .where('companyId', '==', companyId)
-    .where('status', '==', 'published')
-    .get();
-
-  const ratings: number[] = [];
-  for (const doc of snap.docs) {
-    const rating = Number(doc.data().rating);
-    if (Number.isInteger(rating) && rating >= 1 && rating <= 5) {
-      ratings.push(rating);
-    }
-  }
-
-  const reviews_count = ratings.length;
-  const rating =
-    reviews_count > 0
-      ? Math.round((ratings.reduce((a, b) => a + b, 0) / reviews_count) * 10) / 10
-      : 0;
-
-  await db.doc(`companies/${companyId}`).update({ rating, reviews_count });
-  return { rating, reviews_count };
 }
 
 /**

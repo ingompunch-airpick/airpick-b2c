@@ -1,5 +1,5 @@
 import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
 import NaverMapPreview from './NaverMapPreview';
 import ReviewWriteModal from './ReviewWriteModal';
@@ -147,6 +147,8 @@ export default function ReservationCard({
   onCancel,
   onSubmitReview,
   lookupPassword = '',
+  autoOpenReview = false,
+  onAutoOpenReviewHandled,
 }: {
   reservation: Reservation;
   company?: Company;
@@ -154,6 +156,9 @@ export default function ReservationCard({
   onCancel?: (password: string) => Promise<void>;
   onSubmitReview?: (password: string, rating: number, body: string) => Promise<void>;
   lookupPassword?: string;
+  /** 출고 알림톡 딥링크 — 후기 모달 자동 오픈 */
+  autoOpenReview?: boolean;
+  onAutoOpenReviewHandled?: () => void;
 }) {
   const statusLabel = getStatusLabel(reservation.status);
   const insuranceDisplay = resolveInsuranceDisplay(reservation, company);
@@ -168,11 +173,21 @@ export default function ReservationCard({
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState('');
   const [reviewOpen, setReviewOpen] = useState(false);
+  const autoReviewOpenedRef = useRef(false);
 
   const canWriteReview =
     Boolean(onSubmitReview) &&
     isReservationReviewable(reservation.status) &&
     reservation.hasReview !== true;
+
+  useEffect(() => {
+    if (!autoOpenReview || autoReviewOpenedRef.current) return;
+    autoReviewOpenedRef.current = true;
+    if (canWriteReview) {
+      setReviewOpen(true);
+    }
+    onAutoOpenReviewHandled?.();
+  }, [autoOpenReview, canWriteReview, onAutoOpenReviewHandled]);
 
   const handleCancel = async () => {
     if (!onCancel || !/^\d{4}$/.test(cancelPw)) return;

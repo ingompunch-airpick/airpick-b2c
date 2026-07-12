@@ -136,7 +136,7 @@ export function buildPartnerDistanceList(
     priced.map((item) => ({
       company: item.company,
       price: item.price,
-      distanceKm: getTerminalDistanceKm(item.company, search.terminal),
+      distanceKm: getTerminalDistanceKm(item.company, search.terminal, search.isIndoor),
     }))
   );
 }

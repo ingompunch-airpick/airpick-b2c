@@ -62,6 +62,12 @@ export interface Company {
   outdoorParkingAddress?: string;
   indoorParkingMapUrl?: string;
   outdoorParkingMapUrl?: string;
+  /** B2B 핀 · 실내 주차장 좌표 */
+  indoorParkingLat?: number;
+  indoorParkingLng?: number;
+  /** B2B 핀 · 야외 주차장 좌표 */
+  outdoorParkingLat?: number;
+  outdoorParkingLng?: number;
   /** 손님 MY · 주차장 시설 사진 (B2B 등록) */
   indoorParkingPhotos?: string[];
   outdoorParkingPhotos?: string[];
@@ -74,8 +80,12 @@ export interface Company {
   /** 실내·야외 요금이 다른 업체 — 검색 조건에 따라 선택 */
   indoorPricingProfile?: string;
   outdoorPricingProfile?: string;
-  /** B2B 입력 · 터미널별 현재 주차장 거리 (계약 변경 시 업데이트) */
+  /** B2B 입력 · 터미널별 현재 주차장 거리 (계약 변경 시 업데이트) — 레거시 폴백 */
   parkingDistances?: CompanyParkingDistances;
+  /** 실내 대표 주차장 T1/T2 거리 */
+  parkingDistancesIndoor?: CompanyParkingDistances;
+  /** 야외 대표 주차장 T1/T2 거리 */
+  parkingDistancesOutdoor?: CompanyParkingDistances;
 }
 
 export interface Reservation {

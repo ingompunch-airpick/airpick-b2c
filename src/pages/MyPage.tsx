@@ -1,5 +1,5 @@
 import { BookOpen, Car, ChevronRight, HelpCircle } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BRAND_SUBLINE, BRAND_TAGLINE, ESIM_GUIDE_TITLE, PARKING_TAB_LABEL } from '../constants/marketing';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
@@ -40,12 +40,17 @@ function MyMenuButton({
 
 export default function MyPage({
   lastReservationId,
+  reviewReservationId = null,
+  onReviewDeepLinkHandled,
   onBookParking,
   onOpenSupport,
   onOpenParkingGuide,
   onOpenEsimGuide,
 }: {
   lastReservationId: string | null;
+  /** 출고 알림톡 `/my?review={id}` */
+  reviewReservationId?: string | null;
+  onReviewDeepLinkHandled?: () => void;
   onBookParking: () => void;
   onOpenSupport?: () => void;
   onOpenParkingGuide?: () => void;
@@ -58,6 +63,9 @@ export default function MyPage({
   const [error, setError] = useState('');
   const [recentCarNumber] = useState(() => getRecentReservation()?.carNumber ?? '');
   const [lookupPassword, setLookupPassword] = useState('');
+  const [autoOpenReviewId, setAutoOpenReviewId] = useState<string | null>(null);
+  const [reviewLinkHint, setReviewLinkHint] = useState('');
+  const reviewDeepLinkHandledRef = useRef<string | null>(null);
 
   const handleCancel = async (reservation: Reservation, password: string) => {
     await cancelReservation(reservation.id, password);
@@ -100,6 +108,47 @@ export default function MyPage({
   useEffect(() => {
     void loadLastReservation();
   }, [loadLastReservation]);
+
+  useEffect(() => {
+    if (!reviewReservationId) return;
+    if (reviewDeepLinkHandledRef.current === reviewReservationId) return;
+    reviewDeepLinkHandledRef.current = reviewReservationId;
+
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError('');
+      setReviewLinkHint('');
+      try {
+        const target = await fetchReservationById(reviewReservationId);
+        if (cancelled) return;
+        if (!target) {
+          setReviewLinkHint('예약을 찾지 못했습니다. 아래에서 차량번호와 비밀번호로 조회해 주세요.');
+          onReviewDeepLinkHandled?.();
+          return;
+        }
+        setReservations((prev) => {
+          if (prev.some((r) => r.id === target.id)) {
+            return prev.map((r) => (r.id === target.id ? { ...r, ...target } : r));
+          }
+          return [target, ...prev];
+        });
+        setAutoOpenReviewId(target.id);
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) {
+          setReviewLinkHint('후기 링크를 열지 못했습니다. 아래에서 예약을 조회한 뒤 후기를 작성해 주세요.');
+          onReviewDeepLinkHandled?.();
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reviewReservationId, onReviewDeepLinkHandled]);
 
   useEffect(() => {
     const ids = reservations.map((r) => r.id).filter(Boolean) as string[];
@@ -159,6 +208,12 @@ export default function MyPage({
         </p>
       )}
 
+      {reviewLinkHint && (
+        <p className="rounded-2xl bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800 ring-1 ring-amber-100">
+          {reviewLinkHint}
+        </p>
+      )}
+
       {error && (
         <p className="rounded-2xl bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-600 ring-1 ring-rose-100">
           {error}
@@ -178,6 +233,13 @@ export default function MyPage({
               onBookAirpick={onBookParking}
               onCancel={(password) => handleCancel(reservation, password)}
               lookupPassword={lookupPassword}
+              autoOpenReview={autoOpenReviewId === reservation.id}
+              onAutoOpenReviewHandled={() => {
+                if (autoOpenReviewId === reservation.id) {
+                  setAutoOpenReviewId(null);
+                  onReviewDeepLinkHandled?.();
+                }
+              }}
               onSubmitReview={(password, rating, body) =>
                 handleSubmitReview(reservation, password, rating, body)
               }

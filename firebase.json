@@ -70,6 +70,20 @@
         }
       },
       {
+        "source": "/api/admin/reviews",
+        "function": {
+          "functionId": "listAdminReviews",
+          "region": "asia-northeast3"
+        }
+      },
+      {
+        "source": "/api/admin/review-moderate",
+        "function": {
+          "functionId": "moderateReview",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

@@ -1,7 +1,12 @@
 import type { BookingSearch, Company, Terminal } from '../types';
+import { resolveParkingDistanceEntry } from './parkingDistances';
 
-export function getTerminalDistanceKm(company: Company, terminal: Terminal): number | null {
-  const entry = company.parkingDistances?.[terminal];
+export function getTerminalDistanceKm(
+  company: Company,
+  terminal: Terminal,
+  isIndoor = true
+): number | null {
+  const entry = resolveParkingDistanceEntry(company, terminal, isIndoor);
   if (entry == null || entry.distanceKm == null || Number.isNaN(entry.distanceKm)) {
     return null;
   }
@@ -19,9 +24,10 @@ export function formatTerminalDistanceLabel(km: number | null, terminal: Termina
 
 export function formatTerminalDistanceDetail(
   company: Company,
-  terminal: Terminal
+  terminal: Terminal,
+  isIndoor = true
 ): string | undefined {
-  const entry = company.parkingDistances?.[terminal];
+  const entry = resolveParkingDistanceEntry(company, terminal, isIndoor);
   if (!entry) return undefined;
 
   const parts: string[] = [formatTerminalDistanceLabel(entry.distanceKm, terminal)];
@@ -66,12 +72,13 @@ export function terminalDistanceSubtitle(search: BookingSearch, count: number): 
 export function formatAddressWithTerminalDistance(
   address: string,
   company: Company,
-  terminal: Terminal
+  terminal: Terminal,
+  isIndoor = true
 ): string {
   const trimmed = address.trim();
   if (!trimmed) return trimmed;
 
-  const km = getTerminalDistanceKm(company, terminal);
+  const km = getTerminalDistanceKm(company, terminal, isIndoor);
   if (km == null) return trimmed;
 
   return `${trimmed} · ${formatTerminalDistanceLabel(km, terminal)}`;

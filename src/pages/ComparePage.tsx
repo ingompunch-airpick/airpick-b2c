@@ -69,6 +69,7 @@ function CompareSection({
   onSelect,
   distanceMode,
   terminal,
+  isIndoor = true,
   reviewSnapshots,
   faceToFaceMode = false,
 }: {
@@ -78,6 +79,7 @@ function CompareSection({
   onSelect: (company: Company, price: number) => void;
   distanceMode?: boolean;
   terminal?: BookingSearch['terminal'];
+  isIndoor?: boolean;
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
   faceToFaceMode?: boolean;
 }) {
@@ -102,8 +104,11 @@ function CompareSection({
             faceToFaceMode={faceToFaceMode}
             distanceDetail={
               distanceMode && terminal
-                ? formatTerminalDistanceDetail(company, terminal) ??
-                  formatTerminalDistanceLabel(getTerminalDistanceKm(company, terminal), terminal)
+                ? formatTerminalDistanceDetail(company, terminal, isIndoor) ??
+                  formatTerminalDistanceLabel(
+                    getTerminalDistanceKm(company, terminal, isIndoor),
+                    terminal
+                  )
                 : undefined
             }
           />
@@ -211,6 +216,7 @@ export default function ComparePage({
               onSelect={handleSelect}
               distanceMode
               terminal={search.terminal}
+              isIndoor={search.isIndoor}
               reviewSnapshots={reviewSnapshots}
             />
           )}

@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore
 import { db } from '../firebase';
 import type { Company } from '../types';
 import { deriveParkingAddressesFromCompanyData } from '../utils/companyParking';
-import { parseParkingDistancesFromFirestore } from '../utils/parkingDistances';
+import { parseAllParkingDistancesFromFirestore } from '../utils/parkingDistances';
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { mergePartnerPricing } from '../utils/pricing';
 
@@ -74,7 +74,7 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     hasInsurance: insurance?.enrolled,
     insuranceProvider: insurance?.provider,
     insuranceLimit: insurance?.coverageLimitWon,
-    parkingDistances: parseParkingDistancesFromFirestore(data),
+    ...parseAllParkingDistancesFromFirestore(data),
     ...deriveParkingAddressesFromCompanyData(data),
   };
 

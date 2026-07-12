@@ -1,27 +1,43 @@
 import type { Company, Terminal } from '../types';
+import { resolveParkingDistanceEntry, resolveParkingDistancesForLot } from './parkingDistances';
 import { displayInsuranceLabel } from './trust';
 
 const TERMINALS: Terminal[] = ['T1', 'T2'];
 
 /** B2B parkingDistances — 주차장명·주소 라벨 */
-export function formatParkingDistanceLotLabel(company: Company, terminal: Terminal): string | undefined {
-  const entry = company.parkingDistances?.[terminal];
+export function formatParkingDistanceLotLabel(
+  company: Company,
+  terminal: Terminal,
+  isIndoor = true
+): string | undefined {
+  const entry = resolveParkingDistanceEntry(company, terminal, isIndoor);
   if (!entry) return undefined;
   const parts = [entry.parkingLotAddress?.trim(), entry.parkingLotName?.trim()].filter(Boolean);
   return parts.length > 0 ? parts.join(' · ') : undefined;
 }
 
 function hasParkingDistanceEntry(company: Company): boolean {
-  if (!company.parkingDistances) return false;
-  return TERMINALS.some((terminal) => {
-    const entry = company.parkingDistances?.[terminal];
-    return entry != null && entry.distanceKm != null && entry.distanceKm >= 0;
-  });
+  const maps = [
+    company.parkingDistancesIndoor,
+    company.parkingDistancesOutdoor,
+    company.parkingDistances,
+  ].filter(Boolean);
+  if (maps.length === 0) return false;
+  return maps.some((map) =>
+    TERMINALS.some((terminal) => {
+      const entry = map?.[terminal];
+      return entry != null && entry.distanceKm != null && entry.distanceKm >= 0;
+    })
+  );
 }
 
 function hasParkingLotInfoFromDistances(company: Company): boolean {
-  if (!company.parkingDistances) return false;
-  return TERMINALS.some((terminal) => !!formatParkingDistanceLotLabel(company, terminal));
+  return (
+    !!formatParkingDistanceLotLabel(company, 'T1', true) ||
+    !!formatParkingDistanceLotLabel(company, 'T2', true) ||
+    !!formatParkingDistanceLotLabel(company, 'T1', false) ||
+    !!formatParkingDistanceLotLabel(company, 'T2', false)
+  );
 }
 
 export function companyHasParkingLocation(company: Company): boolean {
@@ -51,4 +67,13 @@ export function shouldShowPhotosBadge(company: Company): boolean {
 export function shouldShowInsuranceBadge(company: Company): boolean {
   if (company.sharesInsurance === false) return false;
   return !!displayInsuranceLabel(company);
+}
+
+/** 검색 주차 유형에 거리 데이터가 있는지 */
+export function companyHasDistanceForLot(company: Company, isIndoor: boolean): boolean {
+  const map = resolveParkingDistancesForLot(company, isIndoor);
+  if (!map) return false;
+  return TERMINALS.some(
+    (terminal) => map[terminal] != null && map[terminal]!.distanceKm != null && map[terminal]!.distanceKm >= 0
+  );
 }

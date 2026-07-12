@@ -21,7 +21,13 @@ import MyPage from './pages/MyPage';
 import ParkingGuidePage from './pages/ParkingGuidePage';
 import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
-import { readInitialTab, syncUrlToTab, tabFromPathname } from './utils/appPath';
+import {
+  clearReviewQueryParam,
+  readInitialTab,
+  readReviewReservationId,
+  syncUrlToTab,
+  tabFromPathname,
+} from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
 
 export default function App() {
@@ -36,6 +42,9 @@ export default function App() {
     null
   );
   const [lastReservationId, setLastReservationId] = useState<string | null>(null);
+  const [reviewReservationId, setReviewReservationId] = useState<string | null>(() =>
+    readReviewReservationId()
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
@@ -105,6 +114,11 @@ export default function App() {
     return (
       <MyPage
         lastReservationId={lastReservationId}
+        reviewReservationId={reviewReservationId}
+        onReviewDeepLinkHandled={() => {
+          clearReviewQueryParam();
+          setReviewReservationId(null);
+        }}
         onBookParking={() => {
           trackCtaClick('compare_parking', 'reservation');
           setTab('compare');
@@ -123,7 +137,7 @@ export default function App() {
         }}
       />
     );
-  }, [tab, search, companies, lastReservationId]);
+  }, [tab, search, companies, lastReservationId, reviewReservationId]);
 
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">

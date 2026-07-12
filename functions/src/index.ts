@@ -5,6 +5,7 @@ import { getReceipt } from './api/getReceipt';
 import { lookupReservation } from './api/lookupReservation';
 import { cancelReservation } from './api/cancelReservation';
 import { submitReview } from './api/submitReview';
+import { listAdminReviews, moderateReview } from './api/moderateReview';
 
 admin.initializeApp();
 
@@ -13,4 +14,11 @@ setGlobalOptions({
   maxInstances: 10,
 });
 
-export { getReceipt, lookupReservation, cancelReservation, submitReview };
+export {
+  getReceipt,
+  lookupReservation,
+  cancelReservation,
+  submitReview,
+  listAdminReviews,
+  moderateReview,
+};

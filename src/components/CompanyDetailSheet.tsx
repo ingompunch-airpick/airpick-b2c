@@ -152,18 +152,41 @@ export default function CompanyDetailSheet({
     .join(' · ');
 
   const telHref = buildTelHref(company.phone);
-  const terminalDistance = formatTerminalDistanceDetail(company, search.terminal);
+  const terminalDistance = formatTerminalDistanceDetail(
+    company,
+    search.terminal,
+    search.isIndoor
+  );
 
   const indoorAddress = company.indoorParkingAddress
-    ? formatAddressWithTerminalDistance(company.indoorParkingAddress, company, search.terminal)
+    ? formatAddressWithTerminalDistance(
+        company.indoorParkingAddress,
+        company,
+        search.terminal,
+        true
+      )
     : null;
   const outdoorAddress = company.outdoorParkingAddress
-    ? formatAddressWithTerminalDistance(company.outdoorParkingAddress, company, search.terminal)
+    ? formatAddressWithTerminalDistance(
+        company.outdoorParkingAddress,
+        company,
+        search.terminal,
+        false
+      )
     : null;
-  const parkingLotFromB2b = formatParkingDistanceLotLabel(company, search.terminal);
+  const parkingLotFromB2b = formatParkingDistanceLotLabel(
+    company,
+    search.terminal,
+    search.isIndoor
+  );
   const parkingLotLine =
     !indoorAddress && !outdoorAddress && parkingLotFromB2b
-      ? formatAddressWithTerminalDistance(parkingLotFromB2b, company, search.terminal)
+      ? formatAddressWithTerminalDistance(
+          parkingLotFromB2b,
+          company,
+          search.terminal,
+          search.isIndoor
+        )
       : null;
 
   const reviewsLoading = reviewSnapshot == null;
