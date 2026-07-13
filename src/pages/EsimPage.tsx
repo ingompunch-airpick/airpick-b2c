@@ -2,6 +2,12 @@ import { ExternalLink } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
+import PageHero from '../components/PageHero';
+import {
+  ESIM_COMPARE_DESC,
+  ESIM_COMPARE_H1,
+  ESIM_COMPARE_SUB,
+} from '../constants/marketing';
 import { ESIM_OFFERS_UPDATED_AT } from '../config/esimPartnerOffers';
 import { getEsimCountryName } from '../config/esimCountries';
 import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
@@ -29,6 +35,8 @@ export default function EsimPage() {
 
   return (
     <div className="space-y-5">
+      <PageHero sub={ESIM_COMPARE_SUB} line={ESIM_COMPARE_H1} desc={ESIM_COMPARE_DESC} />
+
       <EsimSearchPanel search={search} onChange={setSearch} />
 
       <div className="flex items-start justify-between gap-3 px-1">

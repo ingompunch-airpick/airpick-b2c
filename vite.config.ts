@@ -7,21 +7,24 @@ import { fileURLToPath } from 'node:url';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
-/** /parking → parking.html (dev · preview) */
-function parkingHtmlRewrite() {
-  const rewrite = (
-    req: { url?: string },
-    _res: unknown,
-    next: () => void
-  ) => {
-    const url = req.url ?? '';
-    if (url === '/parking' || url.startsWith('/parking?')) {
-      req.url = url.replace(/^\/parking/, '/parking.html');
+/** /parking · /esim → 전용 HTML 엔트리 (dev · preview) */
+function hubHtmlRewrite() {
+  const hubs: Record<string, string> = {
+    '/parking': '/parking.html',
+    '/esim': '/esim.html',
+  };
+  const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
+    const raw = req.url ?? '';
+    const pathOnly = raw.split('?')[0] ?? '';
+    const dest = hubs[pathOnly];
+    if (dest) {
+      const qs = raw.includes('?') ? raw.slice(raw.indexOf('?')) : '';
+      req.url = `${dest}${qs}`;
     }
     next();
   };
   return {
-    name: 'parking-html-rewrite',
+    name: 'hub-html-rewrite',
     configureServer(server: { middlewares: { use: (fn: typeof rewrite) => void } }) {
       server.middlewares.use(rewrite);
     },
@@ -35,7 +38,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    parkingHtmlRewrite(),
+    hubHtmlRewrite(),
     VitePWA({
       // 새 SW가 오면 바로 활성화 → 다음 로드부터 최신 셸
       registerType: 'autoUpdate',
@@ -47,7 +50,12 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         // HTML은 index.html만(폴백용). about/faq/privacy·검증·sitemap 등은 제외
-        globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', 'index.html', 'parking.html'],
+        globPatterns: [
+          '**/*.{js,css,ico,png,svg,webmanifest}',
+          'index.html',
+          'parking.html',
+          'esim.html',
+        ],
         globIgnores: [
           '**/about/**',
           '**/faq/**',
@@ -146,6 +154,7 @@ export default defineConfig({
       input: {
         main: path.resolve(rootDir, 'index.html'),
         parking: path.resolve(rootDir, 'parking.html'),
+        esim: path.resolve(rootDir, 'esim.html'),
       },
     },
   },

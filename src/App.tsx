@@ -22,7 +22,7 @@ import ParkingGuidePage from './pages/ParkingGuidePage';
 import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
-  ESIM_TAB_LABEL,
+  ESIM_COMPARE_DOCUMENT_TITLE,
   PARKING_COMPARE_DOCUMENT_TITLE,
 } from './constants/marketing';
 import {
@@ -37,7 +37,7 @@ import { defaultBookingSearch } from './utils/dates';
 const DOCUMENT_TITLE: Record<AppTab, string> = {
   home: '에어픽 · 주차대행·유심·eSIM 비교',
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
-  esim: `${ESIM_TAB_LABEL} 요금비교 · 에어픽`,
+  esim: ESIM_COMPARE_DOCUMENT_TITLE,
   my: '예약 조회 · 에어픽',
 };
 

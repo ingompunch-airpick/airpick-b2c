@@ -27,6 +27,16 @@ export const PARKING_COMPARE_DESC =
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 가격비교 · 에어픽';
 
+/** 유심·eSIM 비교 허브 H1 (SEO·화면 공통) */
+export const ESIM_COMPARE_H1 = '해외여행 유심·eSIM 가격비교';
+
+export const ESIM_COMPARE_DESC =
+  '나라·용량·일수·eSIM/USIM으로 제휴 참고가 비교 · 구매·개통은 제휴사에서';
+
+export const ESIM_COMPARE_DOCUMENT_TITLE = '해외여행 유심·eSIM 가격비교 · 에어픽';
+
+export const ESIM_COMPARE_SUB = '제휴 요금 비교';
+
 export const PARKING_PARTNER_SECTION = {
   title: '에어픽 입점 · 바로 예약',
   titleDistance: '에어픽 입점 · 거리순',

@@ -241,7 +241,7 @@
       },
       {
         "source": "/esim",
-        "destination": "/index.html"
+        "destination": "/esim.html"
       },
       {
         "source": "/my",
