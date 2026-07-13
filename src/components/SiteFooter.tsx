@@ -83,6 +83,9 @@ export default function SiteFooter() {
         <a href="/about/" className="text-muted underline-offset-2 hover:text-brand hover:underline">
           에어픽 소개
         </a>
+        <a href="/guides/" className="text-muted underline-offset-2 hover:text-brand hover:underline">
+          가이드
+        </a>
         <a
           href="/privacy/"
           className="text-muted underline-offset-2 hover:text-brand hover:underline"

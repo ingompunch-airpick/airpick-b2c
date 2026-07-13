@@ -1,4 +1,4 @@
-import { Building2, ChevronRight, CircleHelp, Mail, X } from 'lucide-react';
+import { BookOpen, Building2, ChevronRight, CircleHelp, Mail, X } from 'lucide-react';
 import { openPartnerInquiryEmail } from '../constants/partnerContact';
 
 function MenuItem({
@@ -60,6 +60,14 @@ export default function AppMenuSheet({
             onClick={() => {
               onClose();
               window.location.assign('/about/');
+            }}
+          />
+          <MenuItem
+            label="주차대행 가이드"
+            icon={BookOpen}
+            onClick={() => {
+              onClose();
+              window.location.assign('/guides/');
             }}
           />
           <MenuItem
