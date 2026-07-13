@@ -187,6 +187,8 @@ export interface CompanyReview {
   rating: number;
   body?: string;
   authorMask: string;
+  /** 끝 2자리 마스킹 차량번호 — 없으면 미표시 */
+  carMask?: string;
   createdAt: string;
 }
 

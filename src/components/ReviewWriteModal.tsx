@@ -47,6 +47,9 @@ export default function ReviewWriteModal({
             <p className="text-xs font-bold text-brand">업체 후기</p>
             <h2 className="mt-1 text-lg font-bold text-ink">{companyName}</h2>
             <p className="mt-1 text-xs font-medium text-muted">출고 완료 예약에 대한 후기입니다</p>
+            <p className="mt-1 text-[11px] font-medium text-muted-light">
+              공개 시 이름·차량번호는 일부만 표시됩니다 (예: 김*수 · 31소34**)
+            </p>
           </div>
           <button
             type="button"

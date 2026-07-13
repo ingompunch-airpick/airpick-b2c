@@ -24,6 +24,7 @@ function normalizeReview(id: string, data: Record<string, unknown>): CompanyRevi
     rating,
     body: data.body ? String(data.body) : undefined,
     authorMask: String(data.authorMask || '익명'),
+    carMask: data.carMask ? String(data.carMask) : undefined,
     createdAt: String(data.createdAt || ''),
   };
 }

@@ -56,6 +56,7 @@ export const listAdminReviews = onRequest(
           rating: Number(data.rating) || 0,
           body: data.body ? String(data.body) : undefined,
           authorMask: String(data.authorMask ?? '익명'),
+          carMask: data.carMask ? String(data.carMask) : undefined,
           status: String(data.status ?? ''),
           createdAt: String(data.createdAt ?? ''),
         };

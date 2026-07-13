@@ -9,6 +9,7 @@ type AdminReview = {
   rating: number;
   body?: string;
   authorMask: string;
+  carMask?: string;
   status: string;
   createdAt: string;
 };
@@ -168,7 +169,9 @@ export default function AdminReviewsPage() {
                         {review.companyName || review.companyId}
                       </p>
                       <p className="mt-0.5 text-[11px] font-medium text-muted">
-                        {review.authorMask} · {review.createdAt.slice(0, 10)} · {review.id}
+                        {review.authorMask}
+                        {review.carMask ? ` · ${review.carMask}` : ''} · {review.createdAt.slice(0, 10)} ·{' '}
+                        {review.id}
                       </p>
                     </div>
                     <span

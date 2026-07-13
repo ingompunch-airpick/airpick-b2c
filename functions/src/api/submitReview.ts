@@ -4,6 +4,7 @@ import { logger } from 'firebase-functions';
 
 import { reservationPasswordMatches } from '../reservations/publicReservation';
 import { recomputeCompanyRating } from '../reviews/aggregate';
+import { maskCarNumber } from '../utils/carNumber';
 
 const REVIEWABLE_STATUSES = new Set(['checked_out', 'completed_out']);
 const BODY_MAX = 200;
@@ -98,6 +99,7 @@ export const submitReview = onRequest(
         companyId;
 
       const createdAt = new Date().toISOString();
+      const carMask = maskCarNumber(String(data.carNumber ?? ''));
       await reviewRef.create({
         companyId,
         companyName,
@@ -105,6 +107,7 @@ export const submitReview = onRequest(
         rating,
         ...(reviewBody ? { body: reviewBody } : {}),
         authorMask: maskAuthorName(String(data.userName ?? '')),
+        ...(carMask ? { carMask } : {}),
         status: 'published',
         createdAt,
         createdBy: 'customer',

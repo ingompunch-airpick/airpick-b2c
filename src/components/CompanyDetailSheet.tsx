@@ -40,6 +40,7 @@ function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
 }
 
 function ReviewItem({ review }: { review: CompanyReview }) {
+  const identity = [review.authorMask, review.carMask].filter(Boolean).join(' · ');
   return (
     <div className="rounded-xl bg-sky-bg px-3.5 py-3 ring-1 ring-sky-border/50">
       <div className="flex items-center justify-between gap-2">
@@ -48,7 +49,7 @@ function ReviewItem({ review }: { review: CompanyReview }) {
           {formatReviewDate(review.createdAt)}
         </span>
       </div>
-      <p className="mt-1.5 text-[11px] font-semibold text-muted">{review.authorMask}</p>
+      <p className="mt-1.5 text-[11px] font-semibold text-muted">{identity || '익명'}</p>
       {review.body?.trim() && (
         <p className="mt-1 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
       )}
