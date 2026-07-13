@@ -119,13 +119,27 @@
             "legalName": "곰컴퍼니",
             "url": "https://www.에어픽.kr",
             "logo": "https://www.에어픽.kr/icon-512.png",
-            "email": "ingompunch@gmail.com",
             "telephone": "+82-10-2556-5746",
+            "email": "ingompunch@gmail.com",
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "자연대로29, 2017호",
               "addressLocality": "인천 중구",
               "addressCountry": "KR"
+            },
+            "openingHoursSpecification": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ],
+              "opens": "09:00",
+              "closes": "18:00"
             },
             "sameAs": ["https://pf.kakao.com/_lxhEnn"]
           },
@@ -182,7 +196,7 @@
             "name": "에어픽 · 주차대행·유심·eSIM 비교",
             "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
             "about": { "@id": "https://www.에어픽.kr/#organization" },
-            "description": "인천공항 주차대행·유심·eSIM 가격비교. 검증된 업체 요금·보험을 비교하고 예약하세요.",
+            "description": "인천공항 주차대행·유심·eSIM 가격비교. 입점 업체 요금·보험을 비교하고, 예약 후 위치·사진을 확인하세요.",
             "inLanguage": "ko-KR"
           }
         ]
@@ -194,7 +208,7 @@
       <!-- 크롤러·JS 전용: React가 mount되면 이 내용은 앱 UI로 교체됩니다 -->
       <main class="prerender-home">
         <p class="brand">에어픽</p>
-        <h1>검증된 업체만, 가격부터 보험까지 투명하게</h1>
+        <h1>입점 업체 요금·보험 비교, 맡긴 뒤 위치·사진까지</h1>
         <p class="eyebrow">인천공항 주차대행 · 유심·eSIM 가격비교</p>
 
         <section>
@@ -210,9 +224,9 @@
         <section>
           <h2>유심·eSIM · 제휴 요금 비교</h2>
           <ul>
-            <li>제휴사별 요금</li>
+            <li>제휴사별 참고 요금</li>
             <li>나라·용량·일수</li>
-            <li>최저가순 정렬</li>
+            <li>낮은 가격순 정렬</li>
           </ul>
           <a class="cta secondary" href="/esim">유심·eSIM 요금 비교하기</a>
         </section>

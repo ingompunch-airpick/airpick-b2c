@@ -81,12 +81,17 @@ export function priceCompaniesForSearch(
     }));
 }
 
-/** 그룹 내 가격 오름차순 → 평점 → 이름 */
+/** 그룹 내 가격 오름차순 → 실후기 수·평점(있을 때만) → 이름 */
 function sortByPrice(items: PricedCompany[]): PricedCompany[] {
   return [...items].sort((a, b) => {
     if (a.price !== b.price) return a.price - b.price;
-    const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
-    if (ratingDiff !== 0) return ratingDiff;
+    const aReviews = a.company.reviews_count || 0;
+    const bReviews = b.company.reviews_count || 0;
+    if (aReviews !== bReviews) return bReviews - aReviews;
+    if (aReviews > 0 && bReviews > 0) {
+      const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
+      if (ratingDiff !== 0) return ratingDiff;
+    }
     return a.company.name.localeCompare(b.company.name, 'ko');
   });
 }

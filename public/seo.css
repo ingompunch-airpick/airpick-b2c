@@ -229,6 +229,7 @@ details.faq p {
 .cta {
   display: inline-flex;
   margin-top: 0.75rem;
+  margin-right: 0.5rem;
   padding: 0.65rem 1rem;
   border-radius: 0.75rem;
   background: var(--brand);
@@ -240,4 +241,14 @@ details.faq p {
 
 .cta:hover {
   background: var(--brand-dark);
+}
+
+.cta.secondary {
+  background: transparent;
+  color: var(--brand) !important;
+  box-shadow: inset 0 0 0 1.5px var(--brand);
+}
+
+.cta.secondary:hover {
+  background: rgba(49, 130, 246, 0.08);
 }

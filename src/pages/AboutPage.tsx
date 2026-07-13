@@ -37,7 +37,8 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           </div>
           <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
             {COMPANY_LEGAL.serviceArea} 주차대행·유심/eSIM 요금을 비교하는 플랫폼입니다. 입점 업체는
-            검증·예약·추적까지, 미입점 업체는 가격 참고용으로 제공합니다.
+            비교·예약 후 주차 위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점 업체는 가격
+            참고용으로 제공합니다.
           </p>
           <a
             href={COMPANY_LEGAL.siteUrl}

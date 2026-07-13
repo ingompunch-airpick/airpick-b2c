@@ -31,7 +31,7 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
   items: [
     {
       id: 'esim-buy-here',
-      question: '에어픽 앱에서 바로 구매할 수 있나요?',
+      question: '에어픽에서 유심·eSIM을 바로 구매할 수 있나요?',
       answer:
         '아니요. 에어픽은 제휴 요금 비교만 제공합니다. 원하는 요금제를 선택한 뒤 제휴사 사이트에서 구매·개통해 주세요.',
     },
@@ -43,19 +43,18 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
     },
     {
       id: 'esim-price',
-      question: '표시된 가격이 최종 금액인가요?',
+      question: '에어픽에 표시된 유심·eSIM 가격이 최종 금액인가요?',
       answer:
         '제휴사가 제공한 참고 요금입니다. 제휴사 사이트에서 쿠폰·환율·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요.',
     },
     {
       id: 'esim-update',
-      question: '요금은 언제 업데이트되나요?',
-      answer:
-        `${ESIM_TAB_LABEL} 탭 상단 「마지막 수정」 날짜를 참고해 주세요. 제휴사 요금은 수시로 변동될 수 있습니다.`,
+      question: '유심·eSIM 요금은 언제 업데이트되나요?',
+      answer: `${ESIM_TAB_LABEL} 탭 상단 「마지막 수정」 날짜를 참고해 주세요. 제휴사 요금은 수시로 변동될 수 있습니다.`,
     },
     {
       id: 'esim-support',
-      question: '개통이 안 되거나 데이터가 안 될 때는?',
+      question: '유심·eSIM 개통이 안 되거나 데이터가 안 될 때는?',
       answer:
         '구매한 제휴사 고객센터로 문의해 주세요. APN 설정·eSIM 재설치 방법은 제휴사 안내를 따르시면 됩니다.',
     },

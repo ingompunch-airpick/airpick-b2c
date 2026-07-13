@@ -54,6 +54,29 @@ function renderPartner(p) {
     ? `<p><img src="${esc(p.imageUrl.trim())}" alt="${esc(p.imageAlt || name + ' 주차장')}" width="800" height="450" style="max-width:100%;height:auto;border-radius:1rem" loading="lazy" /></p>`
     : '';
 
+  const localBusiness = {
+    '@type': 'LocalBusiness',
+    '@id': `${url}#business`,
+    name,
+    url,
+    description: `${name} — 에어픽 입점 인천공항 주차대행·발렛`,
+    ...(p.imageUrl?.trim() ? { image: p.imageUrl.trim() } : {}),
+    parentOrganization: { '@id': 'https://www.에어픽.kr/#organization' },
+  };
+
+  /** 실후기 집계가 소스에 있을 때만 AggregateRating (가짜 별점 금지) */
+  const rating = Number(p.rating);
+  const reviewCount = Number(p.reviewsCount);
+  if (reviewCount > 0 && rating > 0 && rating <= 5) {
+    localBusiness.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: rating,
+      reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -76,15 +99,7 @@ function renderPartner(p) {
         breadcrumb: { '@id': `${url}#breadcrumb` },
         inLanguage: 'ko-KR',
       },
-      {
-        '@type': 'LocalBusiness',
-        '@id': `${url}#business`,
-        name,
-        url,
-        description: `${name} — 에어픽 입점 인천공항 주차대행·발렛`,
-        ...(p.imageUrl?.trim() ? { image: p.imageUrl.trim() } : {}),
-        parentOrganization: { '@id': 'https://www.에어픽.kr/#organization' },
-      },
+      localBusiness,
     ],
   };
 

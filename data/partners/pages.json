@@ -1,5 +1,5 @@
 {
-  "comment": "입점 업체 공개 랜딩 소스. 수정 후 npm run partners. Firestore companies/{id} 공개 필드만. 요금·가짜 별점 넣지 말 것.",
+  "comment": "입점 업체 공개 랜딩 소스. 수정 후 npm run partners. Firestore companies/{id} 공개 필드만. 요금·가짜 별점 넣지 말 것. rating/reviewsCount는 실후기 집계가 있을 때만.",
   "partners": [
     {
       "id": "wawa",

@@ -41,8 +41,9 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     base_price: Number(data.base_price) || 15000,
     extra_day_price: Number(data.extra_day_price) || 5000,
     base_days: Number(data.base_days) || 1,
-    rating: Number(data.rating) || 4.5,
-    reviews_count: Number(data.reviews_count) || 0,
+    /** 실후기 집계만 사용. 시드·기본 4.5 등 가짜 평점 금지 */
+    rating: Number(data.rating) > 0 ? Number(data.rating) : 0,
+    reviews_count: Number(data.reviews_count) > 0 ? Number(data.reviews_count) : 0,
     features: Array.isArray(data.features) ? (data.features as string[]) : [],
     image_url:
       primaryImage ||

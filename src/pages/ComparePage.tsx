@@ -172,11 +172,36 @@ export default function ComparePage({
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 
       {totalCount === 0 ? (
-        <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-          {search.isIndoor
-            ? '실내 주차를 제공하는 업체가 없습니다.'
-            : '야외 주차를 제공하는 업체가 없습니다.'}
-        </p>
+        <div className="space-y-3 rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+          <p>
+            {search.isIndoor
+              ? '실내 주차를 제공하는 업체가 없습니다.'
+              : '야외 주차를 제공하는 업체가 없습니다.'}
+          </p>
+          <p className="text-xs">실내/야외를 바꿔 보거나, 아래 가이드를 참고해 주세요.</p>
+          <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-brand">
+            <li>
+              <a href="/guides/parking-compare/" className="underline-offset-2 hover:underline">
+                주차대행 비교·예약 가이드
+              </a>
+            </li>
+            <li>
+              <a href="/guides/" className="underline-offset-2 hover:underline">
+                가이드 모음
+              </a>
+            </li>
+            <li>
+              <a href="/faq/" className="underline-offset-2 hover:underline">
+                자주 묻는 질문
+              </a>
+            </li>
+            <li>
+              <a href="/partners/wawa/" className="underline-offset-2 hover:underline">
+                입점 업체 예시 (와와발렛)
+              </a>
+            </li>
+          </ul>
+        </div>
       ) : sortMode === 'price' ? (
         <>
           <CompareSection

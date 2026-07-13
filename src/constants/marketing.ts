@@ -45,7 +45,7 @@ export const PARKING_PARTNER_SECTION = {
 
 export const PARKING_EXTERNAL_SECTION = {
   title: '가격 비교 · 홈페이지 이동',
-  subtitleNote: '가격 참고용(정확한 금액X) · 주차장 위치·보험 공유X',
+  subtitleNote: '참고 요금 · 위치·보험·후기는 에어픽에서 제공하지 않음',
 } as const;
 
 /** 업체 홈페이지 예약 — 에어픽 전용 추적 안내 */
@@ -58,7 +58,7 @@ export const AIRPICK_TRACKING_UPSELL = {
 /** 홈 — Hero 카피 (한 줄 · 바로 행동) */
 export const HOME_EYEBROW = `인천공항 주차대행 · ${ESIM_TAB_LABEL} 가격비교`;
 
-export const HOME_HEADLINE = '검증된 업체만, 가격부터 보험까지 투명하게';
+export const HOME_HEADLINE = '입점 업체 요금·보험 비교, 맡긴 뒤 위치·사진까지';
 
 export const HOME_PARKING = {
   headline: '주차대행 · 업체 요금 비교',
@@ -74,7 +74,7 @@ export const HOME_PLATFORM_SUB = HOME_EYEBROW;
 
 export const HOME_ESIM = {
   headline: `${ESIM_TAB_LABEL} · 제휴 요금 비교`,
-  highlights: ['제휴사별 요금', '나라·용량·일수', '최저가순 정렬'],
+  highlights: ['제휴사별 참고 요금', '나라·용량·일수', '낮은 가격순 정렬'],
   cta: `${ESIM_TAB_LABEL} 요금 비교하기`,
 } as const;
 

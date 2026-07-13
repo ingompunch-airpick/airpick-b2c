@@ -57,8 +57,13 @@ export function sortPartnersByTerminalDistance(
     if (a.distanceKm == null) return 1;
     if (b.distanceKm == null) return -1;
     if (a.distanceKm !== b.distanceKm) return a.distanceKm - b.distanceKm;
-    const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
-    if (ratingDiff !== 0) return ratingDiff;
+    const aReviews = a.company.reviews_count || 0;
+    const bReviews = b.company.reviews_count || 0;
+    if (aReviews !== bReviews) return bReviews - aReviews;
+    if (aReviews > 0 && bReviews > 0) {
+      const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
+      if (ratingDiff !== 0) return ratingDiff;
+    }
     return a.company.name.localeCompare(b.company.name, 'ko');
   });
 }

@@ -29,6 +29,29 @@ function faqJsonLd(faqs) {
   }));
 }
 
+function formatUpdated(iso) {
+  if (!iso) return '';
+  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return esc(iso);
+  return `${m[1]}.${m[2]}.${m[3]}`;
+}
+
+function howToJsonLd(howTo, pageUrl) {
+  if (!howTo?.name || !Array.isArray(howTo.steps) || howTo.steps.length === 0) return null;
+  return {
+    '@type': 'HowTo',
+    '@id': `${pageUrl}#howto`,
+    name: howTo.name,
+    description: howTo.description || undefined,
+    step: howTo.steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
+  };
+}
+
 function renderPage(page, allPages) {
   const url = `https://www.에어픽.kr/guides/${page.slug}/`;
   const otherGuides = allPages
@@ -73,6 +96,22 @@ ${sec.table.rows
     )
     .join('\n');
 
+  const updated = page.updated || page.dateModified || '';
+  const published = page.published || page.datePublished || updated;
+  const updatedLabel = formatUpdated(updated);
+  const howTo = howToJsonLd(page.howTo, url);
+
+  const howToHtml =
+    page.howTo?.steps?.length > 0
+      ? `      <section class="section">
+        <h2>${esc(page.howTo.name || '따라하기')}</h2>
+        ${page.howTo.description ? `<p>${esc(page.howTo.description)}</p>` : ''}
+        <ol>
+${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> — ${esc(s.text)}</li>`).join('\n')}
+        </ol>
+      </section>`
+      : '';
+
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -91,6 +130,8 @@ ${sec.table.rows
         url,
         name: page.title,
         description: page.description,
+        ...(published ? { datePublished: published } : {}),
+        ...(updated ? { dateModified: updated } : {}),
         isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
         breadcrumb: { '@id': `${url}#breadcrumb` },
         inLanguage: 'ko-KR',
@@ -101,8 +142,14 @@ ${sec.table.rows
         url,
         mainEntity: faqJsonLd(page.faqs),
       },
+      ...(howTo ? [howTo] : []),
     ],
   };
+
+  const secondaryCta =
+    page.ctaHref === '/esim'
+      ? `<a class="cta secondary" href="/parking">주차대행도 비교하기</a>`
+      : `<a class="cta secondary" href="/">홈 · 예약 조회</a>`;
 
   return `<!doctype html>
 <html lang="ko">
@@ -122,6 +169,7 @@ ${sec.table.rows
     <meta property="og:image" content="https://www.에어픽.kr/icon-512.png" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
+    ${updated ? `<meta property="article:modified_time" content="${esc(updated)}" />` : ''}
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="stylesheet" href="/seo.css" />
     <script type="application/ld+json">
@@ -143,8 +191,12 @@ ${JSON.stringify(graph, null, 2)}
         <p class="eyebrow">${esc(page.eyebrow)}</p>
         <h1>${esc(page.h1)}</h1>
         <p>${page.lead}</p>
+        ${updatedLabel ? `<p class="muted" style="font-size:0.8125rem;color:var(--muted)">마지막 업데이트: ${updatedLabel}</p>` : ''}
         <a class="cta" href="${esc(page.ctaHref)}">${esc(page.ctaLabel)}</a>
+        ${secondaryCta}
       </header>
+
+${howToHtml}
 
 ${sectionsHtml}
 
@@ -159,10 +211,15 @@ ${faqHtml}
             ${otherGuides}
             <li><a href="/parking">인천공항 주차대행 가격비교</a> — 요금·예약</li>
             <li><a href="/esim">해외여행 유심·eSIM 가격비교</a></li>
+            <li><a href="/faq/">자주 묻는 질문</a></li>
         </ul>
+        <p style="margin-top:1.25rem">
+          <a class="cta" href="${esc(page.ctaHref)}">${esc(page.ctaLabel)}</a>
+          ${secondaryCta}
+        </p>
       </section>
 
-      <p class="footer-note">에어픽은 인천공항 주차대행·유심·eSIM 비교 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·공식 안내를 확인하세요.</p>
+      <p class="footer-note">에어픽은 인천공항 주차대행·유심·eSIM 비교 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·공식 안내를 확인하세요. 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
     </div>
   </body>
 </html>
@@ -172,12 +229,14 @@ ${faqHtml}
 function renderIndex(pages) {
   const url = 'https://www.에어픽.kr/guides/';
   const items = pages
-    .map(
-      (p) => `        <li>
+    .map((p) => {
+      const updated = formatUpdated(p.updated || p.dateModified);
+      return `        <li>
           <a href="/guides/${esc(p.slug)}/"><strong>${esc(p.h1)}</strong></a>
           <p class="muted" style="margin:0.25rem 0 0;font-size:0.8125rem;color:var(--muted)">${esc(p.description)}</p>
-        </li>`
-    )
+          ${updated ? `<p class="muted" style="margin:0.15rem 0 0;font-size:0.75rem;color:var(--muted)">업데이트 ${updated}</p>` : ''}
+        </li>`;
+    })
     .join('\n');
 
   const graph = {
@@ -185,7 +244,8 @@ function renderIndex(pages) {
     '@type': 'CollectionPage',
     name: '인천공항 주차대행 가이드 · 에어픽',
     url,
-    description: '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음',
+    description:
+      '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음',
     isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
     inLanguage: 'ko-KR',
   };
@@ -232,13 +292,19 @@ ${JSON.stringify(graph, null, 2)}
           비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 체크, 유심·eSIM 초보까지.
           읽은 뒤 <a href="/parking">주차 비교</a> 또는 <a href="/esim">유심·eSIM 비교</a>로 이어 가세요.
         </p>
-        <a class="cta" href="/parking">주차 요금 비교</a>
+        <a class="cta" href="/parking">주차 요금 비교·예약</a>
+        <a class="cta secondary" href="/esim">유심·eSIM 비교</a>
       </header>
       <section class="section">
         <h2>가이드 목록</h2>
         <ul style="list-style:none;padding:0;margin:0;display:grid;gap:1rem">
 ${items}
         </ul>
+      </section>
+      <section class="section">
+        <h2>바로 비교하기</h2>
+        <a class="cta" href="/parking">주차대행 가격비교</a>
+        <a class="cta secondary" href="/">홈 · 예약 조회</a>
       </section>
     </div>
   </body>

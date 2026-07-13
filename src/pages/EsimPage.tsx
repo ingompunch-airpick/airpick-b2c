@@ -56,11 +56,27 @@ export default function EsimPage() {
       </div>
 
       {offers.length === 0 ? (
-        <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-          선택하신 조건의 제휴 요금이 아직 없습니다.
-          <br />
-          <span className="mt-1 inline-block text-xs">다른 용량·일수를 선택해 보세요.</span>
-        </p>
+        <div className="space-y-3 rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+          <p>선택하신 조건의 제휴 요금이 아직 없습니다.</p>
+          <p className="text-xs">다른 용량·일수를 선택하거나, 초보 가이드를 확인해 보세요.</p>
+          <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-brand">
+            <li>
+              <a href="/guides/esim-beginner/" className="underline-offset-2 hover:underline">
+                유심·eSIM 초보 가이드
+              </a>
+            </li>
+            <li>
+              <a href="/guides/" className="underline-offset-2 hover:underline">
+                가이드 모음
+              </a>
+            </li>
+            <li>
+              <a href="/faq/" className="underline-offset-2 hover:underline">
+                자주 묻는 질문
+              </a>
+            </li>
+          </ul>
+        </div>
       ) : (
         <div className="space-y-2.5">
           {offers.map((product, index) => (
