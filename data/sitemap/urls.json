@@ -57,10 +57,10 @@
       "note": "해외여행 꿀팁"
     },
     {
-      "path": "/partners/sample-partner/",
+      "path": "/partners/wawa/",
       "changefreq": "weekly",
       "priority": 0.7,
-      "note": "입점 공개 페이지 프로토타입"
+      "note": "와와발렛 입점 공개 페이지"
     },
     {
       "path": "/about/",
