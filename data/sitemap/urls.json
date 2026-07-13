@@ -57,6 +57,12 @@
       "note": "해외여행 꿀팁"
     },
     {
+      "path": "/guides/esim-beginner/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "유심·eSIM 초보 가이드"
+    },
+    {
       "path": "/partners/wawa/",
       "changefreq": "weekly",
       "priority": 0.7,
@@ -84,11 +90,7 @@
   "planned": [
     {
       "path": "/guides/parking-insurance/",
-      "note": "보험 있는 주차대행 — 다음 확장"
-    },
-    {
-      "path": "/guides/esim-beginner/",
-      "note": "유심/eSIM 초보 가이드 — 다음 확장"
+      "note": "보험 있는 주차대행 — 심사 후 확장"
     }
   ]
 }

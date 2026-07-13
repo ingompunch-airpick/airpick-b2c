@@ -184,7 +184,7 @@ function renderIndex(pages) {
     '@type': 'CollectionPage',
     name: '인천공항 주차대행 가이드 · 에어픽',
     url,
-    description: '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁 가이드 모음',
+    description: '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음',
     isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
     inLanguage: 'ko-KR',
   };
@@ -196,15 +196,15 @@ function renderIndex(pages) {
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#3182F6" />
-    <title>인천공항 주차대행 가이드 · 에어픽</title>
+    <title>인천공항 주차대행·유심 가이드 · 에어픽</title>
     <meta
       name="description"
-      content="인천공항 주차대행·발렛파킹 비교, 공식 주차장 vs 사설, T1·T2·운서역, 장기·단기주차, 해외여행 전 꿀팁 가이드를 모았습니다."
+      content="인천공항 주차대행·발렛파킹 비교, 공식 주차장 vs 사설, T1·T2·운서역, 장기·단기주차, 해외여행 꿀팁, 유심·eSIM 초보 가이드를 모았습니다."
     />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="인천공항 주차대행 가이드 · 에어픽" />
-    <meta property="og:description" content="비교·사설·터미널·장단기·해외여행 꿀팁까지 주차대행 가이드 모음." />
+    <meta property="og:title" content="인천공항 주차대행·유심 가이드 · 에어픽" />
+    <meta property="og:description" content="비교·사설·터미널·장단기·해외여행 꿀팁·유심 eSIM까지 가이드 모음." />
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
@@ -219,18 +219,19 @@ ${JSON.stringify(graph, null, 2)}
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
         <a href="/parking">주차 비교</a>
+        <a href="/esim">유심·eSIM</a>
         <a href="/guides/">가이드</a>
         <a href="/faq/">FAQ</a>
         <a href="/">앱 열기</a>
       </nav>
       <header class="hero">
         <p class="eyebrow">에어픽 가이드</p>
-        <h1>인천공항 주차대행 가이드</h1>
+        <h1>인천공항 주차대행·유심 가이드</h1>
         <p>
-          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 체크까지.
-          읽은 뒤 <a href="/parking">주차대행 가격비교</a>에서 요금을 확인하세요.
+          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 체크, 유심·eSIM 초보까지.
+          읽은 뒤 <a href="/parking">주차 비교</a> 또는 <a href="/esim">유심·eSIM 비교</a>로 이어 가세요.
         </p>
-        <a class="cta" href="/parking">요금 비교하러 가기</a>
+        <a class="cta" href="/parking">주차 요금 비교</a>
       </header>
       <section class="section">
         <h2>가이드 목록</h2>
