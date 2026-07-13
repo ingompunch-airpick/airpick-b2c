@@ -19,6 +19,7 @@ import {
   formatTerminalDistanceDetail,
 } from '../utils/terminalDistance';
 import { formatParkingDistanceLotLabel } from '../utils/trustDisplay';
+import { companyThumbnailUrl } from '../utils/imageUrl';
 import { cn } from '../utils/cn';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
@@ -206,9 +207,12 @@ export default function CompanyDetailSheet({
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-sky-border/50 px-5 py-4">
           <div className="flex min-w-0 gap-3">
             <img
-              src={company.image_url}
-              alt=""
+              src={companyThumbnailUrl(company.image_url, 128)}
+              alt={name}
+              width={64}
+              height={64}
               className="h-16 w-16 shrink-0 rounded-2xl object-cover ring-2 ring-sky-tint"
+              decoding="async"
             />
             <div className="min-w-0">
               <p className="text-xs font-bold text-brand">에어픽 입점</p>

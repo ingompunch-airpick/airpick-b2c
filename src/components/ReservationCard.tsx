@@ -8,6 +8,7 @@ import { displayCompanyName } from '../utils/display';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 import { cn } from '../utils/cn';
 import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
+import { companyPhotoUrl } from '../utils/imageUrl';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
 import { getStatusLabel, getStatusStep } from '../utils/trust';
@@ -137,10 +138,13 @@ function PhotoStrip({
           className="block shrink-0 overflow-hidden rounded-xl ring-1 ring-sky-border/60 shadow-sm"
         >
           <img
-            src={url}
+            src={companyPhotoUrl(url, size === 'md' ? 320 : 128)}
             alt={`주차장 사진 ${index + 1}`}
+            width={size === 'md' ? 160 : 64}
+            height={size === 'md' ? 128 : 64}
             className={`${imgClass} object-cover`}
             loading="lazy"
+            decoding="async"
           />
         </a>
       ))}

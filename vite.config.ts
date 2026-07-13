@@ -46,7 +46,14 @@ export default defineConfig({
         enabled: false,
       },
       // 아이콘만 precache. robots/sitemap/SEO HTML은 SW에 넣지 않음(구버전 고착 방지)
-      includeAssets: ['favicon-48.png', 'favicon-32.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: [
+        'favicon-48.png',
+        'favicon-32.png',
+        'icon-192.png',
+        'icon-512.png',
+        'brand-logo.webp',
+        'brand-logo-sm.png',
+      ],
       workbox: {
         cleanupOutdatedCaches: true,
         // HTML은 index.html만(폴백용). about/faq/privacy·검증·sitemap 등은 제외
@@ -159,6 +166,20 @@ export default defineConfig({
         main: path.resolve(rootDir, 'index.html'),
         parking: path.resolve(rootDir, 'parking.html'),
         esim: path.resolve(rootDir, 'esim.html'),
+      },
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('firebase') || id.includes('@firebase')) return 'firebase';
+          if (
+            id.includes('/react/') ||
+            id.includes('/react-dom/') ||
+            id.includes('/scheduler/')
+          ) {
+            return 'react-vendor';
+          }
+          if (id.includes('lucide-react')) return 'lucide';
+        },
       },
     },
   },

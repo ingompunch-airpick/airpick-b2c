@@ -22,7 +22,7 @@ const localCsvPath = path.join(root, 'data/parking/companies.csv');
 const outPath = path.join(root, 'src/config/externalParkingCompanies.generated.ts');
 
 const PLACEHOLDER_IMAGE =
-  'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80';
+  'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=128&h=128&q=60';
 
 function parseCsv(text) {
   const rows = [];

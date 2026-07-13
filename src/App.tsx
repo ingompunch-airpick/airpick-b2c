@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { ComparePageSkeleton, HomePageSkeleton } from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
-import BookingModal from './components/BookingModal';
 import BottomNav from './components/BottomNav';
-import CompanyDetailSheet from './components/CompanyDetailSheet';
 import Header from './components/Header';
 import SiteFooter from './components/SiteFooter';
 import { subscribeCompanies } from './lib/companies';
@@ -13,13 +11,7 @@ import {
   trackParkingBookStart,
   trackTabView,
 } from './lib/analytics';
-import ComparePage from './pages/ComparePage';
-import EsimPage from './pages/EsimPage';
-import EsimGuidePage from './pages/EsimGuidePage';
 import HomePage from './pages/HomePage';
-import MyPage from './pages/MyPage';
-import ParkingGuidePage from './pages/ParkingGuidePage';
-import SupportPage from './pages/SupportPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
@@ -33,6 +25,15 @@ import {
   tabFromPathname,
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
+
+const ComparePage = lazy(() => import('./pages/ComparePage'));
+const EsimPage = lazy(() => import('./pages/EsimPage'));
+const MyPage = lazy(() => import('./pages/MyPage'));
+const CompanyDetailSheet = lazy(() => import('./components/CompanyDetailSheet'));
+const BookingModal = lazy(() => import('./components/BookingModal'));
+const SupportPage = lazy(() => import('./pages/SupportPage'));
+const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
+const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
   home: '에어픽 · 주차대행·유심·eSIM 비교',
@@ -151,6 +152,9 @@ export default function App() {
     );
   }, [tab, search, companies, lastReservationId, reviewReservationId]);
 
+  const pageFallback =
+    tab === 'compare' ? <ComparePageSkeleton /> : tab === 'home' ? <HomePageSkeleton /> : null;
+
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">
       <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
@@ -161,61 +165,63 @@ export default function App() {
           ) : loading && tab === 'compare' ? (
             <ComparePageSkeleton />
           ) : (
-            page
+            <Suspense fallback={pageFallback}>{page}</Suspense>
           )}
           <SiteFooter />
         </main>
       </div>
       <BottomNav active={tab} onChange={(next) => setTab(next)} />
 
-      {partnerDetail && (
-        <CompanyDetailSheet
-          company={partnerDetail.company}
-          price={partnerDetail.price}
-          search={search}
-          onClose={() => setPartnerDetail(null)}
-          onBook={() => {
-            trackParkingBookStart(partnerDetail.company.id, partnerDetail.company.name);
-            setBookingTarget(partnerDetail);
-            setPartnerDetail(null);
-          }}
-        />
-      )}
+      <Suspense fallback={null}>
+        {partnerDetail && (
+          <CompanyDetailSheet
+            company={partnerDetail.company}
+            price={partnerDetail.price}
+            search={search}
+            onClose={() => setPartnerDetail(null)}
+            onBook={() => {
+              trackParkingBookStart(partnerDetail.company.id, partnerDetail.company.name);
+              setBookingTarget(partnerDetail);
+              setPartnerDetail(null);
+            }}
+          />
+        )}
 
-      {bookingTarget && (
-        <BookingModal
-          company={bookingTarget.company}
-          search={search}
-          price={bookingTarget.price}
-          onClose={() => {
-            setBookingTarget(null);
-            setPartnerDetail(null);
-          }}
-          onSuccess={(id) => {
-            trackParkingBookComplete(bookingTarget.company.id, bookingTarget.company.name);
-            setLastReservationId(id);
-            setBookingTarget(null);
-            setPartnerDetail(null);
-            setTab('my');
-          }}
-        />
-      )}
+        {bookingTarget && (
+          <BookingModal
+            company={bookingTarget.company}
+            search={search}
+            price={bookingTarget.price}
+            onClose={() => {
+              setBookingTarget(null);
+              setPartnerDetail(null);
+            }}
+            onSuccess={(id) => {
+              trackParkingBookComplete(bookingTarget.company.id, bookingTarget.company.name);
+              setLastReservationId(id);
+              setBookingTarget(null);
+              setPartnerDetail(null);
+              setTab('my');
+            }}
+          />
+        )}
 
-      {menuOpen && (
-        <AppMenuSheet
-          onClose={() => setMenuOpen(false)}
-          onOpenSupport={() => {
-            trackCtaClick('open_faq', 'menu');
-            setSupportOpen(true);
-          }}
-        />
-      )}
+        {menuOpen && (
+          <AppMenuSheet
+            onClose={() => setMenuOpen(false)}
+            onOpenSupport={() => {
+              trackCtaClick('open_faq', 'menu');
+              setSupportOpen(true);
+            }}
+          />
+        )}
 
-      {supportOpen && <SupportPage onBack={() => setSupportOpen(false)} />}
+        {supportOpen && <SupportPage onBack={() => setSupportOpen(false)} />}
 
-      {esimGuideOpen && <EsimGuidePage onBack={() => setEsimGuideOpen(false)} />}
+        {esimGuideOpen && <EsimGuidePage onBack={() => setEsimGuideOpen(false)} />}
 
-      {parkingGuideOpen && <ParkingGuidePage onBack={() => setParkingGuideOpen(false)} />}
+        {parkingGuideOpen && <ParkingGuidePage onBack={() => setParkingGuideOpen(false)} />}
+      </Suspense>
     </div>
   );
 }

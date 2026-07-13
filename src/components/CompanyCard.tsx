@@ -4,6 +4,7 @@ import type { Company } from '../types';
 import { cn } from '../utils/cn';
 import { isAirpickPartner } from '../utils/compareSort';
 import { displayCompanyName } from '../utils/display';
+import { companyThumbnailUrl } from '../utils/imageUrl';
 import TrustBadges from './TrustBadges';
 
 export default function CompanyCard({
@@ -35,6 +36,7 @@ export default function CompanyCard({
   /** 입점 + 대면 희망일 때만 대면 UI */
   const premium = faceToFaceMode && partner && faceToFaceCapable;
   const dimmed = faceToFaceMode && partner && !faceToFaceCapable;
+  const thumbSrc = companyThumbnailUrl(company.image_url, 128);
 
   if (layout === 'grid') {
     return (
@@ -45,10 +47,13 @@ export default function CompanyCard({
       >
         <div className="h-14 w-14 overflow-hidden rounded-full bg-sky-tint">
           <img
-            src={company.image_url}
+            src={thumbSrc}
             alt={name}
+            width={56}
+            height={56}
             className="h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
           />
         </div>
         <span className="line-clamp-1 text-xs font-bold text-ink">{name}</span>
@@ -72,10 +77,13 @@ export default function CompanyCard({
       )}
     >
       <img
-        src={company.image_url}
+        src={thumbSrc}
         alt={name}
+        width={64}
+        height={64}
         className="h-16 w-16 shrink-0 rounded-2xl object-cover ring-2 ring-sky-tint"
         loading="lazy"
+        decoding="async"
       />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1.5">

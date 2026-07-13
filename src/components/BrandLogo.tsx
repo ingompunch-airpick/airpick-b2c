@@ -12,12 +12,19 @@ export default function BrandLogo() {
         window.dispatchEvent(new PopStateEvent('popstate'));
       }}
     >
-      <img
-        src="/brand-logo.png"
-        alt="AirPick 에어픽"
-        className="block h-18 w-auto select-none"
-        draggable={false}
-      />
+      <picture>
+        <source type="image/webp" srcSet="/brand-logo.webp" />
+        <img
+          src="/brand-logo-sm.png"
+          alt="AirPick 에어픽"
+          width={288}
+          height={144}
+          className="block h-18 w-auto select-none"
+          draggable={false}
+          decoding="async"
+          fetchPriority="high"
+        />
+      </picture>
     </a>
   );
 }
