@@ -133,9 +133,10 @@ ${JSON.stringify(graph, null, 2)}
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
         <a href="/parking">주차 비교</a>
+        <a href="/esim">유심·eSIM</a>
         <a href="/guides/">가이드</a>
+        <a href="/partners/wawa/">입점 업체</a>
         <a href="/faq/">FAQ</a>
-        <a href="/">앱 열기</a>
       </nav>
 
       <header class="hero">
@@ -221,8 +222,8 @@ ${JSON.stringify(graph, null, 2)}
         <a href="/parking">주차 비교</a>
         <a href="/esim">유심·eSIM</a>
         <a href="/guides/">가이드</a>
+        <a href="/partners/wawa/">입점 업체</a>
         <a href="/faq/">FAQ</a>
-        <a href="/">앱 열기</a>
       </nav>
       <header class="hero">
         <p class="eyebrow">에어픽 가이드</p>

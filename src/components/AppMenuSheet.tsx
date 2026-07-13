@@ -1,5 +1,24 @@
-import { BookOpen, Building2, ChevronRight, CircleHelp, Mail, X } from 'lucide-react';
+import {
+  BookOpen,
+  Building2,
+  CircleHelp,
+  LayoutGrid,
+  Mail,
+  Smartphone,
+  Store,
+  ChevronRight,
+  X,
+} from 'lucide-react';
 import { openPartnerInquiryEmail } from '../constants/partnerContact';
+import { SITE_NAV_PRIMARY } from '../constants/siteNav';
+
+const MENU_ICONS = {
+  '/parking': LayoutGrid,
+  '/esim': Smartphone,
+  '/guides/': BookOpen,
+  '/partners/wawa/': Store,
+  '/faq/': CircleHelp,
+} as const;
 
 function MenuItem({
   label,
@@ -53,29 +72,32 @@ export default function AppMenuSheet({
           </button>
         </div>
 
-        <nav className="space-y-2 p-3">
+        <nav className="space-y-2 p-3" aria-label="사이트 메뉴">
+          {SITE_NAV_PRIMARY.map((item) => {
+            const Icon = MENU_ICONS[item.href as keyof typeof MENU_ICONS] ?? CircleHelp;
+            const goWeb = item.href !== '/faq/';
+            return (
+              <MenuItem
+                key={item.href}
+                label={item.label}
+                icon={Icon}
+                onClick={() => {
+                  onClose();
+                  if (goWeb) {
+                    window.location.assign(item.href);
+                  } else {
+                    onOpenSupport();
+                  }
+                }}
+              />
+            );
+          })}
           <MenuItem
             label="에어픽 소개"
             icon={Building2}
             onClick={() => {
               onClose();
               window.location.assign('/about/');
-            }}
-          />
-          <MenuItem
-            label="주차대행 가이드"
-            icon={BookOpen}
-            onClick={() => {
-              onClose();
-              window.location.assign('/guides/');
-            }}
-          />
-          <MenuItem
-            label="자주 묻는 질문"
-            icon={CircleHelp}
-            onClick={() => {
-              onClose();
-              onOpenSupport();
             }}
           />
           <MenuItem

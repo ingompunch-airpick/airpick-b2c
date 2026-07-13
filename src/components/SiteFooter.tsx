@@ -1,4 +1,5 @@
 import { COMPANY_LEGAL } from '../constants/companyLegal';
+import { SITE_NAV_PRIMARY, SITE_NAV_SECONDARY } from '../constants/siteNav';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 
 export default function SiteFooter() {
@@ -6,7 +7,19 @@ export default function SiteFooter() {
 
   return (
     <footer className="mt-6 border-t border-sky-border/60 px-1 pt-4 pb-2">
-      <p className="text-[10px] font-bold text-muted">사업자 정보</p>
+      <nav className="flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] font-bold" aria-label="사이트 메뉴">
+        {SITE_NAV_PRIMARY.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="text-ink underline-offset-2 hover:text-brand hover:underline"
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <p className="mt-4 text-[10px] font-bold text-muted">사업자 정보</p>
       <dl className="mt-1.5 space-y-0.5 text-[10px] font-medium leading-relaxed text-muted-light">
         <div className="flex gap-1.5">
           <dt className="shrink-0 text-muted">브랜드</dt>
@@ -80,21 +93,15 @@ export default function SiteFooter() {
       </dl>
 
       <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-bold">
-        <a href="/about/" className="text-muted underline-offset-2 hover:text-brand hover:underline">
-          에어픽 소개
-        </a>
-        <a href="/guides/" className="text-muted underline-offset-2 hover:text-brand hover:underline">
-          가이드
-        </a>
-        <a
-          href="/privacy/"
-          className="text-muted underline-offset-2 hover:text-brand hover:underline"
-        >
-          개인정보처리방침
-        </a>
-        <a href="/faq/" className="text-muted underline-offset-2 hover:text-brand hover:underline">
-          FAQ
-        </a>
+        {SITE_NAV_SECONDARY.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="text-muted underline-offset-2 hover:text-brand hover:underline"
+          >
+            {item.label}
+          </a>
+        ))}
       </div>
     </footer>
   );
