@@ -21,15 +21,51 @@
       "note": "유심·eSIM 비교"
     },
     {
+      "path": "/guides/",
+      "changefreq": "weekly",
+      "priority": 0.85,
+      "note": "가이드 허브"
+    },
+    {
+      "path": "/guides/parking-compare/",
+      "changefreq": "weekly",
+      "priority": 0.85,
+      "note": "주차대행 비교·예약 가이드"
+    },
+    {
+      "path": "/guides/official-vs-private/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "공식 vs 사설"
+    },
+    {
+      "path": "/guides/t1-t2-unseo/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "T1·T2·운서"
+    },
+    {
+      "path": "/guides/long-vs-short/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "장기·단기"
+    },
+    {
+      "path": "/guides/travel-parking-tips/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "해외여행 꿀팁"
+    },
+    {
       "path": "/about/",
       "changefreq": "monthly",
-      "priority": 0.8,
+      "priority": 0.7,
       "note": "소개 (정적 HTML)"
     },
     {
       "path": "/faq/",
       "changefreq": "monthly",
-      "priority": 0.8,
+      "priority": 0.7,
       "note": "FAQ (정적 HTML)"
     },
     {
@@ -41,20 +77,12 @@
   ],
   "planned": [
     {
-      "path": "/guides/parking-compare/",
-      "note": "P1 — 인천공항 주차대행 비교 가이드 (URL·정적 HTML 생긴 뒤 urls로 이동)"
-    },
-    {
-      "path": "/guides/t1-t2-distance/",
-      "note": "P1 — T1/T2 거리·고르는 법"
-    },
-    {
       "path": "/guides/parking-insurance/",
-      "note": "P1 — 보험 있는 주차대행"
+      "note": "보험 있는 주차대행 — 다음 확장"
     },
     {
       "path": "/guides/esim-beginner/",
-      "note": "P1 — 유심/eSIM 초보 가이드"
+      "note": "유심/eSIM 초보 가이드 — 다음 확장"
     }
   ]
 }
