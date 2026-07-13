@@ -63,6 +63,12 @@
       "note": "유심·eSIM 초보 가이드"
     },
     {
+      "path": "/guides/partner-vs-external/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "입점 vs 미입점"
+    },
+    {
       "path": "/partners/wawa/",
       "changefreq": "weekly",
       "priority": 0.7,
