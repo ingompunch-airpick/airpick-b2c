@@ -61,6 +61,7 @@ export default defineConfig({
           '**/faq/**',
           '**/privacy/**',
           '**/guides/**',
+          '**/partners/**',
           '**/robots.txt',
           '**/sitemap.xml',
           '**/seo.css',
@@ -86,6 +87,7 @@ export default defineConfig({
           /^\/faq(?:\/|$)/,
           /^\/privacy(?:\/|$)/,
           /^\/guides(?:\/|$)/,
+          /^\/partners(?:\/|$)/,
           /^\/api(?:\/|$)/,
           /^\/naver[\w-]+\.html$/,
           /^\/google[\w-]+\.html$/,
@@ -109,15 +111,15 @@ export default defineConfig({
             urlPattern: /\/(?:robots\.txt|sitemap\.xml|seo\.css|(?:naver|google)[\w-]+\.html)$/i,
             handler: 'NetworkOnly',
           },
-          // about/faq/privacy 정적 HTML — 네트워크 우선, 최대 1시간
+          // about/faq/privacy/guides/partners 정적 HTML — 네트워크 우선, 최대 1시간
           {
-            urlPattern: /\/(?:about|faq|privacy|guides)(?:\/|$)/i,
+            urlPattern: /\/(?:about|faq|privacy|guides|partners)(?:\/|$)/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'seo-html',
               networkTimeoutSeconds: 3,
               expiration: {
-                maxEntries: 12,
+                maxEntries: 24,
                 maxAgeSeconds: 60 * 60,
               },
               cacheableResponse: { statuses: [0, 200] },

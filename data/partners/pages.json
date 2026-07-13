@@ -1,0 +1,19 @@
+{
+  "comment": "입점 업체 공개 랜딩 소스. 수정 후 npm run partners. Firestore companies/{id} 공개 필드만. 요금·가짜 별점 넣지 말 것.",
+  "partners": [
+    {
+      "id": "sample-partner",
+      "name": "샘플주차대행",
+      "isPrototype": true,
+      "description": "에어픽 입점 주차대행 공개 페이지 프로토타입입니다. 실제 입점 업체로 교체할 때 data/partners/pages.json 의 id·name·표 필드만 맞추면 됩니다.",
+      "supportsIndoor": true,
+      "supportsOutdoor": true,
+      "terminals": ["1터미널", "2터미널"],
+      "distanceNote": "입점 업체는 비교 화면에서 1·2터미널 기준 대략 거리·이동 시간을 확인할 수 있습니다.",
+      "insuranceNote": "보험 안내는 에어픽 앱 업체 상세·예약 후 카드에서 확인하세요. (심사·등록 상태에 따라 표시가 달라질 수 있습니다.)",
+      "addressNote": "운서·영종 등 공항 인근 사설 주차장에서 차량을 맡기고 터미널로 이동합니다.",
+      "imageUrl": "",
+      "imageAlt": "샘플주차대행 주차장"
+    }
+  ]
+}

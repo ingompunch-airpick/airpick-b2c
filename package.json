@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "npm run sync:airlines && vite",
-    "build": "npm run guides && npm run sitemap && npm run sync:airlines && tsc -b && vite build",
+    "build": "npm run guides && npm run partners && npm run sitemap && npm run sync:airlines && tsc -b && vite build",
     "lint": "tsc -b --noEmit",
     "guides": "node scripts/generate-guides.mjs",
+    "partners": "node scripts/generate-partners.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "sync:airlines": "cp src/constants/airlines.json public/shared/airlines.json",
     "sync:esim": "node scripts/sync-esim-offers.mjs",
