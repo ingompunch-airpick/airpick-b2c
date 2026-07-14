@@ -198,8 +198,8 @@ export default function ComparePage({
               </a>
             </li>
             <li>
-              <a href="/partners/wawa/" className="underline-offset-2 hover:underline">
-                입점 업체 예시 (와와발렛)
+              <a href="/partners/" className="underline-offset-2 hover:underline">
+                입점 업체 목록
               </a>
             </li>
           </ul>

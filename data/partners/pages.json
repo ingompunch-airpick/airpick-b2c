@@ -13,6 +13,19 @@
       "addressNote": "공항 인근 사설 주차장에서 차량을 맡기고 터미널로 이동합니다.",
       "imageUrl": "",
       "imageAlt": "와와발렛 주차장"
+    },
+    {
+      "id": "gayu",
+      "name": "가유",
+      "description": "가유는 에어픽 입점 인천공항 주차대행·발렛입니다. 야외 주차, 1·2터미널 일정을 넣고 비교한 뒤 예약하세요.",
+      "supportsIndoor": false,
+      "supportsOutdoor": true,
+      "terminals": ["1터미널", "2터미널"],
+      "distanceNote": "1·2터미널 기준 대략 거리·이동 시간은 에어픽 비교 화면에서 확인할 수 있습니다.",
+      "insuranceNote": "보험 안내는 에어픽 앱 업체 상세·예약 후 카드에서 확인하세요. (심사·등록 상태에 따라 표시가 달라질 수 있습니다.)",
+      "addressNote": "공항 인근 사설 주차장에서 차량을 맡기고 터미널로 이동합니다.",
+      "imageUrl": "",
+      "imageAlt": "가유 주차장"
     }
   ]
 }

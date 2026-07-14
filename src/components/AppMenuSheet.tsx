@@ -16,7 +16,7 @@ const MENU_ICONS = {
   '/parking': LayoutGrid,
   '/esim': Smartphone,
   '/guides/': BookOpen,
-  '/partners/wawa/': Store,
+  '/partners/': Store,
   '/faq/': CircleHelp,
 } as const;
 

@@ -69,10 +69,22 @@
       "note": "입점 vs 미입점"
     },
     {
+      "path": "/partners/",
+      "changefreq": "weekly",
+      "priority": 0.75,
+      "note": "입점 업체 허브 (개별 URL은 pages.json에서 sitemap이 병합)"
+    },
+    {
       "path": "/partners/wawa/",
       "changefreq": "weekly",
       "priority": 0.7,
-      "note": "와와발렛 입점 공개 페이지"
+      "note": "와와발렛 — partners 병합과 중복되어도 OK"
+    },
+    {
+      "path": "/partners/gayu/",
+      "changefreq": "weekly",
+      "priority": 0.7,
+      "note": "가유"
     },
     {
       "path": "/about/",

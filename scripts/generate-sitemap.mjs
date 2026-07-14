@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const configPath = path.join(root, 'data/sitemap/urls.json');
+const partnersPath = path.join(root, 'data/partners/pages.json');
 const outPath = path.join(root, 'public/sitemap.xml');
 
 const EXCLUDE_PREFIXES = ['/my', '/r/', '/admin', '/api/'];
@@ -84,6 +85,31 @@ async function main() {
       changefreq: item.changefreq || 'weekly',
       priority: formatPriority(item.priority ?? 0.5),
     });
+  }
+
+  // 입점 공개 URL — pages.json 과 자동 병합 (허브 + 각 id)
+  try {
+    const partnersRaw = await readFile(partnersPath, 'utf8');
+    const { partners } = JSON.parse(partnersRaw);
+    const partnerPaths = ['/partners/'];
+    if (Array.isArray(partners)) {
+      for (const p of partners) {
+        const id = String(p?.id || '').trim();
+        if (id) partnerPaths.push(`/partners/${id}/`);
+      }
+    }
+    for (const pathname of partnerPaths) {
+      if (seen.has(pathname)) continue;
+      seen.add(pathname);
+      entries.push({
+        loc: `${base}${pathname}`,
+        lastmod: lastmodDefault,
+        changefreq: 'weekly',
+        priority: pathname === '/partners/' ? '0.8' : '0.7',
+      });
+    }
+  } catch (err) {
+    console.warn(`[sitemap] partners merge skipped: ${err.message}`);
   }
 
   if (entries.length === 0) {

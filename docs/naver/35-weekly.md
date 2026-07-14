@@ -5,7 +5,7 @@
 ## 체크 (15분)
 
 1. **수집·색인**  
-   - `/` `/parking` `/esim` `/guides/` `/faq/` `/about/` `/partners/wawa/`  
+   - `/` `/parking` `/esim` `/guides/` `/faq/` `/about/` `/partners/` `/partners/wawa/` `/partners/gayu/`  
    - 깨지면 수집요청 · 사이트맵 재제출
 
 2. **이슈 알림**  

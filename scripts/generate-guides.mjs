@@ -183,13 +183,14 @@ ${JSON.stringify(graph, null, 2)}
         <a href="/parking">주차 비교</a>
         <a href="/esim">유심·eSIM</a>
         <a href="/guides/">가이드</a>
-        <a href="/partners/wawa/">입점 업체</a>
+        <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
       </nav>
 
       <header class="hero">
         <p class="eyebrow">${esc(page.eyebrow)}</p>
         <h1>${esc(page.h1)}</h1>
+        ${page.answer ? `<p class="answer"><strong>${esc(page.answer)}</strong></p>` : ''}
         <p>${page.lead}</p>
         ${updatedLabel ? `<p class="muted" style="font-size:0.8125rem;color:var(--muted)">마지막 업데이트: ${updatedLabel}</p>` : ''}
         <a class="cta" href="${esc(page.ctaHref)}">${esc(page.ctaLabel)}</a>
@@ -219,7 +220,7 @@ ${faqHtml}
         </p>
       </section>
 
-      <p class="footer-note">에어픽은 인천공항 주차대행·유심·eSIM 비교 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·공식 안내를 확인하세요. 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
+      <p class="footer-note">에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·공식 안내를 확인하세요. 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
     </div>
   </body>
 </html>
@@ -282,7 +283,7 @@ ${JSON.stringify(graph, null, 2)}
         <a href="/parking">주차 비교</a>
         <a href="/esim">유심·eSIM</a>
         <a href="/guides/">가이드</a>
-        <a href="/partners/wawa/">입점 업체</a>
+        <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
       </nav>
       <header class="hero">

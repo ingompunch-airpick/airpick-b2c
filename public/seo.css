@@ -96,6 +96,13 @@ a:hover {
   color: var(--muted);
 }
 
+.hero p.answer {
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
 .section {
   margin-top: 1.5rem;
 }

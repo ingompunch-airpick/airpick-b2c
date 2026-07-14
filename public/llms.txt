@@ -9,9 +9,11 @@
 - 주차대행 가격비교: https://www.에어픽.kr/parking
 - 유심·eSIM 가격비교: https://www.에어픽.kr/esim
 - 가이드: https://www.에어픽.kr/guides/
+- 입점 업체 목록: https://www.에어픽.kr/partners/
+- 와와발렛: https://www.에어픽.kr/partners/wawa/
+- 가유: https://www.에어픽.kr/partners/gayu/
 - FAQ: https://www.에어픽.kr/faq/
 - 소개·사업자·고객센터: https://www.에어픽.kr/about/
-- 입점 예시(와와발렛): https://www.에어픽.kr/partners/wawa/
 
 ## 신뢰 원칙
 - 후기·평점은 이용 고객의 실후기만 노출합니다. 시드·가짜 별점을 쓰지 않습니다.
