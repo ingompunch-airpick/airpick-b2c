@@ -1,10 +1,12 @@
 import { Building2, ChevronLeft, Clock3, MessageCircle, Phone } from 'lucide-react';
 import type { ReactNode } from 'react';
 import {
+  AIRPICK_DEFINITION,
   AIRPICK_SERVICES,
   COMPANY_LEGAL,
   PARTNER_VS_EXTERNAL,
 } from '../constants/companyLegal';
+import { listOfficialChannelLinks } from '../constants/officialChannels';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 
 export default function AboutPage({ onBack }: { onBack: () => void }) {
@@ -35,10 +37,10 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
               <p className="text-sm font-bold text-ink">{COMPANY_LEGAL.serviceName}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
-            {COMPANY_LEGAL.serviceArea} 주차대행·유심/eSIM 요금을 비교하는 플랫폼입니다. 입점 업체는
-            비교·예약 후 주차 위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점 업체는 가격
-            참고용으로 제공합니다.
+          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{AIRPICK_DEFINITION}</p>
+          <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
+            입점 업체는 비교·예약 후 주차 위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점
+            업체는 가격 참고용으로 제공합니다.
           </p>
           <a
             href={COMPANY_LEGAL.siteUrl}
@@ -48,6 +50,26 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           >
             공식 사이트 {COMPANY_LEGAL.siteUrlDisplay}
           </a>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <a
+              href="/parking"
+              className="rounded-full bg-brand px-3 py-1.5 text-[11px] font-bold text-white"
+            >
+              주차 비교·예약
+            </a>
+            <a
+              href="/"
+              className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-brand ring-1 ring-brand/25"
+            >
+              예약 조회
+            </a>
+            <a
+              href="/faq/"
+              className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-brand ring-1 ring-brand/25"
+            >
+              FAQ
+            </a>
+          </div>
         </section>
 
         <Section title="무엇을 하나요">
@@ -75,7 +97,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           </div>
         </Section>
 
-        <Section title="고객센터">
+        <Section title="고객센터 · 공식 채널">
           <dl className="space-y-2.5 rounded-2xl bg-sky-soft px-4 py-3.5 text-xs ring-1 ring-sky-border/60">
             <div className="flex items-start gap-2.5">
               <Phone size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2} />
@@ -92,22 +114,27 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
                 </dd>
               </div>
             </div>
-            <div className="flex items-start gap-2.5">
-              <MessageCircle size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2} />
-              <div>
-                <dt className="font-bold text-muted">카카오 고객센터</dt>
-                <dd className="mt-0.5">
-                  <a
-                    href={COMPANY_LEGAL.kakaoChatUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-brand underline-offset-2 hover:underline"
-                  >
-                    카카오톡 상담하기
-                  </a>
-                </dd>
+            {listOfficialChannelLinks().map((channel) => (
+              <div key={channel.id} className="flex items-start gap-2.5">
+                <MessageCircle size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2} />
+                <div>
+                  <dt className="font-bold text-muted">{channel.label}</dt>
+                  <dd className="mt-0.5">
+                    <a
+                      href={channel.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-brand underline-offset-2 hover:underline"
+                    >
+                      {channel.id === 'kakao' ? '카카오톡 상담하기' : '바로가기'}
+                    </a>
+                    {channel.note ? (
+                      <span className="mt-0.5 block font-medium text-muted">{channel.note}</span>
+                    ) : null}
+                  </dd>
+                </div>
               </div>
-            </div>
+            ))}
             <div className="flex items-start gap-2.5">
               <Clock3 size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2} />
               <div>

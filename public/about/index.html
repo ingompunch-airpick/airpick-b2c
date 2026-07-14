@@ -15,7 +15,7 @@
     <meta property="og:title" content="에어픽 소개 · 곰컴퍼니" />
     <meta
       property="og:description"
-      content="인천공항 주차대행·유심·eSIM 가격비교. 입점은 예약·위치·사진·보험 안내, 미입점은 가격 참고."
+      content="에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 입점은 예약·위치·사진·보험 안내, 미입점은 가격 참고."
     />
     <meta property="og:url" content="https://www.에어픽.kr/about/" />
     <meta property="og:locale" content="ko_KR" />
@@ -30,7 +30,7 @@
         "url": "https://www.에어픽.kr/about/",
         "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
         "about": { "@id": "https://www.에어픽.kr/#organization" },
-        "description": "곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼 에어픽 소개",
+        "description": "에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.",
         "inLanguage": "ko-KR"
       }
     </script>
@@ -41,6 +41,7 @@
         "@id": "https://www.에어픽.kr/#organization",
         "name": "에어픽",
         "legalName": "곰컴퍼니",
+        "description": "에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.",
         "url": "https://www.에어픽.kr",
         "logo": "https://www.에어픽.kr/icon-512.png",
         "telephone": "+82-10-2556-5746",
@@ -50,6 +51,26 @@
           "streetAddress": "자연대로29, 2017호",
           "addressLocality": "인천 중구",
           "addressCountry": "KR"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+82-10-2556-5746",
+          "contactType": "customer service",
+          "availableLanguage": ["ko"],
+          "hoursAvailable": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
         },
         "openingHoursSpecification": {
           "@type": "OpeningHoursSpecification",
@@ -84,15 +105,29 @@
         <p class="eyebrow">곰컴퍼니 운영</p>
         <h1>에어픽</h1>
         <p>
-          인천공항 주차대행·유심/eSIM 요금을 비교하는 플랫폼입니다. 입점 업체는 비교·예약 후 주차
-          위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점 업체는 가격 참고용으로 제공합니다.
+          에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 입점
+          업체는 비교·예약 후 주차 위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점 업체는
+          가격 참고용으로 제공합니다.
         </p>
         <p>
           공식 사이트
           <a href="https://www.에어픽.kr">www.에어픽.kr</a>
         </p>
         <a class="cta" href="/parking">주차 비교·예약하기</a>
+        <a class="cta secondary" href="/">홈 · 예약 조회</a>
+        <a class="cta secondary" href="/faq/">고객센터 FAQ</a>
       </header>
+
+      <section class="section">
+        <h2>한눈에 이동</h2>
+        <ul>
+          <li><a href="/parking">주차대행 가격비교 · 예약</a></li>
+          <li><a href="/esim">유심·eSIM 가격비교</a></li>
+          <li><a href="/">예약 조회</a> — 하단 예약 탭 · 비밀번호 4자리</li>
+          <li><a href="/faq/">자주 묻는 질문</a></li>
+          <li><a href="/guides/">가이드 모음</a></li>
+        </ul>
+      </section>
 
       <section class="section">
         <h2>무엇을 하나요</h2>
@@ -143,8 +178,8 @@
         </p>
       </section>
 
-      <section class="section">
-        <h2>고객센터</h2>
+      <section class="section" id="channels">
+        <h2>고객센터 · 공식 채널</h2>
         <div class="card">
           <dl class="dl">
             <div>
@@ -163,7 +198,15 @@
               <dt>운영 시간</dt>
               <dd>09:00 ~ 18:00</dd>
             </div>
+            <div>
+              <dt>공식 사이트</dt>
+              <dd><a href="https://www.에어픽.kr">www.에어픽.kr</a></dd>
+            </div>
           </dl>
+          <p style="margin-top:0.75rem;font-size:0.85rem;color:#4e5968">
+            네이버 플레이스·공식 블로그는 개설 후 이 구역과 Organization sameAs에 동일 URL로
+            연결합니다. (가짜 채널·빈 URL은 넣지 않습니다.)
+          </p>
         </div>
       </section>
 
@@ -199,7 +242,10 @@
         </div>
       </section>
 
-      <p class="footer-note">© 곰컴퍼니 · 에어픽</p>
+      <p class="footer-note">
+        © 곰컴퍼니 · 에어픽 ·
+        <a href="/privacy/">개인정보처리방침</a>
+      </p>
     </div>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import { COMPANY_LEGAL } from '../constants/companyLegal';
+import { AIRPICK_DEFINITION, COMPANY_LEGAL } from '../constants/companyLegal';
 import { SITE_NAV_PRIMARY, SITE_NAV_SECONDARY } from '../constants/siteNav';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 
@@ -18,6 +18,8 @@ export default function SiteFooter() {
           </a>
         ))}
       </nav>
+
+      <p className="mt-3 text-[10px] font-medium leading-relaxed text-muted">{AIRPICK_DEFINITION}</p>
 
       <p className="mt-4 text-[10px] font-bold text-muted">사업자 정보</p>
       <dl className="mt-1.5 space-y-0.5 text-[10px] font-medium leading-relaxed text-muted-light">

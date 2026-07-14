@@ -22,6 +22,12 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
     label: '예약 · 조회',
     items: [
       {
+        id: 'what-is',
+        question: '에어픽은 어떤 서비스인가요?',
+        answer:
+          '에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 입점 업체는 앱에서 예약·조회하고 위치·사진·보험을 확인할 수 있으며, 미입점은 참고 요금 비교 후 업체 홈으로 이동합니다.',
+      },
+      {
         id: 'my-how',
         question: '에어픽 예약은 어디서 조회하나요?',
         answer:

@@ -18,9 +18,45 @@ export const COMPANY_LEGAL = {
   siteUrlDisplay: 'www.에어픽.kr',
   /** 카카오 고객센터 채널 */
   kakaoChatUrl: 'http://pf.kakao.com/_lxhEnn/chat',
+  /** 카카오 채널 프로필 (Organization sameAs) */
+  kakaoProfileUrl: 'https://pf.kakao.com/_lxhEnn',
   /** 고객센터 운영 시간 */
   supportHours: '09:00 ~ 18:00',
 } as const;
+
+/**
+ * 브랜드 검색·AI·네이버 채널용 정의 문장 (한 줄 정본).
+ * 채널·랜딩·FAQ에서 이 문장을 그대로 쓴다.
+ */
+export const AIRPICK_DEFINITION =
+  '에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.';
+
+/** 메타·OG용 짧은 보조 (확정 요금·최저가 단정 금지) */
+export const AIRPICK_DEFINITION_META =
+  '에어픽 — 인천공항 주차대행·유심·eSIM 가격비교. 입점은 예약·위치·사진·보험 안내, 미입점은 참고가 비교.';
+
+/**
+ * 공식 외부 채널 (개설된 URL만 sameAs에 넣는다).
+ * 네이버 플레이스·블로그 URL은 docs/naver 개설 후 여기만 채우면 됨.
+ */
+export const OFFICIAL_CHANNEL_URLS: {
+  kakao: string;
+  naverBlog: string | null;
+  naverPlace: string | null;
+} = {
+  kakao: COMPANY_LEGAL.kakaoProfileUrl,
+  /** 예: https://blog.naver.com/... — docs/naver 개설 후 기입 */
+  naverBlog: null,
+  /** 네이버 플레이스 상세 URL — 개설 후 기입 */
+  naverPlace: null,
+};
+
+/** Organization JSON-LD sameAs — null 제외 */
+export function buildOrganizationSameAs(): string[] {
+  return Object.values(OFFICIAL_CHANNEL_URLS).filter(
+    (url): url is string => typeof url === 'string' && url.length > 0
+  );
+}
 
 /** 에어픽이 하는 일 (소개·AI/검색용 한 줄 근거) */
 export const AIRPICK_SERVICES = [
