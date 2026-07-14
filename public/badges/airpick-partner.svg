@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="40" viewBox="0 0 200 40" role="img" aria-label="Ð´= … · DP·}">
+  <rect width="200" height="40" rx="10" fill="#EDF4FC" stroke="#C8DFF5"/>
+  <circle cx="20" cy="20" r="10" fill="#3182F6"/>
+  <path fill="#fff" d="M17 23c0-3 2.5-5.5 6-6 1.5-.25 2.7 0 3.5.7-2.5-.3-5 1.2-6.5 3.5-.7 1-1.5 1.5-3 1.8z"/>
+  <text x="38" y="25" fill="#191F28" font-family="Pretendard, Apple SD Gothic Neo, Noto Sans KR, sans-serif" font-size="13" font-weight="700">Ð´= … · DP·}</text>
+</svg>

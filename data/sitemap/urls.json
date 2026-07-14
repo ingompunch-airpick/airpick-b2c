@@ -87,6 +87,12 @@
       "note": "가유"
     },
     {
+      "path": "/for-partners/",
+      "changefreq": "monthly",
+      "priority": 0.55,
+      "note": "입점사 배지·백링크 가이드"
+    },
+    {
       "path": "/about/",
       "changefreq": "monthly",
       "priority": 0.7,

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="/canonical-host.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3182F6" />
+    <title>입점사를 위한 에어픽 소개 배지 · 백링크 가이드</title>
+    <meta
+      name="description"
+      content="에어픽 입점 업체가 홈페이지·카카오에 붙일 비교·예약 배지와 문구입니다. www.에어픽.kr로 연결되는 소개 링크 가이드."
+    />
+    <link rel="canonical" href="https://www.에어픽.kr/for-partners/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="입점사를 위한 에어픽 소개 배지" />
+    <meta
+      property="og:description"
+      content="홈·카톡에 「에어픽에서 비교·예약」을 붙이는 방법. 과장 요금·가짜 후기 없이 신뢰 있게."
+    />
+    <meta property="og:url" content="https://www.에어픽.kr/for-partners/" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="에어픽" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="stylesheet" href="/seo.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "입점사를 위한 에어픽 소개 배지",
+        "url": "https://www.에어픽.kr/for-partners/",
+        "description": "에어픽 입점 업체가 홈·카카오에 붙일 비교·예약 배지와 문구 가이드",
+        "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
+        "inLanguage": "ko-KR"
+      }
+    </script>
+    <style>
+      .badge-preview {
+        display: block;
+        margin: 0.75rem 0 1rem;
+        max-width: 100%;
+        height: auto;
+      }
+      .snippet {
+        margin: 0.5rem 0 1rem;
+        padding: 0.75rem 0.9rem;
+        border-radius: 0.75rem;
+        background: #fff;
+        border: 1px solid var(--sky-border);
+        font-size: 0.75rem;
+        line-height: 1.45;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: var(--ink);
+      }
+      .copy-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+      }
+      button.copy {
+        appearance: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 0.45rem 0.85rem;
+        background: var(--brand);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.copy:hover {
+        background: var(--brand-dark);
+      }
+      button.copy.secondary {
+        background: var(--sky-tint);
+        color: var(--brand);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="topnav" aria-label="사이트 메뉴">
+        <a class="brand" href="/">에어픽</a>
+        <a href="/parking">주차 비교</a>
+        <a href="/esim">유심·eSIM</a>
+        <a href="/guides/">가이드</a>
+        <a href="/partners/">입점 업체</a>
+        <a href="/faq/">FAQ</a>
+      </nav>
+
+      <header class="hero">
+        <p class="eyebrow">입점사 · 협업</p>
+        <h1>에어픽 소개 배지 · 링크 가이드</h1>
+        <p class="answer">
+          <strong
+            >입점사 홈·카톡에 「에어픽에서 비교·예약」을 붙이면, 손님은 비교로 오고 검색·신뢰에도
+            도움이 됩니다.</strong
+          >
+        </p>
+        <p>
+          에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 아래
+          배지·문구는 <strong>확정 요금·최저가 단정 없이</strong> 쓰도록 맞춰 두었습니다.
+        </p>
+        <a class="cta" href="/partners/">입점 업체 목록</a>
+        <a class="cta secondary" href="/parking">주차 비교 허브</a>
+      </header>
+
+      <section class="section">
+        <h2>왜 붙이나 (짧게)</h2>
+        <ul>
+          <li>손님에게 <strong>비교·예약 경로</strong>가 분명해집니다.</li>
+          <li>에어픽 공개 페이지·www로 연결되면 <strong>검색·발견</strong>에 유리합니다.</li>
+          <li>링크는 <code>www.에어픽.kr</code> 또는 내 업체 공개 URL로만 — 광고 디렉터리·유료 링크 구매는 하지 않습니다.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>1) 배지 (홈페이지 HTML)</h2>
+        <p>파란 버튼형 — 비교 허브로 연결</p>
+        <a href="https://www.에어픽.kr/parking" rel="noopener noreferrer">
+          <img
+            class="badge-preview"
+            src="/badges/airpick-compare.svg"
+            width="280"
+            height="56"
+            alt="에어픽에서 비교·예약하기"
+          />
+        </a>
+        <pre class="snippet" id="snip-compare">&lt;a href="https://www.에어픽.kr/parking" rel="noopener noreferrer"&gt;
+  &lt;img src="https://www.에어픽.kr/badges/airpick-compare.svg" width="280" height="56" alt="에어픽에서 비교·예약하기" /&gt;
+&lt;/a&gt;</pre>
+        <div class="copy-row">
+          <button type="button" class="copy" data-copy="snip-compare">HTML 복사</button>
+        </div>
+
+        <p>밝은 입점형 — 입점 목록으로 연결</p>
+        <a href="https://www.에어픽.kr/partners/" rel="noopener noreferrer">
+          <img
+            class="badge-preview"
+            src="/badges/airpick-partner.svg"
+            width="200"
+            height="40"
+            alt="에어픽 입점 · 비교·예약"
+          />
+        </a>
+        <pre class="snippet" id="snip-partner">&lt;a href="https://www.에어픽.kr/partners/" rel="noopener noreferrer"&gt;
+  &lt;img src="https://www.에어픽.kr/badges/airpick-partner.svg" width="200" height="40" alt="에어픽 입점 · 비교·예약" /&gt;
+&lt;/a&gt;</pre>
+        <div class="copy-row">
+          <button type="button" class="copy" data-copy="snip-partner">HTML 복사</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>2) 내 업체 공개 페이지로 연결 (추천)</h2>
+        <p>
+          손님·검색이 업체명으로 들어올 때는 <strong>자기 공개 URL</strong>이 더 분명합니다.
+        </p>
+        <p>와와발렛</p>
+        <pre class="snippet" id="snip-wawa">&lt;a href="https://www.에어픽.kr/partners/wawa/" rel="noopener noreferrer"&gt;
+  &lt;img src="https://www.에어픽.kr/badges/airpick-partner.svg" width="200" height="40" alt="와와발렛 · 에어픽에서 비교·예약" /&gt;
+&lt;/a&gt;</pre>
+        <div class="copy-row">
+          <button type="button" class="copy" data-copy="snip-wawa">와와 HTML 복사</button>
+          <a class="cta secondary" href="/partners/wawa/">페이지 열기</a>
+        </div>
+
+        <p>가유</p>
+        <pre class="snippet" id="snip-gayu">&lt;a href="https://www.에어픽.kr/partners/gayu/" rel="noopener noreferrer"&gt;
+  &lt;img src="https://www.에어픽.kr/badges/airpick-partner.svg" width="200" height="40" alt="가유 · 에어픽에서 비교·예약" /&gt;
+&lt;/a&gt;</pre>
+        <div class="copy-row">
+          <button type="button" class="copy" data-copy="snip-gayu">가유 HTML 복사</button>
+          <a class="cta secondary" href="/partners/gayu/">페이지 열기</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>3) 텍스트 링크 (배지 없이)</h2>
+        <pre class="snippet" id="snip-text">&lt;a href="https://www.에어픽.kr/parking" rel="noopener noreferrer"&gt;에어픽에서 주차대행 요금 비교·예약&lt;/a&gt;</pre>
+        <div class="copy-row">
+          <button type="button" class="copy" data-copy="snip-text">텍스트 HTML 복사</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>4) 카카오톡 · 안내 문구 (복붙)</h2>
+        <pre class="snippet" id="snip-kakao">에어픽 입점 업체입니다.
+일정 넣어 요금 비교 후 예약할 수 있어요.
+→ https://www.에어픽.kr/parking
+
+(표시 요금은 일정 기준 참고가이며, 현장 정책에 따라 달라질 수 있습니다.)</pre>
+        <div class="copy-row">
+          <button type="button" class="copy" data-copy="snip-kakao">카톡 문구 복사</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>링크·문구 규칙 (컴플라이언스)</h2>
+        <ul>
+          <li><strong>허용</strong>: 비교·예약, 입점, 참고가, 일정 넣어 확인</li>
+          <li><strong>금지</strong>: 무조건 최저가, 확정 ○○원, 가짜 별점·후기, 「검증 완료」 과대</li>
+          <li>가능하면 <code>rel="sponsored"</code> / <code>nofollow</code> 로 막지 말고 <strong>일반 소개 링크</strong>로 둡니다 (제휴 광고가 아닐 때).</li>
+          <li>스팸성 디렉터리·유료 링크 구매는 하지 않습니다.</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>에어픽 쪽에서 할 일</h2>
+        <ol>
+          <li>입점사에 이 페이지 URL을 전달합니다.</li>
+          <li>붙인 뒤 홈·카톡에 링크가 살아 있는지 확인합니다.</li>
+          <li>새 입점이 생기면 <code>/partners/{id}/</code>용 스니펫을 이 페이지에 추가합니다.</li>
+        </ol>
+        <p>운영 체크리스트는 저장소 <code>docs/partners-backlinks.md</code> 에 있습니다.</p>
+      </section>
+
+      <p class="footer-note">
+        에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. ·
+        <a href="/about/">소개</a> · <a href="/partners/">입점 목록</a>
+      </p>
+    </div>
+    <script>
+      document.querySelectorAll('button.copy').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-copy');
+          const el = document.getElementById(id);
+          if (!el) return;
+          const text = el.textContent || '';
+          try {
+            await navigator.clipboard.writeText(text.trim());
+            const prev = btn.textContent;
+            btn.textContent = '복사됨';
+            setTimeout(() => {
+              btn.textContent = prev;
+            }, 1600);
+          } catch {
+            btn.textContent = '드래그해 복사';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
