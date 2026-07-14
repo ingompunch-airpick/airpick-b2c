@@ -217,6 +217,16 @@ ${JSON.stringify(graph, null, 2)}
           <li><a href="/guides/official-vs-private/">공식 주차장 vs 사설 주차대행</a></li>
           <li><a href="/guides/">가이드 모음</a></li>
           <li><a href="/parking">전체 업체 요금 비교</a></li>
+          <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
+        </ul>
+      </section>
+
+      <section class="section evidence">
+        <h2>근거 · 사실</h2>
+        <ul>
+          <li>${esc(name)}${particle} 에어픽 <strong>입점</strong> 주차대행입니다. (비교 플랫폼의 입점사)</li>
+          <li>확정 요금·가짜 별점을 이 페이지에 두지 않습니다. 실후기만 앱·상세에 노출됩니다.</li>
+          <li>운영사·정의: <a href="/facts/">사실 확인</a> · <a href="/about/">곰컴퍼니</a></li>
         </ul>
       </section>
 
@@ -325,6 +335,16 @@ ${JSON.stringify(graph, null, 2)}
         </ul>
       </section>
 
+      <section class="section evidence">
+        <h2>근거 · 사실</h2>
+        <ul>
+          <li>${esc(AIRPICK_DEFINITION)}</li>
+          <li>이 목록의 공개 입점 페이지: <strong>${partners.length}곳</strong> (미입점은 여기 없음)</li>
+          <li>요금·보험 확정 숫자는 이 페이지에 박지 않습니다. 일정 넣어 비교·앱에서 확인하세요.</li>
+          <li>공식 사실: <a href="/facts/">사실 확인</a></li>
+        </ul>
+      </section>
+
       <section class="section">
         <h2>함께 보면</h2>
         <ul>
@@ -332,6 +352,7 @@ ${JSON.stringify(graph, null, 2)}
           <li><a href="/guides/parking-compare/">비교·예약 가이드</a></li>
           <li><a href="/for-partners/">입점사 배지 · 소개 링크</a></li>
           <li><a href="/faq/">자주 묻는 질문</a></li>
+          <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
         </ul>
       </section>
 

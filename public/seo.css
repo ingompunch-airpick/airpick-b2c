@@ -259,3 +259,20 @@ details.faq p {
 .cta.secondary:hover {
   background: rgba(49, 130, 246, 0.08);
 }
+
+.evidence {
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  background: #fff;
+  border: 1px solid var(--sky-border);
+}
+
+.evidence ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.evidence li + li {
+  margin-top: 0.35rem;
+}
+

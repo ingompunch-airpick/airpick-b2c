@@ -93,6 +93,12 @@
       "note": "입점사 배지·백링크 가이드"
     },
     {
+      "path": "/facts/",
+      "changefreq": "monthly",
+      "priority": 0.65,
+      "note": "AI·보도용 사실 확인"
+    },
+    {
       "path": "/about/",
       "changefreq": "monthly",
       "priority": 0.7,

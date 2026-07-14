@@ -10,6 +10,7 @@ export const SITE_NAV_PRIMARY = [
 
 export const SITE_NAV_SECONDARY = [
   { href: '/about/', label: '에어픽 소개' },
+  { href: '/facts/', label: '사실 확인' },
   { href: '/for-partners/', label: '입점사 배지' },
   { href: '/privacy/', label: '개인정보처리방침' },
 ] as const;

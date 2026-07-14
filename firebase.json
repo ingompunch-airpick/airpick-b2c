@@ -152,6 +152,15 @@
         ]
       },
       {
+        "source": "/facts/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300"
+          }
+        ]
+      },
+      {
         "source": "/for-partners/**",
         "headers": [
           {

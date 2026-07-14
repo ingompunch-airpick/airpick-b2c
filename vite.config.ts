@@ -70,6 +70,7 @@ export default defineConfig({
           '**/guides/**',
           '**/partners/**',
           '**/for-partners/**',
+          '**/facts/**',
           '**/badges/**',
           '**/robots.txt',
           '**/sitemap.xml',
@@ -98,6 +99,7 @@ export default defineConfig({
           /^\/guides(?:\/|$)/,
           /^\/partners(?:\/|$)/,
           /^\/for-partners(?:\/|$)/,
+          /^\/facts(?:\/|$)/,
           /^\/api(?:\/|$)/,
           /^\/naver[\w-]+\.html$/,
           /^\/google[\w-]+\.html$/,
@@ -123,7 +125,7 @@ export default defineConfig({
           },
           // about/faq/privacy/guides/partners 정적 HTML — 네트워크 우선, 최대 1시간
           {
-            urlPattern: /\/(?:about|faq|privacy|guides|partners|for-partners)(?:\/|$)/i,
+            urlPattern: /\/(?:about|faq|privacy|guides|partners|for-partners|facts)(?:\/|$)/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'seo-html',

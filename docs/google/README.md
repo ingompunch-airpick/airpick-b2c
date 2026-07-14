@@ -11,5 +11,7 @@
 | 42 | 입점 배지·링크 정책 | https://www.에어픽.kr/for-partners/ | **사이트 반영 완료** |
 | 43 | YouTube/숏폼 설명란 | [43-youtube-templates.md](./43-youtube-templates.md) | 템플릿 준비 |
 
+GEO(P5) 모니터링·사실 페이지: [`docs/geo/`](../geo/) · https://www.에어픽.kr/facts/
+
 공식 사이트: https://www.에어픽.kr  
 정의 정본: 에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
