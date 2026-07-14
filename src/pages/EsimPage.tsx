@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
 import PageHero from '../components/PageHero';
+import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
 import {
   ESIM_COMPARE_DESC,
   ESIM_COMPARE_H1,
@@ -36,6 +37,7 @@ export default function EsimPage() {
   return (
     <div className="space-y-5">
       <PageHero sub={ESIM_COMPARE_SUB} line={ESIM_COMPARE_H1} desc={ESIM_COMPARE_DESC} />
+      <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
       <EsimSearchPanel search={search} onChange={setSearch} />
 

@@ -94,7 +94,7 @@ export const TRUST_PILLARS = [
   {
     id: 'insurance',
     title: '보험',
-    desc: '가입 여부·보장 한도를 미리 확인',
+    desc: '가입 여부·보험 안내를 미리 확인',
   },
 ] as const;
 

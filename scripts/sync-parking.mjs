@@ -249,6 +249,7 @@ function generateTs(companies) {
       `    base_price: ${c.outdoorBasePrice ?? c.indoorBasePrice ?? 0},`,
       `    base_days: ${c.outdoorBaseDays ?? c.indoorBaseDays ?? 1},`,
       `    extra_day_price: ${c.outdoorExtraPrice ?? c.indoorExtraPrice ?? 0},`,
+      // Company 타입 호환용 — UI·정렬·스키마는 실후기만 사용 (시드 별점 표시 금지)
       `    rating: 0,`,
       `    reviews_count: 0,`,
       `    features: [],`,

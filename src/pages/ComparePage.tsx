@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import CompanyCard from '../components/CompanyCard';
 import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
+import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
 import {
   PARKING_COMPARE_DESC,
   PARKING_COMPARE_H1,
@@ -168,6 +169,7 @@ export default function ComparePage({
     <div className="space-y-5">
       <PageHero sub={PARKING_PLATFORM_SUB} line={PARKING_COMPARE_H1} desc={PARKING_COMPARE_DESC} />
       <SearchPanel search={search} onChange={onSearchChange} />
+      <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 
