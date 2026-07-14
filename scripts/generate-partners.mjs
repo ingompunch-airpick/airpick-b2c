@@ -24,6 +24,17 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
+function topicParticle(name) {
+  const chars = [...String(name)];
+  const last = chars[chars.length - 1];
+  if (!last) return '는';
+  const code = last.codePointAt(0);
+  if (code >= 0xac00 && code <= 0xd7a3) {
+    return (code - 0xac00) % 28 === 0 ? '는' : '은';
+  }
+  return '는';
+}
+
 function lotLabel(p) {
   const parts = [];
   if (p.supportsIndoor) parts.push('실내');
@@ -56,13 +67,14 @@ function renderPartner(p) {
 
   const url = `https://www.에어픽.kr/partners/${id}/`;
   const title = `${name} · 인천공항 주차대행 (에어픽 입점)`;
+  const particle = topicParticle(name);
   const description =
     p.description?.trim() ||
-    `${name}은 에어픽 입점 인천공항 주차대행입니다. 실내·야외, 터미널, 보험 안내를 확인하고 일정 넣어 비교·예약하세요.`;
+    `${name}${particle} 에어픽 입점 인천공항 주차대행입니다. 실내·야외, 터미널, 보험 안내를 확인하고 일정 넣어 비교·예약하세요.`;
   const h1 = `${name} · 인천공항 주차대행`;
   const directAnswer =
     p.answer?.trim() ||
-    `${name}은 에어픽 입점 주차대행입니다. 일정을 넣고 비교·예약한 뒤, 위치·사진·보험은 예약 탭에서 확인하세요.`;
+    `${name}${particle} 에어픽 입점 주차대행입니다. 일정을 넣고 비교·예약한 뒤, 위치·사진·보험은 예약 탭에서 확인하세요.`;
   const prototypeNote = p.isPrototype
     ? `<p class="note">이 페이지는 공개 URL·본문 구조 검증용 프로토타입입니다. 실제 입점 정보로 교체될 수 있습니다.</p>`
     : '';
@@ -152,7 +164,7 @@ ${JSON.stringify(graph, null, 2)}
         <p class="answer"><strong>${esc(directAnswer)}</strong></p>
         <p>
           ${esc(AIRPICK_DEFINITION)}
-          ${esc(name)}은 에어픽에 입점한 인천공항 주차대행·발렛입니다.
+          ${esc(name)}${particle} 에어픽에 입점한 인천공항 주차대행·발렛입니다.
           요금은 출국·귀국 일정·터미널·실내/야외에 따라 달라지므로,
           <strong>확정가 대신 비교 화면에서 일정을 넣고</strong> 확인한 뒤 예약하세요.
         </p>
