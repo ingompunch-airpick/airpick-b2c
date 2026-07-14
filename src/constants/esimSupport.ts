@@ -1,5 +1,6 @@
 import type { FaqCategory } from './support';
 import { ESIM_TAB_LABEL } from './marketing';
+import { SHORT_ANSWERS } from './officialAnswers';
 
 /** 초보자 유심/eSIM 이용 가이드 — 예약 탭 */
 export const ESIM_GUIDE_STEPS = [
@@ -32,29 +33,36 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
     {
       id: 'esim-buy-here',
       question: '에어픽에서 유심·eSIM을 바로 구매할 수 있나요?',
+      shortAnswer: SHORT_ANSWERS.esimBuy,
       answer:
         '아니요. 에어픽은 제휴 요금 비교만 제공합니다. 원하는 요금제를 선택한 뒤 제휴사 사이트에서 구매·개통해 주세요.',
     },
     {
       id: 'esim-diff',
       question: 'eSIM과 USIM 중 무엇을 선택해야 하나요?',
+      shortAnswer: SHORT_ANSWERS.esimType,
       answer:
         'eSIM을 지원하는 최신 스마트폰이면 eSIM이 편합니다(물리 카드 없이 QR 설치). eSIM 미지원 기기는 USIM을 선택해 주세요.',
     },
     {
       id: 'esim-price',
       question: '에어픽에 표시된 유심·eSIM 가격이 최종 금액인가요?',
+      shortAnswer: SHORT_ANSWERS.esimPrice,
       answer:
         '제휴사가 제공한 참고 요금입니다. 제휴사 사이트에서 쿠폰·환율·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요.',
     },
     {
       id: 'esim-update',
       question: '유심·eSIM 요금은 언제 업데이트되나요?',
+      shortAnswer:
+        '유심·eSIM 탭 상단 「마지막 수정」일을 보세요. 제휴 요금은 수시로 바뀔 수 있습니다.',
       answer: `${ESIM_TAB_LABEL} 탭 상단 「마지막 수정」 날짜를 참고해 주세요. 제휴사 요금은 수시로 변동될 수 있습니다.`,
     },
     {
       id: 'esim-support',
       question: '유심·eSIM 개통이 안 되거나 데이터가 안 될 때는?',
+      shortAnswer:
+        '구매한 제휴사 고객센터로 문의해 주세요. 에어픽은 개통을 대행하지 않습니다.',
       answer:
         '구매한 제휴사 고객센터로 문의해 주세요. APN 설정·eSIM 재설치 방법은 제휴사 안내를 따르시면 됩니다.',
     },

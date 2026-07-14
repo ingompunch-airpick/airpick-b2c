@@ -60,7 +60,10 @@ export default function SupportPage({
                       <summary className="cursor-pointer list-none text-sm font-semibold text-ink marker:content-none">
                         {item.question}
                       </summary>
-                      <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
+                      <p className="mt-2 text-xs font-bold leading-relaxed text-ink">
+                        {item.shortAnswer}
+                      </p>
+                      <p className="mt-1.5 text-xs font-medium leading-relaxed text-muted">
                         {item.answer}
                       </p>
                     </details>

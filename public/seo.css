@@ -218,6 +218,12 @@ details.faq p {
   color: var(--muted);
 }
 
+details.faq p.answer {
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .cat-label {
   margin: 1rem 0 0.5rem;
   padding: 0 0.125rem;
