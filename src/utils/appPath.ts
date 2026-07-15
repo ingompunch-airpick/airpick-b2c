@@ -8,9 +8,28 @@ export const TAB_PATH: Record<AppTab, string> = {
   my: '/my',
 };
 
+/** 정적 HTML SEO 문서 (React 앱 탭이 아님) */
+const SEO_DOCUMENT_PREFIXES = [
+  '/guides',
+  '/partners',
+  '/faq',
+  '/about',
+  '/privacy',
+  '/facts',
+  '/for-partners',
+  '/badges',
+] as const;
+
 export function normalizePathname(pathname: string): string {
   if (!pathname || pathname === '/') return '/';
   return pathname.replace(/\/+$/, '') || '/';
+}
+
+export function isSeoDocumentPath(pathname: string): boolean {
+  const path = normalizePathname(pathname);
+  return SEO_DOCUMENT_PREFIXES.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
 }
 
 /** pathname → 탭. 앱 탭이 아니면 null */
@@ -41,6 +60,37 @@ export function syncUrlToTab(tab: AppTab, mode: 'push' | 'replace' = 'push'): vo
 
 export function readInitialTab(): AppTab {
   return tabFromPathname(window.location.pathname) ?? 'home';
+}
+
+/**
+ * 오래된 SW가 SEO URL에 SPA(index)를 준 경우 복구.
+ * @returns true면 리로드 진행 중이라 React를 마운트하지 말 것
+ */
+export async function recoverStolenSeoDocument(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+  if (!isSeoDocumentPath(window.location.pathname)) return false;
+
+  const spaShell =
+    Boolean(document.getElementById('root')) && !document.querySelector('nav.topnav');
+  if (!spaShell) return false;
+
+  const key = `seo-recover:${normalizePathname(window.location.pathname)}`;
+  if (sessionStorage.getItem(key) === '1') return false;
+  sessionStorage.setItem(key, '1');
+
+  try {
+    const regs = (await navigator.serviceWorker?.getRegistrations()) ?? [];
+    await Promise.all(regs.map((r) => r.unregister()));
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+  } catch {
+    /* ignore — still reload */
+  }
+
+  window.location.reload();
+  return true;
 }
 
 /** `/my?review={reservationId}` — 출고 알림톡 후기 딥링크 */

@@ -80,11 +80,9 @@ export default defineConfig({
           '**/shared/**',
         ],
         navigateFallback: 'index.html',
-        // 알려진 앱 경로만 SPA 폴백 — 그 외는 네트워크(Hosting 404)로
+        // SPA 폴백은 앱 전용 경로만. /parking·/esim은 Hosting이 parking.html·esim.html로 보냄
         navigateFallbackAllowlist: [
           /^\/$/,
-          /^\/parking$/,
-          /^\/esim$/,
           /^\/my$/,
           /^\/r\/[^/]+$/,
           /^\/admin\/reviews$/,
@@ -92,6 +90,7 @@ export default defineConfig({
         navigateFallbackDenylist: [
           /^\/robots\.txt$/,
           /^\/sitemap\.xml$/,
+          /^\/llms\.txt$/,
           /^\/seo\.css$/,
           /^\/about(?:\/|$)/,
           /^\/faq(?:\/|$)/,
@@ -100,6 +99,9 @@ export default defineConfig({
           /^\/partners(?:\/|$)/,
           /^\/for-partners(?:\/|$)/,
           /^\/facts(?:\/|$)/,
+          /^\/badges(?:\/|$)/,
+          /^\/parking(?:\/|$)/,
+          /^\/esim(?:\/|$)/,
           /^\/api(?:\/|$)/,
           /^\/naver[\w-]+\.html$/,
           /^\/google[\w-]+\.html$/,

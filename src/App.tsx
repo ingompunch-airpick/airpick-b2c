@@ -19,6 +19,7 @@ import {
 } from './constants/marketing';
 import {
   clearReviewQueryParam,
+  isSeoDocumentPath,
   readInitialTab,
   readReviewReservationId,
   syncUrlToTab,
@@ -81,16 +82,22 @@ export default function App() {
   }, [tab]);
 
   useEffect(() => {
-    // 알 수 없는 path로 들어오면 홈으로 정리
-    if (tabFromPathname(window.location.pathname) == null) {
+    const path = window.location.pathname;
+    // 가이드·FAQ 등 SEO 문서는 앱 탭이 아님 — 홈으로 접지 않음
+    if (!isSeoDocumentPath(path) && tabFromPathname(path) == null) {
       syncUrlToTab('home', 'replace');
       setTabState('home');
     }
 
     const onPopState = () => {
-      const next = tabFromPathname(window.location.pathname) ?? 'home';
+      const current = window.location.pathname;
+      if (isSeoDocumentPath(current)) {
+        window.location.assign(current + window.location.search + window.location.hash);
+        return;
+      }
+      const next = tabFromPathname(current) ?? 'home';
       setTabState(next);
-      if (tabFromPathname(window.location.pathname) == null) {
+      if (tabFromPathname(current) == null) {
         syncUrlToTab('home', 'replace');
       }
     };
