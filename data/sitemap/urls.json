@@ -1,6 +1,6 @@
 {
   "comment": "사이트맵 소스. 경로만 적으면 scripts/generate-sitemap.mjs 가 public/sitemap.xml 을 갱신한다. /my · /r/* · /admin 은 넣지 말 것.",
-  "baseUrl": "https://www.xn--oh5b1bw17d.kr",
+  "baseUrl": "https://www.에어픽.kr",
   "urls": [
     {
       "path": "/",
@@ -69,6 +69,12 @@
       "note": "입점 vs 미입점"
     },
     {
+      "path": "/guides/parking-insurance/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "주차대행 보험 확인법"
+    },
+    {
       "path": "/partners/",
       "changefreq": "weekly",
       "priority": 0.75,
@@ -117,10 +123,5 @@
       "note": "개인정보처리방침 (정적 HTML)"
     }
   ],
-  "planned": [
-    {
-      "path": "/guides/parking-insurance/",
-      "note": "보험 있는 주차대행 — 심사 후 확장"
-    }
-  ]
+  "planned": []
 }

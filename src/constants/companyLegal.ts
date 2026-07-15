@@ -13,9 +13,11 @@ export const COMPANY_LEGAL = {
   privacyOfficer: '김인원',
   /** 서비스 영역 */
   serviceArea: '인천공항',
-  /** 공식 사이트 */
+  /** 공식 사이트 — canonical·sitemap·JSON-LD 와 동일 (유니코드 www) */
   siteUrl: 'https://www.에어픽.kr',
   siteUrlDisplay: 'www.에어픽.kr',
+  /** Firebase/web.app 리다이렉트·DNS용 퓨니코드 (표기는 siteUrl 우선) */
+  siteUrlAscii: 'https://www.xn--oh5b1bw17d.kr',
   /** 카카오 고객센터 채널 */
   kakaoChatUrl: 'http://pf.kakao.com/_lxhEnn/chat',
   /** 카카오 채널 프로필 (Organization sameAs) */

@@ -25,14 +25,60 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "에어픽 사실 확인",
-        "url": "https://www.에어픽.kr/facts/",
-        "description": "에어픽 정의·사업자·입점·결제·요금 범위에 대한 공식 사실 요약",
-        "dateModified": "2026-07-15",
-        "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
-        "about": { "@id": "https://www.에어픽.kr/#organization" },
-        "inLanguage": "ko-KR"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://www.에어픽.kr/#organization",
+            "name": "에어픽",
+            "legalName": "곰컴퍼니",
+            "description": "에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.",
+            "url": "https://www.에어픽.kr",
+            "logo": "https://www.에어픽.kr/icon-512.png",
+            "taxID": "776-32-01655",
+            "founder": { "@type": "Person", "name": "김인원" },
+            "areaServed": { "@type": "Place", "name": "인천국제공항" },
+            "telephone": "+82-10-2556-5746",
+            "email": "ingompunch@gmail.com",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "자연대로29, 2017호",
+              "addressLocality": "인천 중구",
+              "addressCountry": "KR"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+82-10-2556-5746",
+              "contactType": "customer service",
+              "availableLanguage": ["ko"],
+              "hoursAvailable": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday"
+                ],
+                "opens": "09:00",
+                "closes": "18:00"
+              }
+            },
+            "sameAs": ["https://pf.kakao.com/_lxhEnn"]
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://www.에어픽.kr/facts/#webpage",
+            "name": "에어픽 사실 확인",
+            "url": "https://www.에어픽.kr/facts/",
+            "description": "에어픽 정의·사업자·입점·결제·요금 범위에 대한 공식 사실 요약",
+            "dateModified": "2026-07-16",
+            "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
+            "about": { "@id": "https://www.에어픽.kr/#organization" },
+            "inLanguage": "ko-KR"
+          }
+        ]
       }
     </script>
   </head>
@@ -61,7 +107,7 @@
           요금·최저가 단정은 하지 않습니다.
         </p>
         <p class="muted" style="font-size: 0.8125rem; color: var(--muted)">
-          마지막 업데이트: 2026.07.15
+          마지막 업데이트: 2026.07.16
         </p>
         <a class="cta" href="/faq/">FAQ</a>
         <a class="cta secondary" href="/about/">소개 · 사업자</a>

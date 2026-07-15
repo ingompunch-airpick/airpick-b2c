@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.xn--oh5b1bw17d.kr/sitemap.xml
+Sitemap: https://www.에어픽.kr/sitemap.xml
