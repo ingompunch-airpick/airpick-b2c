@@ -66,6 +66,8 @@ export default function App() {
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
     syncUrlToTab(next, mode);
+    // 탭만 바꾸면 브라우저 scrollY가 유지되어 비교/유심 화면이 하단(푸터)부터 보임
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
