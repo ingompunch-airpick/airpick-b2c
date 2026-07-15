@@ -89,7 +89,18 @@ function renderPartner(p) {
     name,
     url,
     description: `${name} — 에어픽 입점 인천공항 주차대행·발렛`,
-    ...(p.imageUrl?.trim() ? { image: p.imageUrl.trim() } : {}),
+    image: p.imageUrl?.trim() || 'https://www.에어픽.kr/icon-512.png',
+    // 도로명 미공개 — 가짜 streetAddress 넣지 않음. 지역·서비스권만 명시
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: '인천',
+      addressRegion: '인천광역시',
+      addressCountry: 'KR',
+    },
+    areaServed: {
+      '@type': 'Place',
+      name: '인천국제공항',
+    },
     parentOrganization: { '@id': 'https://www.에어픽.kr/#organization' },
   };
 

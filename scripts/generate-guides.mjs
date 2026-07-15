@@ -253,13 +253,40 @@ function renderIndex(pages) {
 
   const graph = {
     '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: '인천공항 주차대행 가이드 · 에어픽',
-    url,
-    description:
-      '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음',
-    isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
-    inLanguage: 'ko-KR',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: '에어픽', item: 'https://www.에어픽.kr/' },
+          { '@type': 'ListItem', position: 2, name: '가이드', item: url },
+        ],
+      },
+      {
+        '@type': 'CollectionPage',
+        '@id': `${url}#webpage`,
+        name: '인천공항 주차대행 가이드 · 에어픽',
+        url,
+        description:
+          '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음',
+        isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
+        breadcrumb: { '@id': `${url}#breadcrumb` },
+        mainEntity: { '@id': `${url}#itemlist` },
+        inLanguage: 'ko-KR',
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${url}#itemlist`,
+        name: '에어픽 가이드 목록',
+        numberOfItems: pages.length,
+        itemListElement: pages.map((p, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: p.h1,
+          url: `https://www.에어픽.kr/guides/${p.slug}/`,
+        })),
+      },
+    ],
   };
 
   return `<!doctype html>

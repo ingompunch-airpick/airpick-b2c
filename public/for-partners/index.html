@@ -25,12 +25,37 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "입점사를 위한 에어픽 소개 배지",
-        "url": "https://www.에어픽.kr/for-partners/",
-        "description": "에어픽 입점 업체가 홈·카카오에 붙일 비교·예약 배지와 문구 가이드",
-        "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
-        "inLanguage": "ko-KR"
+        "@graph": [
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.에어픽.kr/for-partners/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "에어픽",
+                "item": "https://www.에어픽.kr/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "입점사 배지",
+                "item": "https://www.에어픽.kr/for-partners/"
+              }
+            ]
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://www.에어픽.kr/for-partners/#webpage",
+            "name": "입점사를 위한 에어픽 소개 배지",
+            "url": "https://www.에어픽.kr/for-partners/",
+            "description": "에어픽 입점 업체가 홈·카카오에 붙일 비교·예약 배지와 문구 가이드",
+            "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
+            "about": { "@id": "https://www.에어픽.kr/#organization" },
+            "breadcrumb": { "@id": "https://www.에어픽.kr/for-partners/#breadcrumb" },
+            "inLanguage": "ko-KR"
+          }
+        ]
       }
     </script>
     <style>

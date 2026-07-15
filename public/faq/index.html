@@ -25,9 +25,35 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "url": "https://www.에어픽.kr/faq/",
-        "mainEntity": [
+        "@graph": [
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.에어픽.kr/faq/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "에어픽",
+                "item": "https://www.에어픽.kr/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "FAQ",
+                "item": "https://www.에어픽.kr/faq/"
+              }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://www.에어픽.kr/faq/#faq",
+            "url": "https://www.에어픽.kr/faq/",
+            "name": "자주 묻는 질문 · 에어픽 FAQ",
+            "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
+            "about": { "@id": "https://www.에어픽.kr/#organization" },
+            "breadcrumb": { "@id": "https://www.에어픽.kr/faq/#breadcrumb" },
+            "inLanguage": "ko-KR",
+            "mainEntity": [
           {
             "@type": "Question",
             "name": "에어픽은 어떤 서비스인가요?",
@@ -123,6 +149,8 @@
               "@type": "Answer",
               "text": "표시가는 참고 요금입니다. 결제 전 제휴사에서 최종 금액을 확인하세요. 제휴사가 제공한 참고 요금입니다. 제휴사 사이트에서 쿠폰·환율·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요."
             }
+          }
+        ]
           }
         ]
       }

@@ -22,14 +22,99 @@
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": "인천공항 주차대행 가이드 · 에어픽",
-  "url": "https://www.에어픽.kr/guides/",
-  "description": "인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음",
-  "isPartOf": {
-    "@id": "https://www.에어픽.kr/#website"
-  },
-  "inLanguage": "ko-KR"
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.에어픽.kr/guides/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "에어픽",
+          "item": "https://www.에어픽.kr/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "가이드",
+          "item": "https://www.에어픽.kr/guides/"
+        }
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://www.에어픽.kr/guides/#webpage",
+      "name": "인천공항 주차대행 가이드 · 에어픽",
+      "url": "https://www.에어픽.kr/guides/",
+      "description": "인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음",
+      "isPartOf": {
+        "@id": "https://www.에어픽.kr/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://www.에어픽.kr/guides/#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "https://www.에어픽.kr/guides/#itemlist"
+      },
+      "inLanguage": "ko-KR"
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://www.에어픽.kr/guides/#itemlist",
+      "name": "에어픽 가이드 목록",
+      "numberOfItems": 8,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "인천공항 주차대행 비교·예약 가이드",
+          "url": "https://www.에어픽.kr/guides/parking-compare/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "인천공항 공식 주차장 vs 사설 주차대행",
+          "url": "https://www.에어픽.kr/guides/official-vs-private/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "인천공항 1터미널·2터미널·운서역 주차대행 고르는 법",
+          "url": "https://www.에어픽.kr/guides/t1-t2-unseo/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "인천공항 장기주차·단기주차, 주차대행으로 맡길 때",
+          "url": "https://www.에어픽.kr/guides/long-vs-short/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "해외여행 전 인천공항 주차·발렛 꿀팁",
+          "url": "https://www.에어픽.kr/guides/travel-parking-tips/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "name": "해외여행 유심·eSIM 초보 가이드",
+          "url": "https://www.에어픽.kr/guides/esim-beginner/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "name": "에어픽 입점 vs 미입점 주차대행",
+          "url": "https://www.에어픽.kr/guides/partner-vs-external/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 8,
+          "name": "인천공항 주차대행 보험 확인법",
+          "url": "https://www.에어픽.kr/guides/parking-insurance/"
+        }
+      ]
+    }
+  ]
 }
     </script>
   </head>
