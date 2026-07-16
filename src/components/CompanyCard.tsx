@@ -1,4 +1,5 @@
 import { ChevronRight, ExternalLink, Star } from 'lucide-react';
+import { REVIEW_EMPTY_HINT } from '../constants/complianceCopy';
 import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { Company } from '../types';
 import { cn } from '../utils/cn';
@@ -108,14 +109,16 @@ export default function CompanyCard({
             </span>
           )}
         </div>
-        {partner && reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null && (
+        {partner && reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null ? (
           <div className="mt-1 flex items-center gap-1 text-[11px] font-medium text-muted">
             <Star size={12} className="fill-amber-400 text-amber-400" />
             <span>{reviewSnapshot.averageRating.toFixed(1)}</span>
             <span>·</span>
             <span>후기 {reviewSnapshot.count}</span>
           </div>
-        )}
+        ) : partner ? (
+          <p className="mt-1 text-[11px] font-medium text-muted">{REVIEW_EMPTY_HINT}</p>
+        ) : null}
         {partner && (
           <div className="mt-2">
             <TrustBadges company={company} />

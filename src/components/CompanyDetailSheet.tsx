@@ -283,11 +283,15 @@ export default function CompanyDetailSheet({
               ) : reviews.length > 0 ? (
                 reviews.map((review) => <ReviewItem key={review.id} review={review} />)
               ) : (
-                <p className="rounded-xl bg-sky-bg px-4 py-6 text-center text-xs leading-relaxed text-muted ring-1 ring-sky-border/50">
-                  아직 등록된 후기가 없습니다.
-                  <br />
-                  이용 후 예약 탭에서 작성할 수 있습니다.
-                </p>
+                <div className="rounded-xl bg-sky-bg px-4 py-6 text-center text-xs leading-relaxed text-muted ring-1 ring-sky-border/50">
+                  <p className="font-semibold text-ink">아직 등록된 후기가 없습니다</p>
+                  <p className="mt-2">
+                    에어픽은 이용 고객의 실후기만 표시합니다.
+                    <br />
+                    가짜 별점·시드 후기는 사용하지 않습니다.
+                  </p>
+                  <p className="mt-2">이용 후 예약 탭에서 후기를 남길 수 있습니다.</p>
+                </div>
               )}
             </div>
           </section>

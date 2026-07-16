@@ -48,6 +48,16 @@ export const PARKING_EXTERNAL_SECTION = {
   subtitleNote: '참고 요금 · 위치·보험·후기는 에어픽에서 제공하지 않음',
 } as const;
 
+/** 주차 비교 탭 하단 · 빈 결과 안내 등 내부 링크 */
+export const PARKING_COMPARE_GUIDE_LINKS = [
+  { href: '/guides/parking-compare/', label: '주차대행 비교·예약 가이드' },
+  { href: '/guides/parking-insurance/', label: '보험 확인법' },
+  { href: '/guides/partner-vs-external/', label: '입점 vs 미입점' },
+  { href: '/guides/official-vs-private/', label: '공식 주차장 vs 사설' },
+  { href: '/guides/t1-t2-unseo/', label: 'T1·T2·운서역 고르기' },
+  { href: '/faq/', label: '자주 묻는 질문' },
+] as const;
+
 /** 업체 홈페이지 예약 — 에어픽 전용 추적 안내 */
 export const AIRPICK_TRACKING_UPSELL = {
   title: '입고 위치·사진은 에어픽 예약 전용',

@@ -132,3 +132,81 @@ https://www.에어픽.kr/for-partners/
 - 새 입점: `data/partners/pages.json` 추가 → `npm run partners`
 - `/for-partners/` 에 해당 id 스니펫 추가
 - sitemap은 partners 병합으로 자동 포함
+
+---
+
+## 6) 네이버 블로그 · 공식 글 (복붙용)
+
+**원칙:** www 가이드를 요약하고 **본문 링크 1~2개**만. 첫 문장 = 정본 한 줄.
+
+초안 파일: `docs/naver/blog-drafts/`
+
+| 주제 | 초안 | 권장 링크 |
+|------|------|-----------|
+| 비교·예약 | 01-parking-compare.md | /guides/parking-compare/ |
+| 입점 vs 미입점 | 02-partner-vs-external.md | /guides/partner-vs-external/ |
+| T1·T2·운서 | 03-terminal.md | /guides/t1-t2-unseo/ |
+| 유심·eSIM | 04-esim.md | /guides/esim-beginner/ |
+| **보험 확인** | **05-parking-insurance.md** | **/guides/parking-insurance/** |
+
+**블로그 본문 끝에 넣을 CTA (택1)**
+
+```
+자세한 단계는 에어픽 가이드에서 확인하세요.
+👉 https://www.에어픽.kr/guides/parking-compare/
+바로 비교: https://www.에어픽.kr/parking
+```
+
+보험 글일 때:
+
+```
+보험 확인 체크리스트: https://www.에어픽.kr/guides/parking-insurance/
+바로 비교: https://www.에어픽.kr/parking
+```
+
+**금지:** 확정 요금·최저가 단정, 가짜 후기, 경쟁사 비하.
+
+---
+
+## 7) 카페 · 지식iN · 커뮤니티 (짧은 답변)
+
+**원칙:** 질문에 맞는 사실 2~4문장 + **www 링크 1개**. 동일 글 복붙 금지.
+
+```
+에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
+출국·귀국 일정과 터미널·실내/야외를 넣으면 업체별 참고 요금을 나란히 볼 수 있고,
+입점은 앱에서 예약·입고 후 위치·사진·보험 안내까지 이어집니다.
+표시 금액은 일정 기준 예상·참고가이며 변동될 수 있습니다.
+
+자세한 비교 → https://www.에어픽.kr/parking
+```
+
+보험 질문일 때:
+
+```
+주차대행 보험은 업체마다 안내 방식이 다릅니다. 에어픽 입점은 비교·예약 후 보험 안내를 함께 볼 수 있고,
+미입점은 참고 요금만 비교한 뒤 해당 업체에서 확인하시면 됩니다.
+
+체크리스트 → https://www.에어픽.kr/guides/parking-insurance/
+```
+
+---
+
+## 8) 지도 · 플레이스 · 카카오맵 소식
+
+**플레이스/맵 소식 제목 예**
+
+- 「주차대행 비교 가이드를 정리했습니다」
+- 「주차대행 보험, 확인할 때 볼 것」
+
+**소식 본문 (3줄 + 링크 1개)**
+
+```
+에어픽은 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
+일정·터미널만 넣으면 업체별 참고 요금을 한곳에서 비교할 수 있습니다.
+입점은 예약 후 주차 위치·사진·보험 안내까지 확인 가능합니다.
+
+가이드: https://www.에어픽.kr/guides/parking-compare/
+```
+
+상세 입력값·사진 가이드: `docs/naver/31-place.md` · 채널: `docs/channels/60-kakao-map.md`

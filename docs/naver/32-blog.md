@@ -20,6 +20,7 @@
 | 2 | [blog-drafts/02-partner-vs-external.md](./blog-drafts/02-partner-vs-external.md) | /guides/partner-vs-external/ |
 | 3 | [blog-drafts/03-terminal.md](./blog-drafts/03-terminal.md) | /guides/t1-t2-unseo/ |
 | 4 | [blog-drafts/04-esim.md](./blog-drafts/04-esim.md) | /guides/esim-beginner/ |
+| 5 | [blog-drafts/05-parking-insurance.md](./blog-drafts/05-parking-insurance.md) | /guides/parking-insurance/ |
 
 이후: 성수기·명절 전 long-vs-short / travel-parking-tips 요약 각 1편.
 

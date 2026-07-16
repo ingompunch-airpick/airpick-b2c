@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import CompanyCard from '../components/CompanyCard';
 import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
-import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
+import { PRICE_DISCLAIMER, REVIEW_POLICY_LINE } from '../constants/complianceCopy';
 import {
   PARKING_COMPARE_DESC,
+  PARKING_COMPARE_GUIDE_LINKS,
   PARKING_COMPARE_H1,
   PARKING_EXTERNAL_SECTION,
   PARKING_PARTNER_SECTION,
@@ -119,6 +120,28 @@ function CompareSection({
   );
 }
 
+function CompareGuideLinks() {
+  return (
+    <section className="rounded-2xl bg-sky-soft px-4 py-5 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+      <p className="text-xs font-bold text-brand">고르기 전에 · 가이드</p>
+      <ul className="mt-2 space-y-1.5 text-xs font-semibold text-brand">
+        {PARKING_COMPARE_GUIDE_LINKS.map(({ href, label }) => (
+          <li key={href}>
+            <a href={href} className="underline-offset-2 hover:underline">
+              {label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href="/partners/" className="underline-offset-2 hover:underline">
+            입점 업체 목록
+          </a>
+        </li>
+      </ul>
+    </section>
+  );
+}
+
 export default function ComparePage({
   search,
   onSearchChange,
@@ -134,6 +157,7 @@ export default function ComparePage({
   const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
     {}
   );
+  const [reviewsReady, setReviewsReady] = useState(false);
   const merged = mergeParkingCompareCompanies(companies);
   const { partners, externals } = buildParkingCompareSections(merged, search);
   const distancePartners = buildPartnerDistanceList(merged, search);
@@ -149,13 +173,29 @@ export default function ComparePage({
 
   useEffect(() => {
     let cancelled = false;
+    setReviewsReady(false);
+    if (partnerIds.length === 0) {
+      setReviewSnapshots({});
+      setReviewsReady(true);
+      return;
+    }
     void fetchReviewSnapshotsByCompanyIds(partnerIds).then((snapshots) => {
-      if (!cancelled) setReviewSnapshots(snapshots);
+      if (!cancelled) {
+        setReviewSnapshots(snapshots);
+        setReviewsReady(true);
+      }
     });
     return () => {
       cancelled = true;
     };
   }, [partnerIds.join('|')]);
+
+  const totalPartnerReviews = useMemo(
+    () => partnerIds.reduce((sum, id) => sum + (reviewSnapshots[id]?.count ?? 0), 0),
+    [partnerIds, reviewSnapshots]
+  );
+  const showReviewEmptyNotice =
+    partnerIds.length > 0 && reviewsReady && totalPartnerReviews === 0;
 
   const handleSelect = (company: Company, price: number) => {
     if (isAirpickPartner(company)) {
@@ -173,6 +213,12 @@ export default function ComparePage({
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 
+      {showReviewEmptyNotice && (
+        <p className="rounded-xl bg-sky-soft px-4 py-3 text-center text-[11px] font-medium leading-relaxed text-muted ring-1 ring-sky-border/50">
+          {REVIEW_POLICY_LINE}
+        </p>
+      )}
+
       {totalCount === 0 ? (
         <div className="space-y-3 rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
           <p>
@@ -182,21 +228,13 @@ export default function ComparePage({
           </p>
           <p className="text-xs">실내/야외를 바꿔 보거나, 아래 가이드를 참고해 주세요.</p>
           <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-brand">
-            <li>
-              <a href="/guides/parking-compare/" className="underline-offset-2 hover:underline">
-                주차대행 비교·예약 가이드
-              </a>
-            </li>
-            <li>
-              <a href="/guides/" className="underline-offset-2 hover:underline">
-                가이드 모음
-              </a>
-            </li>
-            <li>
-              <a href="/faq/" className="underline-offset-2 hover:underline">
-                자주 묻는 질문
-              </a>
-            </li>
+            {PARKING_COMPARE_GUIDE_LINKS.map(({ href, label }) => (
+              <li key={href}>
+                <a href={href} className="underline-offset-2 hover:underline">
+                  {label}
+                </a>
+              </li>
+            ))}
             <li>
               <a href="/partners/" className="underline-offset-2 hover:underline">
                 입점 업체 목록
@@ -252,6 +290,8 @@ export default function ComparePage({
           </p>
         </>
       )}
+
+      <CompareGuideLinks />
     </div>
   );
 }

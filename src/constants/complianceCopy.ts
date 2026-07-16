@@ -13,3 +13,10 @@ export const COMPLIANCE_COPY_RULES = [
 /** 요금·정책성 문구에 붙이기 좋은 한 줄 */
 export const PRICE_DISCLAIMER =
   '표시 금액은 입력 일정 기준 예상·참고가입니다. 현장 정책·옵션에 따라 달라질 수 있습니다.';
+
+/** 입점 업체 후기 0건일 때 — 가짜 별점 대신 정책만 표시 */
+export const REVIEW_EMPTY_HINT = '실후기만 표시 · 이용 후 후기 누적 중';
+
+/** 상세 시트·안내용 한 줄 */
+export const REVIEW_POLICY_LINE =
+  '에어픽은 이용 고객의 실후기만 표시합니다. 가짜 별점·시드 후기는 사용하지 않습니다.';
