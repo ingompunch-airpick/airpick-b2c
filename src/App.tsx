@@ -21,8 +21,6 @@ import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
   isSeoDocumentPath,
-  pathForEsim,
-  pathForParking,
   readEsimCountryCode,
   readInitialTab,
   readParkingCompanyId,
@@ -76,29 +74,6 @@ export default function App() {
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
     syncUrlToTab(next, mode);
-    window.scrollTo(0, 0);
-  };
-
-  const openParking = (companyId?: string) => {
-    trackCtaClick('compare_parking', 'home');
-    setTabState('compare');
-    const path = pathForParking(companyId);
-    const current = `${window.location.pathname}${window.location.search}`;
-    if (current !== path) {
-      window.history.pushState({ tab: 'compare' }, '', path);
-    }
-    window.scrollTo(0, 0);
-    if (companyId) setPendingCompanyId(companyId);
-  };
-
-  const openEsim = (countryCode?: string) => {
-    trackCtaClick('compare_esim', 'home');
-    setTabState('esim');
-    const path = pathForEsim(countryCode);
-    const current = `${window.location.pathname}${window.location.search}`;
-    if (current !== path) {
-      window.history.pushState({ tab: 'esim' }, '', path);
-    }
     window.scrollTo(0, 0);
   };
 
@@ -165,9 +140,7 @@ export default function App() {
 
   const page = useMemo(() => {
     if (tab === 'home') {
-      return (
-        <HomePage companies={companies} onOpenParking={openParking} onOpenEsim={openEsim} />
-      );
+      return <HomePage />;
     }
     if (tab === 'compare') {
       return (
@@ -227,7 +200,7 @@ export default function App() {
         <Header onOpenMenu={() => setMenuOpen(true)} />
         {isMapHome ? (
           <main className="relative min-h-0 flex-1">
-            {loading ? <HomePageSkeleton /> : <Suspense fallback={<HomePageSkeleton />}>{page}</Suspense>}
+            <Suspense fallback={<HomePageSkeleton />}>{page}</Suspense>
           </main>
         ) : (
           <main className="px-4 pt-1 pb-5">

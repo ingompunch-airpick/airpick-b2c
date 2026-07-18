@@ -5,7 +5,7 @@ export default function ComingSoonPanel({ label }: { label: string }) {
       <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
         곧 열릴 예정입니다.
         <br />
-        지금은 주차대행 · 주차장 · eSIM을 이용해 주세요.
+        주차대행·유심·eSIM은 아래 탭에서, 지금은 주차장을 이용해 주세요.
       </p>
     </div>
   );

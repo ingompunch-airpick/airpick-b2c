@@ -3,6 +3,9 @@
 /** 하단 네비 · 가이드 등에서 쓰는 탭 이름 (주차장과 구분) */
 export const PARKING_TAB_LABEL = '주차대행';
 
+/** 공항 스팟 탭 — 지도 허브 (장소형) */
+export const SPOTS_TAB_LABEL = '공항 스팟';
+
 /** 유심·eSIM — 탭·Hero·통계 등 사용자-facing 통일 라벨 */
 export const ESIM_TAB_LABEL = '유심·eSIM';
 export const ESIM_STATS_LABEL = `${ESIM_TAB_LABEL} 제휴사`;

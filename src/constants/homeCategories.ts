@@ -1,10 +1,7 @@
-/** 홈 지도 허브 카테고리 — 1차 활성 + Coming soon */
+/** 공항 스팟(지도 허브) 카테고리 — 장소형만. 주차대행·eSIM은 하단 탭 */
 
 export type HomeCategoryId =
-  | 'valet'
   | 'lot'
-  | 'esim'
-  | 'insurance'
   | 'hotel'
   | 'food'
   | 'cafe'
@@ -13,7 +10,7 @@ export type HomeCategoryId =
   | 'pharmacy'
   | 'travel';
 
-export type HomeCategoryKind = 'place' | 'service' | 'soon';
+export type HomeCategoryKind = 'place' | 'soon';
 
 export interface HomeCategory {
   id: HomeCategoryId;
@@ -24,10 +21,7 @@ export interface HomeCategory {
 }
 
 export const HOME_CATEGORIES: HomeCategory[] = [
-  { id: 'valet', label: '주차대행', kind: 'service', showMapPins: true },
   { id: 'lot', label: '주차장', kind: 'place', showMapPins: true },
-  { id: 'esim', label: 'eSIM / 유심', kind: 'service', showMapPins: false },
-  { id: 'insurance', label: '보험', kind: 'soon', showMapPins: false },
   { id: 'hotel', label: '호텔', kind: 'soon', showMapPins: false },
   { id: 'food', label: '맛집', kind: 'soon', showMapPins: false },
   { id: 'cafe', label: '카페', kind: 'soon', showMapPins: false },
@@ -37,7 +31,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
   { id: 'travel', label: '여행소품', kind: 'soon', showMapPins: false },
 ];
 
-export const DEFAULT_HOME_CATEGORY: HomeCategoryId = 'valet';
+export const DEFAULT_HOME_CATEGORY: HomeCategoryId = 'lot';
 
 export function getHomeCategory(id: string | null | undefined): HomeCategory {
   return HOME_CATEGORIES.find((c) => c.id === id) ?? HOME_CATEGORIES[0]!;
