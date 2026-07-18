@@ -20,8 +20,9 @@ import { AIRPICK_DEFINITION } from '../constants/companyLegal';
 function readCatFromUrl(): HomeCategoryId {
   if (typeof window === 'undefined') return DEFAULT_HOME_CATEGORY;
   const cat = new URLSearchParams(window.location.search).get('cat');
-  // 예전 ?cat=valet|esim|insurance 는 주차장으로
+  // 예전 ?cat=valet|esim|insurance|rental 은 주차장/택배 로
   if (cat === 'valet' || cat === 'esim' || cat === 'insurance') return 'lot';
+  if (cat === 'rental') return 'luggage';
   return cat && isHomeCategoryId(cat) ? cat : DEFAULT_HOME_CATEGORY;
 }
 

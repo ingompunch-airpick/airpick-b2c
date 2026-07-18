@@ -5,7 +5,7 @@ export type HomeCategoryId =
   | 'hotel'
   | 'food'
   | 'cafe'
-  | 'rental'
+  | 'luggage'
   | 'exchange'
   | 'pharmacy'
   | 'travel';
@@ -25,7 +25,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
   { id: 'hotel', label: '호텔', kind: 'soon', showMapPins: false },
   { id: 'food', label: '맛집', kind: 'soon', showMapPins: false },
   { id: 'cafe', label: '카페', kind: 'soon', showMapPins: false },
-  { id: 'rental', label: '렌터카', kind: 'soon', showMapPins: false },
+  { id: 'luggage', label: '택배/짐보관', kind: 'soon', showMapPins: false },
   { id: 'exchange', label: '환전', kind: 'soon', showMapPins: false },
   { id: 'pharmacy', label: '약국', kind: 'soon', showMapPins: false },
   { id: 'travel', label: '여행소품', kind: 'soon', showMapPins: false },
