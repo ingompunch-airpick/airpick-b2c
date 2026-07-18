@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
 import PageHero from '../components/PageHero';
@@ -21,9 +21,23 @@ import {
 } from '../utils/esimLabels';
 import { defaultEsimSearch } from '../utils/esimSearch';
 
-export default function EsimPage() {
-  const [search, setSearch] = useState<EsimSearch>(defaultEsimSearch);
+export default function EsimPage({
+  initialCountryCode,
+}: {
+  initialCountryCode?: string;
+}) {
+  const [search, setSearch] = useState<EsimSearch>(() => ({
+    ...defaultEsimSearch,
+    ...(initialCountryCode ? { countryCode: initialCountryCode } : {}),
+  }));
   const [selected, setSelected] = useState<EsimProduct | null>(null);
+
+  useEffect(() => {
+    if (!initialCountryCode) return;
+    setSearch((prev) =>
+      prev.countryCode === initialCountryCode ? prev : { ...prev, countryCode: initialCountryCode }
+    );
+  }, [initialCountryCode]);
 
   const offers = useMemo(() => compareEsimOffers(search), [search]);
   const updatedLabel = formatEsimOffersUpdatedAt(ESIM_OFFERS_UPDATED_AT);

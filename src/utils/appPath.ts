@@ -108,3 +108,36 @@ export function clearReviewQueryParam(): void {
   if (!new URLSearchParams(window.location.search).has('review')) return;
   window.history.replaceState({ tab: 'my' }, '', '/my');
 }
+
+/** `/parking?company={id}` — 홈 지도 허브 → 비교 프리필 */
+export function readParkingCompanyId(): string | null {
+  if (typeof window === 'undefined') return null;
+  if (normalizePathname(window.location.pathname) !== '/parking') return null;
+  const id = new URLSearchParams(window.location.search).get('company')?.trim();
+  return id || null;
+}
+
+export function clearParkingCompanyQuery(): void {
+  if (typeof window === 'undefined') return;
+  if (normalizePathname(window.location.pathname) !== '/parking') return;
+  if (!new URLSearchParams(window.location.search).has('company')) return;
+  window.history.replaceState({ tab: 'compare' }, '', '/parking');
+}
+
+/** `/esim?country=JP` */
+export function readEsimCountryCode(): string | null {
+  if (typeof window === 'undefined') return null;
+  if (normalizePathname(window.location.pathname) !== '/esim') return null;
+  const code = new URLSearchParams(window.location.search).get('country')?.trim().toUpperCase();
+  return code || null;
+}
+
+export function pathForParking(companyId?: string): string {
+  if (!companyId) return '/parking';
+  return `/parking?company=${encodeURIComponent(companyId)}`;
+}
+
+export function pathForEsim(countryCode?: string): string {
+  if (!countryCode) return '/esim';
+  return `/esim?country=${encodeURIComponent(countryCode)}`;
+}

@@ -18,14 +18,21 @@ import {
   PARKING_COMPARE_DOCUMENT_TITLE,
 } from './constants/marketing';
 import {
+  clearParkingCompanyQuery,
   clearReviewQueryParam,
   isSeoDocumentPath,
+  pathForEsim,
+  pathForParking,
+  readEsimCountryCode,
   readInitialTab,
+  readParkingCompanyId,
   readReviewReservationId,
   syncUrlToTab,
   tabFromPathname,
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
+import { calculatePrice } from './utils/pricing';
+import { isAirpickPartner } from './utils/compareSort';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
 const EsimPage = lazy(() => import('./pages/EsimPage'));
@@ -58,6 +65,9 @@ export default function App() {
   const [reviewReservationId, setReviewReservationId] = useState<string | null>(() =>
     readReviewReservationId()
   );
+  const [pendingCompanyId, setPendingCompanyId] = useState<string | null>(() =>
+    readParkingCompanyId()
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
@@ -66,7 +76,29 @@ export default function App() {
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
     syncUrlToTab(next, mode);
-    // 탭만 바꾸면 브라우저 scrollY가 유지되어 비교/유심 화면이 하단(푸터)부터 보임
+    window.scrollTo(0, 0);
+  };
+
+  const openParking = (companyId?: string) => {
+    trackCtaClick('compare_parking', 'home');
+    setTabState('compare');
+    const path = pathForParking(companyId);
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (current !== path) {
+      window.history.pushState({ tab: 'compare' }, '', path);
+    }
+    window.scrollTo(0, 0);
+    if (companyId) setPendingCompanyId(companyId);
+  };
+
+  const openEsim = (countryCode?: string) => {
+    trackCtaClick('compare_esim', 'home');
+    setTabState('esim');
+    const path = pathForEsim(countryCode);
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (current !== path) {
+      window.history.pushState({ tab: 'esim' }, '', path);
+    }
     window.scrollTo(0, 0);
   };
 
@@ -83,9 +115,32 @@ export default function App() {
     document.title = DOCUMENT_TITLE[tab];
   }, [tab]);
 
+  /** /parking?company= → 상세 시트 프리필 */
+  useEffect(() => {
+    if (tab !== 'compare' || loading || !pendingCompanyId) return;
+    const company = companies.find((c) => c.id === pendingCompanyId && isAirpickPartner(c));
+    if (!company) {
+      clearParkingCompanyQuery();
+      setPendingCompanyId(null);
+      return;
+    }
+    const price = calculatePrice(
+      company,
+      search.departureDate,
+      search.arrivalDate,
+      search.isIndoor,
+      search.terminal === 'T2',
+      search.departureTime,
+      search.arrivalTime,
+      false
+    );
+    setPartnerDetail({ company, price });
+    clearParkingCompanyQuery();
+    setPendingCompanyId(null);
+  }, [tab, loading, pendingCompanyId, companies, search]);
+
   useEffect(() => {
     const path = window.location.pathname;
-    // 가이드·FAQ 등 SEO 문서는 앱 탭이 아님 — 홈으로 접지 않음
     if (!isSeoDocumentPath(path) && tabFromPathname(path) == null) {
       syncUrlToTab('home', 'replace');
       setTabState('home');
@@ -99,6 +154,7 @@ export default function App() {
       }
       const next = tabFromPathname(current) ?? 'home';
       setTabState(next);
+      if (next === 'compare') setPendingCompanyId(readParkingCompanyId());
       if (tabFromPathname(current) == null) {
         syncUrlToTab('home', 'replace');
       }
@@ -110,16 +166,7 @@ export default function App() {
   const page = useMemo(() => {
     if (tab === 'home') {
       return (
-        <HomePage
-          onCompareParking={() => {
-            trackCtaClick('compare_parking', 'home');
-            setTab('compare');
-          }}
-          onCompareEsim={() => {
-            trackCtaClick('compare_esim', 'home');
-            setTab('esim');
-          }}
-        />
+        <HomePage companies={companies} onOpenParking={openParking} onOpenEsim={openEsim} />
       );
     }
     if (tab === 'compare') {
@@ -132,7 +179,9 @@ export default function App() {
         />
       );
     }
-    if (tab === 'esim') return <EsimPage />;
+    if (tab === 'esim') {
+      return <EsimPage initialCountryCode={readEsimCountryCode() ?? undefined} />;
+    }
     return (
       <MyPage
         lastReservationId={lastReservationId}
@@ -164,20 +213,32 @@ export default function App() {
   const pageFallback =
     tab === 'compare' ? <ComparePageSkeleton /> : tab === 'home' ? <HomePageSkeleton /> : null;
 
+  const isMapHome = tab === 'home';
+
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">
-      <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
+      <div
+        className={
+          isMapHome
+            ? 'mx-auto flex h-dvh max-w-lg flex-col overflow-hidden bg-sky-bg pb-[calc(3.5rem+env(safe-area-inset-bottom))]'
+            : 'mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24'
+        }
+      >
         <Header onOpenMenu={() => setMenuOpen(true)} />
-        <main className="px-4 pt-1 pb-5">
-          {loading && tab === 'home' ? (
-            <HomePageSkeleton />
-          ) : loading && tab === 'compare' ? (
-            <ComparePageSkeleton />
-          ) : (
-            <Suspense fallback={pageFallback}>{page}</Suspense>
-          )}
-          <SiteFooter />
-        </main>
+        {isMapHome ? (
+          <main className="relative min-h-0 flex-1">
+            {loading ? <HomePageSkeleton /> : <Suspense fallback={<HomePageSkeleton />}>{page}</Suspense>}
+          </main>
+        ) : (
+          <main className="px-4 pt-1 pb-5">
+            {loading && tab === 'compare' ? (
+              <ComparePageSkeleton />
+            ) : (
+              <Suspense fallback={pageFallback}>{page}</Suspense>
+            )}
+            <SiteFooter />
+          </main>
+        )}
       </div>
       <BottomNav active={tab} onChange={(next) => setTab(next)} />
 

@@ -9,16 +9,21 @@ function Skeleton({ className }: { className?: string }) {
   );
 }
 
-/** Firestore companies 로딩 — 홈 Hero·카테고리 */
+/** Firestore companies 로딩 — 홈 지도 허브 */
 export function HomePageSkeleton() {
   return (
-    <div className="space-y-6 pb-2" aria-busy="true" aria-label="불러오는 중">
-      <section className="px-0.5 pb-1 pt-1">
-        <Skeleton className="h-9 w-[88%] max-w-sm" />
-        <Skeleton className="mt-2 h-7 w-[70%] max-w-xs" />
-      </section>
-      <Skeleton className="h-40 w-full rounded-3xl" />
-      <Skeleton className="h-36 w-full rounded-3xl" />
+    <div className="relative h-full min-h-[60vh] w-full" aria-busy="true" aria-label="불러오는 중">
+      <Skeleton className="absolute inset-0 rounded-none" />
+      <div className="absolute inset-x-3 top-2 space-y-2">
+        <Skeleton className="h-11 w-full rounded-2xl" />
+        <Skeleton className="h-9 w-full rounded-full" />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-[45%] rounded-t-3xl bg-white p-4 shadow-lg">
+        <Skeleton className="mx-auto h-1 w-10 rounded-full" />
+        <Skeleton className="mt-4 h-5 w-40" />
+        <Skeleton className="mt-3 h-20 w-full rounded-2xl" />
+        <Skeleton className="mt-2 h-20 w-full rounded-2xl" />
+      </div>
     </div>
   );
 }

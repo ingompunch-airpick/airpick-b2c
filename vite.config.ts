@@ -107,6 +107,11 @@ export default defineConfig({
           /^\/google[\w-]+\.html$/,
         ],
         runtimeCaching: [
+          // OSM 타일 — 캐시하지 않음 (홈 지도)
+          {
+            urlPattern: /^https:\/\/[a-z]\.tile\.openstreetmap\.org\//i,
+            handler: 'NetworkOnly',
+          },
           // 해시된 빌드 에셋 — 오래 캐시 (파일명 해시로 버전 분리)
           {
             urlPattern: /\/assets\/.+\.(?:js|css)$/i,
