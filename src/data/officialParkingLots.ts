@@ -12,6 +12,8 @@ export interface OfficialParkingLot {
   phone?: string;
   /** 공식 안내·요금 페이지 */
   infoUrl?: string;
+  /** 장기주차장 — 무료 셔틀 API 연동 */
+  shuttleEnabled?: boolean;
 }
 
 export const OFFICIAL_PARKING_LOTS: OfficialParkingLot[] = [
@@ -23,6 +25,7 @@ export const OFFICIAL_PARKING_LOTS: OfficialParkingLot[] = [
     lat: 37.4492,
     lng: 126.4558,
     infoUrl: 'https://www.airport.kr/ap/ko/t1/parkInfo.do',
+    shuttleEnabled: true,
   },
   {
     id: 'icn-t1-shortterm',
@@ -41,6 +44,7 @@ export const OFFICIAL_PARKING_LOTS: OfficialParkingLot[] = [
     lat: 37.4701,
     lng: 126.4352,
     infoUrl: 'https://www.airport.kr/ap/ko/t2/parkInfo.do',
+    shuttleEnabled: true,
   },
   {
     id: 'icn-t2-shortterm',

@@ -272,6 +272,13 @@
         }
       },
       {
+        "source": "/api/icn-shuttle",
+        "function": {
+          "functionId": "getIcnShuttle",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "/parking",
         "destination": "/parking.html"
       },
