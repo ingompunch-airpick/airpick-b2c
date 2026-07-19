@@ -9,7 +9,8 @@ import AirlineSelect from './AirlineSelect';
 import { PARKING_TAB_LABEL } from '../constants/marketing';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { displayCompanyName } from '../utils/display';
-import { submitReservation, type BookingForm } from '../lib/reservations';
+import { ensureAnonymousAuth, submitReservation, type BookingForm } from '../lib/reservations';
+import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityRepos';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
 import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
@@ -164,6 +165,22 @@ export default function BookingModal({
       );
       if (!localCheck.allowed) {
         setError(bookingPolicyMessage(localCheck, payload.departureDate, payload.arrivalDate));
+        return;
+      }
+
+      try {
+        await ensureAnonymousAuth();
+        await assertHourlyCapacityAvailable(
+          company.id,
+          payload.departureDate,
+          payload.departureTime,
+          {
+            hourlyCapEnabled: company.hourlyCapEnabled,
+            maxCarsPerHour: company.maxCarsPerHour,
+          }
+        );
+      } catch (capErr) {
+        setError(capErr instanceof Error ? capErr.message : '해당 시간대 예약이 마감되었습니다.');
         return;
       }
 
