@@ -1,25 +1,54 @@
+import { useState } from 'react';
 import DepartureGuideCard from '../components/map-home/DepartureGuideCard';
 import { AIRPICK_DEFINITION } from '../constants/companyLegal';
+import { HOME_EYEBROW, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
 import type { AppTab } from '../types';
 
-/** 홈 — 출국 동선 스타팅 (탭으로 다른 서비스 이동) */
+/** 홈 — 웹 히어로 + 편명 계산 (결과 이후는 카드가 앱처럼) */
 export default function HomePage({ onGoTab: _onGoTab }: { onGoTab: (tab: AppTab) => void }) {
+  const [hasResult, setHasResult] = useState(false);
+  const headlineLines = HOME_HEADLINE.split('\n');
+
   return (
-    <div className="space-y-4">
-      <header className="pt-1">
-        <p className="text-[11px] font-bold tracking-wide text-brand">에어픽</p>
-        <h1 className="mt-1 text-xl font-bold tracking-tight text-ink">출국 동선부터</h1>
-        <p className="mt-1.5 text-[12px] font-medium leading-relaxed text-muted">
-          편명만 입력하면 체크인 카운터까지 한 번에 안내합니다. 주차대행·유심/이심·공항지도는 아래
-          탭에서 이어갈 수 있어요.
-        </p>
-      </header>
+    <div className="relative">
+      <div
+        className="pointer-events-none absolute inset-x-0 -top-2 -mx-4 h-[min(52vh,420px)]"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(ellipse 90% 70% at 50% 0%, #cfe4fb 0%, #edf4fc 55%, transparent 75%)',
+        }}
+      />
 
-      <DepartureGuideCard />
+      <div className="relative space-y-5 pt-2">
+        <header className={`transition-all duration-300 ${hasResult ? 'opacity-70' : ''}`}>
+          <p className="text-[11px] font-bold tracking-wide text-brand">{HOME_EYEBROW}</p>
+          <h1
+            className={`mt-2 font-bold tracking-tight text-ink ${
+              hasResult ? 'text-xl leading-snug' : 'text-[1.85rem] leading-[1.2] sm:text-[2.1rem]'
+            }`}
+          >
+            {headlineLines.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </h1>
+          {!hasResult ? (
+            <p className="mt-3 max-w-[20rem] text-[14px] font-medium leading-relaxed text-muted">
+              {HOME_SUBHEAD}
+            </p>
+          ) : null}
+        </header>
 
-      <p className="border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
-        {AIRPICK_DEFINITION}
-      </p>
+        <DepartureGuideCard onResultChange={setHasResult} />
+
+        {!hasResult ? (
+          <p className="border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
+            {AIRPICK_DEFINITION}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

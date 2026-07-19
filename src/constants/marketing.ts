@@ -74,10 +74,18 @@ export const AIRPICK_TRACKING_UPSELL = {
   cta: '에어픽에서 예약하기',
 } as const;
 
-/** 홈 — Hero 카피 (한 줄 · 바로 행동) */
-export const HOME_EYEBROW = `인천공항 주차대행 · ${ESIM_TAB_LABEL} 가격비교`;
+/** 홈 — Hero (검색 유입 · 웹 히어로) */
+export const HOME_EYEBROW = '에어픽 · 인천공항 출국 준비';
 
-export const HOME_HEADLINE = '입점 업체 요금·보험 비교, 맡긴 뒤 위치·사진까지';
+export const HOME_HEADLINE = '공항에서\n헤매지 마세요.';
+
+export const HOME_SUBHEAD = '편명만 입력하면 출국 준비를 계산해드립니다.';
+
+export const HOME_CALCULATE_CTA = '출국 준비 계산하기';
+
+export const HOME_CALCULATING = '계산 중…';
+
+export const HOME_RESULT_EYEBROW = '출국 준비 계산 결과';
 
 export const HOME_PARKING = {
   headline: '주차대행 · 업체 요금 비교',

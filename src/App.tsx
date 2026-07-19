@@ -16,7 +16,6 @@ import SpotsPage from './pages/SpotsPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
-  HOME_TAB_LABEL,
   PARKING_COMPARE_DOCUMENT_TITLE,
   SPOTS_TAB_LABEL,
 } from './constants/marketing';
@@ -45,7 +44,7 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: `${HOME_TAB_LABEL} · 출국 동선 · 에어픽`,
+  home: `공항에서 헤매지 마세요 · 출국 준비 계산 · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
   spots: `${SPOTS_TAB_LABEL} · 에어픽`,
