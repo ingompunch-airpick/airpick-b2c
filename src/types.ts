@@ -179,7 +179,7 @@ export interface BookingSearch {
   faceToFace?: boolean;
 }
 
-export type AppTab = 'home' | 'compare' | 'esim' | 'my';
+export type AppTab = 'home' | 'compare' | 'esim' | 'spots' | 'my';
 
 export interface CompanyReview {
   id: string;

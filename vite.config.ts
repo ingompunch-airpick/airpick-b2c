@@ -107,9 +107,9 @@ export default defineConfig({
           /^\/google[\w-]+\.html$/,
         ],
         runtimeCaching: [
-          // OSM 타일 — 캐시하지 않음 (홈 지도)
+          // 네이버 지도 타일·SDK — 캐시하지 않음
           {
-            urlPattern: /^https:\/\/[a-z]\.tile\.openstreetmap\.org\//i,
+            urlPattern: /^https:\/\/(?:oapi\.map\.naver\.com|map\.pstatic\.net|nrbe\.map\.naver\.com)\//i,
             handler: 'NetworkOnly',
           },
           // 해시된 빌드 에셋 — 오래 캐시 (파일명 해시로 버전 분리)
@@ -199,6 +199,16 @@ export default defineConfig({
     port: 5173,
     host: true,
     proxy: {
+      '/api/icn-shuttle': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/icn-shuttle/, '/getIcnShuttle'),
+      },
+      '/api/icn-flight': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/icn-flight/, '/getIcnFlight'),
+      },
       '/api/receipt': {
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,

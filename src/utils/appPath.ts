@@ -5,6 +5,7 @@ export const TAB_PATH: Record<AppTab, string> = {
   home: '/',
   compare: '/parking',
   esim: '/esim',
+  spots: '/spots',
   my: '/my',
 };
 
@@ -38,6 +39,7 @@ export function tabFromPathname(pathname: string): AppTab | null {
   if (path === '/') return 'home';
   if (path === '/parking') return 'compare';
   if (path === '/esim') return 'esim';
+  if (path === '/spots') return 'spots';
   if (path === '/my') return 'my';
   return null;
 }

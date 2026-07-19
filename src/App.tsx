@@ -12,10 +12,13 @@ import {
   trackTabView,
 } from './lib/analytics';
 import HomePage from './pages/HomePage';
+import SpotsPage from './pages/SpotsPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
+  HOME_TAB_LABEL,
   PARKING_COMPARE_DOCUMENT_TITLE,
+  SPOTS_TAB_LABEL,
 } from './constants/marketing';
 import {
   clearParkingCompanyQuery,
@@ -42,10 +45,11 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: '에어픽 · 주차대행·유심·eSIM 비교',
+  home: `${HOME_TAB_LABEL} · 출국 동선 · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
-  my: '예약 조회 · 에어픽',
+  spots: `${SPOTS_TAB_LABEL} · 에어픽`,
+  my: '내 예약 · 에어픽',
 };
 
 export default function App() {
@@ -140,7 +144,10 @@ export default function App() {
 
   const page = useMemo(() => {
     if (tab === 'home') {
-      return <HomePage />;
+      return <HomePage onGoTab={(next) => setTab(next)} />;
+    }
+    if (tab === 'spots') {
+      return <SpotsPage />;
     }
     if (tab === 'compare') {
       return (
@@ -184,21 +191,21 @@ export default function App() {
   }, [tab, search, companies, lastReservationId, reviewReservationId]);
 
   const pageFallback =
-    tab === 'compare' ? <ComparePageSkeleton /> : tab === 'home' ? <HomePageSkeleton /> : null;
+    tab === 'compare' ? <ComparePageSkeleton /> : tab === 'spots' ? <HomePageSkeleton /> : null;
 
-  const isMapHome = tab === 'home';
+  const isMapSpots = tab === 'spots';
 
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">
       <div
         className={
-          isMapHome
+          isMapSpots
             ? 'mx-auto flex h-dvh max-w-lg flex-col overflow-hidden bg-sky-bg pb-[calc(3.5rem+env(safe-area-inset-bottom))]'
             : 'mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24'
         }
       >
         <Header onOpenMenu={() => setMenuOpen(true)} />
-        {isMapHome ? (
+        {isMapSpots ? (
           <main className="relative min-h-0 flex-1">
             <Suspense fallback={<HomePageSkeleton />}>{page}</Suspense>
           </main>

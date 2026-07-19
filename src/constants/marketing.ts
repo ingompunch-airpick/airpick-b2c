@@ -3,13 +3,19 @@
 /** 하단 네비 · 가이드 등에서 쓰는 탭 이름 (주차장과 구분) */
 export const PARKING_TAB_LABEL = '주차대행';
 
-/** 공항 스팟 탭 — 지도 허브 (장소형) */
-export const SPOTS_TAB_LABEL = '공항 스팟';
+/** 공항주변스팟 탭 — 지도 허브 (장소형) */
+export const SPOTS_TAB_LABEL = '공항주변스팟';
 
-/** 유심·eSIM — 탭·Hero·통계 등 사용자-facing 통일 라벨 */
-export const ESIM_TAB_LABEL = '유심·eSIM';
+/** 유심/이심 — 탭·Hero·통계 등 사용자-facing 통일 라벨 */
+export const ESIM_TAB_LABEL = '유심/이심';
 export const ESIM_STATS_LABEL = `${ESIM_TAB_LABEL} 제휴사`;
 export const ESIM_GUIDE_TITLE = `${ESIM_TAB_LABEL} 이용 가이드`;
+
+/** 예약 탭 */
+export const MY_TAB_LABEL = '내 예약';
+
+/** 홈 탭 */
+export const HOME_TAB_LABEL = '홈';
 
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
 export const BRAND_TAGLINE = '맡긴 차, 사진·위치까지';
@@ -30,13 +36,13 @@ export const PARKING_COMPARE_DESC =
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 가격비교 · 에어픽';
 
-/** 유심·eSIM 비교 허브 H1 (SEO·화면 공통) */
-export const ESIM_COMPARE_H1 = '해외여행 유심·eSIM 가격비교';
+/** 유심/이심 비교 허브 H1 (SEO·화면 공통) */
+export const ESIM_COMPARE_H1 = '해외여행 유심/이심 가격비교';
 
 export const ESIM_COMPARE_DESC =
-  '나라·용량·일수·eSIM/USIM으로 제휴 참고가 비교 · 구매·개통은 제휴사에서';
+  '나라·용량·일수로 제휴 참고가 비교 · 구매·개통은 제휴사에서';
 
-export const ESIM_COMPARE_DOCUMENT_TITLE = '해외여행 유심·eSIM 가격비교 · 에어픽';
+export const ESIM_COMPARE_DOCUMENT_TITLE = '해외여행 유심/이심 가격비교 · 에어픽';
 
 export const ESIM_COMPARE_SUB = '제휴 요금 비교';
 

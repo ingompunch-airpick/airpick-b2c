@@ -2,7 +2,7 @@
 
 export const SITE_NAV_PRIMARY = [
   { href: '/parking', label: '주차 비교' },
-  { href: '/esim', label: '유심·eSIM' },
+  { href: '/esim', label: '유심/이심' },
   { href: '/guides/', label: '가이드' },
   { href: '/partners/', label: '입점 업체' },
   { href: '/faq/', label: 'FAQ' },

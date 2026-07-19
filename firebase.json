@@ -279,12 +279,23 @@
         }
       },
       {
+        "source": "/api/icn-flight",
+        "function": {
+          "functionId": "getIcnFlight",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "/parking",
         "destination": "/parking.html"
       },
       {
         "source": "/esim",
         "destination": "/esim.html"
+      },
+      {
+        "source": "/spots",
+        "destination": "/index.html"
       },
       {
         "source": "/my",
