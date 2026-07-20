@@ -22,8 +22,8 @@ export function resolveDriveGoal(
   const label =
     mode === 'car' && parking === 'valet'
       ? `${terminal} 터미널 (주차대행 픽업)`
-      : mode === 'subway'
-        ? `${terminal === 'T2' ? '공항철도 인천공항2터미널' : '공항철도 인천공항1터미널'}`
+      : mode === 'transit'
+        ? `${terminal === 'T2' ? '인천공항2터미널 (대중교통)' : '인천공항1터미널 (대중교통)'}`
         : `${terminal} 터미널`;
   return { lat: term.lat, lng: term.lng, label };
 }

@@ -44,7 +44,7 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: `집에서 몇 시에 나서야 할까요 · 인천공항 시간 계산기 · 에어픽`,
+  home: `인천공항 이동시간 계산기 · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
   spots: `${SPOTS_TAB_LABEL} · 에어픽`,

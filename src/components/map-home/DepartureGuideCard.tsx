@@ -34,8 +34,7 @@ import DateField from '../DateField';
 
 const MODES: { id: TransportMode; label: string }[] = [
   { id: 'car', label: '자가용' },
-  { id: 'limousine', label: '리무진' },
-  { id: 'subway', label: '지하철' },
+  { id: 'transit', label: '대중교통' },
 ];
 
 const PARKING: { id: CarParkingType; label: string }[] = [

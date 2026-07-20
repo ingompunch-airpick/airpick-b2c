@@ -1,7 +1,7 @@
 import { getOfficialParkingLot } from '../data/officialParkingLots';
 import type { IcnFlightResponse } from '../lib/icnFlight';
 
-export type TransportMode = 'car' | 'limousine' | 'subway';
+export type TransportMode = 'car' | 'transit';
 export type CarParkingType = 'long' | 'short' | 'valet';
 
 export type DepartureStep = {
@@ -20,10 +20,12 @@ export type DepartureGuidePlan = {
   totalNote: string;
 };
 
-/** 예전 저장값(taxi 등) → 현재 모드 */
+/** 예전 저장값(limousine·subway·taxi 등) → 현재 모드 */
 export function normalizeTransportMode(raw: unknown): TransportMode {
-  if (raw === 'car' || raw === 'limousine' || raw === 'subway') return raw;
-  if (raw === 'taxi') return 'limousine';
+  if (raw === 'car') return 'car';
+  if (raw === 'transit' || raw === 'subway' || raw === 'limousine' || raw === 'taxi') {
+    return 'transit';
+  }
   return 'car';
 }
 
@@ -44,7 +46,7 @@ const WALK = {
   toDepartureHall: { minutes: 5, minutesMax: 8 },
   /** 단기주차 → 출국장 */
   shortToHall: { minutes: 5, minutesMax: 10 },
-  /** 리무진·지하철 하차 → 출국장·체크인 */
+  /** 대중교통 하차 → 출국장·체크인 */
   dropoffToCheckIn: { minutes: 5, minutesMax: 10 },
 } as const;
 
@@ -181,28 +183,20 @@ export function buildDepartureGuide(
       ];
       totalNote = '터미널 도착 후 도보만 · 픽업·이동 시간은 업체마다 다름';
     }
-  } else if (mode === 'limousine') {
-    steps = [
-      { text: `리무진에서 ${terminalName}에 내리세요.` },
-      {
-        text: '터미널 안으로 들어와 3층 출국장으로 이동하세요.',
-        ...WALK.dropoffToCheckIn,
-      },
-      checkInStep,
-    ];
-    totalNote = '하차 후 도보만 · 리무진 탑승 시간은 제외';
   } else {
-    const station =
-      terminal === 'T2' ? '공항철도 인천공항2터미널역' : '공항철도 인천공항1터미널역';
+    const stationHint =
+      terminal === 'T2'
+        ? '공항철도·버스 하차 후 인천공항2터미널'
+        : '공항철도·버스 하차 후 인천공항1터미널';
     steps = [
-      { text: `${station}에서 내리세요.` },
+      { text: `${stationHint}로 도착하세요.` },
       {
         text: '안내를 따라 출국장(3층)으로 이동하세요.',
         ...WALK.dropoffToCheckIn,
       },
       checkInStep,
     ];
-    totalNote = '하차 후 도보만 · 열차 탑승 시간은 제외';
+    totalNote = '하차 후 도보만 · 버스·열차 탑승 시간은 제외';
   }
 
   const { totalMinutesMin, totalMinutesMax } = sumRanges(steps);
