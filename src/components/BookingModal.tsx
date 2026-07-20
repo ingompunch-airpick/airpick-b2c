@@ -10,7 +10,7 @@ import { PARKING_TAB_LABEL } from '../constants/marketing';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { ensureAnonymousAuth, submitReservation, type BookingForm } from '../lib/reservations';
-import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityRepos';
+import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
 import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';

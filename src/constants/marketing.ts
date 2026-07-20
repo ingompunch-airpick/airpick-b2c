@@ -74,18 +74,19 @@ export const AIRPICK_TRACKING_UPSELL = {
   cta: '에어픽에서 예약하기',
 } as const;
 
-/** 홈 — Hero (검색 유입 · 웹 히어로) */
-export const HOME_EYEBROW = '에어픽 · 인천공항 출국 준비';
+/** 홈 — Hero (검색 유입 · 공항 시간 계산기) */
+export const HOME_EYEBROW = '에어픽 · 인천공항 시간 계산기';
 
-export const HOME_HEADLINE = '공항에서\n헤매지 마세요.';
+export const HOME_HEADLINE = '집에서 몇 시에\n나서야 할까요?';
 
-export const HOME_SUBHEAD = '편명만 입력하면 출국 준비를 계산해드립니다.';
+export const HOME_SUBHEAD =
+  '편명·출발일·집 주소만 넣으면, 집에서 나서야 할 최소 시각을 알려드립니다.';
 
-export const HOME_CALCULATE_CTA = '출국 준비 계산하기';
+export const HOME_CALCULATE_CTA = '나설 시각 계산하기';
 
 export const HOME_CALCULATING = '계산 중…';
 
-export const HOME_RESULT_EYEBROW = '출국 준비 계산 결과';
+export const HOME_RESULT_EYEBROW = '계산 결과';
 
 export const HOME_PARKING = {
   headline: '주차대행 · 업체 요금 비교',

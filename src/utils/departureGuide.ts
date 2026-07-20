@@ -6,7 +6,7 @@ export type CarParkingType = 'long' | 'short' | 'valet';
 
 export type DepartureStep = {
   text: string;
-  /** 이동 소요(분). 대기·자리 찾기 제외. 범위면 minutes~minutesMax */
+  /** 소요(분). 범위면 minutes~minutesMax */
   minutes?: number;
   minutesMax?: number;
 };
@@ -27,7 +27,11 @@ export function normalizeTransportMode(raw: unknown): TransportMode {
   return 'car';
 }
 
-/** 공개 안내 기준 — 셔틀 탑승 시간만(대기 제외) */
+/** 자리 찾기·셔틀 대기 — 고정 여유 */
+const PARK_FIND = { minutes: 10, minutesMax: 10 } as const;
+const SHUTTLE_WAIT = { minutes: 15, minutesMax: 15 } as const;
+
+/** 공개 안내 기준 — 셔틀 탑승 후 이동 */
 const SHUTTLE_RIDE = {
   T1: { min: 7, max: 15 },
   T2: { min: 15, max: 15 },
@@ -35,7 +39,7 @@ const SHUTTLE_RIDE = {
 
 const WALK = {
   /** 주차 후 가까운 셔틀 탑승장까지 */
-  toShuttleStop: { minutes: 3, minutesMax: 5 },
+  toShuttleStop: { minutes: 5, minutesMax: 5 },
   /** 터미널 하차 → 3층 출국장 */
   toDepartureHall: { minutes: 5, minutesMax: 8 },
   /** 단기주차 → 출국장 */
@@ -75,17 +79,29 @@ export function formatTotalMinutes(min: number | null, max: number | null): stri
 function longTermShuttlePlan(terminal: 'T1' | 'T2'): DepartureStep[] {
   const lot = getOfficialParkingLot(terminal, 'long');
   const ride = SHUTTLE_RIDE[terminal];
+  const arriveAndPark: DepartureStep[] = [
+    {
+      text: `내비에 「${lot.navQuery}」 또는 「${lot.address}」로 이동해 ${lot.name}에 도착하세요.`,
+    },
+    {
+      text: '주차장에서 빈자리를 찾아 주차하세요.',
+      ...PARK_FIND,
+    },
+    {
+      text: '주차 위치에서 가장 가까운 무료 셔틀(장기 탑승장)으로 가세요.',
+      ...WALK.toShuttleStop,
+    },
+    {
+      text: '셔틀을 기다리세요. (배차 간격 여유)',
+      ...SHUTTLE_WAIT,
+    },
+  ];
+
   if (terminal === 'T2') {
     return [
+      ...arriveAndPark,
       {
-        text: `내비에 「${lot.navQuery}」 또는 「${lot.address}」로 이동해 ${lot.name}에 주차하세요.`,
-      },
-      {
-        text: '주차 위치에서 가장 가까운 무료 셔틀(장기 탑승장)으로 가세요.',
-        ...WALK.toShuttleStop,
-      },
-      {
-        text: '공항02 셔틀을 타고 제2여객터미널 1층 중앙(5~6번 출입구 부근)에서 내리세요. T2 터미널 하차는 이곳 한 곳입니다. (대기 시간 제외)',
+        text: '공항02 셔틀을 타고 제2여객터미널 1층 중앙(5~6번 출입구 부근)에서 내리세요. T2 터미널 하차는 이곳 한 곳입니다.',
         minutes: ride.min,
         minutesMax: ride.max,
       },
@@ -96,15 +112,9 @@ function longTermShuttlePlan(terminal: 'T1' | 'T2'): DepartureStep[] {
     ];
   }
   return [
+    ...arriveAndPark,
     {
-      text: `내비에 「${lot.navQuery}」 또는 「${lot.address}」로 이동해 ${lot.name}에 주차하세요.`,
-    },
-    {
-      text: '주차 위치에서 가장 가까운 무료 셔틀(장기 탑승장)으로 가세요.',
-      ...WALK.toShuttleStop,
-    },
-    {
-      text: '셔틀(공항01)은 1층 3C(동측) 또는 13C(서측) 중 한 곳에 정차합니다. 두 곳 모두 제1여객터미널이고, 어디든 내려도 됩니다. (대기 시간 제외)',
+      text: '셔틀(공항01)은 1층 3C(동측) 또는 13C(서측) 중 한 곳에 정차합니다. 두 곳 모두 제1여객터미널이고, 어디든 내려도 됩니다.',
       minutes: ride.min,
       minutesMax: ride.max,
     },
@@ -132,18 +142,23 @@ export function buildDepartureGuide(
   };
 
   let steps: DepartureStep[];
-  let totalNote = '도보·셔틀 이동만 · 대기·주차 자리 찾기는 제외';
+  let totalNote = '도보·셔틀·자리 찾기·셔틀 대기 포함(체크인 대기 제외)';
 
   if (mode === 'car') {
     const park = parking ?? 'long';
     if (park === 'long') {
       steps = [...longTermShuttlePlan(terminal), checkInStep];
-      totalNote = '셔틀 탑승·도보만 · 셔틀 대기·주차 자리 찾기 제외';
+      totalNote =
+        '자리 찾기 10분 + 탑승장 5분 + 셔틀 대기 15분 + 탑승·도보 · 체크인 대기 제외';
     } else if (park === 'short') {
       const lot = getOfficialParkingLot(terminal, 'short');
       steps = [
         {
-          text: `내비에 「${lot.navQuery}」 또는 「${lot.address}」로 이동해 ${lot.name}에 주차하세요.`,
+          text: `내비에 「${lot.navQuery}」 또는 「${lot.address}」로 이동해 ${lot.name}에 도착하세요.`,
+        },
+        {
+          text: '주차장에서 빈자리를 찾아 주차하세요.',
+          ...PARK_FIND,
         },
         {
           text: `안내 동선을 따라 ${terminalName} 3층 출국장으로 이동하세요.`,
@@ -151,7 +166,7 @@ export function buildDepartureGuide(
         },
         checkInStep,
       ];
-      totalNote = '주차 후 도보만 · 주차 자리 찾기 제외';
+      totalNote = '자리 찾기 10분 + 도보 포함 · 체크인 대기는 제외';
     } else {
       steps = [
         { text: '예약한 주차대행 픽업 장소에서 차량을 맡기세요.' },
