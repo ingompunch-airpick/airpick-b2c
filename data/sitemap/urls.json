@@ -18,7 +18,7 @@
       "path": "/esim",
       "changefreq": "daily",
       "priority": 0.9,
-      "note": "유심·eSIM 비교"
+      "note": "이심 비교"
     },
     {
       "path": "/guides/",
@@ -60,7 +60,7 @@
       "path": "/guides/esim-beginner/",
       "changefreq": "weekly",
       "priority": 0.8,
-      "note": "유심·eSIM 초보 가이드"
+      "note": "이심(eSIM) 초보 가이드"
     },
     {
       "path": "/guides/partner-vs-external/",

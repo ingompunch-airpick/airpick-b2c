@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { LayoutGrid, MapPinned, Smartphone } from 'lucide-react';
+import { LayoutGrid, MapPinned } from 'lucide-react';
 import {
   fetchIcnFlight,
   inputValueToYmd,
@@ -22,12 +22,11 @@ import {
   resolveAirportArriveMinutes,
 } from '../../utils/leaveByCalculator';
 import {
-  ESIM_TAB_LABEL,
   HOME_CALCULATE_CTA,
   HOME_CALCULATING,
   HOME_RESULT_EYEBROW,
+  HOME_VALET_UPSELL,
   PARKING_TAB_LABEL,
-  SPOTS_TAB_LABEL,
 } from '../../constants/marketing';
 import DepartureGuideMap from './DepartureGuideMap';
 import DateField from '../DateField';
@@ -187,6 +186,17 @@ export default function DepartureGuideCard({
     );
   }, [flight, mode, parking]);
 
+  const valetGuide = useMemo(() => {
+    if (!flight) return null;
+    return buildDepartureGuide(
+      flight.terminal
+        ? flight
+        : { ...flight, terminal: 'T1', terminalLabel: '제1여객터미널' },
+      'car',
+      'valet'
+    );
+  }, [flight]);
+
   const totalLabel = guide
     ? formatTotalMinutes(guide.totalMinutesMin, guide.totalMinutesMax)
     : null;
@@ -205,29 +215,52 @@ export default function DepartureGuideCard({
     return { error: plan ? null : '이동 시간을 확인해 주세요.', plan, arrive };
   }, [flight, travelMinutes, airportMinutesForLeave]);
 
+  /** 직접 장기주차 대비 주차대행이 아끼는 공항 안 시간 */
+  const valetTimeSave = useMemo(() => {
+    if (!guide || !valetGuide) return null;
+    if (!(mode === 'car' && parking === 'long')) return null;
+    const selfMax = guide.totalMinutesMax ?? guide.totalMinutesMin;
+    const valetMax = valetGuide.totalMinutesMax ?? valetGuide.totalMinutesMin;
+    if (selfMax == null || valetMax == null) return null;
+    const saved = selfMax - valetMax;
+    if (saved < 10) return null;
+    const selfLabel = formatTotalMinutes(guide.totalMinutesMin, guide.totalMinutesMax);
+    const valetLabel = formatTotalMinutes(valetGuide.totalMinutesMin, valetGuide.totalMinutesMax);
+    return { saved, selfLabel, valetLabel };
+  }, [guide, valetGuide, mode, parking]);
+
   const contextCta =
     flight == null
       ? null
       : mode === 'car' && parking === 'valet'
         ? {
             href: '/parking',
-            label: `${PARKING_TAB_LABEL} 업체 비교하기`,
-            desc: '입점 업체 요금·예약',
+            label: HOME_VALET_UPSELL.cta,
+            desc: HOME_VALET_UPSELL.ctaDesc,
             icon: LayoutGrid,
           }
-        : mode === 'car'
+        : mode === 'car' && parking === 'long'
           ? {
-              href: '/spots',
-              label: `${SPOTS_TAB_LABEL}에서 주차장 보기`,
-              desc: '주소·길찾기·셔틀',
-              icon: MapPinned,
+              href: '/parking',
+              label: HOME_VALET_UPSELL.cta,
+              desc: valetTimeSave
+                ? `장기주차 대비 약 ${valetTimeSave.saved}분 절약 · 요금 비교`
+                : HOME_VALET_UPSELL.ctaDesc,
+              icon: LayoutGrid,
             }
-          : {
-              href: '/esim',
-              label: `${ESIM_TAB_LABEL} 요금 비교`,
-              desc: '여행용 데이터',
-              icon: Smartphone,
-            };
+          : mode === 'car'
+            ? {
+                href: '/spots',
+                label: '공식 주차장 위치 보기',
+                desc: '주소·길찾기·셔틀',
+                icon: MapPinned,
+              }
+            : {
+                href: '/parking',
+                label: `${PARKING_TAB_LABEL}으로 시간 아끼기`,
+                desc: '장기주차·셔틀 없이 터미널 도착',
+                icon: LayoutGrid,
+              };
 
   return (
     <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(49,130,246,0.08)] ring-1 ring-sky-border">
@@ -368,9 +401,11 @@ export default function DepartureGuideCard({
                 비행기 {leavePlan.arrive.departureHm} 출발 → 공항 {leavePlan.plan.arriveHm} 도착
                 (3시간 전) · {leavePlan.plan.note}
               </p>
-              <p className="mt-1 text-[10px] font-medium opacity-80">
-                자리 찾기 10분·탑승장 5분·셔틀 대기 15분을 포함했습니다. 체크인 대기·심한
-                체증은 여유를 더 두세요.
+              {guide?.totalNote ? (
+                <p className="mt-1 text-[10px] font-medium opacity-80">{guide.totalNote}</p>
+              ) : null}
+              <p className="mt-1 text-[10px] font-medium opacity-75">
+                체크인 대기·심한 체증은 여유를 더 두세요.
               </p>
               {showTrafficRefBadge ? (
                 <p className="mt-2 inline-flex rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold">
@@ -381,6 +416,40 @@ export default function DepartureGuideCard({
           ) : leavePlan?.error ? (
             <p className="mt-3 text-[11px] font-medium leading-relaxed text-amber-700">
               {leavePlan.error}
+            </p>
+          ) : null}
+
+          {valetTimeSave ? (
+            <div className="mt-3 rounded-2xl bg-white px-4 py-3.5 ring-1 ring-brand/25">
+              <p className="text-[10px] font-bold tracking-wide text-brand">
+                {HOME_VALET_UPSELL.eyebrow}
+              </p>
+              <p className="mt-1 text-[13px] font-bold text-ink">{HOME_VALET_UPSELL.title}</p>
+              <div className="mt-2.5 grid grid-cols-2 gap-2">
+                <div className="rounded-xl bg-sky-soft/80 px-3 py-2.5">
+                  <p className="text-[9px] font-bold text-muted">{HOME_VALET_UPSELL.selfLabel}</p>
+                  <p className="mt-0.5 text-[14px] font-bold text-ink">
+                    공항 안 {valetTimeSave.selfLabel}
+                  </p>
+                  <p className="mt-0.5 text-[9px] font-medium text-muted">자리 찾기·셔틀 포함</p>
+                </div>
+                <div className="rounded-xl bg-brand-soft/90 px-3 py-2.5">
+                  <p className="text-[9px] font-bold text-brand">{HOME_VALET_UPSELL.valetLabel}</p>
+                  <p className="mt-0.5 text-[14px] font-bold text-brand">
+                    공항 안 {valetTimeSave.valetLabel}
+                  </p>
+                  <p className="mt-0.5 text-[9px] font-medium text-brand/80">셔틀 대기 없음</p>
+                </div>
+              </div>
+              <p className="mt-2 text-[11px] font-semibold leading-relaxed text-ink">
+                장기주차 후 셔틀 타는 시간 없이 약{' '}
+                <span className="font-bold text-brand">{valetTimeSave.saved}분</span> 아낄 수
+                있습니다. 더 늦게 나서도 됩니다.
+              </p>
+            </div>
+          ) : mode === 'car' && parking === 'valet' ? (
+            <p className="mt-3 rounded-xl bg-brand-soft/70 px-3 py-2.5 text-[11px] font-semibold leading-relaxed text-brand">
+              주차대행은 직접 장기주차처럼 자리 찾기·셔틀 대기가 없어 공항 안 이동이 짧습니다.
             </p>
           ) : null}
 
@@ -446,15 +515,24 @@ export default function DepartureGuideCard({
           {contextCta ? (
             <a
               href={contextCta.href}
-              className="mt-4 flex items-center gap-3 rounded-xl bg-white px-3 py-3 ring-1 ring-brand/25"
+              className="mt-4 flex items-center gap-3 rounded-xl bg-brand px-3 py-3.5 text-white shadow-[0_6px_16px_rgba(49,130,246,0.3)]"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-soft text-brand">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
                 <contextCta.icon size={18} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[12px] font-bold text-ink">{contextCta.label}</span>
-                <span className="block text-[10px] font-medium text-muted">{contextCta.desc}</span>
+                <span className="block text-[13px] font-bold">{contextCta.label}</span>
+                <span className="block text-[10px] font-medium opacity-90">{contextCta.desc}</span>
               </span>
+            </a>
+          ) : null}
+
+          {mode === 'car' && parking === 'long' ? (
+            <a
+              href="/spots"
+              className="mt-2 block text-center text-[11px] font-semibold text-muted underline-offset-2 hover:underline"
+            >
+              공식 장기주차장 위치·셔틀만 볼래요
             </a>
           ) : null}
         </div>

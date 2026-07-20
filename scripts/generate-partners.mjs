@@ -14,7 +14,7 @@ const dataPath = path.join(root, 'data/partners/pages.json');
 const outRoot = path.join(root, 'public/partners');
 
 const AIRPICK_DEFINITION =
-  '에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.';
+  '에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.';
 
 function esc(s) {
   return String(s ?? '')
@@ -50,8 +50,8 @@ function terminalsLabel(p) {
 function navHtml() {
   return `<nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차 비교</a>
-        <a href="/esim">유심·eSIM</a>
+        <a href="/parking">주차대행 비교</a>
+        <a href="/esim">이심 비교</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
@@ -217,7 +217,7 @@ ${JSON.stringify(graph, null, 2)}
           <li>입점 예약 후 <strong>주차 위치·입고 사진·보험 안내</strong>를 예약 탭에서 확인 (제공 업체)</li>
           <li>현장 결제 — 앱에서 카드 결제를 받지 않습니다</li>
         </ul>
-        <a class="cta" href="/parking">주차대행 가격비교 열기</a>
+        <a class="cta" href="/parking">주차대행 비교 열기</a>
       </section>
 
       <section class="section">
@@ -335,7 +335,7 @@ ${JSON.stringify(graph, null, 2)}
         <h1>입점 주차대행 업체</h1>
         <p class="answer"><strong>${esc(answer)}</strong></p>
         <p>${esc(AIRPICK_DEFINITION)} 아래 입점 업체를 고른 뒤, 일정 넣어 비교·예약하세요.</p>
-        <a class="cta" href="/parking">주차대행 가격비교 · 예약</a>
+        <a class="cta" href="/parking">주차대행 비교 · 예약</a>
         <a class="cta secondary" href="/guides/partner-vs-external/">입점 vs 미입점 가이드</a>
       </header>
 

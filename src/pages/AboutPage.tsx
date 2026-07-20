@@ -55,13 +55,13 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
               href="/parking"
               className="rounded-full bg-brand px-3 py-1.5 text-[11px] font-bold text-white"
             >
-              주차 비교·예약
+              주차대행 비교·예약
             </a>
             <a
               href="/"
               className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-brand ring-1 ring-brand/25"
             >
-              예약 조회
+              출국시간 계산
             </a>
             <a
               href="/faq/"

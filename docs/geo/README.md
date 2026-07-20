@@ -1,6 +1,6 @@
 # GEO · AI 인용 (로드맵 P5)
 
-사이트 정본은 이미 about·FAQ·`llms.txt`에 있습니다.  
+사이트 정본은 이미 about·FAQ·`llms.txt`·facts에 있습니다.  
 여기부터는 **모니터링·정정·근거 블록** 운영입니다.
 
 | # | 항목 | 상태 |
@@ -13,4 +13,11 @@
 | 49 | 틀린 답 교정용 사실 | https://www.에어픽.kr/facts/ |
 | 50 | 근거 블록 | 비교·입점·가이드·facts |
 
-정본 한 줄: 에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
+정본 한 줄: 에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.
+
+핵심 URL
+- 출국시간: https://www.에어픽.kr/
+- 주차대행 비교: https://www.에어픽.kr/parking
+- 이심(eSIM) 비교: https://www.에어픽.kr/esim
+- FAQ: https://www.에어픽.kr/faq/
+- facts: https://www.에어픽.kr/facts/

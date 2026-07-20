@@ -5,17 +5,17 @@
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#3182F6" />
-    <title>자주 묻는 질문 · 에어픽 FAQ | 주차대행·유심 예약</title>
+    <title>자주 묻는 질문 · 에어픽 FAQ | 출국시간·주차대행·이심</title>
     <meta
       name="description"
-      content="에어픽 FAQ — 예약은 어디서 조회하나요, 카드 결제 여부, 입고 사진·주차 위치, 유심·eSIM 비교 구매 안내."
+      content="에어픽 FAQ — 출국시간 계산, 공항 혼잡·대기 여유, 주차대행 예약 조회, 이심(eSIM) 비교 구매 안내."
     />
     <link rel="canonical" href="https://www.에어픽.kr/faq/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="자주 묻는 질문 · 에어픽 FAQ" />
     <meta
       property="og:description"
-      content="에어픽 예약 조회·취소, 입고 사진·위치, 유심·eSIM 비교에 대한 자주 묻는 질문."
+      content="출국시간 계산, 주차대행 예약 조회·취소, 이심(eSIM) 비교에 대한 자주 묻는 질문."
     />
     <meta property="og:url" content="https://www.에어픽.kr/faq/" />
     <meta property="og:locale" content="ko_KR" />
@@ -56,10 +56,34 @@
             "mainEntity": [
           {
             "@type": "Question",
+            "name": "인천공항 출국시간·나설 시각은 어떻게 계산하나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "홈에서 편명·출발일·집 주소를 넣으면 혼잡·대기 여유를 반영한 나설 시각을 계산합니다. 홈 출국시간 계산기에 편명·출발일·집 주소를 입력하면, 비행 출발 기준 공항 도착 여유와 이동 시간을 반영해 집에서 나서야 할 시각을 계산합니다. 공항 혼잡·대기 여유를 계획하는 용도이며, 실시간 혼잡도 API를 그대로 보여주는 서비스는 아닙니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "공항 도착 여유·혼잡도는 어떻게 반영되나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "기본은 출발 3시간 전 공항 도착 기준이며, 실시간 혼잡 API가 아닌 여유 계획용입니다. 혼잡·대기 검색 수요에 맞춰 여유를 넉넉히 잡는 계획용이며, 현장 대기 시간은 날·시간대에 따라 달라질 수 있습니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "직접 장기주차와 주차대행, 공항 안 시간은 얼마나 다른가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "직접 장기주차는 자리 찾기·셔틀 대기가 더 들고, 주차대행은 탑승장 인근 인계로 공항 안 시간이 짧습니다. 직접 장기주차는 자리 찾기(약 10분)·탑승장 이동·셔틀 대기(약 15분) 등이 더 듭니다. 홈 계산 결과에서 둘을 비교한 뒤 주차대행 비교로 이어갈 수 있습니다."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "에어픽은 어떤 서비스인가요?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 입점 업체는 앱에서 예약·조회하고 위치·사진·보험을 확인할 수 있으며, 미입점은 참고 요금 비교 후 업체 홈으로 이동합니다."
+              "text": "에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다. 입점 업체는 앱에서 예약·조회하고 위치·사진·보험을 확인할 수 있으며, 미입점은 참고 요금 비교 후 업체 홈으로 이동합니다."
             }
           },
           {
@@ -128,7 +152,7 @@
           },
           {
             "@type": "Question",
-            "name": "에어픽에서 유심·eSIM을 바로 구매할 수 있나요?",
+            "name": "에어픽에서 이심(eSIM)을 바로 구매할 수 있나요?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "아니요. 비교만 하고, 구매·개통은 제휴사 사이트에서 합니다. 에어픽은 제휴 요금 비교만 제공합니다. 원하는 요금제를 선택한 뒤 제휴사 사이트에서 구매·개통해 주세요."
@@ -136,15 +160,15 @@
           },
           {
             "@type": "Question",
-            "name": "eSIM과 USIM 중 무엇을 선택해야 하나요?",
+            "name": "이심(eSIM)과 USIM 중 무엇을 선택해야 하나요?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "최신폰 eSIM 지원이면 eSIM, 아니면 실물 USIM을 고르세요. eSIM을 지원하는 최신 스마트폰이면 eSIM이 편합니다(물리 카드 없이 QR 설치). eSIM 미지원 기기는 USIM을 선택해 주세요."
+              "text": "최신폰 eSIM 지원이면 이심(eSIM), 아니면 실물 유심을 고르세요. eSIM을 지원하는 최신 스마트폰이면 eSIM이 편합니다(물리 카드 없이 QR 설치). eSIM 미지원 기기는 USIM을 선택해 주세요."
             }
           },
           {
             "@type": "Question",
-            "name": "에어픽에 표시된 유심·eSIM 가격이 최종 금액인가요?",
+            "name": "에어픽에 표시된 이심(eSIM) 가격이 최종 금액인가요?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "표시가는 참고 요금입니다. 결제 전 제휴사에서 최종 금액을 확인하세요. 제휴사가 제공한 참고 요금입니다. 제휴사 사이트에서 쿠폰·환율·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요."
@@ -160,8 +184,8 @@
     <div class="wrap">
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차 비교</a>
-        <a href="/esim">유심·eSIM</a>
+        <a href="/parking">주차대행 비교</a>
+        <a href="/esim">이심 비교</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
@@ -171,20 +195,55 @@
         <p class="eyebrow">에어픽 안내</p>
         <h1>자주 묻는 질문</h1>
         <p>
-          에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 앱·예약·조회
-          FAQ를 모았습니다. 입·출고, 차량 상태, 현장 일정 등은 예약하신 주차장(업체)으로 문의해
-          주세요.
+          에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교
+          플랫폼입니다. 출국시간·예약·조회 FAQ를 모았습니다. 입·출고, 차량 상태, 현장 일정 등은
+          예약하신 주차장(업체)으로 문의해 주세요.
         </p>
-        <a class="cta" href="/parking">주차 비교·예약하기</a>
-        <a class="cta secondary" href="/">홈 · 예약 조회</a>
+        <a class="cta" href="/parking">주차대행 비교·예약하기</a>
+        <a class="cta secondary" href="/">출국시간 계산하기</a>
         <a class="cta secondary" href="/about/">소개 · 고객센터</a>
       </header>
+
+      <p class="cat-label">출국시간 · 혼잡</p>
+      <details class="faq">
+        <summary>인천공항 출국시간·나설 시각은 어떻게 계산하나요?</summary>
+        <p class="answer">
+          홈에서 편명·출발일·집 주소를 넣으면 혼잡·대기 여유를 반영한 나설 시각을 계산합니다.
+        </p>
+        <p>
+          홈 출국시간 계산기에 편명·출발일·집 주소를 입력하면, 비행 출발 기준 공항 도착 여유와 이동
+          시간을 반영해 집에서 나서야 할 시각을 계산합니다. 공항 혼잡·대기 여유를 계획하는 용도이며,
+          실시간 혼잡도 API를 그대로 보여주는 서비스는 아닙니다.
+        </p>
+      </details>
+      <details class="faq">
+        <summary>공항 도착 여유·혼잡도는 어떻게 반영되나요?</summary>
+        <p class="answer">
+          기본은 출발 3시간 전 공항 도착 기준이며, 실시간 혼잡 API가 아닌 여유 계획용입니다.
+        </p>
+        <p>
+          혼잡·대기 검색 수요에 맞춰 여유를 넉넉히 잡는 계획용이며, 현장 대기 시간은 날·시간대에 따라
+          달라질 수 있습니다.
+        </p>
+      </details>
+      <details class="faq">
+        <summary>직접 장기주차와 주차대행, 공항 안 시간은 얼마나 다른가요?</summary>
+        <p class="answer">
+          직접 장기주차는 자리 찾기·셔틀 대기가 더 들고, 주차대행은 탑승장 인근 인계로 공항 안 시간이
+          짧습니다.
+        </p>
+        <p>
+          직접 장기주차는 자리 찾기(약 10분)·탑승장 이동·셔틀 대기(약 15분) 등이 더 듭니다. 홈 계산
+          결과에서 둘을 비교한 뒤 주차대행 비교로 이어갈 수 있습니다.
+        </p>
+      </details>
 
       <p class="cat-label">예약 · 조회</p>
       <details class="faq">
         <summary>에어픽은 어떤 서비스인가요?</summary>
         <p class="answer">
-          에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
+          에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교
+          플랫폼입니다.
         </p>
         <p>
           입점 업체는 앱에서 예약·조회하고 위치·사진·보험을 확인할 수 있으며, 미입점은 참고 요금
@@ -279,9 +338,9 @@
         </p>
       </details>
 
-      <p class="cat-label">유심·eSIM</p>
+      <p class="cat-label">이심(eSIM)</p>
       <details class="faq">
-        <summary>에어픽에서 유심·eSIM을 바로 구매할 수 있나요?</summary>
+        <summary>에어픽에서 이심(eSIM)을 바로 구매할 수 있나요?</summary>
         <p class="answer">아니요. 비교만 하고, 구매·개통은 제휴사 사이트에서 합니다.</p>
         <p>
           에어픽은 제휴 요금 비교만 제공합니다. 원하는 요금제를 선택한 뒤 제휴사 사이트에서
@@ -289,7 +348,7 @@
         </p>
       </details>
       <details class="faq">
-        <summary>eSIM과 USIM 중 무엇을 선택해야 하나요?</summary>
+        <summary>이심(eSIM)과 USIM 중 무엇을 선택해야 하나요?</summary>
         <p class="answer">최신폰 eSIM 지원이면 eSIM, 아니면 실물 USIM을 고르세요.</p>
         <p>
           eSIM을 지원하는 최신 스마트폰이면 eSIM이 편합니다(물리 카드 없이 QR 설치). eSIM 미지원
@@ -297,7 +356,7 @@
         </p>
       </details>
       <details class="faq">
-        <summary>에어픽에 표시된 유심·eSIM 가격이 최종 금액인가요?</summary>
+        <summary>에어픽에 표시된 이심(eSIM) 가격이 최종 금액인가요?</summary>
         <p class="answer">표시가는 참고 요금입니다. 결제 전 제휴사에서 최종 금액을 확인하세요.</p>
         <p>
           제휴사가 제공한 참고 요금입니다. 제휴사 사이트에서 쿠폰·환율·옵션에 따라 달라질 수 있으니
@@ -308,7 +367,7 @@
       <section class="section">
         <h2>더 보기</h2>
         <ul>
-          <li><a href="/parking">주차대행 가격비교 · 예약</a></li>
+          <li><a href="/parking">주차대행 비교 · 예약</a></li>
           <li><a href="/guides/">가이드 모음</a></li>
           <li><a href="/about/">에어픽 소개 · 사업자 정보</a></li>
           <li><a href="/facts/">사실 확인 · AI·보도용</a></li>

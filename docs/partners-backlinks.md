@@ -44,7 +44,7 @@ https://www.에어픽.kr/for-partners/
 홈페이지·카카오톡에 「에어픽에서 비교·예약」 배지/문구를 붙여 주시면 감사하겠습니다.
 
 • 가이드(HTML·문구 복붙): https://www.에어픽.kr/for-partners/
-• 주차 비교: https://www.에어픽.kr/parking
+• 주차대행 비교: https://www.에어픽.kr/parking
 • 입점 목록: https://www.에어픽.kr/partners/
 
 업체별 공개 페이지(소개·검색용):
@@ -146,7 +146,7 @@ https://www.에어픽.kr/for-partners/
 | 비교·예약 | 01-parking-compare.md | /guides/parking-compare/ |
 | 입점 vs 미입점 | 02-partner-vs-external.md | /guides/partner-vs-external/ |
 | T1·T2·운서 | 03-terminal.md | /guides/t1-t2-unseo/ |
-| 유심·eSIM | 04-esim.md | /guides/esim-beginner/ |
+| 이심(eSIM) | 04-esim.md | /guides/esim-beginner/ |
 | **보험 확인** | **05-parking-insurance.md** | **/guides/parking-insurance/** |
 
 **블로그 본문 끝에 넣을 CTA (택1)**
@@ -173,7 +173,7 @@ https://www.에어픽.kr/for-partners/
 **원칙:** 질문에 맞는 사실 2~4문장 + **www 링크 1개**. 동일 글 복붙 금지.
 
 ```
-에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
+에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.
 출국·귀국 일정과 터미널·실내/야외를 넣으면 업체별 참고 요금을 나란히 볼 수 있고,
 입점은 앱에서 예약·입고 후 위치·사진·보험 안내까지 이어집니다.
 표시 금액은 일정 기준 예상·참고가이며 변동될 수 있습니다.
@@ -202,7 +202,7 @@ https://www.에어픽.kr/for-partners/
 **소식 본문 (3줄 + 링크 1개)**
 
 ```
-에어픽은 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.
+에어픽은 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.
 일정·터미널만 넣으면 업체별 참고 요금을 한곳에서 비교할 수 있습니다.
 입점은 예약 후 주차 위치·사진·보험 안내까지 확인 가능합니다.
 

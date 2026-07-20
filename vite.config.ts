@@ -149,7 +149,7 @@ export default defineConfig({
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
-        description: '인천공항 주차대행·유심·eSIM 가격비교 — 업체 요금, 위치, 보험 한 번에',
+        description: '인천공항 출국시간 계산 · 주차대행 비교 · 이심(eSIM) 가격비교',
         theme_color: '#3182F6',
         background_color: '#EDF4FC',
         display: 'standalone',

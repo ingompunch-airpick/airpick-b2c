@@ -19,6 +19,33 @@ export interface FaqCategory {
 
 export const FAQ_CATEGORIES: FaqCategory[] = [
   {
+    id: 'leave-by',
+    label: '출국시간 · 혼잡',
+    items: [
+      {
+        id: 'leave-by-how',
+        question: '인천공항 출국시간·나설 시각은 어떻게 계산하나요?',
+        shortAnswer: SHORT_ANSWERS.leaveBy,
+        answer:
+          '홈 출국시간 계산기에 편명·출발일·집 주소를 입력하면, 비행 출발 기준 공항 도착 여유와 이동 시간을 반영해 집에서 나서야 할 시각을 계산합니다. 공항 혼잡·대기 여유를 계획하는 용도이며, 실시간 혼잡도 API를 그대로 보여주는 서비스는 아닙니다.',
+      },
+      {
+        id: 'leave-by-buffer',
+        question: '공항 도착 여유·혼잡도는 어떻게 반영되나요?',
+        shortAnswer: SHORT_ANSWERS.leaveByBuffer,
+        answer:
+          '기본은 출발 3시간 전 공항 도착을 기준으로 합니다. 혼잡·대기 검색 수요에 맞춰 여유를 넉넉히 잡는 계획용이며, 현장 대기 시간은 날·시간대에 따라 달라질 수 있습니다.',
+      },
+      {
+        id: 'long-lot-vs-valet',
+        question: '직접 장기주차와 주차대행, 공항 안 시간은 얼마나 다른가요?',
+        shortAnswer: SHORT_ANSWERS.longLotVsValet,
+        answer:
+          '직접 장기주차는 자리 찾기(약 10분)·탑승장 이동·셔틀 대기(약 15분) 등이 더 듭니다. 주차대행은 탑승장 인근에서 인계해 공항 안 이동 시간이 짧은 편입니다. 홈 계산 결과에서 둘을 비교한 뒤 주차대행 비교로 이어갈 수 있습니다.',
+      },
+    ],
+  },
+  {
     id: 'my',
     label: '예약 · 조회',
     items: [
@@ -27,7 +54,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         question: '에어픽은 어떤 서비스인가요?',
         shortAnswer: SHORT_ANSWERS.whatIs,
         answer:
-          '에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 입점 업체는 앱에서 예약·조회하고 위치·사진·보험을 확인할 수 있으며, 미입점은 참고 요금 비교 후 업체 홈으로 이동합니다.',
+          '에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다. 입점 업체는 앱에서 예약·조회하고 위치·사진·보험을 확인할 수 있으며, 미입점은 참고 요금 비교 후 업체 홈으로 이동합니다.',
       },
       {
         id: 'my-how',
