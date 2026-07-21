@@ -9,8 +9,9 @@ import { logger } from 'firebase-functions';
 const ncpKeyIdParam = defineString('NAVER_NCP_API_KEY_ID', { default: '' });
 const ncpKeySecretParam = defineString('NAVER_NCP_API_KEY', { default: '' });
 
-const GEOCODE_URL = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode';
-const DIRECTION_URL = 'https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving';
+/** 신 Maps (maps.apigw) — 구 naveropenapi 호스트는 210 subscription 오류 */
+const GEOCODE_URL = 'https://maps.apigw.ntruss.com/map-geocode/v2/geocode';
+const DIRECTION_URL = 'https://maps.apigw.ntruss.com/map-direction/v1/driving';
 
 function readSecrets(): { id: string; secret: string } {
   let id = '';

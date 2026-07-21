@@ -75,29 +75,73 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /**
- * 홈 — 출국시간 계산기
- * 검색 입구: 공항 혼잡·대기 여유 계획 수요 → 제품: 나설 시각 계산 → 전환: 주차대행
+ * 홈 — 출국시간 계산기 (SEO Hook)
+ * 흐름: 계산기 → 주차대행 비교 → 이심 → 예약
+ * H1·메타·SEO 본문은 유지. UX는 출국 준비 허브로 연결.
  */
 export const HOME_EYEBROW = '에어픽 · 출국시간 계산';
 
 export const HOME_HEADLINE = '인천공항 출국시간 계산기';
 
-export const HOME_SUBHEAD =
-  '공항 혼잡·대기 여유까지 보고, 집에서 나서야 할 시각을 계산합니다. 편명·출발일·집 주소만 넣으면 됩니다.';
+/** 히어로 서브 — 한 줄 (H1 유지) */
+export const HOME_SUBHEAD = '출국 준비의 첫 단계, 추천 출발 시간을 확인하세요.';
 
 export const HOME_CALCULATE_CTA = '출국시간 계산하기';
 
 export const HOME_CALCULATING = '계산 중…';
 
-export const HOME_RESULT_EYEBROW = '계산 결과';
+export const HOME_RESULT_EYEBROW = '추천 출발 시각';
 
-/** 계산 결과 → 직접 장기주차 대비 주차대행 설득 */
+export const HOME_LEAVE_DISCLAIMER =
+  '비행기 출발 3시간 전 공항 도착을 기준으로 계산합니다. 체크인·보안검색·출국심사 시간은 해당 3시간에 포함되어 있습니다. 공항 혼잡도 및 항공사 상황에 따라 실제 소요시간은 달라질 수 있습니다.';
+
+export const HOME_PEAK_ADVISORY =
+  '현재 출국객이 많은 기간입니다. 평소보다 15~20분 정도 더 여유 있게 출발하는 것을 권장합니다.';
+
+/** 계산 완료 후 · 다음 준비 섹션 */
+export const HOME_NEXT_PREP = {
+  done: '출국시간 계산 완료',
+  title: '다음 준비',
+  bridge: '출국 준비는 여기서 끝이 아닙니다.',
+  bridgeSub: '다음 준비도 함께 확인해보세요.',
+  parking: {
+    title: '주차대행 비교',
+    body: '장기주차와 비교해보세요.',
+    benefit: '출국 전 불필요한 이동을 줄여보세요.',
+    cta: '주차대행 비교하기',
+    href: '/parking',
+  },
+  esim: {
+    title: '이심 비교',
+    body: '출국 전 데이터도 준비하세요.',
+    cta: '이심 비교하기',
+    href: '/esim',
+  },
+  reserve: {
+    title: '예약',
+    body: '입점 업체는 비교 후 바로 예약할 수 있어요.',
+    cta: '내 예약 보기',
+    href: '/my',
+  },
+} as const;
+
+/** @deprecated HOME_NEXT_PREP.parking 사용 */
+export const HOME_VALET_NOTE = {
+  body: HOME_NEXT_PREP.parking.benefit,
+  cta: HOME_NEXT_PREP.parking.cta,
+} as const;
+
+/** 주차대행 선택 시 · 고정 시간 미포함 안내 */
+export const HOME_VALET_MODE_NOTE =
+  '주차대행은 업체마다 차량 인수 위치가 달라, 터미널 도착 후 이동 시간은 계산에 넣지 않았습니다. 업체 상세에서 이용 방법을 확인해 주세요.';
+
+/** @deprecated HOME_VALET_NOTE 사용 */
 export const HOME_VALET_UPSELL = {
-  eyebrow: '시간 비교',
-  title: '직접 장기주차보다 주차대행이 빠릅니다',
-  selfLabel: '직접 장기주차',
+  eyebrow: '참고',
+  title: HOME_VALET_NOTE.body,
+  selfLabel: '장기주차',
   valetLabel: '주차대행',
-  cta: '시간 아끼는 주차대행 비교하기',
+  cta: HOME_VALET_NOTE.cta,
   ctaDesc: '입점 업체 요금·예약',
 } as const;
 

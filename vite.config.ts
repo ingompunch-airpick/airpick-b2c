@@ -209,6 +209,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/icn-flight/, '/getIcnFlight'),
       },
+      '/api/icn-airport-live': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/icn-airport-live/, '/getIcnAirportLive'),
+      },
       '/api/drive-eta': {
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,

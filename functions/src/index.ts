@@ -8,6 +8,7 @@ import { submitReview } from './api/submitReview';
 import { listAdminReviews, moderateReview } from './api/moderateReview';
 import { getIcnShuttle } from './api/icnShuttle';
 import { getIcnFlight } from './api/icnFlight';
+import { getIcnAirportLive } from './api/icnAirportLive';
 import { getDriveEta } from './api/driveEta';
 
 admin.initializeApp();
@@ -26,5 +27,6 @@ export {
   moderateReview,
   getIcnShuttle,
   getIcnFlight,
+  getIcnAirportLive,
   getDriveEta,
 };

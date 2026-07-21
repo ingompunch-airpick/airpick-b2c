@@ -69,13 +69,13 @@ export type LeaveByPlan = {
   arriveHm: string;
   travelMinutes: number;
   airportMinutes: number;
-  /** 이동+공항 안 */
+  /** 이동 + 공항 이동 */
   bufferMinutes: number;
   note: string;
 };
 
 /**
- * 집에서 나설 시각 = 공항 도착 − 집→공항 이동 − 공항 안 이동
+ * 추천 출발 시각 = 공항 도착(출발−180) − 집→공항 − 공항 이동
  */
 export function computeLeaveBy(args: {
   arriveMinutes: number;
@@ -95,7 +95,7 @@ export function computeLeaveBy(args: {
     travelMinutes: travel,
     airportMinutes: airport,
     bufferMinutes: buffer,
-    note: `이동 ${travel}분 + 공항 안 약 ${airport}분`,
+    note: `집→공항 ${travel}분 + 공항 이동 ${airport}분`,
   };
 }
 

@@ -4,6 +4,9 @@ import type { IcnFlightResponse } from '../lib/icnFlight';
 export type TransportMode = 'car' | 'transit';
 export type CarParkingType = 'long' | 'short' | 'valet';
 
+/** 출국시간 계산기 주차 방식 (자가용 전제 · 대중교통 없음) */
+export type LeaveTravelMode = 'long' | 'short' | 'valet';
+
 export type DepartureStep = {
   text: string;
   /** 소요(분). 범위면 minutes~minutesMax */
@@ -29,24 +32,72 @@ export function normalizeTransportMode(raw: unknown): TransportMode {
   return 'car';
 }
 
-/** 자리 찾기·셔틀 대기 — 고정 여유 */
-const PARK_FIND = { minutes: 10, minutesMax: 10 } as const;
-const SHUTTLE_WAIT = { minutes: 15, minutesMax: 15 } as const;
+/**
+ * 공항 내부 이동(분) — leave-by에 쓰는 고정값.
+ * 장기: 주차10 + 정류장5 + 셔틀대기10 + 셔틀15 + 터미널8 = 48
+ * 단기: 15
+ * 주차대행: 0 (업체마다 인수 위치가 달라 고정값 미사용)
+ * 체크인 대기·보안·출국심사·탑승구는 180분(3시간 전 도착)에 포함 · 여기 미반영
+ */
+export const AIRPORT_INTERNAL_MINUTES: Record<LeaveTravelMode, number> = {
+  long: 48,
+  short: 15,
+  valet: 0,
+};
 
-/** 공개 안내 기준 — 셔틀 탑승 후 이동 */
-const SHUTTLE_RIDE = {
-  T1: { min: 7, max: 15 },
-  T2: { min: 15, max: 15 },
-} as const;
+export function airportInternalMinutes(mode: LeaveTravelMode): number {
+  return AIRPORT_INTERNAL_MINUTES[mode];
+}
+
+/** 집→목적지 (길찾기 구간) */
+export function leaveDriveLabel(mode: LeaveTravelMode): string {
+  if (mode === 'long') return '집→장기주차장';
+  if (mode === 'short') return '집→단기주차장';
+  return '집→터미널';
+}
+
+/** 도착 후 공항 구간 */
+export function leaveAirportSegmentLabel(mode: LeaveTravelMode): string {
+  if (mode === 'long') return '장기주차장→공항';
+  if (mode === 'short') return '단기주차장→공항';
+  return '터미널→출국장';
+}
+
+/** @deprecated leaveAirportSegmentLabel */
+export function airportMoveLabel(mode: LeaveTravelMode): string {
+  return leaveAirportSegmentLabel(mode);
+}
+
+export function leaveTravelModeToDriveArgs(mode: LeaveTravelMode): {
+  transport: TransportMode;
+  parking: CarParkingType;
+} {
+  return { transport: 'car', parking: mode };
+}
+
+/** 성수기 안내만 — 계산식·결과는 변경하지 않음 */
+export function showPeakTravelAdvisory(departureYmd: string): boolean {
+  const ymd = departureYmd.replace(/\D/g, '');
+  if (ymd.length !== 8) return false;
+  const m = Number(ymd.slice(4, 6));
+  const d = Number(ymd.slice(6, 8));
+  if (m === 7 || m === 8) return true;
+  if (m === 12 && d >= 20) return true;
+  if (m === 1 && d <= 10) return true;
+  if (m === 5 && d <= 5) return true;
+  if (m === 9 && d >= 20) return true;
+  return false;
+}
+
+/** 자리 찾기·셔틀 — 내부 단계용 (leave-by 합계는 AIRPORT_INTERNAL_MINUTES) */
+const PARK_FIND = { minutes: 10, minutesMax: 10 } as const;
+const SHUTTLE_WAIT = { minutes: 10, minutesMax: 10 } as const;
+const SHUTTLE_RIDE = { minutes: 15, minutesMax: 15 } as const;
 
 const WALK = {
-  /** 주차 후 가까운 셔틀 탑승장까지 */
   toShuttleStop: { minutes: 5, minutesMax: 5 },
-  /** 터미널 하차 → 3층 출국장 */
-  toDepartureHall: { minutes: 5, minutesMax: 8 },
-  /** 단기주차 → 출국장 */
-  shortToHall: { minutes: 5, minutesMax: 10 },
-  /** 대중교통 하차 → 출국장·체크인 */
+  toDepartureHall: { minutes: 8, minutesMax: 8 },
+  shortToHall: { minutes: 5, minutesMax: 5 },
   dropoffToCheckIn: { minutes: 5, minutesMax: 10 },
 } as const;
 
@@ -80,7 +131,6 @@ export function formatTotalMinutes(min: number | null, max: number | null): stri
 
 function longTermShuttlePlan(terminal: 'T1' | 'T2'): DepartureStep[] {
   const lot = getOfficialParkingLot(terminal, 'long');
-  const ride = SHUTTLE_RIDE[terminal];
   const arriveAndPark: DepartureStep[] = [
     {
       text: `내비에 「${lot.navQuery}」 또는 「${lot.address}」로 이동해 ${lot.name}에 도착하세요.`,
@@ -94,7 +144,7 @@ function longTermShuttlePlan(terminal: 'T1' | 'T2'): DepartureStep[] {
       ...WALK.toShuttleStop,
     },
     {
-      text: '셔틀을 기다리세요. (배차 간격 여유)',
+      text: '셔틀을 기다리세요.',
       ...SHUTTLE_WAIT,
     },
   ];
@@ -104,8 +154,7 @@ function longTermShuttlePlan(terminal: 'T1' | 'T2'): DepartureStep[] {
       ...arriveAndPark,
       {
         text: '공항02 셔틀을 타고 제2여객터미널 1층 중앙(5~6번 출입구 부근)에서 내리세요. T2 터미널 하차는 이곳 한 곳입니다.',
-        minutes: ride.min,
-        minutesMax: ride.max,
+        ...SHUTTLE_RIDE,
       },
       {
         text: '건물로 들어간 뒤 3층 출국장으로 올라가세요.',
@@ -117,8 +166,7 @@ function longTermShuttlePlan(terminal: 'T1' | 'T2'): DepartureStep[] {
     ...arriveAndPark,
     {
       text: '셔틀(공항01)은 1층 3C(동측) 또는 13C(서측) 중 한 곳에 정차합니다. 두 곳 모두 제1여객터미널이고, 어디든 내려도 됩니다.',
-      minutes: ride.min,
-      minutesMax: ride.max,
+      ...SHUTTLE_RIDE,
     },
     {
       text: '정차하면 내려 건물로 들어간 뒤 3층 출국장으로 올라가세요.',
@@ -144,14 +192,13 @@ export function buildDepartureGuide(
   };
 
   let steps: DepartureStep[];
-  let totalNote = '도보·셔틀·자리 찾기·셔틀 대기 포함(체크인 대기 제외)';
+  let totalNote: string;
 
   if (mode === 'car') {
     const park = parking ?? 'long';
     if (park === 'long') {
       steps = [...longTermShuttlePlan(terminal), checkInStep];
-      totalNote =
-        '자리 찾기 10분 + 탑승장 5분 + 셔틀 대기 15분 + 탑승·도보 · 체크인 대기 제외';
+      totalNote = '장기주차장→출국장 · 약 48분';
     } else if (park === 'short') {
       const lot = getOfficialParkingLot(terminal, 'short');
       steps = [
@@ -160,28 +207,26 @@ export function buildDepartureGuide(
         },
         {
           text: '주차장에서 빈자리를 찾아 주차하세요.',
-          ...PARK_FIND,
+          minutes: 10,
+          minutesMax: 10,
         },
         {
           text: `안내 동선을 따라 ${terminalName} 3층 출국장으로 이동하세요.`,
-          ...WALK.shortToHall,
+          minutes: 5,
+          minutesMax: 5,
         },
         checkInStep,
       ];
-      totalNote = '자리 찾기 10분 + 도보 포함 · 체크인 대기는 제외';
+      totalNote = '단기주차→출국장 · 약 15분';
     } else {
+      // 주차대행: 업체별 인수 위치가 달라 시간 합산에 넣지 않음
       steps = [
-        { text: '예약한 주차대행 픽업 장소에서 차량을 맡기세요.' },
         {
-          text: `안내받은 동선으로 ${terminalName}에 도착하세요.`,
-        },
-        {
-          text: `${terminalName} 3층 출국장으로 가세요.`,
-          ...WALK.dropoffToCheckIn,
+          text: '주차대행은 업체마다 차량 인수 위치·운영 방식이 다릅니다. 상세에서 이용 방법을 확인해 주세요.',
         },
         checkInStep,
       ];
-      totalNote = '터미널 도착 후 도보만 · 픽업·이동 시간은 업체마다 다름';
+      totalNote = '주차대행 · 공항 이동시간 미포함(업체별 상이)';
     }
   } else {
     const stationHint =
@@ -196,7 +241,7 @@ export function buildDepartureGuide(
       },
       checkInStep,
     ];
-    totalNote = '하차 후 도보만 · 버스·열차 탑승 시간은 제외';
+    totalNote = '하차→출국장 도보';
   }
 
   const { totalMinutesMin, totalMinutesMax } = sumRanges(steps);

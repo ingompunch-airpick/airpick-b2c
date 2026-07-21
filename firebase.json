@@ -286,6 +286,13 @@
         }
       },
       {
+        "source": "/api/icn-airport-live",
+        "function": {
+          "functionId": "getIcnAirportLive",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "/api/drive-eta",
         "function": {
           "functionId": "getDriveEta",

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import DepartureGuideCard from '../components/map-home/DepartureGuideCard';
-import { AIRPICK_DEFINITION } from '../constants/companyLegal';
 import { HOME_EYEBROW, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
 import type { AppTab } from '../types';
 
-/** 홈 — 웹 히어로 + 이동시간 계산 (결과 이후는 카드가 앱처럼) */
-export default function HomePage({ onGoTab: _onGoTab }: { onGoTab: (tab: AppTab) => void }) {
+/** 홈 — SEO Hook(출국시간 계산) → 주차·이심·예약 전환 */
+export default function HomePage({ onGoTab }: { onGoTab: (tab: AppTab) => void }) {
   const [hasResult, setHasResult] = useState(false);
 
   return (
@@ -32,19 +31,13 @@ export default function HomePage({ onGoTab: _onGoTab }: { onGoTab: (tab: AppTab)
             {HOME_HEADLINE}
           </h1>
           {!hasResult ? (
-            <p className="mt-3 max-w-[22rem] text-[14px] font-medium leading-relaxed text-muted">
+            <p className="mt-2 max-w-[20rem] text-[13px] font-medium leading-snug text-muted">
               {HOME_SUBHEAD}
             </p>
           ) : null}
         </header>
 
-        <DepartureGuideCard onResultChange={setHasResult} />
-
-        {!hasResult ? (
-          <p className="border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
-            {AIRPICK_DEFINITION}
-          </p>
-        ) : null}
+        <DepartureGuideCard onResultChange={setHasResult} onGoTab={onGoTab} />
       </div>
     </div>
   );
