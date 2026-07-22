@@ -111,8 +111,8 @@ export const HOME_NEXT_PREP = {
   bridgeSub: '다음 준비도 함께 확인해보세요.',
   parking: {
     title: '주차대행 비교',
-    body: '입점 업체는 예약·위치·사진·보험까지',
-    benefit: '출국 전 이동을 줄이고, 맡긴 뒤에도 위치를 확인하세요.',
+    body: '',
+    benefit: '공항까지 걸리는 시간을 줄여보세요.',
     cta: '주차대행 비교하기',
     href: '/parking',
   },

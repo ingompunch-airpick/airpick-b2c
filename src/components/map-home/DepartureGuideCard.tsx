@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { ChevronDown } from 'lucide-react';
 import {
   fetchIcnFlight,
   inputValueToYmd,
@@ -33,6 +34,7 @@ import {
 } from '../../constants/marketing';
 import DateField from '../DateField';
 import type { AppTab, BookingSearch } from '../../types';
+import { cn } from '../../utils/cn';
 
 const PARKING_MODES: { id: LeaveTravelMode; label: string }[] = [
   { id: 'long', label: '장기주차' },
@@ -43,8 +45,73 @@ const PARKING_MODES: { id: LeaveTravelMode; label: string }[] = [
 const TRAVEL_FALLBACK_PRESETS = [40, 60, 90, 120] as const;
 const EXAMPLE_FLIGHT = 'KE623';
 
+type CongestionLevel = '여유' | '보통' | '혼잡' | '매우혼잡';
+
 function normalizeFlightInput(raw: string): string {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+function congestionLevelTone(level: CongestionLevel): string {
+  if (level === '여유') return 'bg-emerald-50 text-emerald-800 ring-emerald-200/80';
+  if (level === '보통') return 'bg-sky-50 text-sky-800 ring-sky-200/80';
+  if (level === '혼잡') return 'bg-amber-50 text-amber-800 ring-amber-200/80';
+  return 'bg-rose-50 text-rose-800 ring-rose-200/80';
+}
+
+function CongestionLevelBadge({ level }: { level: CongestionLevel }) {
+  return (
+    <span
+      className={cn(
+        'inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ring-1',
+        congestionLevelTone(level)
+      )}
+    >
+      {level}
+    </span>
+  );
+}
+
+function parkingOccupancyLevel(occupied: number, total: number): CongestionLevel {
+  if (total <= 0) return '보통';
+  const rate = occupied / total;
+  if (rate < 0.5) return '여유';
+  if (rate < 0.75) return '보통';
+  if (rate < 0.9) return '혼잡';
+  return '매우혼잡';
+}
+
+function summarizeParkingKind(
+  live: IcnAirportLiveResponse,
+  kind: 'long' | 'short'
+): { available: number; level: CongestionLevel } | null {
+  if (!live.parking.available) return null;
+  const terminal = live.terminal;
+  const prefix = terminal === 'T2' ? 'T2' : 'T1';
+  const lots = live.parking.lots ?? [];
+  const relevant = lots.filter(
+    (l) => l.name.includes(prefix) || l.name.includes(terminal)
+  );
+  const list = relevant.length > 0 ? relevant : lots;
+  const filtered =
+    kind === 'long'
+      ? list.filter((l) => /장기|타워|P\d/i.test(l.name) && !/단기/i.test(l.name))
+      : list.filter((l) => /단기/i.test(l.name));
+
+  if (filtered.length > 0) {
+    const occupied = filtered.reduce((a, l) => a + l.occupied, 0);
+    const total = filtered.reduce((a, l) => a + l.total, 0);
+    if (total > 0) {
+      return {
+        available: Math.max(0, total - occupied),
+        level: parkingOccupancyLevel(occupied, total),
+      };
+    }
+  }
+
+  const available =
+    kind === 'long' ? live.parking.longAvailable : live.parking.shortAvailable;
+  if (!Number.isFinite(available)) return null;
+  return { available, level: available > 800 ? '여유' : available > 200 ? '보통' : '혼잡' };
 }
 
 function addDaysYmd(ymdDash: string, days: number): string {
@@ -241,6 +308,17 @@ export default function DepartureGuideCard({
     return { error: plan ? null : '이동 시간을 확인해 주세요.', plan, arrive };
   }, [flight, travelMinutes, airportMinutes]);
 
+  const parkingLiveSummary = useMemo(() => {
+    if (!airportLive || parking === 'valet') return null;
+    return summarizeParkingKind(airportLive, parking);
+  }, [airportLive, parking]);
+
+  const showAirportLiveRef =
+    !!airportLive &&
+    (!!parkingLiveSummary ||
+      airportLive.congestion.available ||
+      !!airportLive.congestion.note);
+
   return (
     <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(49,130,246,0.08)] ring-1 ring-sky-border">
       <form onSubmit={(e) => void onSubmit(e)} className="space-y-3 px-4 pb-4 pt-4">
@@ -380,9 +458,15 @@ export default function DepartureGuideCard({
             </p>
           ) : null}
 
-          <details className="mt-3 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-sky-border/60">
-            <summary className="cursor-pointer list-none text-[12px] font-bold text-ink [&::-webkit-details-marker]:hidden">
-              계산 근거 보기
+          <details className="group mt-3 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-sky-border/60">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[12px] font-bold text-ink [&::-webkit-details-marker]:hidden">
+              <span>어떻게 계산했나요?</span>
+              <ChevronDown
+                size={16}
+                strokeWidth={2.5}
+                className="shrink-0 text-brand transition-transform group-open:rotate-180"
+                aria-hidden
+              />
             </summary>
             <dl className="mt-2.5 space-y-1.5 border-t border-sky-border/50 pt-2.5 text-[12px]">
               <div className="flex justify-between gap-3">
@@ -428,39 +512,40 @@ export default function DepartureGuideCard({
 
           {airportLiveLoading ? (
             <p className="mt-3 text-[11px] font-medium text-muted">지금 공항 상황 불러오는 중…</p>
-          ) : airportLive &&
-            (airportLive.congestion.available ||
-              airportLive.parking.available ||
-              airportLive.congestion.note) ? (
+          ) : showAirportLiveRef && airportLive ? (
             <div className="mt-3 rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/60">
               <p className="text-[10px] font-bold tracking-wide text-brand">
                 지금 공항 참고 · 계산 미반영
               </p>
-              {airportLive.congestion.busiest ? (
-                <p className="mt-1.5 text-[12px] font-semibold leading-relaxed text-ink">
-                  {airportLive.terminal} 출국장 {airportLive.congestion.busiest.gate}번
-                  {airportLive.congestion.busiest.side
-                    ? ` ${airportLive.congestion.busiest.side}`
-                    : ''}{' '}
-                  · 대기인원 약 {airportLive.congestion.busiest.passengers}명 (
-                  {airportLive.congestion.busiest.level}
-                  {airportLive.congestion.busiest.waitMinutes != null
-                    ? ` · 약 ${airportLive.congestion.busiest.waitMinutes}분`
-                    : ''}
-                  )
-                </p>
-              ) : airportLive.congestion.note ? (
-                <p className="mt-1.5 text-[12px] font-medium leading-relaxed text-muted">
-                  {airportLive.congestion.note}
-                </p>
-              ) : null}
-              {airportLive.parking.available ? (
-                <p className="mt-1 text-[12px] font-semibold leading-relaxed text-ink">
-                  {airportLive.terminal} 주차 여유 · 장기 약 {airportLive.parking.longAvailable}면
-                  · 단기 약 {airportLive.parking.shortAvailable}면
-                </p>
-              ) : null}
-              <p className="mt-1.5 text-[10px] font-medium leading-relaxed text-muted">
+              <ul className="mt-2 space-y-2">
+                {parkingLiveSummary ? (
+                  <li className="flex items-center justify-between gap-3">
+                    <span className="text-[12px] font-semibold text-ink">
+                      {parking === 'short' ? '단기주차장' : '장기주차장'}
+                    </span>
+                    <CongestionLevelBadge level={parkingLiveSummary.level} />
+                  </li>
+                ) : null}
+                {airportLive.congestion.busiest ? (
+                  <li className="flex items-center justify-between gap-3">
+                    <span className="min-w-0 text-[12px] font-semibold leading-snug text-ink">
+                      출국장 {airportLive.congestion.busiest.gate}번
+                      {airportLive.congestion.busiest.side
+                        ? ` ${airportLive.congestion.busiest.side}`
+                        : ''}
+                      {airportLive.congestion.busiest.waitMinutes != null
+                        ? ` · 약 ${airportLive.congestion.busiest.waitMinutes}분`
+                        : ` · 약 ${airportLive.congestion.busiest.passengers}명`}
+                    </span>
+                    <CongestionLevelBadge level={airportLive.congestion.busiest.level} />
+                  </li>
+                ) : airportLive.congestion.note ? (
+                  <li className="text-[12px] font-medium leading-relaxed text-muted">
+                    {airportLive.congestion.note}
+                  </li>
+                ) : null}
+              </ul>
+              <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
                 {airportLive.disclaimer}
               </p>
             </div>
@@ -505,30 +590,11 @@ export default function DepartureGuideCard({
               }}
               className="block w-full rounded-xl bg-brand px-4 py-3.5 text-left text-white shadow-[0_6px_16px_rgba(49,130,246,0.28)]"
             >
-              <span className="block text-[11px] font-bold opacity-90">
-                {HOME_NEXT_PREP.parking.title}
-              </span>
-              <span className="mt-1 block text-[13px] font-semibold leading-relaxed">
+              <span className="block text-[13px] font-semibold leading-relaxed">
                 {HOME_NEXT_PREP.parking.benefit}
               </span>
-              <span className="mt-0.5 block text-[12px] font-medium leading-relaxed opacity-90">
-                {HOME_NEXT_PREP.parking.body}
-              </span>
-              <span className="mt-2 block text-[14px] font-bold">
+              <span className="mt-2 block text-[16px] font-bold">
                 {HOME_NEXT_PREP.parking.cta} →
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onGoTab?.('my')}
-              className="block w-full rounded-xl bg-white/80 px-4 py-3 text-left ring-1 ring-sky-border/50"
-            >
-              <span className="block text-[11px] font-bold text-muted">
-                {HOME_NEXT_PREP.reserve.title}
-              </span>
-              <span className="mt-1 block text-[12px] font-medium leading-relaxed text-muted">
-                {HOME_NEXT_PREP.reserve.body}
               </span>
             </button>
           </div>
