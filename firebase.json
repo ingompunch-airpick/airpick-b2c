@@ -19,6 +19,16 @@
         "type": 301
       },
       {
+        "source": "/spots",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/spots/",
+        "destination": "/",
+        "type": 301
+      },
+      {
         "source": "/my/",
         "destination": "/my",
         "type": 301
@@ -305,10 +315,6 @@
       },
       {
         "source": "/esim",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/spots",
         "destination": "/index.html"
       },
       {

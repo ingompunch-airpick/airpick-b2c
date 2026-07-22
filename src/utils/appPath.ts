@@ -5,7 +5,6 @@ export const TAB_PATH: Record<AppTab, string> = {
   home: '/',
   compare: '/parking',
   esim: '/esim',
-  spots: '/spots',
   my: '/my',
 };
 
@@ -39,7 +38,6 @@ export function tabFromPathname(pathname: string): AppTab | null {
   if (path === '/') return 'home';
   if (path === '/parking') return 'compare';
   if (path === '/esim') return 'esim';
-  if (path === '/spots') return 'spots';
   if (path === '/my') return 'my';
   return null;
 }
@@ -61,7 +59,13 @@ export function syncUrlToTab(tab: AppTab, mode: 'push' | 'replace' = 'push'): vo
 }
 
 export function readInitialTab(): AppTab {
-  return tabFromPathname(window.location.pathname) ?? 'home';
+  const path = normalizePathname(window.location.pathname);
+  // 공항주변스팟 탭 비공개 — 구 URL은 홈으로
+  if (path === '/spots') {
+    window.history.replaceState({ tab: 'home' }, '', '/');
+    return 'home';
+  }
+  return tabFromPathname(path) ?? 'home';
 }
 
 /**

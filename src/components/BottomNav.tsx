@@ -1,4 +1,4 @@
-import { ClipboardList, Home, LayoutGrid, MapPinned, Smartphone } from 'lucide-react';
+import { ClipboardList, Home, LayoutGrid, Smartphone } from 'lucide-react';
 import type { AppTab } from '../types';
 import {
   APP_TAB_SOON,
@@ -6,7 +6,6 @@ import {
   HOME_TAB_LABEL,
   MY_TAB_LABEL,
   PARKING_TAB_LABEL,
-  SPOTS_TAB_LABEL,
 } from '../constants/marketing';
 import { pathFromTab } from '../utils/appPath';
 import { cn } from '../utils/cn';
@@ -15,12 +14,11 @@ const tabs: { id: AppTab; label: string; icon: typeof Home }[] = [
   { id: 'home', label: HOME_TAB_LABEL, icon: Home },
   { id: 'compare', label: PARKING_TAB_LABEL, icon: LayoutGrid },
   { id: 'esim', label: ESIM_TAB_LABEL, icon: Smartphone },
-  { id: 'spots', label: SPOTS_TAB_LABEL, icon: MapPinned },
   { id: 'my', label: MY_TAB_LABEL, icon: ClipboardList },
 ];
 
 function isSoonTab(id: AppTab): boolean {
-  return id === 'esim' || id === 'spots' ? APP_TAB_SOON[id] : false;
+  return id === 'esim' ? APP_TAB_SOON.esim : false;
 }
 
 export default function BottomNav({

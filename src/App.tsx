@@ -18,7 +18,6 @@ import {
   ESIM_COMPARE_DOCUMENT_TITLE,
   ESIM_TAB_LABEL,
   PARKING_COMPARE_DOCUMENT_TITLE,
-  SPOTS_TAB_LABEL,
 } from './constants/marketing';
 import {
   clearParkingCompanyQuery,
@@ -43,10 +42,9 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: `인천공항 출국시간 계산기 · 혼잡·대기 여유 · 에어픽`,
+  home: `집→공항 출발 시각 계산기 · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
-  spots: `${SPOTS_TAB_LABEL} · 에어픽`,
   my: '내 예약 · 에어픽',
 };
 
@@ -73,10 +71,17 @@ export default function App() {
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
 
+  const [leaveByBridge, setLeaveByBridge] = useState(false);
+
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
     syncUrlToTab(next, mode);
     window.scrollTo(0, 0);
+  };
+
+  const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
+    setSearch((prev) => ({ ...prev, ...patch }));
+    setLeaveByBridge(true);
   };
 
   useEffect(() => {
@@ -142,21 +147,23 @@ export default function App() {
 
   const page = useMemo(() => {
     if (tab === 'home') {
-      return <HomePage onGoTab={(next) => setTab(next)} />;
-    }
-    if (tab === 'spots') {
       return (
-        <div className="px-0 pt-2">
-          <ComingSoonPanel label={SPOTS_TAB_LABEL} />
-        </div>
+        <HomePage
+          onGoTab={(next) => setTab(next)}
+          onPrefillParkingSearch={prefillFromLeaveBy}
+        />
       );
     }
     if (tab === 'compare') {
       return (
         <ComparePage
           search={search}
-          onSearchChange={setSearch}
+          onSearchChange={(next) => {
+            setLeaveByBridge(false);
+            setSearch(next);
+          }}
           companies={companies}
+          fromLeaveBy={leaveByBridge}
           onBookOnAirpick={(company, price) => setPartnerDetail({ company, price })}
         />
       );
@@ -194,7 +201,7 @@ export default function App() {
         }}
       />
     );
-  }, [tab, search, companies, lastReservationId, reviewReservationId]);
+  }, [tab, search, companies, lastReservationId, reviewReservationId, leaveByBridge]);
 
   const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
 

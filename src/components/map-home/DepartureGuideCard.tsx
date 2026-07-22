@@ -32,7 +32,7 @@ import {
   HOME_VALET_MODE_NOTE,
 } from '../../constants/marketing';
 import DateField from '../DateField';
-import type { AppTab } from '../../types';
+import type { AppTab, BookingSearch } from '../../types';
 
 const PARKING_MODES: { id: LeaveTravelMode; label: string }[] = [
   { id: 'long', label: '장기주차' },
@@ -47,12 +47,24 @@ function normalizeFlightInput(raw: string): string {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
 
+function addDaysYmd(ymdDash: string, days: number): string {
+  const d = new Date(`${ymdDash}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return ymdDash;
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 export default function DepartureGuideCard({
   onResultChange,
   onGoTab,
+  onPrefillParkingSearch,
 }: {
   onResultChange?: (hasResult: boolean) => void;
   onGoTab?: (tab: AppTab) => void;
+  onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
 }) {
   const [flightId, setFlightId] = useState('');
   const [date, setDate] = useState(() => ymdToInputValue(todaySeoulYmd()));
@@ -472,7 +484,25 @@ export default function DepartureGuideCard({
 
             <button
               type="button"
-              onClick={() => onGoTab?.('compare')}
+              onClick={() => {
+                const depYmd =
+                  ymdToInputValue(flight.date) ||
+                  ymdToInputValue(inputValueToYmd(date) || todaySeoulYmd()) ||
+                  date;
+                const terminal =
+                  flight.terminal === 'T2' || flight.terminal === 'T1'
+                    ? flight.terminal
+                    : 'T1';
+                const depTime = flight.scheduleTime || '10:00';
+                onPrefillParkingSearch?.({
+                  departureDate: depYmd,
+                  arrivalDate: addDaysYmd(depYmd, 6),
+                  departureTime: depTime,
+                  terminal,
+                  arrivalTerminal: terminal,
+                });
+                onGoTab?.('compare');
+              }}
               className="block w-full rounded-xl bg-brand px-4 py-3.5 text-left text-white shadow-[0_6px_16px_rgba(49,130,246,0.28)]"
             >
               <span className="block text-[11px] font-bold opacity-90">
@@ -480,6 +510,9 @@ export default function DepartureGuideCard({
               </span>
               <span className="mt-1 block text-[13px] font-semibold leading-relaxed">
                 {HOME_NEXT_PREP.parking.benefit}
+              </span>
+              <span className="mt-0.5 block text-[12px] font-medium leading-relaxed opacity-90">
+                {HOME_NEXT_PREP.parking.body}
               </span>
               <span className="mt-2 block text-[14px] font-bold">
                 {HOME_NEXT_PREP.parking.cta} →

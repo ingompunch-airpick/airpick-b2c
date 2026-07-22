@@ -14,14 +14,13 @@ export const ESIM_GUIDE_TITLE = '이심(eSIM) 이용 가이드';
 /** 아직 공개하지 않는 앱 탭 */
 export const APP_TAB_SOON = {
   esim: true,
-  spots: true,
 } as const;
 
 /** 예약 탭 */
 export const MY_TAB_LABEL = '내 예약';
 
-/** 홈 탭 — 출국시간 계산기 (혼잡·대기 여유 계획 수요) */
-export const HOME_TAB_LABEL = '출국시간';
+/** 홈 탭 — 집→공항 출발 시각 계산 */
+export const HOME_TAB_LABEL = '출발시각';
 
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
 export const BRAND_TAGLINE = '맡긴 차, 사진·위치까지';
@@ -38,7 +37,7 @@ export const PARKING_COMPARE_H1 = '인천공항 주차대행 비교';
 
 /** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
 export const PARKING_COMPARE_DESC =
-  '전 업체 요금 비교 · 입점은 보험·거리 확인 후 예약 · 맡긴 뒤 위치·사진';
+  '입점 = 예약·위치·사진·보험 · 미입점 = 참고 요금·업체 홈 이동';
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 · 에어픽';
 
@@ -81,18 +80,18 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /**
- * 홈 — 출국시간 계산기 (SEO Hook)
- * 흐름: 계산기 → 주차대행 비교 → 예약 (이심·스팟은 Soon)
- * H1·메타·SEO 본문은 유지. UX는 출국 준비 허브로 연결.
+ * 홈 — 집→공항 출발 시각 계산기
+ * H1은 결과물(집에서 나설 시각)에 맞춤. 주차대행 전환은 결과 CTA.
  */
-export const HOME_EYEBROW = '에어픽 · 출국시간 계산';
+export const HOME_HEADLINE = '집→공항 출발 시각 계산기';
 
-export const HOME_HEADLINE = '인천공항 출국시간 계산기';
+/** 히어로 서브 — 계산기 역할만 (주차 설득은 결과 CTA) */
+export const HOME_SUBHEAD = '집에서 나서야 할 추천 출발 시각을 알려드립니다.';
 
-/** 히어로 서브 — 한 줄 (H1 유지) */
-export const HOME_SUBHEAD = '출국 준비의 첫 단계, 추천 출발 시간을 확인하세요.';
+/** @deprecated 결과 CTA로 이동 — 계산 전 노출 안 함 */
+export const HOME_TRUST_HINT = '';
 
-export const HOME_CALCULATE_CTA = '출국시간 계산하기';
+export const HOME_CALCULATE_CTA = '출발 시각 계산하기';
 
 export const HOME_CALCULATING = '계산 중…';
 
@@ -106,14 +105,14 @@ export const HOME_PEAK_ADVISORY =
 
 /** 계산 완료 후 · 다음 준비 섹션 */
 export const HOME_NEXT_PREP = {
-  done: '출국시간 계산 완료',
+  done: '출발 시각 계산 완료',
   title: '다음 준비',
   bridge: '출국 준비는 여기서 끝이 아닙니다.',
   bridgeSub: '다음 준비도 함께 확인해보세요.',
   parking: {
     title: '주차대행 비교',
-    body: '장기주차와 비교해보세요.',
-    benefit: '출국 전 불필요한 이동을 줄여보세요.',
+    body: '입점 업체는 예약·위치·사진·보험까지',
+    benefit: '출국 전 이동을 줄이고, 맡긴 뒤에도 위치를 확인하세요.',
     cta: '주차대행 비교하기',
     href: '/parking',
   },
@@ -130,6 +129,9 @@ export const HOME_NEXT_PREP = {
     href: '/my',
   },
 } as const;
+
+/** 비교 탭 · 계산기에서 넘어온 일정 배지 */
+export const HOME_TO_COMPARE_BADGE = '출발 시각 계산 일정 기준';
 
 /** @deprecated HOME_NEXT_PREP.parking 사용 */
 export const HOME_VALET_NOTE = {
@@ -157,11 +159,14 @@ export const HOME_PARKING = {
   cta: '주차대행 비교하기',
 } as const;
 
-/** @deprecated HOME_EYEBROW 사용 */
+/** @deprecated HOME_HEADLINE 사용 */
 export const HOME_PLATFORM_LINE = HOME_HEADLINE;
 
-/** @deprecated HOME_EYEBROW 사용 */
-export const HOME_PLATFORM_SUB = HOME_EYEBROW;
+/** @deprecated */
+export const HOME_EYEBROW = '';
+
+/** @deprecated */
+export const HOME_PLATFORM_SUB = '';
 
 export const HOME_ESIM = {
   headline: '이심 비교 · 제휴 요금',

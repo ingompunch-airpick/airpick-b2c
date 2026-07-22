@@ -1,9 +1,9 @@
-import { ESIM_TAB_LABEL, PARKING_TAB_LABEL, SPOTS_TAB_LABEL } from '../../constants/marketing';
+import { ESIM_TAB_LABEL, PARKING_TAB_LABEL } from '../../constants/marketing';
 
 export default function ComingSoonPanel({ label }: { label: string }) {
   const hint =
-    label === ESIM_TAB_LABEL || label === SPOTS_TAB_LABEL
-      ? `지금은 ${PARKING_TAB_LABEL}과 출국시간 계산을 이용해 주세요.`
+    label === ESIM_TAB_LABEL
+      ? `지금은 ${PARKING_TAB_LABEL}과 출발 시각 계산을 이용해 주세요.`
       : '지금은 주차장을 이용해 주세요.';
 
   return (

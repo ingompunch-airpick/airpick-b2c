@@ -183,7 +183,7 @@ export interface BookingSearch {
   faceToFace?: boolean;
 }
 
-export type AppTab = 'home' | 'compare' | 'esim' | 'spots' | 'my';
+export type AppTab = 'home' | 'compare' | 'esim' | 'my';
 
 export interface CompanyReview {
   id: string;

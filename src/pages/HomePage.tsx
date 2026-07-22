@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import DepartureGuideCard from '../components/map-home/DepartureGuideCard';
-import { HOME_EYEBROW, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
-import type { AppTab } from '../types';
+import { HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
+import type { AppTab, BookingSearch } from '../types';
 
-/** 홈 — SEO Hook(출국시간 계산) → 주차·이심·예약 전환 */
-export default function HomePage({ onGoTab }: { onGoTab: (tab: AppTab) => void }) {
+/** 홈 — SEO Hook(출국시간) → 결과에서 주차대행 비교로 전환 */
+export default function HomePage({
+  onGoTab,
+  onPrefillParkingSearch,
+}: {
+  onGoTab: (tab: AppTab) => void;
+  onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
+}) {
   const [hasResult, setHasResult] = useState(false);
 
   return (
@@ -20,9 +26,8 @@ export default function HomePage({ onGoTab }: { onGoTab: (tab: AppTab) => void }
 
       <div className="relative space-y-5 pt-2">
         <header className={`transition-all duration-300 ${hasResult ? 'opacity-70' : ''}`}>
-          <p className="text-[11px] font-bold tracking-wide text-brand">{HOME_EYEBROW}</p>
           <h1
-            className={`mt-2 font-bold tracking-tight text-ink ${
+            className={`font-bold tracking-tight text-ink ${
               hasResult
                 ? 'text-xl leading-snug'
                 : 'text-[1.65rem] leading-tight sm:text-[1.9rem]'
@@ -37,7 +42,11 @@ export default function HomePage({ onGoTab }: { onGoTab: (tab: AppTab) => void }
           ) : null}
         </header>
 
-        <DepartureGuideCard onResultChange={setHasResult} onGoTab={onGoTab} />
+        <DepartureGuideCard
+          onResultChange={setHasResult}
+          onGoTab={onGoTab}
+          onPrefillParkingSearch={onPrefillParkingSearch}
+        />
       </div>
     </div>
   );
