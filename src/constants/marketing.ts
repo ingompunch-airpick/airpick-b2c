@@ -11,6 +11,12 @@ export const ESIM_TAB_LABEL = '이심 비교';
 export const ESIM_STATS_LABEL = '이심 제휴사';
 export const ESIM_GUIDE_TITLE = '이심(eSIM) 이용 가이드';
 
+/** 아직 공개하지 않는 앱 탭 */
+export const APP_TAB_SOON = {
+  esim: true,
+  spots: true,
+} as const;
+
 /** 예약 탭 */
 export const MY_TAB_LABEL = '내 예약';
 
@@ -76,7 +82,7 @@ export const AIRPICK_TRACKING_UPSELL = {
 
 /**
  * 홈 — 출국시간 계산기 (SEO Hook)
- * 흐름: 계산기 → 주차대행 비교 → 이심 → 예약
+ * 흐름: 계산기 → 주차대행 비교 → 예약 (이심·스팟은 Soon)
  * H1·메타·SEO 본문은 유지. UX는 출국 준비 허브로 연결.
  */
 export const HOME_EYEBROW = '에어픽 · 출국시간 계산';

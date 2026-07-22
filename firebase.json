@@ -305,7 +305,7 @@
       },
       {
         "source": "/esim",
-        "destination": "/esim.html"
+        "destination": "/index.html"
       },
       {
         "source": "/spots",

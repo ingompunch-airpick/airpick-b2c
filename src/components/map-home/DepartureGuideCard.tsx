@@ -488,22 +488,6 @@ export default function DepartureGuideCard({
 
             <button
               type="button"
-              onClick={() => onGoTab?.('esim')}
-              className="block w-full rounded-xl bg-white px-4 py-3.5 text-left ring-1 ring-sky-border/70"
-            >
-              <span className="block text-[11px] font-bold text-brand">
-                {HOME_NEXT_PREP.esim.title}
-              </span>
-              <span className="mt-1 block text-[13px] font-semibold leading-relaxed text-ink">
-                {HOME_NEXT_PREP.esim.body}
-              </span>
-              <span className="mt-2 block text-[13px] font-bold text-brand">
-                {HOME_NEXT_PREP.esim.cta} →
-              </span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => onGoTab?.('my')}
               className="block w-full rounded-xl bg-white/80 px-4 py-3 text-left ring-1 ring-sky-border/50"
             >

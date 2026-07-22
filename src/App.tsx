@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { ComparePageSkeleton, HomePageSkeleton } from './components/LoadingSkeletons';
+import { ComparePageSkeleton } from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
 import Header from './components/Header';
 import SiteFooter from './components/SiteFooter';
+import ComingSoonPanel from './components/map-home/ComingSoonPanel';
 import { subscribeCompanies } from './lib/companies';
 import {
   trackCtaClick,
@@ -12,10 +13,10 @@ import {
   trackTabView,
 } from './lib/analytics';
 import HomePage from './pages/HomePage';
-import SpotsPage from './pages/SpotsPage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
+  ESIM_TAB_LABEL,
   PARKING_COMPARE_DOCUMENT_TITLE,
   SPOTS_TAB_LABEL,
 } from './constants/marketing';
@@ -23,7 +24,6 @@ import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
   isSeoDocumentPath,
-  readEsimCountryCode,
   readInitialTab,
   readParkingCompanyId,
   readReviewReservationId,
@@ -35,7 +35,6 @@ import { calculatePrice } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
-const EsimPage = lazy(() => import('./pages/EsimPage'));
 const MyPage = lazy(() => import('./pages/MyPage'));
 const CompanyDetailSheet = lazy(() => import('./components/CompanyDetailSheet'));
 const BookingModal = lazy(() => import('./components/BookingModal'));
@@ -146,7 +145,11 @@ export default function App() {
       return <HomePage onGoTab={(next) => setTab(next)} />;
     }
     if (tab === 'spots') {
-      return <SpotsPage />;
+      return (
+        <div className="px-0 pt-2">
+          <ComingSoonPanel label={SPOTS_TAB_LABEL} />
+        </div>
+      );
     }
     if (tab === 'compare') {
       return (
@@ -159,7 +162,11 @@ export default function App() {
       );
     }
     if (tab === 'esim') {
-      return <EsimPage initialCountryCode={readEsimCountryCode() ?? undefined} />;
+      return (
+        <div className="pt-2">
+          <ComingSoonPanel label={ESIM_TAB_LABEL} />
+        </div>
+      );
     }
     return (
       <MyPage
@@ -189,35 +196,20 @@ export default function App() {
     );
   }, [tab, search, companies, lastReservationId, reviewReservationId]);
 
-  const pageFallback =
-    tab === 'compare' ? <ComparePageSkeleton /> : tab === 'spots' ? <HomePageSkeleton /> : null;
-
-  const isMapSpots = tab === 'spots';
+  const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
 
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">
-      <div
-        className={
-          isMapSpots
-            ? 'mx-auto flex h-dvh max-w-lg flex-col overflow-hidden bg-sky-bg pb-[calc(3.5rem+env(safe-area-inset-bottom))]'
-            : 'mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24'
-        }
-      >
+      <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
         <Header onOpenMenu={() => setMenuOpen(true)} />
-        {isMapSpots ? (
-          <main className="relative min-h-0 flex-1">
-            <Suspense fallback={<HomePageSkeleton />}>{page}</Suspense>
-          </main>
-        ) : (
-          <main className="px-4 pt-1 pb-5">
-            {loading && tab === 'compare' ? (
-              <ComparePageSkeleton />
-            ) : (
-              <Suspense fallback={pageFallback}>{page}</Suspense>
-            )}
-            <SiteFooter />
-          </main>
-        )}
+        <main className="px-4 pt-1 pb-5">
+          {loading && tab === 'compare' ? (
+            <ComparePageSkeleton />
+          ) : (
+            <Suspense fallback={pageFallback}>{page}</Suspense>
+          )}
+          <SiteFooter />
+        </main>
       </div>
       <BottomNav active={tab} onChange={(next) => setTab(next)} />
 
