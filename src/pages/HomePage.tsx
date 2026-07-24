@@ -9,7 +9,10 @@ export default function HomePage({
   onPrefillParkingSearch,
 }: {
   onGoTab: (tab: AppTab) => void;
-  onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
+  onPrefillParkingSearch?: (
+    patch: Partial<BookingSearch>,
+    meta?: { valetLeaveByHm: string }
+  ) => void;
 }) {
   const [hasResult, setHasResult] = useState(false);
 

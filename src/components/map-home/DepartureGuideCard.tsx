@@ -30,6 +30,7 @@ import {
   HOME_NEXT_PREP,
   HOME_PEAK_ADVISORY,
   HOME_RESULT_EYEBROW,
+  HOME_TO_COMPARE_VALET_LEAVE,
   HOME_VALET_MODE_NOTE,
 } from '../../constants/marketing';
 import DateField from '../DateField';
@@ -131,7 +132,10 @@ export default function DepartureGuideCard({
 }: {
   onResultChange?: (hasResult: boolean) => void;
   onGoTab?: (tab: AppTab) => void;
-  onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
+  onPrefillParkingSearch?: (
+    patch: Partial<BookingSearch>,
+    meta?: { valetLeaveByHm: string }
+  ) => void;
 }) {
   const [flightId, setFlightId] = useState('');
   const [date, setDate] = useState(() => ymdToInputValue(todaySeoulYmd()));
@@ -307,6 +311,17 @@ export default function DepartureGuideCard({
     });
     return { error: plan ? null : '이동 시간을 확인해 주세요.', plan, arrive };
   }, [flight, travelMinutes, airportMinutes]);
+
+  /** 주차대행 비교로 넘길 때 보여줄 출발 시각 (공항 내부 0분) */
+  const valetLeaveByHm = useMemo(() => {
+    if (!leavePlan?.arrive?.arriveMinutes || travelMinutes == null) return null;
+    const plan = computeLeaveBy({
+      arriveMinutes: leavePlan.arrive.arriveMinutes,
+      travelMinutes: clampTravelMinutes(travelMinutes),
+      airportMinutes: airportInternalMinutes('valet'),
+    });
+    return plan?.leaveByHm ?? null;
+  }, [leavePlan, travelMinutes]);
 
   const parkingLiveSummary = useMemo(() => {
     if (!airportLive || parking === 'valet') return null;
@@ -579,19 +594,24 @@ export default function DepartureGuideCard({
                     ? flight.terminal
                     : 'T1';
                 const depTime = flight.scheduleTime || '10:00';
-                onPrefillParkingSearch?.({
-                  departureDate: depYmd,
-                  arrivalDate: addDaysYmd(depYmd, 6),
-                  departureTime: depTime,
-                  terminal,
-                  arrivalTerminal: terminal,
-                });
+                onPrefillParkingSearch?.(
+                  {
+                    departureDate: depYmd,
+                    arrivalDate: addDaysYmd(depYmd, 6),
+                    departureTime: depTime,
+                    terminal,
+                    arrivalTerminal: terminal,
+                  },
+                  valetLeaveByHm ? { valetLeaveByHm } : undefined
+                );
                 onGoTab?.('compare');
               }}
               className="block w-full rounded-xl bg-brand px-4 py-3.5 text-left text-white shadow-[0_6px_16px_rgba(49,130,246,0.28)]"
             >
               <span className="block text-[13px] font-semibold leading-relaxed">
-                {HOME_NEXT_PREP.parking.benefit}
+                {valetLeaveByHm
+                  ? HOME_TO_COMPARE_VALET_LEAVE(valetLeaveByHm)
+                  : HOME_NEXT_PREP.parking.benefit}
               </span>
               <span className="mt-2 block text-[16px] font-bold">
                 {HOME_NEXT_PREP.parking.cta} →

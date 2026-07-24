@@ -71,7 +71,9 @@ export default function App() {
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
 
-  const [leaveByBridge, setLeaveByBridge] = useState(false);
+  const [leaveByBridge, setLeaveByBridge] = useState<{
+    valetLeaveByHm: string;
+  } | null>(null);
 
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
@@ -79,9 +81,12 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
+  const prefillFromLeaveBy = (
+    patch: Partial<BookingSearch>,
+    meta?: { valetLeaveByHm: string }
+  ) => {
     setSearch((prev) => ({ ...prev, ...patch }));
-    setLeaveByBridge(true);
+    setLeaveByBridge(meta?.valetLeaveByHm ? { valetLeaveByHm: meta.valetLeaveByHm } : null);
   };
 
   useEffect(() => {
@@ -159,7 +164,7 @@ export default function App() {
         <ComparePage
           search={search}
           onSearchChange={(next) => {
-            setLeaveByBridge(false);
+            setLeaveByBridge(null);
             setSearch(next);
           }}
           companies={companies}

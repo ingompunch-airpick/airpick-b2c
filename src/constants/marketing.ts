@@ -113,6 +113,7 @@ export const HOME_NEXT_PREP = {
     title: '주차대행 비교',
     body: '',
     benefit: '공항까지 걸리는 시간을 줄여보세요.',
+    /** benefit에 시각을 넣을 때 CTA는 비교만 */
     cta: '주차대행 비교하기',
     href: '/parking',
   },
@@ -131,7 +132,9 @@ export const HOME_NEXT_PREP = {
 } as const;
 
 /** 비교 탭 · 계산기에서 넘어온 일정 배지 */
+/** 계산 → 주차대행 비교 브릿지 */
 export const HOME_TO_COMPARE_BADGE = '출발 시각 계산 일정 기준';
+export const HOME_TO_COMPARE_VALET_LEAVE = (hm: string) => `주차대행 기준 추천 출발 ${hm}`;
 
 /** @deprecated HOME_NEXT_PREP.parking 사용 */
 export const HOME_VALET_NOTE = {

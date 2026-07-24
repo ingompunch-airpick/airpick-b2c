@@ -5,6 +5,7 @@ import SearchPanel from '../components/SearchPanel';
 import { PRICE_DISCLAIMER, REVIEW_POLICY_LINE } from '../constants/complianceCopy';
 import {
   HOME_TO_COMPARE_BADGE,
+  HOME_TO_COMPARE_VALET_LEAVE,
   PARKING_COMPARE_DESC,
   PARKING_COMPARE_GUIDE_LINKS,
   PARKING_COMPARE_H1,
@@ -148,13 +149,13 @@ export default function ComparePage({
   onSearchChange,
   companies,
   onBookOnAirpick,
-  fromLeaveBy = false,
+  fromLeaveBy = null,
 }: {
   search: BookingSearch;
   onSearchChange: (s: BookingSearch) => void;
   companies: Company[];
   onBookOnAirpick: (company: Company, price: number) => void;
-  fromLeaveBy?: boolean;
+  fromLeaveBy?: { valetLeaveByHm: string } | null;
 }) {
   const [sortMode, setSortMode] = useState<CompareSortMode>('price');
   const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
@@ -212,9 +213,12 @@ export default function ComparePage({
     <div className="space-y-5">
       <PageHero sub={PARKING_PLATFORM_SUB} line={PARKING_COMPARE_H1} desc={PARKING_COMPARE_DESC} />
       {fromLeaveBy ? (
-        <p className="rounded-xl bg-brand/10 px-3.5 py-2.5 text-[12px] font-bold text-brand ring-1 ring-brand/20">
-          {HOME_TO_COMPARE_BADGE} · {search.terminal} · {search.departureDate.replace(/-/g, '.')}{' '}
-          {search.departureTime}
+        <p className="rounded-xl bg-brand/10 px-3.5 py-2.5 text-[12px] font-bold leading-relaxed text-brand ring-1 ring-brand/20">
+          {HOME_TO_COMPARE_VALET_LEAVE(fromLeaveBy.valetLeaveByHm)}
+          <span className="mt-0.5 block font-semibold opacity-90">
+            {HOME_TO_COMPARE_BADGE} · {search.terminal} ·{' '}
+            {search.departureDate.replace(/-/g, '.')} {search.departureTime}
+          </span>
         </p>
       ) : null}
       <SearchPanel search={search} onChange={onSearchChange} />
