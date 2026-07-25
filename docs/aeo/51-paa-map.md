@@ -3,6 +3,15 @@
 질문형 검색·PAA 후보를 FAQ `shortAnswer`·상세 답·가이드 H2에 연결한다.  
 직접답은 `src/constants/officialAnswers.ts` / `support.ts` / `esimSupport.ts`와 동기.
 
+## 출국시간 · 혼잡·대기
+
+| 질문형 키워드 (예) | 공식 답 위치 | shortAnswer 키 | 비고 |
+| --- | --- | --- | --- |
+| 인천공항 출국시간 / 집에서 몇 시 나가야 | [/](https://www.에어픽.kr/) · [/faq/](https://www.에어픽.kr/faq/) | `leaveBy` | 홈 계산기 |
+| 공항 혼잡도 / 대기시간 여유 | FAQ 「공항 도착 여유·혼잡도」 | `leaveByBuffer` | **실시간 혼잡 API 아님** · 여유 계획용 |
+| 직접 장기주차 vs 주차대행 시간 | FAQ · 홈 계산 결과 | `longLotVsValet` | 자리 찾기·셔틀 vs 탑승장 인계 |
+| 인천공항 몇 시간 전 도착 | FAQ leaveByBuffer | `leaveByBuffer` | 기본 출발 3시간 전 |
+
 ## 주차대행 · 예약
 
 | 질문형 키워드 (예) | 공식 답 위치 | shortAnswer 키 | 비고 |
@@ -23,16 +32,17 @@
 | --- | --- | --- |
 | 입점 vs 미입점 | [/guides/partner-vs-external/](https://www.에어픽.kr/guides/partner-vs-external/) | 가이드 H2 |
 | 와와발렛 / 가유 에어픽 | [/partners/](https://www.에어픽.kr/partners/) | 업체 랜딩 |
-| 인천공항 T1·T2 주차대행 | 가이드 터미널편 · 주차 비교 | |
+| 인천공항 T1·T2 주차대행 | 가이드 터미널편 · 주차대행 비교 | |
 
-## 유심 · eSIM
+## 이심(eSIM) · 유심
 
-| 질문형 키워드 (예) | 공식 답 위치 | shortAnswer 키 |
-| --- | --- | --- |
-| 에어픽 유심 구매 | FAQ 유심 구매 | `esimBuy` |
-| eSIM USIM 차이 / 뭐 고를까 | FAQ · 앱 eSIM 가이드 | `esimType` |
-| 에어픽 유심 가격 맞나 | FAQ 가격 | `esimPrice` |
-| 유심 개통 안됨 | FAQ 개통 문의 | 제휴사 CS |
+| 질문형 키워드 (예) | 공식 답 위치 | shortAnswer 키 | 비고 |
+| --- | --- | --- | --- |
+| 이심 가격 비교 / 에어픽 이심 | [/esim](https://www.에어픽.kr/esim) · FAQ | `esimBuy` | 메인 키워드 **이심**, eSIM 병기 |
+| 에어픽 이심·유심 구매 | FAQ 이심 구매 | `esimBuy` | |
+| eSIM USIM 차이 / 뭐 고를까 | FAQ · 앱 이심 가이드 | `esimType` | |
+| 에어픽 이심 가격 맞나 | FAQ 가격 | `esimPrice` | |
+| 이심·유심 개통 안됨 | FAQ 개통 문의 | — | 제휴사 CS |
 
 ## 갭 (아직 별도 FAQ 없음 · 가이드·facts로 커버)
 

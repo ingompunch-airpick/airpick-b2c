@@ -3,7 +3,7 @@ import type { EsimProduct } from '../types';
 import { enrichEsimOffers } from './esimOfferEnrich';
 
 /** CSV sync 시각 — npm run sync:esim 할 때마다 갱신 */
-export const ESIM_OFFERS_UPDATED_AT = '2026-07-09T09:12:10.284Z';
+export const ESIM_OFFERS_UPDATED_AT = '2026-07-21T02:00:41.087Z';
 
 const RAW: EsimProduct[] = [
   {

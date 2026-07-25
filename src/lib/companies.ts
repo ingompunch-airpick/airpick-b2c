@@ -10,6 +10,8 @@ export interface CompanyBookingPolicy {
   isOpen: boolean;
   blockedDates: string[];
   sameDayBookingBlocked: boolean;
+  hourlyCapEnabled: boolean;
+  maxCarsPerHour: number;
 }
 
 function normalizeCompany(id: string, data: Record<string, unknown>): Company | null {
@@ -57,6 +59,11 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     cancelCutoffHours:
       typeof data.cancelCutoffHours === 'number' ? data.cancelCutoffHours : undefined,
     sameDayBookingBlocked: data.sameDayBookingBlocked === true,
+    hourlyCapEnabled: data.hourlyCapEnabled === true,
+    maxCarsPerHour:
+      typeof data.maxCarsPerHour === 'number'
+        ? data.maxCarsPerHour
+        : Number(data.maxCarsPerHour) || undefined,
     outdoorBasePrice: Number(data.outdoorBasePrice) || undefined,
     outdoorBaseDays: Number(data.outdoorBaseDays) || undefined,
     outdoorExtraPrice: Number(data.outdoorExtraPrice) || undefined,
@@ -106,6 +113,11 @@ export async function fetchCompanyBookingPolicy(
     isOpen: data.isOpen !== false,
     blockedDates: Array.isArray(data.blockedDates) ? (data.blockedDates as string[]) : [],
     sameDayBookingBlocked: data.sameDayBookingBlocked === true,
+    hourlyCapEnabled: data.hourlyCapEnabled === true,
+    maxCarsPerHour:
+      typeof data.maxCarsPerHour === 'number'
+        ? Math.max(0, Math.min(99, Math.floor(data.maxCarsPerHour)))
+        : Math.max(0, Math.min(99, Math.floor(Number(data.maxCarsPerHour) || 0))),
   };
 }
 

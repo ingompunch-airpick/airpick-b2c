@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { ComparePageSkeleton, HomePageSkeleton } from './components/LoadingSkeletons';
+import { ComparePageSkeleton } from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
 import Header from './components/Header';
 import SiteFooter from './components/SiteFooter';
+import ComingSoonPanel from './components/map-home/ComingSoonPanel';
 import { subscribeCompanies } from './lib/companies';
 import {
   trackCtaClick,
@@ -15,13 +16,13 @@ import HomePage from './pages/HomePage';
 import type { AppTab, BookingSearch, Company } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
+  ESIM_TAB_LABEL,
   PARKING_COMPARE_DOCUMENT_TITLE,
 } from './constants/marketing';
 import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
   isSeoDocumentPath,
-  readEsimCountryCode,
   readInitialTab,
   readParkingCompanyId,
   readReviewReservationId,
@@ -33,7 +34,6 @@ import { calculatePrice } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
-const EsimPage = lazy(() => import('./pages/EsimPage'));
 const MyPage = lazy(() => import('./pages/MyPage'));
 const CompanyDetailSheet = lazy(() => import('./components/CompanyDetailSheet'));
 const BookingModal = lazy(() => import('./components/BookingModal'));
@@ -42,10 +42,10 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: '에어픽 · 주차대행·유심·eSIM 비교',
+  home: `집→공항 출발 시각 계산기 · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
-  my: '예약 조회 · 에어픽',
+  my: '내 예약 · 에어픽',
 };
 
 export default function App() {
@@ -71,10 +71,22 @@ export default function App() {
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
 
+  const [leaveByBridge, setLeaveByBridge] = useState<{
+    valetLeaveByHm: string;
+  } | null>(null);
+
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
     syncUrlToTab(next, mode);
     window.scrollTo(0, 0);
+  };
+
+  const prefillFromLeaveBy = (
+    patch: Partial<BookingSearch>,
+    meta?: { valetLeaveByHm: string }
+  ) => {
+    setSearch((prev) => ({ ...prev, ...patch }));
+    setLeaveByBridge(meta?.valetLeaveByHm ? { valetLeaveByHm: meta.valetLeaveByHm } : null);
   };
 
   useEffect(() => {
@@ -140,20 +152,33 @@ export default function App() {
 
   const page = useMemo(() => {
     if (tab === 'home') {
-      return <HomePage />;
+      return (
+        <HomePage
+          onGoTab={(next) => setTab(next)}
+          onPrefillParkingSearch={prefillFromLeaveBy}
+        />
+      );
     }
     if (tab === 'compare') {
       return (
         <ComparePage
           search={search}
-          onSearchChange={setSearch}
+          onSearchChange={(next) => {
+            setLeaveByBridge(null);
+            setSearch(next);
+          }}
           companies={companies}
+          fromLeaveBy={leaveByBridge}
           onBookOnAirpick={(company, price) => setPartnerDetail({ company, price })}
         />
       );
     }
     if (tab === 'esim') {
-      return <EsimPage initialCountryCode={readEsimCountryCode() ?? undefined} />;
+      return (
+        <div className="pt-2">
+          <ComingSoonPanel label={ESIM_TAB_LABEL} />
+        </div>
+      );
     }
     return (
       <MyPage
@@ -181,37 +206,22 @@ export default function App() {
         }}
       />
     );
-  }, [tab, search, companies, lastReservationId, reviewReservationId]);
+  }, [tab, search, companies, lastReservationId, reviewReservationId, leaveByBridge]);
 
-  const pageFallback =
-    tab === 'compare' ? <ComparePageSkeleton /> : tab === 'home' ? <HomePageSkeleton /> : null;
-
-  const isMapHome = tab === 'home';
+  const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
 
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">
-      <div
-        className={
-          isMapHome
-            ? 'mx-auto flex h-dvh max-w-lg flex-col overflow-hidden bg-sky-bg pb-[calc(3.5rem+env(safe-area-inset-bottom))]'
-            : 'mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24'
-        }
-      >
+      <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
         <Header onOpenMenu={() => setMenuOpen(true)} />
-        {isMapHome ? (
-          <main className="relative min-h-0 flex-1">
-            <Suspense fallback={<HomePageSkeleton />}>{page}</Suspense>
-          </main>
-        ) : (
-          <main className="px-4 pt-1 pb-5">
-            {loading && tab === 'compare' ? (
-              <ComparePageSkeleton />
-            ) : (
-              <Suspense fallback={pageFallback}>{page}</Suspense>
-            )}
-            <SiteFooter />
-          </main>
-        )}
+        <main className="px-4 pt-1 pb-5">
+          {loading && tab === 'compare' ? (
+            <ComparePageSkeleton />
+          ) : (
+            <Suspense fallback={pageFallback}>{page}</Suspense>
+          )}
+          <SiteFooter />
+        </main>
       </div>
       <BottomNav active={tab} onChange={(next) => setTab(next)} />
 

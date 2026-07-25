@@ -3,7 +3,7 @@ import BrandLogo from './BrandLogo';
 
 export default function Header({ onOpenMenu }: { onOpenMenu?: () => void }) {
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between border-b border-sky-border/80 bg-sky-bg/90 px-4 py-1 backdrop-blur-md">
+    <header className="sticky top-0 z-40 flex items-center justify-between overflow-visible border-b border-sky-border/80 bg-sky-bg/90 px-4 py-2 backdrop-blur-md">
       <BrandLogo />
       <button
         type="button"

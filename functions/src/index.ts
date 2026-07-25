@@ -7,6 +7,9 @@ import { cancelReservation } from './api/cancelReservation';
 import { submitReview } from './api/submitReview';
 import { listAdminReviews, moderateReview } from './api/moderateReview';
 import { getIcnShuttle } from './api/icnShuttle';
+import { getIcnFlight } from './api/icnFlight';
+import { getIcnAirportLive } from './api/icnAirportLive';
+import { getDriveEta } from './api/driveEta';
 
 admin.initializeApp();
 
@@ -23,4 +26,7 @@ export {
   listAdminReviews,
   moderateReview,
   getIcnShuttle,
+  getIcnFlight,
+  getIcnAirportLive,
+  getDriveEta,
 };

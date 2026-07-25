@@ -149,7 +149,7 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
   const secondaryCta =
     page.ctaHref === '/esim'
       ? `<a class="cta secondary" href="/parking">주차대행도 비교하기</a>`
-      : `<a class="cta secondary" href="/">홈 · 예약 조회</a>`;
+      : `<a class="cta secondary" href="/">출국시간 계산하기</a>`;
 
   return `<!doctype html>
 <html lang="ko">
@@ -180,8 +180,8 @@ ${JSON.stringify(graph, null, 2)}
     <div class="wrap">
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차 비교</a>
-        <a href="/esim">유심·eSIM</a>
+        <a href="/parking">주차대행 비교</a>
+        <a href="/esim">이심 비교</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
@@ -210,9 +210,9 @@ ${faqHtml}
         <h2>관련 가이드 · 비교</h2>
         <ul>
             ${otherGuides}
-            <li><a href="/parking">인천공항 주차대행 가격비교</a> — 요금·예약</li>
+            <li><a href="/parking">인천공항 주차대행 비교</a> — 요금·예약</li>
             <li><a href="/partners/">입점 업체 목록</a></li>
-            <li><a href="/esim">해외여행 유심·eSIM 가격비교</a></li>
+            <li><a href="/esim">이심(eSIM) 가격 비교</a></li>
             <li><a href="/faq/">자주 묻는 질문</a></li>
             <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
         </ul>
@@ -225,14 +225,14 @@ ${faqHtml}
       <section class="section evidence">
         <h2>근거 · 사실</h2>
         <ul>
-          <li>에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다.</li>
+          <li>에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.</li>
           ${updatedLabel ? `<li>이 글 마지막 업데이트: <strong>${updatedLabel}</strong></li>` : ''}
           <li>표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다. 후기는 실후기만 노출합니다.</li>
           <li>공식 사실 요약: <a href="/facts/">사실 확인</a> · <a href="/about/">사업자 정보</a></li>
         </ul>
       </section>
 
-      <p class="footer-note">에어픽은 곰컴퍼니가 운영하는 인천공항 주차대행·유심·eSIM 가격비교 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·공식 안내를 확인하세요. 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
+      <p class="footer-note">에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·공식 안내를 확인하세요. 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
     </div>
   </body>
 </html>
@@ -266,10 +266,10 @@ function renderIndex(pages) {
       {
         '@type': 'CollectionPage',
         '@id': `${url}#webpage`,
-        name: '인천공항 주차대행 가이드 · 에어픽',
+        name: '인천공항 주차대행·이심 가이드 · 에어픽',
         url,
         description:
-          '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 유심·eSIM 초보 가이드 모음',
+          '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 이심(eSIM) 초보 가이드 모음',
         isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
         breadcrumb: { '@id': `${url}#breadcrumb` },
         mainEntity: { '@id': `${url}#itemlist` },
@@ -297,15 +297,15 @@ function renderIndex(pages) {
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#3182F6" />
-    <title>인천공항 주차대행·유심 가이드 · 에어픽</title>
+    <title>인천공항 주차대행·이심 가이드 · 에어픽</title>
     <meta
       name="description"
-      content="인천공항 주차대행·발렛파킹 비교, 공식 주차장 vs 사설, T1·T2·운서역, 장기·단기주차, 해외여행 꿀팁, 유심·eSIM 초보 가이드를 모았습니다."
+      content="인천공항 주차대행·발렛파킹 비교, 공식 주차장 vs 사설, T1·T2·운서역, 장기·단기주차, 해외여행 꿀팁, 이심(eSIM) 초보 가이드를 모았습니다."
     />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="인천공항 주차대행·유심 가이드 · 에어픽" />
-    <meta property="og:description" content="비교·사설·터미널·장단기·해외여행 꿀팁·유심 eSIM까지 가이드 모음." />
+    <meta property="og:title" content="인천공항 주차대행·이심 가이드 · 에어픽" />
+    <meta property="og:description" content="비교·사설·터미널·장단기·해외여행 꿀팁·이심(eSIM)까지 가이드 모음." />
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
@@ -319,21 +319,21 @@ ${JSON.stringify(graph, null, 2)}
     <div class="wrap">
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차 비교</a>
-        <a href="/esim">유심·eSIM</a>
+        <a href="/parking">주차대행 비교</a>
+        <a href="/esim">이심 비교</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
       </nav>
       <header class="hero">
         <p class="eyebrow">에어픽 가이드</p>
-        <h1>인천공항 주차대행·유심 가이드</h1>
+        <h1>인천공항 주차대행·이심 가이드</h1>
         <p>
-          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 체크, 유심·eSIM 초보까지.
-          읽은 뒤 <a href="/parking">주차 비교</a> 또는 <a href="/esim">유심·eSIM 비교</a>로 이어 가세요.
+          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 체크, 이심(eSIM) 초보까지.
+          읽은 뒤 <a href="/parking">주차대행 비교</a> 또는 <a href="/esim">이심 비교</a>로 이어 가세요.
         </p>
-        <a class="cta" href="/parking">주차 요금 비교·예약</a>
-        <a class="cta secondary" href="/esim">유심·eSIM 비교</a>
+        <a class="cta" href="/parking">주차대행 비교·예약</a>
+        <a class="cta secondary" href="/esim">이심 비교</a>
       </header>
       <section class="section">
         <h2>가이드 목록</h2>
@@ -343,8 +343,8 @@ ${items}
       </section>
       <section class="section">
         <h2>바로 비교하기</h2>
-        <a class="cta" href="/parking">주차대행 가격비교</a>
-        <a class="cta secondary" href="/">홈 · 예약 조회</a>
+        <a class="cta" href="/parking">주차대행 비교</a>
+        <a class="cta secondary" href="/">출국시간 계산하기</a>
       </section>
     </div>
   </body>

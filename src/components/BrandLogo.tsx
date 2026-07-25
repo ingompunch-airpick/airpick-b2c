@@ -2,7 +2,7 @@ export default function BrandLogo() {
   return (
     <a
       href="/"
-      className="flex items-center"
+      className="flex items-center overflow-visible"
       aria-label="에어픽 홈"
       onClick={(e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -12,14 +12,14 @@ export default function BrandLogo() {
         window.dispatchEvent(new PopStateEvent('popstate'));
       }}
     >
-      <picture>
+      <picture className="overflow-visible">
         <source type="image/webp" srcSet="/brand-logo.webp" />
         <img
           src="/brand-logo-sm.png"
-          alt="AirPick 에어픽"
+          alt="AirPick"
           width={288}
           height={144}
-          className="block h-18 w-auto select-none"
+          className="block h-20 w-auto max-w-none select-none object-contain object-left"
           draggable={false}
           decoding="async"
           fetchPriority="high"

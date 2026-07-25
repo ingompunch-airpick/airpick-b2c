@@ -1,15 +1,26 @@
 /** 에어픽 B2C 마케팅 — 위치 · 사진 · 보험 통일 카피 */
 
 /** 하단 네비 · 가이드 등에서 쓰는 탭 이름 (주차장과 구분) */
-export const PARKING_TAB_LABEL = '주차대행';
+export const PARKING_TAB_LABEL = '주차대행 비교';
 
-/** 공항 스팟 탭 — 지도 허브 (장소형) */
-export const SPOTS_TAB_LABEL = '공항 스팟';
+/** 공항주변스팟 탭 — 지도 허브 (장소형) */
+export const SPOTS_TAB_LABEL = '공항주변스팟';
 
-/** 유심·eSIM — 탭·Hero·통계 등 사용자-facing 통일 라벨 */
-export const ESIM_TAB_LABEL = '유심·eSIM';
-export const ESIM_STATS_LABEL = `${ESIM_TAB_LABEL} 제휴사`;
-export const ESIM_GUIDE_TITLE = `${ESIM_TAB_LABEL} 이용 가이드`;
+/** 이심 — 탭·Hero·통계 등 사용자-facing (검색 메인 키워드: 이심) */
+export const ESIM_TAB_LABEL = '이심 비교';
+export const ESIM_STATS_LABEL = '이심 제휴사';
+export const ESIM_GUIDE_TITLE = '이심(eSIM) 이용 가이드';
+
+/** 아직 공개하지 않는 앱 탭 */
+export const APP_TAB_SOON = {
+  esim: true,
+} as const;
+
+/** 예약 탭 */
+export const MY_TAB_LABEL = '내 예약';
+
+/** 홈 탭 — 집→공항 출발 시각 계산 */
+export const HOME_TAB_LABEL = '출발시각';
 
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
 export const BRAND_TAGLINE = '맡긴 차, 사진·위치까지';
@@ -22,23 +33,23 @@ export const BRAND_SUBLINE =
 export const PARKING_PLATFORM_SUB = '인천공항';
 
 /** 주차 비교 허브 H1 (SEO·화면 공통) */
-export const PARKING_COMPARE_H1 = '인천공항 주차대행 가격비교';
+export const PARKING_COMPARE_H1 = '인천공항 주차대행 비교';
 
 /** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
 export const PARKING_COMPARE_DESC =
-  '전 업체 요금 비교 · 입점은 보험·거리 확인 후 예약 · 맡긴 뒤 위치·사진';
+  '입점 = 예약·위치·사진·보험 · 미입점 = 참고 요금·업체 홈 이동';
 
-export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 가격비교 · 에어픽';
+export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 · 에어픽';
 
-/** 유심·eSIM 비교 허브 H1 (SEO·화면 공통) */
-export const ESIM_COMPARE_H1 = '해외여행 유심·eSIM 가격비교';
+/** 이심 비교 허브 H1 (SEO·화면 공통) — 메인 키워드 이심, eSIM 병기 */
+export const ESIM_COMPARE_H1 = '이심(eSIM) 가격 비교';
 
 export const ESIM_COMPARE_DESC =
-  '나라·용량·일수·eSIM/USIM으로 제휴 참고가 비교 · 구매·개통은 제휴사에서';
+  '나라·용량·일수로 제휴 이심 참고가를 비교합니다. 구매·개통은 제휴사에서 진행합니다.';
 
-export const ESIM_COMPARE_DOCUMENT_TITLE = '해외여행 유심·eSIM 가격비교 · 에어픽';
+export const ESIM_COMPARE_DOCUMENT_TITLE = '이심(eSIM) 가격 비교 | 에어픽';
 
-export const ESIM_COMPARE_SUB = '제휴 요금 비교';
+export const ESIM_COMPARE_SUB = '국가별 최저가 참고 비교';
 
 export const PARKING_PARTNER_SECTION = {
   title: '에어픽 입점 · 바로 예약',
@@ -68,27 +79,102 @@ export const AIRPICK_TRACKING_UPSELL = {
   cta: '에어픽에서 예약하기',
 } as const;
 
-/** 홈 — Hero 카피 (한 줄 · 바로 행동) */
-export const HOME_EYEBROW = `인천공항 주차대행 · ${ESIM_TAB_LABEL} 가격비교`;
+/**
+ * 홈 — 집→공항 출발 시각 계산기
+ * H1은 결과물(집에서 나설 시각)에 맞춤. 주차대행 전환은 결과 CTA.
+ */
+export const HOME_HEADLINE = '집→공항 출발 시각 계산기';
 
-export const HOME_HEADLINE = '입점 업체 요금·보험 비교, 맡긴 뒤 위치·사진까지';
+/** 히어로 서브 — 계산기 역할만 (주차 설득은 결과 CTA) */
+export const HOME_SUBHEAD = '집에서 나서야 할 추천 출발 시각을 알려드립니다.';
+
+/** @deprecated 결과 CTA로 이동 — 계산 전 노출 안 함 */
+export const HOME_TRUST_HINT = '';
+
+export const HOME_CALCULATE_CTA = '출발 시각 계산하기';
+
+export const HOME_CALCULATING = '계산 중…';
+
+export const HOME_RESULT_EYEBROW = '추천 출발 시각';
+
+export const HOME_LEAVE_DISCLAIMER =
+  '비행기 출발 3시간 전 공항 도착을 기준으로 계산합니다. 체크인·보안검색·출국심사 시간은 해당 3시간에 포함되어 있습니다. 공항 혼잡도 및 항공사 상황에 따라 실제 소요시간은 달라질 수 있습니다.';
+
+export const HOME_PEAK_ADVISORY =
+  '현재 출국객이 많은 기간입니다. 평소보다 15~20분 정도 더 여유 있게 출발하는 것을 권장합니다.';
+
+/** 계산 완료 후 · 다음 준비 섹션 */
+export const HOME_NEXT_PREP = {
+  done: '출발 시각 계산 완료',
+  title: '다음 준비',
+  bridge: '출국 준비는 여기서 끝이 아닙니다.',
+  bridgeSub: '다음 준비도 함께 확인해보세요.',
+  parking: {
+    title: '주차대행 비교',
+    body: '',
+    benefit: '공항까지 걸리는 시간을 줄여보세요.',
+    /** benefit에 시각을 넣을 때 CTA는 비교만 */
+    cta: '주차대행 비교하기',
+    href: '/parking',
+  },
+  esim: {
+    title: '이심 비교',
+    body: '출국 전 데이터도 준비하세요.',
+    cta: '이심 비교하기',
+    href: '/esim',
+  },
+  reserve: {
+    title: '예약',
+    body: '입점 업체는 비교 후 바로 예약할 수 있어요.',
+    cta: '내 예약 보기',
+    href: '/my',
+  },
+} as const;
+
+/** 비교 탭 · 계산기에서 넘어온 일정 배지 */
+/** 계산 → 주차대행 비교 브릿지 */
+export const HOME_TO_COMPARE_BADGE = '출발 시각 계산 일정 기준';
+export const HOME_TO_COMPARE_VALET_LEAVE = (hm: string) => `주차대행 기준 추천 출발 ${hm}`;
+
+/** @deprecated HOME_NEXT_PREP.parking 사용 */
+export const HOME_VALET_NOTE = {
+  body: HOME_NEXT_PREP.parking.benefit,
+  cta: HOME_NEXT_PREP.parking.cta,
+} as const;
+
+/** 주차대행 선택 시 · 고정 시간 미포함 안내 */
+export const HOME_VALET_MODE_NOTE =
+  '주차대행은 업체마다 차량 인수 위치가 달라, 터미널 도착 후 이동 시간은 계산에 넣지 않았습니다. 업체 상세에서 이용 방법을 확인해 주세요.';
+
+/** @deprecated HOME_VALET_NOTE 사용 */
+export const HOME_VALET_UPSELL = {
+  eyebrow: '참고',
+  title: HOME_VALET_NOTE.body,
+  selfLabel: '장기주차',
+  valetLabel: '주차대행',
+  cta: HOME_VALET_NOTE.cta,
+  ctaDesc: '입점 업체 요금·예약',
+} as const;
 
 export const HOME_PARKING = {
-  headline: '주차대행 · 업체 요금 비교',
+  headline: '주차대행 비교',
   highlights: ['T1·T2·야간 할증', '실내·야외 견적', '입점 업체 바로 예약'],
   cta: '주차대행 비교하기',
 } as const;
 
-/** @deprecated HOME_EYEBROW 사용 */
+/** @deprecated HOME_HEADLINE 사용 */
 export const HOME_PLATFORM_LINE = HOME_HEADLINE;
 
-/** @deprecated HOME_EYEBROW 사용 */
-export const HOME_PLATFORM_SUB = HOME_EYEBROW;
+/** @deprecated */
+export const HOME_EYEBROW = '';
+
+/** @deprecated */
+export const HOME_PLATFORM_SUB = '';
 
 export const HOME_ESIM = {
-  headline: `${ESIM_TAB_LABEL} · 제휴 요금 비교`,
+  headline: '이심 비교 · 제휴 요금',
   highlights: ['제휴사별 참고 요금', '나라·용량·일수', '낮은 가격순 정렬'],
-  cta: `${ESIM_TAB_LABEL} 요금 비교하기`,
+  cta: '이심 요금 비교하기',
 } as const;
 
 export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';

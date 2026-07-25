@@ -32,10 +32,12 @@ export default function TimeField({
   label,
   value,
   onChange,
+  placeholder = '시:분 선택',
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
 }) {
   const inputId = useId();
   const [open, setOpen] = useState(false);
@@ -43,7 +45,8 @@ export default function TimeField({
   const hourColRef = useRef<HTMLDivElement>(null);
   const minuteColRef = useRef<HTMLDivElement>(null);
 
-  const { period, hour12, minute } = parse(value);
+  const hasValue = Boolean(value && parseHmSafe(value));
+  const { period, hour12, minute } = hasValue ? parse(value) : { period: 'AM' as Meridiem, hour12: 9, minute: 0 };
   /** 분이 스텝과 안 맞으면 가장 가까운 스텝을 선택 표시 */
   const selectedMinute = MINUTES.includes(minute)
     ? minute
@@ -85,6 +88,11 @@ export default function TimeField({
     );
   };
 
+  const openPicker = () => {
+    if (!hasValue) onChange(toValue('AM', 9, 0));
+    setOpen((v) => !v);
+  };
+
   return (
     <div className="relative block" ref={containerRef}>
       <span id={inputId} className="mb-1 block text-[11px] font-bold text-muted">
@@ -92,7 +100,7 @@ export default function TimeField({
       </span>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={openPicker}
         className={cn(
           'flex w-full items-center gap-2 rounded-xl border px-3 py-2.5 text-left transition-colors',
           open
@@ -103,8 +111,13 @@ export default function TimeField({
         aria-expanded={open}
       >
         <Clock size={14} className="shrink-0 text-muted-light" />
-        <span className="flex-1 text-sm font-semibold text-ink tabular-nums">
-          {displayLabel(value)}
+        <span
+          className={cn(
+            'flex-1 text-sm font-semibold tabular-nums',
+            hasValue ? 'text-ink' : 'text-muted'
+          )}
+        >
+          {hasValue ? displayLabel(value) : placeholder}
         </span>
       </button>
 
@@ -191,4 +204,8 @@ export default function TimeField({
       )}
     </div>
   );
+}
+
+function parseHmSafe(value: string): boolean {
+  return /^\d{1,2}:\d{2}$/.test(value.trim());
 }

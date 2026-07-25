@@ -107,9 +107,9 @@ export default defineConfig({
           /^\/google[\w-]+\.html$/,
         ],
         runtimeCaching: [
-          // OSM 타일 — 캐시하지 않음 (홈 지도)
+          // 네이버 지도 타일·SDK — 캐시하지 않음
           {
-            urlPattern: /^https:\/\/[a-z]\.tile\.openstreetmap\.org\//i,
+            urlPattern: /^https:\/\/(?:oapi\.map\.naver\.com|map\.pstatic\.net|nrbe\.map\.naver\.com)\//i,
             handler: 'NetworkOnly',
           },
           // 해시된 빌드 에셋 — 오래 캐시 (파일명 해시로 버전 분리)
@@ -149,7 +149,7 @@ export default defineConfig({
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
-        description: '인천공항 주차대행·유심·eSIM 가격비교 — 업체 요금, 위치, 보험 한 번에',
+        description: '인천공항 출국시간 계산 · 주차대행 비교 · 이심(eSIM) 가격비교',
         theme_color: '#3182F6',
         background_color: '#EDF4FC',
         display: 'standalone',
@@ -199,6 +199,26 @@ export default defineConfig({
     port: 5173,
     host: true,
     proxy: {
+      '/api/icn-shuttle': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/icn-shuttle/, '/getIcnShuttle'),
+      },
+      '/api/icn-flight': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/icn-flight/, '/getIcnFlight'),
+      },
+      '/api/icn-airport-live': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/icn-airport-live/, '/getIcnAirportLive'),
+      },
+      '/api/drive-eta': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/drive-eta/, '/getDriveEta'),
+      },
       '/api/receipt': {
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,

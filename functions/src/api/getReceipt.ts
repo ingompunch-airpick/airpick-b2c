@@ -48,13 +48,21 @@ export const getReceipt = onRequest(
         }
         snap = byId;
       } else {
-        // `/r/{receiptToken}` 폴백 — 토큰만으로 조회 (알림톡·구형 링크)
-        const q = await admin
+        // `/r/{code}` — receiptToken 또는 receiptLinkCode(알림톡 단축)
+        let q = await admin
           .firestore()
           .collection('reservations')
           .where('receiptToken', '==', token)
           .limit(1)
           .get();
+        if (q.empty) {
+          q = await admin
+            .firestore()
+            .collection('reservations')
+            .where('receiptLinkCode', '==', token)
+            .limit(1)
+            .get();
+        }
         if (q.empty) {
           res.status(404).json({ error: 'not_found' });
           return;

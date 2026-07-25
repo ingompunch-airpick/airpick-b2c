@@ -5,6 +5,7 @@ import { auth, db } from '../firebase';
 const LOOKUP_API_PATH = '/api/reservation-lookup';
 const CANCEL_API_PATH = '/api/reservation-cancel';
 import { fetchCompanyBookingPolicy } from './companies';
+import { assertHourlyCapacityAvailable } from './hourlyCapacityFirestore';
 import type { BookingSearch, Reservation, ReservationLookupMode } from '../types';
 import {
   bookingPolicyMessage,
@@ -227,6 +228,11 @@ export async function submitReservation(
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
+  await assertHourlyCapacityAvailable(
+    companyId,
+    search.departureDate,
+    search.departureTime
+  );
 
   const id = createReservationId();
   const now = new Date().toISOString();

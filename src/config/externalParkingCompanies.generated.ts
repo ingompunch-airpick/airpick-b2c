@@ -2,7 +2,7 @@
 import type { Company } from '../types';
 
 /** CSV sync 시각 — npm run sync:parking 할 때마다 갱신 */
-export const PARKING_OFFERS_UPDATED_AT = '2026-07-09T09:12:06.771Z';
+export const PARKING_OFFERS_UPDATED_AT = '2026-07-21T02:00:42.062Z';
 
 /** 에어픽 미입점 주차대행 업체 (구글 시트 기준 · 비교 전용) */
 export const externalParkingCompanies: Company[] = [

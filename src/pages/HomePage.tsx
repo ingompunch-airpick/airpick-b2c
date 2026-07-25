@@ -1,130 +1,56 @@
-import { useEffect, useMemo, useState } from 'react';
-import {
-  DEFAULT_HOME_CATEGORY,
-  getHomeCategory,
-  isHomeCategoryId,
-  type HomeCategoryId,
-} from '../constants/homeCategories';
-import {
-  getOfficialLotPins,
-  listOfficialParkingLots,
-} from '../repositories/homeMapRepository';
-import AirportMap from '../components/map-home/AirportMap';
-import CategoryChips from '../components/map-home/CategoryChips';
-import ComingSoonPanel from '../components/map-home/ComingSoonPanel';
-import DraggableSheet from '../components/map-home/DraggableSheet';
-import HomeSearchBar from '../components/map-home/HomeSearchBar';
-import ParkingLotList from '../components/map-home/ParkingLotList';
-import { AIRPICK_DEFINITION } from '../constants/companyLegal';
+import { useState } from 'react';
+import DepartureGuideCard from '../components/map-home/DepartureGuideCard';
+import { HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
+import type { AppTab, BookingSearch } from '../types';
 
-function readCatFromUrl(): HomeCategoryId {
-  if (typeof window === 'undefined') return DEFAULT_HOME_CATEGORY;
-  const cat = new URLSearchParams(window.location.search).get('cat');
-  // 예전 ?cat=valet|esim|insurance|rental 은 주차장/택배 로
-  if (cat === 'valet' || cat === 'esim' || cat === 'insurance') return 'lot';
-  if (cat === 'rental') return 'luggage';
-  return cat && isHomeCategoryId(cat) ? cat : DEFAULT_HOME_CATEGORY;
-}
-
-function writeCatToUrl(cat: HomeCategoryId) {
-  if (typeof window === 'undefined') return;
-  const url = new URL(window.location.href);
-  if (cat === DEFAULT_HOME_CATEGORY) url.searchParams.delete('cat');
-  else url.searchParams.set('cat', cat);
-  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
-}
-
-export default function HomePage() {
-  const [categoryId, setCategoryId] = useState<HomeCategoryId>(() => readCatFromUrl());
-  const [query, setQuery] = useState('');
-  const [selectedPinId, setSelectedPinId] = useState<string | null>(null);
-
-  const category = getHomeCategory(categoryId);
-  const q = query.trim().toLowerCase();
-
-  useEffect(() => {
-    writeCatToUrl(categoryId);
-    setSelectedPinId(null);
-  }, [categoryId]);
-
-  const lotItems = useMemo(() => {
-    const list = listOfficialParkingLots();
-    if (!q) return list;
-    return list.filter(
-      (l) =>
-        l.name.toLowerCase().includes(q) ||
-        l.description.toLowerCase().includes(q) ||
-        l.terminal.toLowerCase().includes(q)
-    );
-  }, [q]);
-
-  const pins = useMemo(() => {
-    if (categoryId === 'lot' && category.showMapPins) return getOfficialLotPins();
-    return [];
-  }, [categoryId, category.showMapPins]);
-
-  const sheetTitle = category.kind === 'soon' ? category.label : '인천공항 주차장';
-  const sheetSubtitle =
-    category.kind === 'soon'
-      ? undefined
-      : '공식 주차장 정보 · 예약 없음 · 길찾기·공식 안내';
+/** 홈 — SEO Hook(출국시간) → 결과에서 주차대행 비교로 전환 */
+export default function HomePage({
+  onGoTab,
+  onPrefillParkingSearch,
+}: {
+  onGoTab: (tab: AppTab) => void;
+  onPrefillParkingSearch?: (
+    patch: Partial<BookingSearch>,
+    meta?: { valetLeaveByHm: string }
+  ) => void;
+}) {
+  const [hasResult, setHasResult] = useState(false);
 
   return (
-    <div className="relative h-full min-h-0 w-full overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        {category.showMapPins ? (
-          <AirportMap
-            pins={pins}
-            selectedPinId={selectedPinId}
-            onSelectPin={setSelectedPinId}
-          />
-        ) : (
-          <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-sky-tint to-sky-bg px-6 text-center">
-            <p className="text-sm font-bold text-brand">공항 스팟</p>
-            <p className="mt-2 max-w-xs text-xs font-medium leading-relaxed text-muted">
-              {category.label}은 곧 열릴 예정입니다. 주차대행·유심·eSIM은 아래 탭에서 이용하세요.
+    <div className="relative">
+      <div
+        className="pointer-events-none absolute inset-x-0 -top-2 -mx-4 h-[min(52vh,420px)]"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(ellipse 90% 70% at 50% 0%, #cfe4fb 0%, #edf4fc 55%, transparent 75%)',
+        }}
+      />
+
+      <div className="relative space-y-5 pt-2">
+        <header className={`transition-all duration-300 ${hasResult ? 'opacity-70' : ''}`}>
+          <h1
+            className={`font-bold tracking-tight text-ink ${
+              hasResult
+                ? 'text-xl leading-snug'
+                : 'text-[1.65rem] leading-tight sm:text-[1.9rem]'
+            }`}
+          >
+            {HOME_HEADLINE}
+          </h1>
+          {!hasResult ? (
+            <p className="mt-2 max-w-[20rem] text-[13px] font-medium leading-snug text-muted">
+              {HOME_SUBHEAD}
             </p>
-          </div>
-        )}
+          ) : null}
+        </header>
+
+        <DepartureGuideCard
+          onResultChange={setHasResult}
+          onGoTab={onGoTab}
+          onPrefillParkingSearch={onPrefillParkingSearch}
+        />
       </div>
-
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pt-2">
-        <div className="pointer-events-auto space-y-2">
-          <HomeSearchBar
-            value={query}
-            onChange={setQuery}
-            placeholder="공항 스팟 · 주차장 검색"
-          />
-          <CategoryChips activeId={categoryId} onChange={setCategoryId} />
-        </div>
-      </div>
-
-      <DraggableSheet title={sheetTitle} subtitle={sheetSubtitle} initialSnap="mid">
-        {category.kind === 'soon' ? (
-          <ComingSoonPanel label={category.label} />
-        ) : (
-          <ParkingLotList
-            items={lotItems}
-            selectedId={selectedPinId}
-            onSelect={setSelectedPinId}
-          />
-        )}
-
-        <p className="mt-6 border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
-          {AIRPICK_DEFINITION}{' '}
-          <a href="/parking" className="font-bold text-brand underline-offset-2 hover:underline">
-            주차대행 비교
-          </a>
-          {' · '}
-          <a href="/esim" className="font-bold text-brand underline-offset-2 hover:underline">
-            유심·eSIM 비교
-          </a>
-          {' · '}
-          <a href="/guides/" className="font-bold text-brand underline-offset-2 hover:underline">
-            가이드
-          </a>
-        </p>
-      </DraggableSheet>
     </div>
   );
 }

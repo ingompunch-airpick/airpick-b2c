@@ -78,7 +78,7 @@ export default function EsimPage({
           <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-brand">
             <li>
               <a href="/guides/esim-beginner/" className="underline-offset-2 hover:underline">
-                유심·eSIM 초보 가이드
+                유심·이심 초보 가이드
               </a>
             </li>
             <li>

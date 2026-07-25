@@ -19,6 +19,16 @@
         "type": 301
       },
       {
+        "source": "/spots",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/spots/",
+        "destination": "/",
+        "type": 301
+      },
+      {
         "source": "/my/",
         "destination": "/my",
         "type": 301
@@ -279,12 +289,33 @@
         }
       },
       {
+        "source": "/api/icn-flight",
+        "function": {
+          "functionId": "getIcnFlight",
+          "region": "asia-northeast3"
+        }
+      },
+      {
+        "source": "/api/icn-airport-live",
+        "function": {
+          "functionId": "getIcnAirportLive",
+          "region": "asia-northeast3"
+        }
+      },
+      {
+        "source": "/api/drive-eta",
+        "function": {
+          "functionId": "getDriveEta",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "/parking",
         "destination": "/parking.html"
       },
       {
         "source": "/esim",
-        "destination": "/esim.html"
+        "destination": "/index.html"
       },
       {
         "source": "/my",
