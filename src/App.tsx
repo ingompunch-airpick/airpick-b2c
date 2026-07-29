@@ -42,7 +42,7 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: `주차 예약 하셨나요? · 에어픽`,
+  home: `주차예약 하셨나요? · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
   my: '내 예약 · 에어픽',

@@ -95,16 +95,6 @@ export default function SearchPanel({
       <div className="mt-2 grid grid-cols-2 gap-2">
         <button
           type="button"
-          onClick={() => onChange({ ...search, isIndoor: true })}
-          className={cn(
-            'rounded-xl py-2 text-xs font-bold transition-colors',
-            search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-bg text-muted'
-          )}
-        >
-          실내
-        </button>
-        <button
-          type="button"
           onClick={() => onChange({ ...search, isIndoor: false })}
           className={cn(
             'rounded-xl py-2 text-xs font-bold transition-colors',
@@ -112,6 +102,16 @@ export default function SearchPanel({
           )}
         >
           야외
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ ...search, isIndoor: true })}
+          className={cn(
+            'rounded-xl py-2 text-xs font-bold transition-colors',
+            search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-bg text-muted'
+          )}
+        >
+          실내
         </button>
       </div>
 

@@ -402,17 +402,6 @@ export default function BookingModal({
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    disabled={!companySupportsIndoor(company)}
-                    onClick={() => setSearch((prev) => ({ ...prev, isIndoor: true }))}
-                    className={cn(
-                      'rounded-xl py-2 text-xs font-bold transition-colors disabled:opacity-40',
-                      search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-                    )}
-                  >
-                    실내
-                  </button>
-                  <button
-                    type="button"
                     disabled={!companySupportsOutdoor(company)}
                     onClick={() => setSearch((prev) => ({ ...prev, isIndoor: false }))}
                     className={cn(
@@ -421,6 +410,17 @@ export default function BookingModal({
                     )}
                   >
                     야외
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!companySupportsIndoor(company)}
+                    onClick={() => setSearch((prev) => ({ ...prev, isIndoor: true }))}
+                    className={cn(
+                      'rounded-xl py-2 text-xs font-bold transition-colors disabled:opacity-40',
+                      search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
+                    )}
+                  >
+                    실내
                   </button>
                 </div>
               </div>
