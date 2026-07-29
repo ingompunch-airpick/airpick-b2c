@@ -10,7 +10,6 @@ import { getIcnShuttle } from './api/icnShuttle';
 import { getIcnFlight, getIcnFlightSearch } from './api/icnFlight';
 import { getIcnAirportLive } from './api/icnAirportLive';
 import { getDriveEta } from './api/driveEta';
-import { submitPartnerApplication } from './api/submitPartnerApplication';
 
 admin.initializeApp();
 
@@ -31,5 +30,4 @@ export {
   getIcnFlightSearch,
   getIcnAirportLive,
   getDriveEta,
-  submitPartnerApplication,
 };

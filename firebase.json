@@ -317,19 +317,8 @@
         }
       },
       {
-        "source": "/api/partner-application",
-        "function": {
-          "functionId": "submitPartnerApplication",
-          "region": "asia-northeast3"
-        }
-      },
-      {
         "source": "/parking",
         "destination": "/parking.html"
-      },
-      {
-        "source": "/partner",
-        "destination": "/partner.html"
       },
       {
         "source": "/esim",
