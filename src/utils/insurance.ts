@@ -3,6 +3,34 @@ import type { Company, CompanyInsurance, Reservation } from '../types';
 const INSURANCE_DISCLAIMER =
   '보험 적용·보상 범위는 해당 업체와 보험사 약관에 따릅니다.';
 
+/** B2B·표시 공통 — 주차대행 업체 표준 상품명 */
+export const CANONICAL_INSURANCE_PRODUCT_NAME = '배상책임보험';
+
+const INSURANCE_PRODUCT_ALIASES: Record<string, string> = {
+  발렛보험: CANONICAL_INSURANCE_PRODUCT_NAME,
+  '발렛 보험': CANONICAL_INSURANCE_PRODUCT_NAME,
+  ValetInsurance: CANONICAL_INSURANCE_PRODUCT_NAME,
+  'Valet Insurance': CANONICAL_INSURANCE_PRODUCT_NAME,
+};
+
+/** B2B 마스터·레거시 비공식 명칭 → 표시용 상품명 */
+export function normalizeInsuranceProductName(name?: string): string | undefined {
+  if (!name?.trim()) return undefined;
+
+  const trimmed = name.trim();
+  const aliased = INSURANCE_PRODUCT_ALIASES[trimmed] ?? INSURANCE_PRODUCT_ALIASES[trimmed.replace(/\s+/g, '')];
+  if (aliased) return aliased;
+
+  if (/발렛\s*보험/i.test(trimmed)) return CANONICAL_INSURANCE_PRODUCT_NAME;
+
+  return trimmed;
+}
+
+function resolveDisplayProductName(insurance: CompanyInsurance): string | undefined {
+  if (!insurance.enrolled) return undefined;
+  return normalizeInsuranceProductName(insurance.productName) ?? CANONICAL_INSURANCE_PRODUCT_NAME;
+}
+
 export { INSURANCE_DISCLAIMER };
 
 export interface InsuranceDisplay {
@@ -20,7 +48,9 @@ function parseInsuranceObject(raw: Record<string, unknown>): CompanyInsurance | 
   if (raw.enrolled !== true) return undefined;
 
   const provider = raw.provider ? String(raw.provider).trim() : undefined;
-  const productName = raw.productName ? String(raw.productName).trim() : undefined;
+  const productName = normalizeInsuranceProductName(
+    raw.productName ? String(raw.productName).trim() : undefined
+  );
   const limitRaw = raw.coverageLimitWon ?? raw.coverageLimit;
   const coverageLimitWon =
     limitRaw !== undefined && limitRaw !== null && limitRaw !== ''
@@ -80,7 +110,8 @@ export function formatInsuranceSummary(insurance: CompanyInsurance): string | un
 
   const parts: string[] = [];
   if (insurance.provider) parts.push(insurance.provider);
-  if (insurance.productName) parts.push(insurance.productName);
+  const productName = resolveDisplayProductName(insurance);
+  if (productName) parts.push(productName);
   if (insurance.coverageLimitWon) {
     parts.push(`보장 ${formatCoverageLimitWon(insurance.coverageLimitWon)}`);
   }
@@ -107,10 +138,9 @@ export function resolveInsuranceDisplay(
   }
 
   const summary = formatInsuranceSummary(insurance);
+  const productName = resolveDisplayProductName(insurance);
   const detail =
-    insurance.productName && insurance.provider
-      ? undefined
-      : insurance.productName || undefined;
+    productName && insurance.provider ? undefined : productName || undefined;
 
   return {
     status: 'enrolled',

@@ -2,6 +2,7 @@ export interface CompanyInsurance {
   enrolled: boolean;
   provider?: string;
   productName?: string;
+  /** 표시·집계 시 {@link CANONICAL_INSURANCE_PRODUCT_NAME} 권장 (레거시: 발렛보험) */
   coverageLimitWon?: number;
   updatedAt?: string;
 }
