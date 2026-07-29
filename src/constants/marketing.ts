@@ -80,10 +80,9 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /**
- * 홈 — 집→공항 출발 시각 계산기
- * H1은 결과물(집에서 나설 시각)에 맞춤. 주차대행 전환은 결과 CTA.
+ * 홈 H1
  */
-export const HOME_HEADLINE = '집→공항 출발 시각 계산기';
+export const HOME_HEADLINE = '주차 예약 하셨나요?';
 
 /** 히어로 서브 — 계산기 역할만 (주차 설득은 결과 CTA) */
 export const HOME_SUBHEAD = '집에서 나서야 할 추천 출발 시각을 알려드립니다.';
@@ -134,7 +133,8 @@ export const HOME_NEXT_PREP = {
 /** 비교 탭 · 계산기에서 넘어온 일정 배지 */
 /** 계산 → 주차대행 비교 브릿지 */
 export const HOME_TO_COMPARE_BADGE = '출발 시각 계산 일정 기준';
-export const HOME_TO_COMPARE_VALET_LEAVE = (hm: string) => `주차대행 기준 추천 출발 ${hm}`;
+export const HOME_TO_COMPARE_VALET_LEAVE = (hm: string) => `주차대행 기준 추천 집 출발 ${hm}`;
+export const HOME_TO_COMPARE_TIME_HINT = '입고·출고 시간은 아래에서 직접 선택해 주세요.';
 
 /** @deprecated HOME_NEXT_PREP.parking 사용 */
 export const HOME_VALET_NOTE = {

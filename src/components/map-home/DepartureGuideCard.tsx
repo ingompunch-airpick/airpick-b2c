@@ -593,12 +593,10 @@ export default function DepartureGuideCard({
                   flight.terminal === 'T2' || flight.terminal === 'T1'
                     ? flight.terminal
                     : 'T1';
-                const depTime = flight.scheduleTime || '10:00';
                 onPrefillParkingSearch?.(
                   {
                     departureDate: depYmd,
                     arrivalDate: addDaysYmd(depYmd, 6),
-                    departureTime: depTime,
                     terminal,
                     arrivalTerminal: terminal,
                   },

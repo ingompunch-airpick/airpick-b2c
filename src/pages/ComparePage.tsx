@@ -5,6 +5,7 @@ import SearchPanel from '../components/SearchPanel';
 import { PRICE_DISCLAIMER, REVIEW_POLICY_LINE } from '../constants/complianceCopy';
 import {
   HOME_TO_COMPARE_BADGE,
+  HOME_TO_COMPARE_TIME_HINT,
   HOME_TO_COMPARE_VALET_LEAVE,
   PARKING_COMPARE_DESC,
   PARKING_COMPARE_GUIDE_LINKS,
@@ -202,7 +203,10 @@ export default function ComparePage({
           {HOME_TO_COMPARE_VALET_LEAVE(fromLeaveBy.valetLeaveByHm)}
           <span className="mt-0.5 block font-semibold opacity-90">
             {HOME_TO_COMPARE_BADGE} · {search.terminal} ·{' '}
-            {search.departureDate.replace(/-/g, '.')} {search.departureTime}
+            {search.departureDate.replace(/-/g, '.')}
+          </span>
+          <span className="mt-1 block text-[11px] font-semibold opacity-80">
+            {HOME_TO_COMPARE_TIME_HINT}
           </span>
         </p>
       ) : null}
