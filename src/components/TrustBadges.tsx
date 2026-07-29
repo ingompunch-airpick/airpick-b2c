@@ -35,11 +35,16 @@ export default function TrustBadges({
             ? insuranceLabel
             : label;
 
+        const isInsurance = key === 'insurance';
+
         return (
           <span
             key={key}
             className={cn(
-              'inline-flex items-center gap-1 rounded-full bg-brand/10 font-semibold text-brand',
+              'inline-flex items-center gap-1 rounded-full font-semibold',
+              isInsurance
+                ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/80'
+                : 'bg-brand/10 text-brand',
               size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-[11px]'
             )}
           >

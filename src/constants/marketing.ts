@@ -53,7 +53,7 @@ export const ESIM_COMPARE_SUB = '국가별 최저가 참고 비교';
 
 export const PARKING_PARTNER_SECTION = {
   title: '에어픽 입점 · 바로 예약',
-  titleDistance: '에어픽 입점 · 거리순',
+  titleRating: '에어픽 입점 · 평점순',
   subtitleNote: '보험·주차 위치 확인 · 후기 · 예약 추적',
 } as const;
 

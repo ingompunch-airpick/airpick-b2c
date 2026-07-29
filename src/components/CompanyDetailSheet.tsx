@@ -1,6 +1,7 @@
 import { Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import TrustBadges from './TrustBadges';
+import InsuranceCoverageCard from './InsuranceCoverageCard';
 import {
   fetchCompanyReviewSnapshot,
   formatReviewDate,
@@ -14,11 +15,8 @@ import {
   companySupportsOutdoor,
   parkingTypeLabel,
 } from '../utils/parkingType';
-import {
-  formatAddressWithTerminalDistance,
-  formatTerminalDistanceDetail,
-} from '../utils/terminalDistance';
-import { formatParkingDistanceLotLabel } from '../utils/trustDisplay';
+import { formatParkingDistanceLotLabel, shouldShowInsuranceBadge } from '../utils/trustDisplay';
+import { displayInsuranceLabel } from '../utils/trust';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import { cn } from '../utils/cn';
 
@@ -154,47 +152,20 @@ export default function CompanyDetailSheet({
     .join(' · ');
 
   const telHref = buildTelHref(company.phone);
-  const terminalDistance = formatTerminalDistanceDetail(
-    company,
-    search.terminal,
-    search.isIndoor
-  );
 
-  const indoorAddress = company.indoorParkingAddress
-    ? formatAddressWithTerminalDistance(
-        company.indoorParkingAddress,
-        company,
-        search.terminal,
-        true
-      )
-    : null;
-  const outdoorAddress = company.outdoorParkingAddress
-    ? formatAddressWithTerminalDistance(
-        company.outdoorParkingAddress,
-        company,
-        search.terminal,
-        false
-      )
-    : null;
-  const parkingLotFromB2b = formatParkingDistanceLotLabel(
-    company,
-    search.terminal,
-    search.isIndoor
-  );
+  const indoorAddress = company.indoorParkingAddress?.trim() || null;
+  const outdoorAddress = company.outdoorParkingAddress?.trim() || null;
   const parkingLotLine =
-    !indoorAddress && !outdoorAddress && parkingLotFromB2b
-      ? formatAddressWithTerminalDistance(
-          parkingLotFromB2b,
-          company,
-          search.terminal,
-          search.isIndoor
-        )
+    !indoorAddress && !outdoorAddress
+      ? formatParkingDistanceLotLabel(company, search.terminal, search.isIndoor)
       : null;
 
   const reviewsLoading = reviewSnapshot == null;
   const reviews = reviewSnapshot?.recent ?? [];
   const reviewCount = reviewSnapshot?.count ?? 0;
   const reviewAverage = reviewSnapshot?.averageRating;
+  const insuranceLabel = displayInsuranceLabel(company);
+  const showInsuranceCard = shouldShowInsuranceBadge(company) && !!insuranceLabel;
 
   return (
     <div className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center sm:p-4">
@@ -255,11 +226,16 @@ export default function CompanyDetailSheet({
             <TrustBadges company={company} size="md" />
           </div>
 
+          {showInsuranceCard && (
+            <div className="mt-4">
+              <InsuranceCoverageCard summary={insuranceLabel} />
+            </div>
+          )}
+
           <section className="mt-4 space-y-2 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">업체 정보</p>
             <InfoRow label="터미널" value={terminals} />
             {parkingTypes && <InfoRow label="주차" value={parkingTypes} />}
-            {terminalDistance && <InfoRow label="거리" value={terminalDistance} />}
             {telHref && (
               <div className="flex gap-3 text-sm">
                 <span className="w-16 shrink-0 font-semibold text-muted">문의</span>

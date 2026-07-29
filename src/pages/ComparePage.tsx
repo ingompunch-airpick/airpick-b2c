@@ -21,17 +21,11 @@ import {
 import type { BookingSearch, Company, CompareSortMode } from '../types';
 import {
   buildParkingCompareSections,
-  buildPartnerDistanceList,
+  buildPartnerRatingList,
   isAirpickPartner,
   sectionHasFaceToFace,
   type PricedCompany,
 } from '../utils/compareSort';
-import {
-  formatTerminalDistanceDetail,
-  formatTerminalDistanceLabel,
-  getTerminalDistanceKm,
-  terminalDistanceSubtitle,
-} from '../utils/terminalDistance';
 import { companyValetFee } from '../utils/parkingType';
 import { cn } from '../utils/cn';
 
@@ -44,7 +38,7 @@ function SortTabs({
 }) {
   const tabs: { id: CompareSortMode; label: string }[] = [
     { id: 'price', label: '가격순' },
-    { id: 'distance', label: '거리순' },
+    { id: 'rating', label: '평점순' },
   ];
 
   return (
@@ -71,9 +65,7 @@ function CompareSection({
   subtitle,
   items,
   onSelect,
-  distanceMode,
   terminal,
-  isIndoor = true,
   reviewSnapshots,
   faceToFaceMode = false,
 }: {
@@ -81,9 +73,7 @@ function CompareSection({
   subtitle: string;
   items: PricedCompany[];
   onSelect: (company: Company, price: number) => void;
-  distanceMode?: boolean;
   terminal?: BookingSearch['terminal'];
-  isIndoor?: boolean;
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
   faceToFaceMode?: boolean;
 }) {
@@ -106,15 +96,6 @@ function CompareSection({
             reviewSnapshot={reviewSnapshots[company.id]}
             valetFee={terminal ? companyValetFee(company, terminal) : null}
             faceToFaceMode={faceToFaceMode}
-            distanceDetail={
-              distanceMode && terminal
-                ? formatTerminalDistanceDetail(company, terminal, isIndoor) ??
-                  formatTerminalDistanceLabel(
-                    getTerminalDistanceKm(company, terminal, isIndoor),
-                    terminal
-                  )
-                : undefined
-            }
           />
         ))}
       </div>
@@ -164,15 +145,19 @@ export default function ComparePage({
   const [reviewsReady, setReviewsReady] = useState(false);
   const merged = mergeParkingCompareCompanies(companies);
   const { partners, externals } = buildParkingCompareSections(merged, search);
-  const distancePartners = buildPartnerDistanceList(merged, search);
   const totalCount = partners.length + externals.length;
 
   /** 대면 UI는 입점 섹션에만 적용 (대면 가능 입점이 있을 때) */
   const partnerFaceToFace = !!search.faceToFace && sectionHasFaceToFace(partners, search.terminal);
 
   const partnerIds = useMemo(
-    () => [...new Set([...partners, ...distancePartners].map(({ company }) => company.id))],
-    [partners, distancePartners]
+    () => [...new Set(partners.map(({ company }) => company.id))],
+    [partners]
+  );
+
+  const ratingPartners = useMemo(
+    () => buildPartnerRatingList(merged, search, reviewSnapshots),
+    [merged, search, reviewSnapshots]
   );
 
   useEffect(() => {
@@ -282,24 +267,22 @@ export default function ComparePage({
         </>
       ) : (
         <>
-          {distancePartners.length === 0 ? (
+          {ratingPartners.length === 0 ? (
             <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-              거리순 비교는 에어픽 입점 업체만 제공합니다.
+              평점순 비교는 에어픽 입점 업체만 제공합니다.
             </p>
           ) : (
             <CompareSection
-              title={PARKING_PARTNER_SECTION.titleDistance}
-              subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${terminalDistanceSubtitle(search, distancePartners.length)}`}
-              items={distancePartners}
+              title={PARKING_PARTNER_SECTION.titleRating}
+              subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${ratingPartners.length}곳 · 높은 평점순 · 실후기 기준`}
+              items={ratingPartners}
               onSelect={handleSelect}
-              distanceMode
-              terminal={search.terminal}
-              isIndoor={search.isIndoor}
               reviewSnapshots={reviewSnapshots}
+              terminal={search.terminal}
             />
           )}
           <p className="px-1 text-center text-[11px] font-medium text-muted">
-            미입점 업체는 거리 정보를 제공하지 않습니다. 가격 비교는 가격순 탭에서 확인하세요.
+            미입점 업체는 평점을 제공하지 않습니다. 가격 비교는 가격순 탭에서 확인하세요.
           </p>
         </>
       )}

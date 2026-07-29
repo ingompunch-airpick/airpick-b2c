@@ -13,7 +13,6 @@ export default function CompanyCard({
   price,
   onSelect,
   layout = 'grid',
-  distanceDetail,
   reviewSnapshot,
   valetFee = null,
   faceToFaceMode = false,
@@ -22,8 +21,6 @@ export default function CompanyCard({
   price: number;
   onSelect: () => void;
   layout?: 'grid' | 'list';
-  /** 거리순 탭에서 터미널까지 거리 표시 */
-  distanceDetail?: string;
   /** reviews 컬렉션 기준 — 없으면 후기 미표시 */
   reviewSnapshot?: CompanyReviewSnapshot;
   /** 선택 터미널 발렛비 — null이면 발렛 미제공 */
@@ -124,10 +121,7 @@ export default function CompanyCard({
             <TrustBadges company={company} />
           </div>
         )}
-        {distanceDetail && (
-          <p className="mt-2 text-[11px] font-semibold text-brand">{distanceDetail}</p>
-        )}
-        <p className={cn('text-lg font-bold text-brand tabular-nums', distanceDetail ? 'mt-1' : 'mt-2')}>
+        <p className="mt-2 text-lg font-bold text-brand tabular-nums">
           {price.toLocaleString()}원
         </p>
         {premium && valetFee != null && (

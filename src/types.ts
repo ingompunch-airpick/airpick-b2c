@@ -165,7 +165,7 @@ export interface ParkingDistanceEntry {
 
 export type CompanyParkingDistances = Partial<Record<Terminal, ParkingDistanceEntry>>;
 
-export type CompareSortMode = 'price' | 'distance';
+export type CompareSortMode = 'price' | 'rating';
 
 export interface BookingSearch {
   departureDate: string;

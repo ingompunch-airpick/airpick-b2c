@@ -1,12 +1,8 @@
+import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { companyMatchesSearch, companyValetFee } from './parkingType';
 import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany } from './pricing';
 import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
-import {
-  getTerminalDistanceKm,
-  sortPartnersByTerminalDistance,
-  type DistanceRankedPartner,
-} from './terminalDistance';
 
 export { companyMatchesSearch, companySupportsIndoor, companySupportsOutdoor } from './parkingType';
 
@@ -129,19 +125,40 @@ export function buildParkingCompareSections(
   return { partners, externals };
 }
 
-export function buildPartnerDistanceList(
+/** 입점 업체만 · 실후기 평점 높은 순 (후기 없으면 하단) */
+export function sortPartnersByRating(
+  items: PricedCompany[],
+  reviewSnapshots: Record<string, CompanyReviewSnapshot>
+): PricedCompany[] {
+  return [...items].sort((a, b) => {
+    const aSnap = reviewSnapshots[a.company.id];
+    const bSnap = reviewSnapshots[b.company.id];
+    const aRating =
+      aSnap?.averageRating ?? (a.company.rating > 0 ? a.company.rating : null);
+    const bRating =
+      bSnap?.averageRating ?? (b.company.rating > 0 ? b.company.rating : null);
+    const aCount = aSnap?.count ?? a.company.reviews_count ?? 0;
+    const bCount = bSnap?.count ?? b.company.reviews_count ?? 0;
+
+    if (aRating == null && bRating == null) {
+      return a.company.name.localeCompare(b.company.name, 'ko');
+    }
+    if (aRating == null) return 1;
+    if (bRating == null) return -1;
+    if (bRating !== aRating) return bRating - aRating;
+    if (bCount !== aCount) return bCount - aCount;
+    if (a.price !== b.price) return a.price - b.price;
+    return a.company.name.localeCompare(b.company.name, 'ko');
+  });
+}
+
+export function buildPartnerRatingList(
   companies: Company[],
-  search: BookingSearch
-): DistanceRankedPartner[] {
+  search: BookingSearch,
+  reviewSnapshots: Record<string, CompanyReviewSnapshot>
+): PricedCompany[] {
   const priced = priceCompaniesForSearch(companies, search).filter((item) =>
     isAirpickPartner(item.company)
   );
-
-  return sortPartnersByTerminalDistance(
-    priced.map((item) => ({
-      company: item.company,
-      price: item.price,
-      distanceKm: getTerminalDistanceKm(item.company, search.terminal, search.isIndoor),
-    }))
-  );
+  return sortPartnersByRating(priced, reviewSnapshots);
 }

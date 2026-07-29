@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
 import ReviewWriteModal from './ReviewWriteModal';
+import InsuranceCoverageCard from './InsuranceCoverageCard';
 import type { Company, Reservation } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
@@ -10,7 +11,7 @@ import { cn } from '../utils/cn';
 import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { companyPhotoUrl } from '../utils/imageUrl';
 import { parkingTypeLabel } from '../utils/parkingType';
-import { INSURANCE_DISCLAIMER, resolveInsuranceDisplay } from '../utils/insurance';
+import { resolveInsuranceDisplay } from '../utils/insurance';
 import { getStatusLabel, getStatusStep } from '../utils/trust';
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import { getCancelEligibility } from '../utils/reservationCancel';
@@ -299,25 +300,22 @@ export default function ReservationCard({
               />
             </TrustBlock>
 
-            <TrustBlock icon={ShieldCheck} title="보험">
-              {insuranceDisplay.status === 'unknown' ? (
-                <p className="text-xs font-medium leading-relaxed text-muted">
-                  업체 보험 가입 정보가 등록되면 이곳에서 확인할 수 있습니다.
-                </p>
-              ) : (
-                <div className="space-y-1.5">
-                  <p className="text-sm font-semibold text-ink">{insuranceDisplay.summary}</p>
-                  {insuranceDisplay.detail && (
-                    <p className="text-xs font-medium text-muted">{insuranceDisplay.detail}</p>
-                  )}
-                  {insuranceDisplay.status === 'enrolled' && (
-                    <p className="text-[10px] font-medium leading-relaxed text-muted-light">
-                      {INSURANCE_DISCLAIMER}
-                    </p>
-                  )}
-                </div>
-              )}
-            </TrustBlock>
+            {insuranceDisplay.status === 'enrolled' && insuranceDisplay.summary ? (
+              <InsuranceCoverageCard
+                summary={insuranceDisplay.summary}
+                detail={insuranceDisplay.detail}
+              />
+            ) : (
+              <TrustBlock icon={ShieldCheck} title="보험">
+                {insuranceDisplay.status === 'unknown' ? (
+                  <p className="text-xs font-medium leading-relaxed text-muted">
+                    업체 보험 가입 정보가 등록되면 이곳에서 확인할 수 있습니다.
+                  </p>
+                ) : (
+                  <p className="text-sm font-semibold text-muted">{insuranceDisplay.summary}</p>
+                )}
+              </TrustBlock>
+            )}
           </>
         ) : (
           <div className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
