@@ -20,7 +20,7 @@ export const AIRPICK_PLATFORM_TERMS = {
     {
       heading: '제1조 (목적)',
       paragraphs: [
-        '본 약관은 곰컴퍼니(이하 "회사")가 운영하는 인천공항 주차대행 예약 중개 플랫폼 "에어픽"(이하 "플랫폼")을 통하여 제공하는 통신판매중개 서비스의 이용조건 및 절차, 회사와 이용자의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.',
+        '본 약관은 에어픽 주차대행 비교센터(이하 "회사")가 운영하는 인천공항 주차대행 예약 중개 플랫폼 "에어픽"(이하 "플랫폼")을 통하여 제공하는 통신판매중개 서비스의 이용조건 및 절차, 회사와 이용자의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.',
       ],
     },
     {
@@ -167,7 +167,7 @@ export function buildParkingServiceTerms(providerName?: string) {
 export const PRIVACY_CONSENT = {
   title: '③ 개인정보 수집 및 이용 동의',
   checkbox: '개인정보 수집 및 이용에 동의합니다. (필수)',
-  controller: '곰컴퍼니(에어픽)',
+  controller: '에어픽 주차대행 비교센터(에어픽)',
   purposes: [
     '예약 접수',
     '예약 조회',

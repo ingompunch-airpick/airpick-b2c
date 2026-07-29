@@ -14,7 +14,7 @@ const dataPath = path.join(root, 'data/partners/pages.json');
 const outRoot = path.join(root, 'public/partners');
 
 const AIRPICK_DEFINITION =
-  '에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.';
+  '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.';
 
 function esc(s) {
   return String(s ?? '')
@@ -237,7 +237,7 @@ ${JSON.stringify(graph, null, 2)}
         <ul>
           <li>${esc(name)}${particle} 에어픽 <strong>입점</strong> 주차대행입니다. (비교 플랫폼의 입점사)</li>
           <li>확정 요금·가짜 별점을 이 페이지에 두지 않습니다. 실후기만 앱·상세에 노출됩니다.</li>
-          <li>운영사·정의: <a href="/facts/">사실 확인</a> · <a href="/about/">곰컴퍼니</a></li>
+          <li>운영사·정의: <a href="/facts/">사실 확인</a> · <a href="/about/">소개</a></li>
         </ul>
       </section>
 
