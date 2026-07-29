@@ -12,6 +12,7 @@ function hubHtmlRewrite() {
   const hubs: Record<string, string> = {
     '/parking': '/parking.html',
     '/esim': '/esim.html',
+    '/partner': '/partner.html',
   };
   const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
     const raw = req.url ?? '';
@@ -62,6 +63,7 @@ export default defineConfig({
           'index.html',
           'parking.html',
           'esim.html',
+          'partner.html',
         ],
         globIgnores: [
           '**/about/**',
@@ -102,6 +104,7 @@ export default defineConfig({
           /^\/badges(?:\/|$)/,
           /^\/parking(?:\/|$)/,
           /^\/esim(?:\/|$)/,
+          /^\/partner(?:\/|$)/,
           /^\/api(?:\/|$)/,
           /^\/naver[\w-]+\.html$/,
           /^\/google[\w-]+\.html$/,
@@ -178,6 +181,7 @@ export default defineConfig({
         main: path.resolve(rootDir, 'index.html'),
         parking: path.resolve(rootDir, 'parking.html'),
         esim: path.resolve(rootDir, 'esim.html'),
+        partner: path.resolve(rootDir, 'partner.html'),
       },
       output: {
         manualChunks(id) {
@@ -200,6 +204,11 @@ export default defineConfig({
     port: 5173,
     host: true,
     proxy: {
+      '/api/partner-application': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/partner-application/, '/submitPartnerApplication'),
+      },
       '/api/icn-shuttle': {
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,
