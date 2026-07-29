@@ -34,6 +34,7 @@ import {
   HOME_VALET_MODE_NOTE,
 } from '../../constants/marketing';
 import DateField from '../DateField';
+import FlightIdCombobox from './FlightIdCombobox';
 import type { AppTab, BookingSearch } from '../../types';
 import { cn } from '../../utils/cn';
 
@@ -340,13 +341,17 @@ export default function DepartureGuideCard({
         <div className="grid grid-cols-[1.35fr_1fr] gap-2">
           <label className="block">
             <span className="mb-1 block text-[11px] font-bold text-muted">항공편명</span>
-            <input
+            <FlightIdCombobox
               value={flightId}
-              onChange={(e) => setFlightId(normalizeFlightInput(e.target.value))}
+              onChange={(next) => {
+                setFlightId(next);
+                setFlight(null);
+                setAirportLive(null);
+                setError(null);
+              }}
+              dateYmd={departureYmd}
               placeholder={EXAMPLE_FLIGHT}
-              autoCapitalize="characters"
-              spellCheck={false}
-              className="w-full rounded-xl border border-sky-border bg-sky-bg px-3.5 py-2.5 text-base font-bold uppercase tracking-wide text-ink outline-none transition-colors hover:bg-sky-soft focus:border-brand focus:ring-2 focus:ring-brand/25 placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-muted"
+              disabled={loading || etaLoading}
             />
           </label>
           <DateField label="출발일" value={date} onChange={setDate} />

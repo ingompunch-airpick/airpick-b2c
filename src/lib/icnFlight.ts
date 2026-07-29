@@ -17,6 +17,49 @@ export interface IcnFlightResponse {
   message?: string;
 }
 
+export interface IcnFlightSearchItem {
+  flightId: string;
+  airline: string | null;
+  destination: string | null;
+  destinationCode: string | null;
+  scheduleTime: string | null;
+  estimatedTime: string | null;
+  remark: string | null;
+  terminal: 'T1' | 'T2' | null;
+  terminalLabel: string | null;
+  codeshare?: string | null;
+  masterFlightId?: string | null;
+}
+
+export interface IcnFlightSearchResponse {
+  date: string;
+  query: string;
+  mode: 'airline' | 'flight_id';
+  flights: IcnFlightSearchItem[];
+  truncated?: boolean;
+  error?: string;
+  message?: string;
+}
+
+export async function fetchIcnFlightSearch(
+  query: string,
+  date: string
+): Promise<
+  | { ok: true; data: IcnFlightSearchResponse }
+  | { ok: false; status: number; data: IcnFlightSearchResponse | null }
+> {
+  const q = query.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const qs = new URLSearchParams({ q, date: date.replace(/\D/g, '') });
+  try {
+    const res = await fetch(`/api/icn-flight-search?${qs.toString()}`);
+    const data = (await res.json().catch(() => null)) as IcnFlightSearchResponse | null;
+    if (!res.ok) return { ok: false, status: res.status, data };
+    return { ok: true, data: data! };
+  } catch {
+    return { ok: false, status: 0, data: null };
+  }
+}
+
 export async function fetchIcnFlight(
   flightId: string,
   date?: string

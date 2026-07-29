@@ -7,9 +7,10 @@ import { cancelReservation } from './api/cancelReservation';
 import { submitReview } from './api/submitReview';
 import { listAdminReviews, moderateReview } from './api/moderateReview';
 import { getIcnShuttle } from './api/icnShuttle';
-import { getIcnFlight } from './api/icnFlight';
+import { getIcnFlight, getIcnFlightSearch } from './api/icnFlight';
 import { getIcnAirportLive } from './api/icnAirportLive';
 import { getDriveEta } from './api/driveEta';
+import { submitPartnerApplication } from './api/submitPartnerApplication';
 
 admin.initializeApp();
 
@@ -27,6 +28,8 @@ export {
   moderateReview,
   getIcnShuttle,
   getIcnFlight,
+  getIcnFlightSearch,
   getIcnAirportLive,
   getDriveEta,
+  submitPartnerApplication,
 };
