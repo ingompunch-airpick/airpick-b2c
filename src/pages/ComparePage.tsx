@@ -38,8 +38,8 @@ function SortTabs({
   onChange: (mode: CompareSortMode) => void;
 }) {
   const tabs: { id: CompareSortMode; label: string }[] = [
-    { id: 'price', label: '가격순' },
     { id: 'rating', label: '평점순' },
+    { id: 'price', label: '가격순' },
   ];
 
   return (
@@ -139,7 +139,7 @@ export default function ComparePage({
   onBookOnAirpick: (company: Company, price: number) => void;
   fromLeaveBy?: { valetLeaveByHm: string } | null;
 }) {
-  const [sortMode, setSortMode] = useState<CompareSortMode>('price');
+  const [sortMode, setSortMode] = useState<CompareSortMode>('rating');
   const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
     {}
   );
@@ -286,7 +286,7 @@ export default function ComparePage({
             />
           )}
           <p className="px-1 text-center text-[11px] font-medium text-muted">
-            미입점 업체는 평점을 제공하지 않습니다. 가격 비교는 가격순 탭에서 확인하세요.
+            미입점 업체는 평점을 제공하지 않습니다. 가격만 보려면 가격순 탭을 선택하세요.
           </p>
         </>
       )}

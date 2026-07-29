@@ -1,5 +1,6 @@
 import { ChevronRight, ExternalLink, Star } from 'lucide-react';
 import { REVIEW_EMPTY_HINT } from '../constants/complianceCopy';
+import { PARKING_EXTERNAL_SECTION } from '../constants/marketing';
 import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { Company } from '../types';
 import { cn } from '../utils/cn';
@@ -107,23 +108,40 @@ export default function CompanyCard({
           )}
         </div>
         {partner && reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null ? (
-          <div className="mt-1 flex items-center gap-1 text-[11px] font-medium text-muted">
-            <Star size={12} className="fill-amber-400 text-amber-400" />
-            <span>{reviewSnapshot.averageRating.toFixed(1)}</span>
-            <span>·</span>
-            <span>후기 {reviewSnapshot.count}</span>
+          <div className="mt-2 flex items-end justify-between gap-3">
+            <div className="flex min-w-0 items-baseline gap-1.5">
+              <Star size={16} className="shrink-0 fill-amber-400 text-amber-400" />
+              <span className="text-lg font-bold tabular-nums text-ink">
+                {reviewSnapshot.averageRating.toFixed(1)}
+              </span>
+              <span className="text-[11px] font-medium text-muted">후기 {reviewSnapshot.count}</span>
+            </div>
+            <p className="shrink-0 text-lg font-bold tabular-nums text-brand">
+              {price.toLocaleString()}원
+            </p>
           </div>
         ) : partner ? (
-          <p className="mt-1 text-[11px] font-medium text-muted">{REVIEW_EMPTY_HINT}</p>
-        ) : null}
+          <div className="mt-2 flex items-end justify-between gap-3">
+            <p className="min-w-0 text-[11px] font-medium text-muted">{REVIEW_EMPTY_HINT}</p>
+            <p className="shrink-0 text-lg font-bold tabular-nums text-brand">
+              {price.toLocaleString()}원
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="mt-1 text-[11px] font-medium leading-snug text-muted">
+              {PARKING_EXTERNAL_SECTION.cardNote}
+            </p>
+            <p className="mt-2 text-lg font-bold text-brand tabular-nums">
+              {price.toLocaleString()}원
+            </p>
+          </>
+        )}
         {partner && (
           <div className="mt-2">
             <TrustBadges company={company} />
           </div>
         )}
-        <p className="mt-2 text-lg font-bold text-brand tabular-nums">
-          {price.toLocaleString()}원
-        </p>
         {premium && valetFee != null && (
           <p className="mt-0.5 text-[11px] font-bold text-brand">
             {valetFee > 0 ? `대면비 +${valetFee.toLocaleString()}원 포함` : '대면 무료'}

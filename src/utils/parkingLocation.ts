@@ -1,7 +1,6 @@
-import type { Company, Reservation, Terminal } from '../types';
+import type { Company, Reservation } from '../types';
 import { buildNaverMapCoordUrl } from './airportDistance';
 import { buildNaverMapSearchUrl } from './naverMap';
-import { resolveParkingDistanceEntry } from './parkingDistances';
 import { PARKING_LABEL_INDOOR, PARKING_LABEL_OUTDOOR } from './parkingType';
 
 export { buildNaverMapSearchUrl } from './naverMap';
@@ -28,36 +27,7 @@ export interface ParkingLocationDisplay {
   mapUrl?: string;
   lat?: number;
   lng?: number;
-  /** 예약 출발 터미널 기준 · 예: 약 3.2km · 약 8분 */
-  terminalDistanceLabel?: string;
   lotPhotos?: string[];
-}
-
-function normalizeTerminal(raw?: string): Terminal {
-  return raw?.toUpperCase().includes('T2') ? 'T2' : 'T1';
-}
-
-function formatBookedTerminalDistance(
-  company: Company | undefined,
-  terminal: Terminal,
-  isIndoor: boolean
-): string | undefined {
-  const entry = resolveParkingDistanceEntry(company ?? {}, terminal, isIndoor);
-  if (!entry || entry.distanceKm == null || Number.isNaN(entry.distanceKm) || entry.distanceKm < 0) {
-    return undefined;
-  }
-  const terminalLabel = terminal === 'T2' ? '2터미널' : '1터미널';
-  const km =
-    entry.distanceKm < 1
-      ? `${Math.round(entry.distanceKm * 1000)}m`
-      : entry.distanceKm >= 10
-        ? `${entry.distanceKm.toFixed(0)}km`
-        : `${entry.distanceKm.toFixed(1)}km`;
-  const minutes =
-    entry.driveMinutes != null && entry.driveMinutes > 0
-      ? ` · 약 ${entry.driveMinutes}분`
-      : '';
-  return `${terminalLabel}까지 약 ${km}${minutes}`;
 }
 
 export function getCompanyParkingLot(
@@ -129,12 +99,6 @@ export function resolveParkingLocationDisplay(
   company?: Company
 ): ParkingLocationDisplay | null {
   const lot = getCompanyParkingLot(company, reservation.isIndoor);
-  const terminal = normalizeTerminal(reservation.departureTerminal);
-  const terminalDistanceLabel = formatBookedTerminalDistance(
-    company,
-    terminal,
-    reservation.isIndoor
-  );
 
   const zoneCandidate =
     reservation.parkingSpace?.trim() ||
@@ -152,7 +116,6 @@ export function resolveParkingLocationDisplay(
       mapUrl,
       lat: lot.lat,
       lng: lot.lng,
-      terminalDistanceLabel,
       lotPhotos: lot.photos?.length ? lot.photos : undefined,
     };
   }
@@ -161,14 +124,6 @@ export function resolveParkingLocationDisplay(
     return {
       title: zone,
       mapUrl: reservation.parkingLocationUrl,
-      terminalDistanceLabel,
-    };
-  }
-
-  if (terminalDistanceLabel) {
-    return {
-      title: lot.label,
-      terminalDistanceLabel,
     };
   }
 

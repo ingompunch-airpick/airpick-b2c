@@ -40,7 +40,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{AIRPICK_DEFINITION}</p>
           <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
             입점 업체는 비교·예약 후 주차 위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점
-            업체는 가격 참고용으로 제공합니다.
+            업체는 가격 비교만 제공하며 보험·주차장 위치는 보증하지 않습니다.
           </p>
           <a
             href={COMPANY_LEGAL.siteUrl}

@@ -4,6 +4,8 @@ export interface CompanyInsurance {
   productName?: string;
   /** 표시·집계 시 {@link CANONICAL_INSURANCE_PRODUCT_NAME} 권장 (레거시: 발렛보험) */
   coverageLimitWon?: number;
+  /** 보험증권 이미지·PDF URL (손님 상세에서 확인) */
+  certificateUrl?: string;
   updatedAt?: string;
 }
 

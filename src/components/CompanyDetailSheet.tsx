@@ -1,6 +1,5 @@
 import { Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import TrustBadges from './TrustBadges';
 import InsuranceCoverageCard from './InsuranceCoverageCard';
 import {
   fetchCompanyReviewSnapshot,
@@ -166,6 +165,7 @@ export default function CompanyDetailSheet({
   const reviewAverage = reviewSnapshot?.averageRating;
   const insuranceLabel = displayInsuranceLabel(company);
   const showInsuranceCard = shouldShowInsuranceBadge(company) && !!insuranceLabel;
+  const certificateUrl = company.insurance?.certificateUrl?.trim() || undefined;
 
   return (
     <div className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center sm:p-4">
@@ -222,16 +222,6 @@ export default function CompanyDetailSheet({
             </p>
           </div>
 
-          <div className="mt-3">
-            <TrustBadges company={company} size="md" />
-          </div>
-
-          {showInsuranceCard && (
-            <div className="mt-4">
-              <InsuranceCoverageCard summary={insuranceLabel} />
-            </div>
-          )}
-
           <section className="mt-4 space-y-2 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">업체 정보</p>
             <InfoRow label="터미널" value={terminals} />
@@ -248,6 +238,12 @@ export default function CompanyDetailSheet({
             {outdoorAddress && <InfoRow label="야외" value={outdoorAddress} />}
             {parkingLotLine && <InfoRow label="주차장" value={parkingLotLine} />}
           </section>
+
+          {showInsuranceCard && (
+            <div className="mt-4">
+              <InsuranceCoverageCard summary={insuranceLabel!} certificateUrl={certificateUrl} />
+            </div>
+          )}
 
           <section className="mt-4">
             <p className="text-xs font-bold text-brand">최근 후기</p>

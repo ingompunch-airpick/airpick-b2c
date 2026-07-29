@@ -39,6 +39,8 @@ export interface InsuranceDisplay {
   summary?: string;
   /** 상품명 등 부가 설명 */
   detail?: string;
+  /** 보험증권 보기 URL */
+  certificateUrl?: string;
 }
 
 function parseInsuranceObject(raw: Record<string, unknown>): CompanyInsurance | undefined {
@@ -65,6 +67,11 @@ function parseInsuranceObject(raw: Record<string, unknown>): CompanyInsurance | 
       coverageLimitWon !== undefined && !Number.isNaN(coverageLimitWon)
         ? coverageLimitWon
         : undefined,
+    certificateUrl: (() => {
+      const url = raw.certificateUrl ?? raw.policyDocumentUrl ?? raw.certificateImageUrl;
+      const s = url ? String(url).trim() : '';
+      return s || undefined;
+    })(),
     updatedAt: raw.updatedAt ? String(raw.updatedAt) : undefined,
   };
 }
@@ -112,9 +119,6 @@ export function formatInsuranceSummary(insurance: CompanyInsurance): string | un
   if (insurance.provider) parts.push(insurance.provider);
   const productName = resolveDisplayProductName(insurance);
   if (productName) parts.push(productName);
-  if (insurance.coverageLimitWon) {
-    parts.push(`보장 ${formatCoverageLimitWon(insurance.coverageLimitWon)}`);
-  }
 
   if (parts.length) return parts.join(' · ');
   return '보험 가입';
@@ -146,6 +150,7 @@ export function resolveInsuranceDisplay(
     status: 'enrolled',
     summary,
     detail,
+    certificateUrl: insurance.certificateUrl,
   };
 }
 

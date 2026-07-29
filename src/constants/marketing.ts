@@ -37,7 +37,7 @@ export const PARKING_COMPARE_H1 = '인천공항 주차대행 비교';
 
 /** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
 export const PARKING_COMPARE_DESC =
-  '입점 = 예약·위치·사진·보험 · 미입점 = 참고 요금·업체 홈 이동';
+  '입점 = 예약·보험·주차 위치 확인 · 미입점 = 참고 요금만 (보험·위치 보증 없음)';
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 · 에어픽';
 
@@ -58,8 +58,10 @@ export const PARKING_PARTNER_SECTION = {
 } as const;
 
 export const PARKING_EXTERNAL_SECTION = {
-  title: '가격 비교 · 홈페이지 이동',
-  subtitleNote: '참고 요금 · 위치·보험·후기는 에어픽에서 제공하지 않음',
+  title: '미입점 · 가격 비교만',
+  subtitleNote: '참고 요금만 제공 · 보험·주차장 위치는 에어픽이 보증하지 않음',
+  /** 카드·섹션용 한 줄 */
+  cardNote: '가격 비교만 · 보험·주차장 위치는 보증하지 않습니다',
 } as const;
 
 /** 주차 비교 탭 하단 · 빈 결과 안내 등 내부 링크 */

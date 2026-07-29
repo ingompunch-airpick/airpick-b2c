@@ -260,11 +260,6 @@ export default function ReservationCard({
                     {parkingDisplay.detail && (
                       <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
                     )}
-                    {parkingDisplay.terminalDistanceLabel && (
-                      <p className="mt-1.5 text-sm font-bold text-brand">
-                        {parkingDisplay.terminalDistanceLabel}
-                      </p>
-                    )}
                   </div>
 
                   <ParkingMapPinPreview
@@ -304,6 +299,7 @@ export default function ReservationCard({
               <InsuranceCoverageCard
                 summary={insuranceDisplay.summary}
                 detail={insuranceDisplay.detail}
+                certificateUrl={insuranceDisplay.certificateUrl}
               />
             ) : (
               <TrustBlock icon={ShieldCheck} title="보험">
