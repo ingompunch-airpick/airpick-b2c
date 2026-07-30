@@ -34,10 +34,56 @@ function hubHtmlRewrite() {
   };
 }
 
+/**
+ * /guides · /about 등 SEO 정적 문서 → 각 경로의 index.html
+ * Vite SPA 폴백이 public HTML을 가로채지 않도록 (dev · preview)
+ */
+function seoDocumentRewrite() {
+  const prefixes = [
+    '/guides',
+    '/partners',
+    '/faq',
+    '/about',
+    '/privacy',
+    '/facts',
+    '/for-partners',
+    '/badges',
+  ] as const;
+
+  const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
+    const raw = req.url ?? '';
+    const qIdx = raw.indexOf('?');
+    const pathOnly = qIdx >= 0 ? raw.slice(0, qIdx) : raw;
+    const qs = qIdx >= 0 ? raw.slice(qIdx) : '';
+    let path = pathOnly || '/';
+    if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+
+    const matched = prefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+    if (!matched || path.endsWith('.html') || /\.[a-zA-Z0-9]+$/.test(path)) {
+      next();
+      return;
+    }
+
+    req.url = `${path}/index.html${qs}`;
+    next();
+  };
+
+  return {
+    name: 'seo-document-rewrite',
+    configureServer(server: { middlewares: { use: (fn: typeof rewrite) => void } }) {
+      server.middlewares.use(rewrite);
+    },
+    configurePreviewServer(server: { middlewares: { use: (fn: typeof rewrite) => void } }) {
+      server.middlewares.use(rewrite);
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    seoDocumentRewrite(),
     hubHtmlRewrite(),
     VitePWA({
       // 새 SW가 오면 바로 활성화 → 다음 로드부터 최신 셸

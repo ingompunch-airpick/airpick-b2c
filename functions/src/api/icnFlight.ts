@@ -147,7 +147,8 @@ export function buildFlightSearchResults(items: FlightItem[], query: string): Fl
       .trim()
       .toUpperCase();
     if (!id) continue;
-    if (q.length >= 3 && !id.startsWith(q)) continue;
+    // 2글자(IATA)·3글자 이상 모두 편명 prefix로 좁힘 (airline=KE 는 업스트림이 무시하는 경우 있음)
+    if (q.length >= 2 && !id.startsWith(q)) continue;
 
     const prev = byId.get(id);
     if (!prev || (isMasterFlight(item) && !isMasterFlight(prev))) {
@@ -331,8 +332,9 @@ export const getIcnFlight = onRequest(
 
 /**
  * GET /api/icn-flight-search?q=KE&date=20260719
- * - 2글자 영문(IATA): airline=KE
- * - 그 외 2글자 이상: flight_id prefix 검색
+ * - 2글자 이상: 항상 flight_id prefix 검색 (KE → KE101…)
+ * - mode=airline 은 2글자 IATA 입력임을 UI/로그용으로만 표기
+ *   (업스트림 airline= 는 IATA를 무시하고 전체 출발 목록을 주는 경우가 있음)
  */
 export const getIcnFlightSearch = onRequest(
   {
@@ -372,10 +374,7 @@ export const getIcnFlightSearch = onRequest(
     }
 
     try {
-      const upstream =
-        mode === 'airline'
-          ? await fetchDepartureList(key, date, { airline: query })
-          : await fetchDepartureList(key, date, { flightId: query });
+      const upstream = await fetchDepartureList(key, date, { flightId: query });
 
       const flights = buildFlightSearchResults(upstream.items, query).map(mapFlightSummary);
       const truncated = upstream.totalCount > flights.length || upstream.items.length >= SEARCH_ROW_LIMIT;

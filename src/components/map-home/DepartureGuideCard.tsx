@@ -462,21 +462,45 @@ export default function DepartureGuideCard({
             </p>
           </div>
 
-          <p className="mt-3 text-[11px] font-medium leading-relaxed text-muted">
-            {HOME_LEAVE_DISCLAIMER}
-          </p>
-
           {peakAdvisory ? (
-            <p className="mt-2 text-[11px] font-semibold leading-relaxed text-amber-800">
+            <p className="mt-3 text-[11px] font-semibold leading-relaxed text-amber-800">
               {HOME_PEAK_ADVISORY}
             </p>
           ) : null}
 
-          {showTrafficRefBadge ? (
-            <p className="mt-2 text-[10px] font-medium text-muted">
-              이동시간 · 실시간 교통 미반영, 참고용
-            </p>
-          ) : null}
+          <button
+            type="button"
+            onClick={() => {
+              const depYmd =
+                ymdToInputValue(flight.date) ||
+                ymdToInputValue(inputValueToYmd(date) || todaySeoulYmd()) ||
+                date;
+              const terminal =
+                flight.terminal === 'T2' || flight.terminal === 'T1'
+                  ? flight.terminal
+                  : 'T1';
+              onPrefillParkingSearch?.(
+                {
+                  departureDate: depYmd,
+                  arrivalDate: addDaysYmd(depYmd, 6),
+                  terminal,
+                  arrivalTerminal: terminal,
+                },
+                valetLeaveByHm ? { valetLeaveByHm } : undefined
+              );
+              onGoTab?.('compare');
+            }}
+            className="mt-4 block w-full rounded-xl bg-white px-4 py-3.5 text-left ring-1 ring-sky-border/80 shadow-[0_4px_14px_rgba(49,130,246,0.12)]"
+          >
+            <span className="block text-[13px] font-semibold leading-relaxed text-ink">
+              {valetLeaveByHm
+                ? HOME_TO_COMPARE_VALET_LEAVE(valetLeaveByHm)
+                : HOME_NEXT_PREP.parking.benefit}
+            </span>
+            <span className="mt-2 block text-[16px] font-bold text-brand">
+              {HOME_NEXT_PREP.parking.cta} →
+            </span>
+          </button>
 
           <details className="group mt-3 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-sky-border/60">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[12px] font-bold text-ink [&::-webkit-details-marker]:hidden">
@@ -488,139 +512,114 @@ export default function DepartureGuideCard({
                 aria-hidden
               />
             </summary>
-            <dl className="mt-2.5 space-y-1.5 border-t border-sky-border/50 pt-2.5 text-[12px]">
-              <div className="flex justify-between gap-3">
-                <dt className="font-medium text-muted">비행기 출발</dt>
-                <dd className="font-bold text-ink">{leavePlan.arrive.departureHm}</dd>
-              </div>
-              <div className="flex justify-between gap-3">
-                <dt className="font-medium text-muted">공항 도착 목표</dt>
-                <dd className="font-bold text-ink">{leavePlan.plan.arriveHm}</dd>
-              </div>
-              <div className="flex justify-between gap-3">
-                <dt className="font-medium text-muted">{leaveDriveLabel(parking)}</dt>
-                <dd className="font-bold text-ink">{leavePlan.plan.travelMinutes}분</dd>
-              </div>
+            <div className="mt-2.5 space-y-2.5 border-t border-sky-border/50 pt-2.5">
+              <dl className="space-y-1.5 text-[12px]">
+                <div className="flex justify-between gap-3">
+                  <dt className="font-medium text-muted">비행기 출발</dt>
+                  <dd className="font-bold text-ink">{leavePlan.arrive.departureHm}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="font-medium text-muted">공항 도착 목표</dt>
+                  <dd className="font-bold text-ink">{leavePlan.plan.arriveHm}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="font-medium text-muted">{leaveDriveLabel(parking)}</dt>
+                  <dd className="font-bold text-ink">{leavePlan.plan.travelMinutes}분</dd>
+                </div>
+                {parking === 'valet' ? (
+                  <div className="flex justify-between gap-3">
+                    <dt className="font-medium text-muted">{leaveAirportSegmentLabel(parking)}</dt>
+                    <dd className="font-bold text-ink">미포함</dd>
+                  </div>
+                ) : (
+                  <div className="flex justify-between gap-3">
+                    <dt className="font-medium text-muted">
+                      {leaveAirportSegmentLabel(parking)}
+                    </dt>
+                    <dd className="font-bold text-ink">{leavePlan.plan.airportMinutes}분</dd>
+                  </div>
+                )}
+                <div className="flex justify-between gap-3 border-t border-sky-border/50 pt-1.5">
+                  <dt className="font-medium text-muted">추천 출발</dt>
+                  <dd className="font-bold text-brand">{leavePlan.plan.leaveByHm}</dd>
+                </div>
+              </dl>
+              {flight.flightId ? (
+                <p className="text-[10px] font-medium text-muted">
+                  {flight.flightId}
+                  {flight.destination ? ` · ${flight.destination}행` : ''}
+                  {flight.terminal || flight.terminalLabel
+                    ? ` · ${flight.terminal || flight.terminalLabel}`
+                    : ''}
+                </p>
+              ) : null}
+              {showTrafficRefBadge ? (
+                <p className="text-[10px] font-medium text-muted">
+                  이동시간 · 실시간 교통 미반영, 참고용
+                </p>
+              ) : null}
               {parking === 'valet' ? (
-                <div className="flex justify-between gap-3">
-                  <dt className="font-medium text-muted">{leaveAirportSegmentLabel(parking)}</dt>
-                  <dd className="font-bold text-ink">미포함</dd>
-                </div>
-              ) : (
-                <div className="flex justify-between gap-3">
-                  <dt className="font-medium text-muted">
-                    {leaveAirportSegmentLabel(parking)}
-                  </dt>
-                  <dd className="font-bold text-ink">{leavePlan.plan.airportMinutes}분</dd>
-                </div>
-              )}
-              <div className="flex justify-between gap-3 border-t border-sky-border/50 pt-1.5">
-                <dt className="font-medium text-muted">추천 출발</dt>
-                <dd className="font-bold text-brand">{leavePlan.plan.leaveByHm}</dd>
-              </div>
-            </dl>
-            {flight.flightId ? (
-              <p className="mt-2 text-[10px] font-medium text-muted">
-                {flight.flightId}
-                {flight.destination ? ` · ${flight.destination}행` : ''}
-                {flight.terminal || flight.terminalLabel
-                  ? ` · ${flight.terminal || flight.terminalLabel}`
-                  : ''}
+                <p className="text-[11px] font-medium leading-relaxed text-muted">
+                  {HOME_VALET_MODE_NOTE}
+                </p>
+              ) : null}
+              <p className="text-[10px] font-medium leading-relaxed text-muted">
+                {HOME_LEAVE_DISCLAIMER}
               </p>
-            ) : null}
+            </div>
           </details>
 
           {airportLiveLoading ? (
             <p className="mt-3 text-[11px] font-medium text-muted">지금 공항 상황 불러오는 중…</p>
           ) : showAirportLiveRef && airportLive ? (
-            <div className="mt-3 rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/60">
-              <p className="text-[10px] font-bold tracking-wide text-brand">
-                지금 공항 참고 · 계산 미반영
-              </p>
-              <ul className="mt-2 space-y-2">
-                {parkingLiveSummary ? (
-                  <li className="flex items-center justify-between gap-3">
-                    <span className="text-[12px] font-semibold text-ink">
-                      {parking === 'short' ? '단기주차장' : '장기주차장'}
-                    </span>
-                    <CongestionLevelBadge level={parkingLiveSummary.level} />
-                  </li>
-                ) : null}
-                {airportLive.congestion.busiest ? (
-                  <li className="flex items-center justify-between gap-3">
-                    <span className="min-w-0 text-[12px] font-semibold leading-snug text-ink">
-                      출국장 {airportLive.congestion.busiest.gate}번
-                      {airportLive.congestion.busiest.side
-                        ? ` ${airportLive.congestion.busiest.side}`
-                        : ''}
-                      {airportLive.congestion.busiest.waitMinutes != null
-                        ? ` · 약 ${airportLive.congestion.busiest.waitMinutes}분`
-                        : ` · 약 ${airportLive.congestion.busiest.passengers}명`}
-                    </span>
-                    <CongestionLevelBadge level={airportLive.congestion.busiest.level} />
-                  </li>
-                ) : airportLive.congestion.note ? (
-                  <li className="text-[12px] font-medium leading-relaxed text-muted">
-                    {airportLive.congestion.note}
-                  </li>
-                ) : null}
-              </ul>
-              <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
-                {airportLive.disclaimer}
-              </p>
-            </div>
+            <details className="group mt-2 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-sky-border/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[12px] font-bold text-ink [&::-webkit-details-marker]:hidden">
+                <span>지금 공항 상황</span>
+                <ChevronDown
+                  size={16}
+                  strokeWidth={2.5}
+                  className="shrink-0 text-brand transition-transform group-open:rotate-180"
+                  aria-hidden
+                />
+              </summary>
+              <div className="mt-2.5 border-t border-sky-border/50 pt-2.5">
+                <p className="text-[10px] font-bold tracking-wide text-muted">
+                  참고용 · 계산에 반영되지 않음
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {parkingLiveSummary ? (
+                    <li className="flex items-center justify-between gap-3">
+                      <span className="text-[12px] font-semibold text-ink">
+                        {parking === 'short' ? '단기주차장' : '장기주차장'}
+                      </span>
+                      <CongestionLevelBadge level={parkingLiveSummary.level} />
+                    </li>
+                  ) : null}
+                  {airportLive.congestion.busiest ? (
+                    <li className="flex items-center justify-between gap-3">
+                      <span className="min-w-0 text-[12px] font-semibold leading-snug text-ink">
+                        출국장 {airportLive.congestion.busiest.gate}번
+                        {airportLive.congestion.busiest.side
+                          ? ` ${airportLive.congestion.busiest.side}`
+                          : ''}
+                        {airportLive.congestion.busiest.waitMinutes != null
+                          ? ` · 약 ${airportLive.congestion.busiest.waitMinutes}분`
+                          : ` · 약 ${airportLive.congestion.busiest.passengers}명`}
+                      </span>
+                      <CongestionLevelBadge level={airportLive.congestion.busiest.level} />
+                    </li>
+                  ) : airportLive.congestion.note ? (
+                    <li className="text-[12px] font-medium leading-relaxed text-muted">
+                      {airportLive.congestion.note}
+                    </li>
+                  ) : null}
+                </ul>
+                <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
+                  {airportLive.disclaimer}
+                </p>
+              </div>
+            </details>
           ) : null}
-
-          {parking === 'valet' ? (
-            <div className="mt-3 rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/60">
-              <p className="text-[12px] font-semibold leading-relaxed text-ink">
-                {HOME_VALET_MODE_NOTE}
-              </p>
-            </div>
-          ) : null}
-
-          <div className="mt-4 space-y-3">
-            <div>
-              <p className="text-[11px] font-bold text-brand">{HOME_NEXT_PREP.done}</p>
-              <p className="mt-1 text-[15px] font-bold leading-snug text-ink">
-                {HOME_NEXT_PREP.title}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                const depYmd =
-                  ymdToInputValue(flight.date) ||
-                  ymdToInputValue(inputValueToYmd(date) || todaySeoulYmd()) ||
-                  date;
-                const terminal =
-                  flight.terminal === 'T2' || flight.terminal === 'T1'
-                    ? flight.terminal
-                    : 'T1';
-                onPrefillParkingSearch?.(
-                  {
-                    departureDate: depYmd,
-                    arrivalDate: addDaysYmd(depYmd, 6),
-                    terminal,
-                    arrivalTerminal: terminal,
-                  },
-                  valetLeaveByHm ? { valetLeaveByHm } : undefined
-                );
-                onGoTab?.('compare');
-              }}
-              className="block w-full rounded-xl bg-brand px-4 py-3.5 text-left text-white shadow-[0_6px_16px_rgba(49,130,246,0.28)]"
-            >
-              <span className="block text-[13px] font-semibold leading-relaxed">
-                {valetLeaveByHm
-                  ? HOME_TO_COMPARE_VALET_LEAVE(valetLeaveByHm)
-                  : HOME_NEXT_PREP.parking.benefit}
-              </span>
-              <span className="mt-2 block text-[16px] font-bold">
-                {HOME_NEXT_PREP.parking.cta} →
-              </span>
-            </button>
-          </div>
         </div>
       ) : flight && leavePlan?.error ? (
         <p className="border-t border-sky-border/50 px-4 py-3 text-[11px] font-medium leading-relaxed text-amber-700">

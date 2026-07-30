@@ -67,9 +67,14 @@ export default function FlightIdCombobox({
           setSearchError(res.data?.message ?? '편명 검색에 실패했습니다.');
           return;
         }
-        setFlights(res.data.flights ?? []);
+        const matched = (res.data.flights ?? []).filter((f) =>
+          String(f.flightId ?? '')
+            .toUpperCase()
+            .startsWith(query)
+        );
+        setFlights(matched);
         setTruncated(!!res.data.truncated);
-        setActiveIndex(res.data.flights?.length ? 0 : -1);
+        setActiveIndex(matched.length ? 0 : -1);
       });
     }, DEBOUNCE_MS);
 
