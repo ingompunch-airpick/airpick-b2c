@@ -51,10 +51,15 @@ service cloud.firestore {
         'valetFeeT1',
         'valetFeeT2',
         // employees 는 upsertCompanyEmployees (Admin SDK) 만
+        'pickupLocation',
         'isOpen',
         'blockedDates',
         'cancelCutoffHours',
         'sameDayBookingBlocked',
+        'hourlyCapEnabled',
+        'maxCarsPerHour',
+        'parkingCapEnabled',
+        'maxParkedCars',
         'phone',
         'updatedAt'
       ]);
@@ -123,6 +128,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // ── customers (방문 횟수 — 전화 숫자 키) ───────────────────────────────
+
+    match /customers/{phoneKey} {
+      allow read: if isSignedIn();
+
+      // 생성·갱신은 Cloud Functions(Admin SDK)만 — 클라이언트 조작 방지
+      allow create, update, delete: if false;
+    }
+
     // ── companies ──────────────────────────────────────────────────────────
 
     match /companies/{companyId} {
@@ -160,6 +174,19 @@ service cloud.firestore {
     match /reviews/{reviewId} {
       allow read: if isSignedIn() && resource.data.status == 'published';
       allow create, update, delete: if false;
+    }
+
+    // ── FCM 디바이스 토큰 (파트너 앱 푸시) ───────────────────────────────
+    match /fcmTokens/{tokenId} {
+      allow read: if false;
+      allow create, update: if isSignedIn()
+        && request.resource.data.token is string
+        && request.resource.data.token.size() > 10
+        && request.resource.data.companyId is string
+        && request.resource.data.companyId.size() > 0
+        && request.resource.data.scopeCompanyIds is list
+        && request.resource.data.enabled is bool;
+      allow delete: if isSignedIn();
     }
   }
 }
