@@ -6,8 +6,22 @@
   "hosting": {
     "site": "airpick-b2c",
     "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "redirects": [
+      {
+        "source": "/compare",
+        "destination": "/parking",
+        "type": 301
+      },
+      {
+        "source": "/compare/",
+        "destination": "/parking",
+        "type": 301
+      },
       {
         "source": "/parking/",
         "destination": "/parking",
@@ -337,12 +351,5 @@
         "destination": "/index.html"
       }
     ]
-  },
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"]
-    }
-  ]
+  }
 }
