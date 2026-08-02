@@ -16,11 +16,22 @@
 
 **공통 백엔드:** Firebase 프로젝트 `airpick-reservation`
 
-### Firestore · Storage 규칙
+### 배포 주의 (이중 배포 금지)
 
-- `firestore.rules`는 **B2B(`airpick2-b-to-b`)와 동일**해야 합니다.
-- **rules 배포는 B2B에서만** 하세요. B2C에서 `firebase deploy --only firestore` 하면 잠금이 풀리거나 어긋날 수 있습니다.
-- 동기화: B2B `firestore.rules`를 이 repo로 복사한 뒤 커밋.
+같은 Firebase에 **Functions / Firestore rules / Storage rules**를 B2B·B2C 양쪽에서 올리면 서로 덮어씁니다.
+
+| | B2B (`airpick2-b-to-b`) | B2C (이 repo) |
+|--|------------------------|---------------|
+| Cloud Functions | **여기만** 통합·배포 | **배포 금지** |
+| Firestore · Storage rules | **여기만** 배포 | **배포 금지** |
+| 손님 웹·앱 | — | Hosting · Capacitor만 |
+
+- **이 repo에서 배포해도 되는 것:** `npm run deploy:hosting` (또는 preview 채널), Capacitor/스토어 빌드
+- **하지 말 것:** `firebase deploy --only functions` · `firestore:rules` · `storage`  
+  → B2B 함수·잠금이 날아갈 수 있음
+- `npm run deploy:functions` / `deploy:rules` / `deploy:storage` 는 막아 두었습니다 (실행 시 즉시 실패).
+
+Functions·rules 정본은 **B2B**. rules 파일을 이 repo에 둘 때는 B2B에서 복사·커밋만 하고, 배포는 B2B에서만 하세요.
 
 
 ```
@@ -58,7 +69,8 @@
 
 ### 이 repo에서 하지 않는 것
 
-- 기사 타임라인·입출고 버튼 → **B2B** (`airpick2-b-to-b`)
+- Cloud Functions · Firestore/Storage rules 배포 → **B2B** (`airpick2-b-to-b`)만
+- 기사 타임라인·입출고 버튼 → **B2B**
 - 제휴사 직원·요금 마스터 설정 → **B2B**
 - 와와 전용 홈페이지 UI → **wawavalet.com** (별도)
 
