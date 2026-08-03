@@ -1,6 +1,9 @@
 import { formatDateDisplay, todayYmd } from './dates';
 
-/** 입고일~출고일 사이 모든 날짜 (YYYY-MM-DD, 로컬 기준) */
+/**
+ * 입고일~출고일 사이 모든 날짜 (YYYY-MM-DD, 로컬 기준).
+ * 만차(parkingCap) 등 구간 계산용 — blockedDates 검사에는 쓰지 않음.
+ */
 export function datesInRange(startYmd: string, endYmd: string): string[] {
   const parse = (ymd: string) => {
     const [y, m, d] = ymd.split('-').map(Number);
@@ -32,9 +35,13 @@ export type BookingPolicyCheck =
   | { allowed: false; reason: 'same_day' }
   | { allowed: false; reason: 'blocked'; blockedDates: string[] };
 
+/**
+ * 예약 마감 정책 — B2B·Cloud Functions·홈과 동일.
+ * blockedDates는 **입고일(departureDate)만** 검사. 출고일·중간일은 허용.
+ */
 export function checkBookingPolicy(
   departureDate: string,
-  arrivalDate: string,
+  _arrivalDate: string,
   isOpen: boolean,
   blockedDates: string[],
   sameDayBookingBlocked = false
@@ -45,10 +52,9 @@ export function checkBookingPolicy(
     return { allowed: false, reason: 'same_day' };
   }
 
-  const span = datesInRange(departureDate, arrivalDate);
-  const blocked = span.filter((d) => blockedDates.includes(d));
-  if (blocked.length > 0) {
-    return { allowed: false, reason: 'blocked', blockedDates: blocked };
+  const dep = String(departureDate || '').trim().slice(0, 10);
+  if (dep && blockedDates.includes(dep)) {
+    return { allowed: false, reason: 'blocked', blockedDates: [dep] };
   }
 
   return { allowed: true };
@@ -57,7 +63,7 @@ export function checkBookingPolicy(
 export function bookingPolicyMessage(
   check: Exclude<BookingPolicyCheck, { allowed: true }>,
   departureDate: string,
-  arrivalDate: string
+  _arrivalDate: string
 ): string {
   if (check.reason === 'closed') {
     return '현재 이 업체는 전체 예약이 마감된 상태입니다.';
@@ -68,7 +74,5 @@ export function bookingPolicyMessage(
   }
 
   const dep = formatDateDisplay(departureDate);
-  const arr = formatDateDisplay(arrivalDate);
-  const days = check.blockedDates.map(formatDateDisplay).join(', ');
-  return `선택하신 기간(${dep} ~ ${arr})에 예약 마감된 날(${days})이 포함되어 있습니다.`;
+  return `선택하신 입고일(${dep})은 예약이 마감된 날짜입니다.`;
 }
