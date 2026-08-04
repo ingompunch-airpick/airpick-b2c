@@ -12,7 +12,7 @@ import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { companyPhotoUrl } from '../utils/imageUrl';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { resolveInsuranceDisplay } from '../utils/insurance';
-import { getStatusLabel, getStatusStep } from '../utils/trust';
+import { getStatusLabel, getStatusStep, formatCheckInStaffLine, formatCheckOutStaffLine } from '../utils/trust';
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import { getCancelEligibility } from '../utils/reservationCancel';
 import { isReservationReviewable } from '../lib/reviews';
@@ -176,6 +176,8 @@ export default function ReservationCard({
   onAutoOpenReviewHandled?: () => void;
 }) {
   const statusLabel = getStatusLabel(reservation.status);
+  const checkInStaffLine = formatCheckInStaffLine(reservation.checkedInBy);
+  const checkOutStaffLine = formatCheckOutStaffLine(reservation.checkedOutBy);
   const insuranceDisplay = resolveInsuranceDisplay(reservation, company);
   const trackingAccess = hasAirpickTrackingAccess(reservation);
 
@@ -248,6 +250,17 @@ export default function ReservationCard({
       </p>
 
       <StatusTimeline status={reservation.status} />
+
+      {(checkInStaffLine || checkOutStaffLine) && (
+        <div className="mt-2 space-y-0.5">
+          {checkInStaffLine ? (
+            <p className="text-[12px] font-semibold text-ink">{checkInStaffLine}</p>
+          ) : null}
+          {checkOutStaffLine ? (
+            <p className="text-[12px] font-semibold text-ink">{checkOutStaffLine}</p>
+          ) : null}
+        </div>
+      )}
 
       <div className="mt-4 space-y-2.5">
         {trackingAccess ? (

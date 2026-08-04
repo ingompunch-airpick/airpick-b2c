@@ -149,6 +149,12 @@ export interface Reservation {
   valetFee?: number;
   /** 출고 완료 예약에 대한 업체 후기 작성 여부 (lookup API) */
   hasReview?: boolean;
+  /** B2B 입고 완료 담당 (직원 이름 또는 「업체 담당」) */
+  checkedInBy?: string;
+  checkedInAt?: string;
+  /** B2B 출고 완료 담당 */
+  checkedOutBy?: string;
+  checkedOutAt?: string;
 }
 
 export type ReservationLookupMode = 'carNumber' | 'phone';

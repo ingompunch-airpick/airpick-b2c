@@ -94,6 +94,10 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     faceToFace: data.faceToFace === true,
     valetFee: typeof data.valetFee === 'number' ? data.valetFee : undefined,
     hasReview: data.hasReview === true,
+    checkedInBy: data.checkedInBy ? String(data.checkedInBy) : undefined,
+    checkedInAt: data.checkedInAt ? String(data.checkedInAt) : undefined,
+    checkedOutBy: data.checkedOutBy ? String(data.checkedOutBy) : undefined,
+    checkedOutAt: data.checkedOutAt ? String(data.checkedOutAt) : undefined,
   };
 }
 

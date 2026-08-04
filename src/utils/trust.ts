@@ -35,3 +35,16 @@ export function getStatusLabel(status: string): string {
   };
   return map[status] ?? '접수 완료';
 }
+
+/** 내 예약 · 입고/출고 담당 한 줄 (B2B checkedInBy / checkedOutBy) */
+export function formatCheckInStaffLine(checkedInBy?: string): string | null {
+  const name = checkedInBy?.trim();
+  if (!name) return null;
+  return `입고 완료 · 담당 ${name}`;
+}
+
+export function formatCheckOutStaffLine(checkedOutBy?: string): string | null {
+  const name = checkedOutBy?.trim();
+  if (!name) return null;
+  return `출고 완료 · 담당 ${name}`;
+}
