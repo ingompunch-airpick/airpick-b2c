@@ -202,12 +202,15 @@ export default function BookingModal({
       setCompletedId(id);
     } catch (err) {
       console.error(err);
+      const raw = err instanceof Error ? err.message : '';
       setError(
-        err instanceof Error && err.message !== 'Failed to fetch'
-          ? err.message.includes('Unsupported field value')
-            ? '예약 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.'
-            : err.message
-          : '예약 저장에 실패했습니다. Firebase 익명 로그인 설정을 확인해 주세요.'
+        raw.includes('Missing or insufficient permissions') || raw.includes('permission-denied')
+          ? '예약 저장 권한이 없습니다. 잠시 후 다시 시도해 주세요. 계속되면 고객센터로 문의해 주세요.'
+          : raw && raw !== 'Failed to fetch'
+            ? raw.includes('Unsupported field value')
+              ? '예약 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+              : raw
+            : '예약 저장에 실패했습니다. Firebase 익명 로그인 설정을 확인해 주세요.'
       );
     } finally {
       setLoading(false);

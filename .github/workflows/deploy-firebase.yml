@@ -2,6 +2,9 @@ name: Deploy B2C to Firebase Hosting
 
 # Live Hosting은 main 푸시·스케줄·수동 실행만.
 # 기능 브랜치에서 firebase deploy 하면 이후 main 스케줄이 덮어쓸 수 있음 → 배포 전에 main 머지.
+#
+# VITE_* 는 빌드 시 번들에 박힘. .env 는 gitignore 라 CI에 시크릿으로 넣어야 함.
+# 없으면 지도 키가 빈 채로 배포되어 「어제 보이던 지도」가 사라진다.
 
 on:
   push:
@@ -33,7 +36,10 @@ jobs:
         if: github.event_name != 'push' && hashFiles('data/esim/sheets.json') != ''
         run: npm run sync:esim
 
-      - run: npm run build
+      - name: Build
+        env:
+          VITE_NAVER_MAP_NCP_KEY_ID: ${{ secrets.VITE_NAVER_MAP_NCP_KEY_ID }}
+        run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

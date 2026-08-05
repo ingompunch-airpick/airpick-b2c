@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -79,8 +79,25 @@ function seoDocumentRewrite() {
   };
 }
 
+/** production 빌드에 지도 키가 빠지면 빈 번들로 배포되어 지도가 사라짐 */
+function requireNaverMapKey() {
+  return {
+    name: 'require-naver-map-key',
+    configResolved(config: { command: string; mode: string }) {
+      if (config.command !== 'build') return;
+      const key = String(loadEnv(config.mode, rootDir, '').VITE_NAVER_MAP_NCP_KEY_ID ?? '').trim();
+      if (!key) {
+        throw new Error(
+          'VITE_NAVER_MAP_NCP_KEY_ID is missing. Set it in .env (local) or GitHub Actions secret VITE_NAVER_MAP_NCP_KEY_ID (CI).'
+        );
+      }
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
+    requireNaverMapKey(),
     react(),
     tailwindcss(),
     seoDocumentRewrite(),
