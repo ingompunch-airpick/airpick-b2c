@@ -36,15 +36,23 @@ export function getStatusLabel(status: string): string {
   return map[status] ?? '접수 완료';
 }
 
-/** 내 예약 · 입고/출고 담당 한 줄 (B2B checkedInBy / checkedOutBy) */
-export function formatCheckInStaffLine(checkedInBy?: string): string | null {
-  const name = checkedInBy?.trim();
+/** 손님용 표시명 — 「홍길동 기사」 (마스터 폴백「업체 담당」은 그대로) */
+function formatStaffDisplayName(raw?: string): string | null {
+  const name = raw?.trim();
   if (!name) return null;
-  return `입고 완료 · 담당 ${name}`;
+  if (name === '업체 담당' || name.endsWith('기사')) return name;
+  return `${name} 기사`;
+}
+
+/** 내 예약 · 입고/출고 기사 한 줄 (B2B checkedInBy / checkedOutBy) */
+export function formatCheckInStaffLine(checkedInBy?: string): string | null {
+  const label = formatStaffDisplayName(checkedInBy);
+  if (!label) return null;
+  return `입고 : ${label}`;
 }
 
 export function formatCheckOutStaffLine(checkedOutBy?: string): string | null {
-  const name = checkedOutBy?.trim();
-  if (!name) return null;
-  return `출고 완료 · 담당 ${name}`;
+  const label = formatStaffDisplayName(checkedOutBy);
+  if (!label) return null;
+  return `출고 : ${label}`;
 }
