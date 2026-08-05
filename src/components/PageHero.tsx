@@ -3,14 +3,16 @@ export default function PageHero({
   line,
   desc,
 }: {
-  sub: string;
+  sub?: string;
   line: string;
   desc?: string;
 }) {
   return (
     <section className="px-1">
-      <p className="text-xs font-semibold text-muted">{sub}</p>
-      <h1 className="mt-1.5 text-[1.75rem] font-bold leading-[1.2] tracking-tight text-ink">
+      {sub ? <p className="text-xs font-semibold text-muted">{sub}</p> : null}
+      <h1
+        className={`${sub ? 'mt-1.5' : ''} text-[1.75rem] font-bold leading-[1.2] tracking-tight text-ink`}
+      >
         {line}
       </h1>
       {desc ? <p className="mt-2 text-sm font-medium text-muted">{desc}</p> : null}

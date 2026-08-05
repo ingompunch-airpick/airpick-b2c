@@ -18,10 +18,10 @@ import { getPriceBreakdown } from '../utils/pricing';
 import {
   companySupportsIndoor,
   companySupportsOutdoor,
-  companyValetFee,
   parkingTypeLabel,
 } from '../utils/parkingType';
-import { formatPhoneInput } from '../utils/contact';
+import { formatPhoneInput, isValidMobilePhone } from '../utils/contact';
+import { isLikelyCarNumber } from '../utils/carNumber';
 import { saveRecentReservation } from '../utils/recentReservation';
 import { formatTerminalSummary } from '../utils/terminalLabels';
 
@@ -77,10 +77,9 @@ export default function BookingModal({
   /** 출국·귀국 중 한쪽이라도 T2면 T2 할증 1회 부과 */
   const isT2 = search.terminal === 'T2' || arrivalTerminal === 'T2';
 
-  /** 입점 예약 모달 — 손님이 대면 선택 + 업체가 해당 터미널 발렛 제공 시 발렛비 포함 */
-  const valetFeeRaw = companyValetFee(company, search.terminal);
-  const faceToFaceApplied = search.faceToFace === true && valetFeeRaw !== null;
-  const valetFee = faceToFaceApplied ? valetFeeRaw ?? 0 : 0;
+  /** 대면 입고 UI 임시 비활성 — 검색 토글·카드 뱃지 제거됨 */
+  const faceToFaceApplied = false;
+  const valetFee = 0;
 
   const breakdown = useMemo(
     () =>
@@ -100,15 +99,18 @@ export default function BookingModal({
 
   const today = todayYmd();
 
+  const phoneValid = isValidMobilePhone(form.phone);
+  const carNumberValid = isLikelyCarNumber(form.carNumber);
+
   const canSubmit =
     agreedPlatformTerms &&
     agreedServiceTerms &&
     agreedPrivacy &&
     agreedThirdParty &&
     form.userName.trim() &&
-    form.phone.trim() &&
+    phoneValid &&
     form.carModel.trim() &&
-    form.carNumber.trim() &&
+    carNumberValid &&
     form.departureAirline.trim() &&
     form.departureFlight.trim() &&
     form.arrivalAirline.trim() &&
@@ -427,8 +429,6 @@ export default function BookingModal({
             )}
           </section>
 
-          <PriceBreakdownCard breakdown={breakdown} />
-
           <section className="space-y-3 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/70">
             <p className="text-xs font-bold text-brand">예약자 · 차량 · 항공</p>
             <div className="grid grid-cols-2 gap-2">
@@ -451,6 +451,11 @@ export default function BookingModal({
                   placeholder="010-1234-5678"
                   className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
                 />
+                {form.phone.trim() && !phoneValid ? (
+                  <span className="mt-1 block text-[10px] font-semibold text-rose-500">
+                    휴대전화 번호를 확인해 주세요.
+                  </span>
+                ) : null}
               </label>
               <label className="block">
                 <span className="mb-1 block text-xs font-bold text-muted">차량 모델 *</span>
@@ -469,6 +474,11 @@ export default function BookingModal({
                   placeholder="12가 3456"
                   className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
                 />
+                {form.carNumber.trim() && !carNumberValid ? (
+                  <span className="mt-1 block text-[10px] font-semibold text-rose-500">
+                    차량번호를 확인해 주세요. 예: 12가3456
+                  </span>
+                ) : null}
               </label>
             </div>
 
@@ -551,6 +561,8 @@ export default function BookingModal({
             </div>
           </section>
 
+          <PriceBreakdownCard breakdown={breakdown} />
+
           <BookingConsent
             agreedPlatformTerms={agreedPlatformTerms}
             agreedServiceTerms={agreedServiceTerms}
@@ -570,10 +582,12 @@ export default function BookingModal({
             disabled={loading || !canSubmit}
             className="w-full rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-60"
           >
-            {loading ? '접수 중…' : '예약 접수하기'}
+            {loading
+              ? '접수 중…'
+              : `${breakdown.total.toLocaleString()}원 · 예약 접수하기`}
           </button>
           <p className="text-center text-[10px] text-muted-light">
-            접수 후 B2B 기사 앱 입고예정에 표시됩니다 · 현장 결제
+            접수 후 업체 기사에게 바로 전달됩니다 · 현장 결제
           </p>
         </form>
       </div>

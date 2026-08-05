@@ -23,12 +23,15 @@ function formatFlightOption(f: IcnFlightSearchItem): string {
 export default function FlightIdCombobox({
   value,
   onChange,
+  onSelectFlight,
   dateYmd,
   placeholder,
   disabled,
 }: {
   value: string;
   onChange: (next: string) => void;
+  /** 목록에서 고르면 편명·시각·터미널이 함께 옴 (계산 시 재조회 생략용) */
+  onSelectFlight?: (flight: IcnFlightSearchItem) => void;
   dateYmd: string;
   placeholder?: string;
   disabled?: boolean;
@@ -92,8 +95,9 @@ export default function FlightIdCombobox({
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
-  const selectFlight = (flightId: string) => {
-    onChange(flightId);
+  const selectFlight = (flight: IcnFlightSearchItem) => {
+    onChange(flight.flightId);
+    onSelectFlight?.(flight);
     setOpen(false);
     setActiveIndex(-1);
   };
@@ -120,7 +124,7 @@ export default function FlightIdCombobox({
             setActiveIndex((i) => Math.max(i - 1, 0));
           } else if (e.key === 'Enter' && activeIndex >= 0) {
             e.preventDefault();
-            selectFlight(flights[activeIndex]!.flightId);
+            selectFlight(flights[activeIndex]!);
           } else if (e.key === 'Escape') {
             setOpen(false);
           }
@@ -156,7 +160,7 @@ export default function FlightIdCombobox({
                 <button
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => selectFlight(f.flightId)}
+                  onClick={() => selectFlight(f)}
                   className={cn(
                     'flex w-full flex-col items-start px-3 py-2 text-left transition',
                     idx === activeIndex ? 'bg-sky-soft' : 'hover:bg-sky-soft/70'

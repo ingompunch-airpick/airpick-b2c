@@ -6,20 +6,23 @@ import {
   reservationPasswordMatches,
   sanitizeReservation,
 } from '../reservations/publicReservation';
-import { carNumberLookupNeedles } from '../utils/carNumber';
+import {
+  carNumberLookupNeedles,
+  carNumberTail,
+  isCarNumberSuffixQuery,
+  normalizeCarNumber,
+} from '../utils/carNumber';
 import { normalizeKoreanPhone } from '../utils/phone';
 
 type LookupMode = 'carNumber' | 'phone';
 
-function lookupNeedles(mode: LookupMode, value: string): string[] {
-  if (mode === 'carNumber') return carNumberLookupNeedles(value);
+function phoneLookupNeedles(value: string): string[] {
   const trimmed = value.trim();
   const digits = trimmed.replace(/\D/g, '');
   const needles = [trimmed, digits];
   const intl = normalizeKoreanPhone(trimmed);
   if (intl) {
     needles.push(intl);
-    // 저장 형태가 010-... / 010... 인 경우도 커버
     if (intl.startsWith('82')) needles.push(`0${intl.slice(2)}`);
   }
   return [...new Set(needles.filter(Boolean))];
@@ -27,6 +30,7 @@ function lookupNeedles(mode: LookupMode, value: string): string[] {
 
 /**
  * 예약 조회 — 서버에서 비밀번호를 검증하고 민감 필드를 제거한 뒤 반환.
+ * 차량번호: 전체 일치 또는 끝 숫자 4자리(carNumberTail) 일치.
  * 비밀번호가 틀리면 존재 여부를 숨기기 위해 빈 배열(200)을 돌려준다.
  */
 export const lookupReservation = onRequest(
@@ -55,31 +59,51 @@ export const lookupReservation = onRequest(
       return;
     }
 
-    const field = mode === 'carNumber' ? 'carNumber' : 'phone';
-
     try {
+      const db = admin.firestore();
       const seen = new Map<string, Record<string, unknown>>();
-      for (const needle of lookupNeedles(mode, value)) {
-        const snap = await admin
-          .firestore()
-          .collection('reservations')
-          .where(field, '==', needle)
-          .get();
+
+      const addSnap = async (field: string, needle: string) => {
+        const snap = await db.collection('reservations').where(field, '==', needle).get();
         for (const doc of snap.docs) {
           if (!seen.has(doc.id)) {
             seen.set(doc.id, doc.data() as Record<string, unknown>);
           }
         }
+      };
+
+      if (mode === 'phone') {
+        for (const needle of phoneLookupNeedles(value)) {
+          await addSnap('phone', needle);
+        }
+      } else if (isCarNumberSuffixQuery(value)) {
+        const tail = carNumberTail(value)!;
+        await addSnap('carNumberTail', tail);
+        // 예전 문서에 tail 없을 수 있음 — 전체 번호로 우연히 4자리만 저장된 경우도 커버
+        await addSnap('carNumber', normalizeCarNumber(value));
+      } else {
+        for (const needle of carNumberLookupNeedles(value)) {
+          await addSnap('carNumber', needle);
+        }
+        const tail = carNumberTail(value);
+        if (tail) await addSnap('carNumberTail', tail);
       }
 
       const matched = [...seen.entries()].filter(([, data]) =>
         reservationPasswordMatches(data.reservationPassword, password)
       );
 
-      const db = admin.firestore();
       const reservations = await Promise.all(
         matched.map(async ([id, data]) => {
           const reviewSnap = await db.doc(`reviews/${id}`).get();
+          // 조회 성공 시 예전 예약에 carNumberTail 보강 (다음 끝4자리 조회용)
+          const stored = String(data.carNumber ?? '');
+          const nextTail = carNumberTail(stored);
+          if (nextTail && data.carNumberTail !== nextTail) {
+            void db.doc(`reservations/${id}`).update({ carNumberTail: nextTail }).catch(() => {
+              /* ignore */
+            });
+          }
           return {
             id,
             data: {

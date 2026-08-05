@@ -71,22 +71,14 @@ export default function App() {
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
 
-  const [leaveByBridge, setLeaveByBridge] = useState<{
-    valetLeaveByHm: string;
-  } | null>(null);
-
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
     syncUrlToTab(next, mode);
     window.scrollTo(0, 0);
   };
 
-  const prefillFromLeaveBy = (
-    patch: Partial<BookingSearch>,
-    meta?: { valetLeaveByHm: string }
-  ) => {
+  const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
     setSearch((prev) => ({ ...prev, ...patch }));
-    setLeaveByBridge(meta?.valetLeaveByHm ? { valetLeaveByHm: meta.valetLeaveByHm } : null);
   };
 
   useEffect(() => {
@@ -163,12 +155,8 @@ export default function App() {
       return (
         <ComparePage
           search={search}
-          onSearchChange={(next) => {
-            setLeaveByBridge(null);
-            setSearch(next);
-          }}
+          onSearchChange={(next) => setSearch(next)}
           companies={companies}
-          fromLeaveBy={leaveByBridge}
           onBookOnAirpick={(company, price) => setPartnerDetail({ company, price })}
         />
       );
@@ -206,7 +194,7 @@ export default function App() {
         }}
       />
     );
-  }, [tab, search, companies, lastReservationId, reviewReservationId, leaveByBridge]);
+  }, [tab, search, companies, lastReservationId, reviewReservationId]);
 
   const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
 

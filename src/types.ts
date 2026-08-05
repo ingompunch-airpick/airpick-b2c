@@ -9,6 +9,19 @@ export interface CompanyInsurance {
   updatedAt?: string;
 }
 
+/** B2B 업체 주차장 (실내·야외 다수) */
+export interface CompanyParkingLot {
+  id: string;
+  type: 'indoor' | 'outdoor';
+  /** 표시 이름 — 예: 실내1, 야외2 */
+  name: string;
+  parkingAddress: string;
+  lat?: number;
+  lng?: number;
+  mapUrl?: string;
+  photos?: string[];
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -80,6 +93,8 @@ export interface Company {
   /** 손님 MY · 주차장 시설 사진 (B2B 등록) */
   indoorParkingPhotos?: string[];
   outdoorParkingPhotos?: string[];
+  /** B2B parkingLots[] — 실내·야외 여러 곳 */
+  parkingLots?: CompanyParkingLot[];
   /** true(기본): 에어픽 앱에서 바로 예약 · false: 홈페이지 링크만 */
   isAirpickPartner?: boolean;
   /** 미입점 업체 예약 페이지 */
@@ -199,6 +214,8 @@ export interface CompanyReview {
   companyId: string;
   rating: number;
   body?: string;
+  /** 후기 사진 URL (선택) */
+  photoUrls?: string[];
   authorMask: string;
   /** 끝 2자리 마스킹 차량번호 — 없으면 미표시 */
   carMask?: string;

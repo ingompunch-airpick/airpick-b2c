@@ -54,7 +54,7 @@ export const ESIM_COMPARE_SUB = '국가별 최저가 참고 비교';
 export const PARKING_PARTNER_SECTION = {
   title: '에어픽 입점 · 바로 예약',
   titleRating: '에어픽 입점 · 평점순',
-  subtitleNote: '보험·주차 위치 확인 · 후기 · 예약 추적',
+  subtitleNote: '예약 후 입고 사진·주차 위치·보험을 예약 탭에서 확인',
 } as const;
 
 export const PARKING_EXTERNAL_SECTION = {
@@ -97,12 +97,50 @@ export const HOME_CALCULATE_CTA = '출발 시각 계산하기';
 export const HOME_CALCULATING = '계산 중…';
 
 export const HOME_RESULT_EYEBROW = '추천 출발 시각';
+export const HOME_RESULT_EYEBROW_MODE = (modeLabel: string) =>
+  `${HOME_RESULT_EYEBROW} · ${modeLabel} 기준`;
+
+/** 큰 숫자 아래 · 비행기·공항도착·이동 한 줄 */
+export const HOME_RESULT_SUMMARY_LINE = (args: {
+  flightHm: string;
+  arriveHm: string;
+  travelMinutes: number;
+}) =>
+  `비행기 ${args.flightHm} · 공항 ${args.arriveHm} 도착(3시간 전) · 이동 약 ${args.travelMinutes}분`;
 
 export const HOME_LEAVE_DISCLAIMER =
   '비행기 출발 3시간 전 공항 도착을 기준으로 계산합니다. 체크인·보안검색·출국심사 시간은 해당 3시간에 포함되어 있습니다. 공항 혼잡도 및 항공사 상황에 따라 실제 소요시간은 달라질 수 있습니다.';
 
 export const HOME_PEAK_ADVISORY =
   '현재 출국객이 많은 기간입니다. 평소보다 15~20분 정도 더 여유 있게 출발하는 것을 권장합니다.';
+
+/** 결과 상단 · 성수기 요약 (전문은 계산 상세에) */
+export const HOME_PEAK_ADVISORY_CHIP = '성수기 · 15~20분 더 여유 권장';
+
+/** 장기주차장 혼잡·매우혼잡일 때만 */
+export const HOME_LONG_PARKING_BUSY_HINT = '자리 찾기·셔틀 대기가 길어질 수 있어요.';
+
+/** 결과 본문 · 출국장 대기(참고, 계산 미반영) */
+export const HOME_DEPARTURE_HALL_REF_HINT =
+  '참고 · 내 체크인·탑승구와 다를 수 있어요. 출발 시각 계산에는 넣지 않았습니다.';
+
+export const HOME_CHECKIN_COUNTER_LABEL = (counter: string) => `체크인 카운터 ${counter}`;
+
+export function formatDepartureHallLiveLine(hall: {
+  gate: string;
+  side: string | null;
+  waitMinutes?: number | null;
+  passengers?: number;
+}): string {
+  const place = `출국장 ${hall.gate}번${hall.side ? ` ${hall.side}` : ''}`;
+  const wait =
+    hall.waitMinutes != null
+      ? `약 ${hall.waitMinutes}분`
+      : hall.passengers != null
+        ? `약 ${hall.passengers}명`
+        : null;
+  return wait ? `지금 출국장 대기 · ${place} · ${wait}` : `지금 출국장 대기 · ${place}`;
+}
 
 /** 계산 완료 후 · 다음 준비 섹션 */
 export const HOME_NEXT_PREP = {
@@ -135,7 +173,17 @@ export const HOME_NEXT_PREP = {
 /** 비교 탭 · 계산기에서 넘어온 일정 배지 */
 /** 계산 → 주차대행 비교 브릿지 */
 export const HOME_TO_COMPARE_BADGE = '출발 시각 계산 일정 기준';
-export const HOME_TO_COMPARE_VALET_LEAVE = (hm: string) => `주차대행 기준 추천 집 출발 ${hm}`;
+/** @deprecated 비교형 카피(HOME_TO_COMPARE_*)로 대체 */
+export const HOME_TO_COMPARE_VALET_LEAVE = (hm: string) =>
+  `주차대행이면 ${hm}에 출발해도 여유 있어요`;
+export const HOME_TO_COMPARE_LONG_LINE = (hm: string) =>
+  `장기주차장이면 ${hm}에 출발해야 돼요`;
+export const HOME_TO_COMPARE_VALET_HEAD = '주차대행 이용 시';
+export const HOME_TO_COMPARE_VALET_TIME = (hm: string) => `${hm} 출발 가능`;
+export const HOME_TO_COMPARE_SAVED = (minutes: number) =>
+  `${minutes}분 더 여유롭게 출발`;
+export const HOME_TO_COMPARE_LONG_CONGESTION = (level: string) =>
+  `지금 장기주차장 · ${level}`;
 export const HOME_TO_COMPARE_TIME_HINT = '입고·출고 시간은 아래에서 직접 선택해 주세요.';
 
 /** @deprecated HOME_NEXT_PREP.parking 사용 */

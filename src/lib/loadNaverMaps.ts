@@ -41,8 +41,12 @@ export function loadNaverMaps(): Promise<typeof naver.maps> {
     script.async = true;
     script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${encodeURIComponent(key)}`;
     script.onload = () => {
-      if (window.naver?.maps) resolve(window.naver.maps);
-      else reject(new Error('naver_maps_unavailable'));
+      if (window.naver?.maps) {
+        resolve(window.naver.maps);
+        return;
+      }
+      loadPromise = null;
+      reject(new Error('naver_maps_unavailable'));
     };
     script.onerror = () => {
       loadPromise = null;

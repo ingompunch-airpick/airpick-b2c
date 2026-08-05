@@ -4,7 +4,7 @@ import type { ReservationLookupMode } from '../types';
 import { cn } from '../utils/cn';
 
 const modes: { id: ReservationLookupMode; label: string; placeholder: string }[] = [
-  { id: 'carNumber', label: '차량번호', placeholder: '12가 3456' },
+  { id: 'carNumber', label: '차량번호', placeholder: '예: 12가 1234' },
   { id: 'phone', label: '연락처', placeholder: '010-1234-5678' },
 ];
 

@@ -6,6 +6,11 @@ import { buildNaverMapSearchUrl } from '../utils/naverMap';
 
 const DEFAULT_ZOOM = 16;
 
+/** 네이버 JS 지도 실패 시에도 위치가 보이게 — OSM 정적 지도 */
+function staticMapUrl(lat: number, lng: number): string {
+  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=${DEFAULT_ZOOM}&size=640x360&maptype=mapnik&markers=${lat},${lng},red-pushpin`;
+}
+
 export default function ParkingMapPinPreview({
   address,
   mapUrl,
@@ -38,6 +43,7 @@ export default function ParkingMapPinPreview({
 
     let cancelled = false;
     let ro: ResizeObserver | null = null;
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
     setStatus('loading');
 
     void loadNaverMaps()
@@ -67,9 +73,18 @@ export default function ParkingMapPinPreview({
         });
         setStatus('ready');
 
-        ro = new ResizeObserver(() => {
-          map.autoResize();
-        });
+        const bump = () => {
+          try {
+            map.autoResize();
+            map.setCenter(center);
+          } catch {
+            /* ignore */
+          }
+        };
+        resizeTimer = setTimeout(bump, 80);
+        requestAnimationFrame(bump);
+
+        ro = new ResizeObserver(bump);
         ro.observe(containerRef.current);
       })
       .catch(() => {
@@ -78,6 +93,7 @@ export default function ParkingMapPinPreview({
 
     return () => {
       cancelled = true;
+      if (resizeTimer) clearTimeout(resizeTimer);
       ro?.disconnect();
       markerRef.current?.setMap(null);
       markerRef.current = null;
@@ -92,11 +108,29 @@ export default function ParkingMapPinPreview({
     <div className="space-y-2">
       {hasPin ? (
         <div className="overflow-hidden rounded-xl ring-1 ring-sky-border/70">
-          <div
-            ref={containerRef}
-            className="h-52 w-full bg-sky-soft sm:h-56"
-            aria-label="주차장 위치 지도"
-          />
+          {status === 'error' ? (
+            <a
+              href={href || buildNaverMapCoordUrl(lat, lng)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+              aria-label="주차장 위치 지도 보기"
+            >
+              <img
+                src={staticMapUrl(lat, lng)}
+                alt=""
+                className="h-52 w-full object-cover sm:h-56"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          ) : (
+            <div
+              ref={containerRef}
+              className="h-52 w-full bg-sky-soft sm:h-56"
+              aria-label="주차장 위치 지도"
+            />
+          )}
           {status === 'loading' ? (
             <p className="border-t border-sky-border/50 px-3 py-2 text-[11px] font-medium text-muted">
               지도 불러오는 중…
@@ -104,7 +138,7 @@ export default function ParkingMapPinPreview({
           ) : null}
           {status === 'error' ? (
             <p className="border-t border-sky-border/50 px-3 py-2 text-[11px] font-medium text-muted">
-              앱 안 지도를 불러오지 못했습니다. 아래 링크로 확인해 주세요.
+              지도를 탭하면 네이버 지도에서 확인할 수 있어요.
             </p>
           ) : null}
         </div>

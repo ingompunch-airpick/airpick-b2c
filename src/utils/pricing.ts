@@ -187,13 +187,17 @@ export function getPriceBreakdown(
     }
     total += valetFee;
 
+    /** 기본 구간과 초과분을 나눠야 명세 합이 합계와 맞는다 */
+    const gayuBaseDays = terminal === '2T' ? 4 : 3;
+    const gayuBaseAmount = terminal === '2T' ? 50000 : 40000;
+
     return {
       days,
       isIndoor: false,
-      basePrice: baseTotal,
-      baseDays: terminal === '2T' ? 4 : 3,
-      extraDays: Math.max(0, days - (terminal === '2T' ? 4 : 3)),
-      extraAmount: Math.max(0, baseTotal - (terminal === '2T' ? 50000 : 40000)),
+      basePrice: Math.min(baseTotal, gayuBaseAmount),
+      baseDays: gayuBaseDays,
+      extraDays: Math.max(0, days - gayuBaseDays),
+      extraAmount: Math.max(0, baseTotal - gayuBaseAmount),
       nightSurcharge,
       nightDetails,
       t2Surcharge: 0,

@@ -2,17 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import CompanyCard from '../components/CompanyCard';
 import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
-import { PRICE_DISCLAIMER, REVIEW_POLICY_LINE } from '../constants/complianceCopy';
+import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
 import {
-  HOME_TO_COMPARE_BADGE,
-  HOME_TO_COMPARE_TIME_HINT,
-  HOME_TO_COMPARE_VALET_LEAVE,
-  PARKING_COMPARE_DESC,
-  PARKING_COMPARE_GUIDE_LINKS,
   PARKING_COMPARE_H1,
   PARKING_EXTERNAL_SECTION,
   PARKING_PARTNER_SECTION,
-  PARKING_PLATFORM_SUB,
 } from '../constants/marketing';
 import { mergeParkingCompareCompanies, openExternalBooking } from '../lib/parkingCompare';
 import {
@@ -24,7 +18,6 @@ import {
   buildParkingCompareSections,
   buildPartnerRatingList,
   isAirpickPartner,
-  sectionHasFaceToFace,
   type PricedCompany,
 } from '../utils/compareSort';
 import { companyValetFee } from '../utils/parkingType';
@@ -68,7 +61,6 @@ function CompareSection({
   onSelect,
   terminal,
   reviewSnapshots,
-  faceToFaceMode = false,
 }: {
   title: string;
   subtitle: string;
@@ -76,7 +68,6 @@ function CompareSection({
   onSelect: (company: Company, price: number) => void;
   terminal?: BookingSearch['terminal'];
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
-  faceToFaceMode?: boolean;
 }) {
   if (items.length === 0) return null;
 
@@ -96,32 +87,9 @@ function CompareSection({
             onSelect={() => onSelect(company, price)}
             reviewSnapshot={reviewSnapshots[company.id]}
             valetFee={terminal ? companyValetFee(company, terminal) : null}
-            faceToFaceMode={faceToFaceMode}
           />
         ))}
       </div>
-    </section>
-  );
-}
-
-function CompareGuideLinks() {
-  return (
-    <section className="rounded-2xl bg-sky-soft px-4 py-5 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-      <p className="text-xs font-bold text-brand">고르기 전에 · 가이드</p>
-      <ul className="mt-2 space-y-1.5 text-xs font-semibold text-brand">
-        {PARKING_COMPARE_GUIDE_LINKS.map(({ href, label }) => (
-          <li key={href}>
-            <a href={href} className="underline-offset-2 hover:underline">
-              {label}
-            </a>
-          </li>
-        ))}
-        <li>
-          <a href="/partners/" className="underline-offset-2 hover:underline">
-            입점 업체 목록
-          </a>
-        </li>
-      </ul>
     </section>
   );
 }
@@ -131,25 +99,20 @@ export default function ComparePage({
   onSearchChange,
   companies,
   onBookOnAirpick,
-  fromLeaveBy = null,
 }: {
   search: BookingSearch;
   onSearchChange: (s: BookingSearch) => void;
   companies: Company[];
   onBookOnAirpick: (company: Company, price: number) => void;
-  fromLeaveBy?: { valetLeaveByHm: string } | null;
 }) {
   const [sortMode, setSortMode] = useState<CompareSortMode>('rating');
   const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
     {}
   );
-  const [reviewsReady, setReviewsReady] = useState(false);
   const merged = mergeParkingCompareCompanies(companies);
-  const { partners, externals } = buildParkingCompareSections(merged, search);
+  const compareSearch = useMemo(() => ({ ...search, faceToFace: false as const }), [search]);
+  const { partners, externals } = buildParkingCompareSections(merged, compareSearch);
   const totalCount = partners.length + externals.length;
-
-  /** 대면 UI는 입점 섹션에만 적용 (대면 가능 입점이 있을 때) */
-  const partnerFaceToFace = !!search.faceToFace && sectionHasFaceToFace(partners, search.terminal);
 
   const partnerIds = useMemo(
     () => [...new Set(partners.map(({ company }) => company.id))],
@@ -157,35 +120,23 @@ export default function ComparePage({
   );
 
   const ratingPartners = useMemo(
-    () => buildPartnerRatingList(merged, search, reviewSnapshots),
-    [merged, search, reviewSnapshots]
+    () => buildPartnerRatingList(merged, compareSearch, reviewSnapshots),
+    [merged, compareSearch, reviewSnapshots]
   );
 
   useEffect(() => {
     let cancelled = false;
-    setReviewsReady(false);
     if (partnerIds.length === 0) {
       setReviewSnapshots({});
-      setReviewsReady(true);
       return;
     }
     void fetchReviewSnapshotsByCompanyIds(partnerIds).then((snapshots) => {
-      if (!cancelled) {
-        setReviewSnapshots(snapshots);
-        setReviewsReady(true);
-      }
+      if (!cancelled) setReviewSnapshots(snapshots);
     });
     return () => {
       cancelled = true;
     };
   }, [partnerIds.join('|')]);
-
-  const totalPartnerReviews = useMemo(
-    () => partnerIds.reduce((sum, id) => sum + (reviewSnapshots[id]?.count ?? 0), 0),
-    [partnerIds, reviewSnapshots]
-  );
-  const showReviewEmptyNotice =
-    partnerIds.length > 0 && reviewsReady && totalPartnerReviews === 0;
 
   const handleSelect = (company: Company, price: number) => {
     if (isAirpickPartner(company)) {
@@ -197,29 +148,11 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
-      <PageHero sub={PARKING_PLATFORM_SUB} line={PARKING_COMPARE_H1} desc={PARKING_COMPARE_DESC} />
-      {fromLeaveBy ? (
-        <p className="rounded-xl bg-brand/10 px-3.5 py-2.5 text-[12px] font-bold leading-relaxed text-brand ring-1 ring-brand/20">
-          {HOME_TO_COMPARE_VALET_LEAVE(fromLeaveBy.valetLeaveByHm)}
-          <span className="mt-0.5 block font-semibold opacity-90">
-            {HOME_TO_COMPARE_BADGE} · {search.terminal} ·{' '}
-            {search.departureDate.replace(/-/g, '.')}
-          </span>
-          <span className="mt-1 block text-[11px] font-semibold opacity-80">
-            {HOME_TO_COMPARE_TIME_HINT}
-          </span>
-        </p>
-      ) : null}
+      <PageHero line={PARKING_COMPARE_H1} />
       <SearchPanel search={search} onChange={onSearchChange} />
       <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
-
-      {showReviewEmptyNotice && (
-        <p className="rounded-xl bg-sky-soft px-4 py-3 text-center text-[11px] font-medium leading-relaxed text-muted ring-1 ring-sky-border/50">
-          {REVIEW_POLICY_LINE}
-        </p>
-      )}
 
       {totalCount === 0 ? (
         <div className="space-y-3 rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
@@ -228,36 +161,17 @@ export default function ComparePage({
               ? '실내 주차를 제공하는 업체가 없습니다.'
               : '야외 주차를 제공하는 업체가 없습니다.'}
           </p>
-          <p className="text-xs">실내/야외를 바꿔 보거나, 아래 가이드를 참고해 주세요.</p>
-          <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-brand">
-            {PARKING_COMPARE_GUIDE_LINKS.map(({ href, label }) => (
-              <li key={href}>
-                <a href={href} className="underline-offset-2 hover:underline">
-                  {label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <a href="/partners/" className="underline-offset-2 hover:underline">
-                입점 업체 목록
-              </a>
-            </li>
-          </ul>
+          <p className="text-xs">실내/야외를 바꿔 보거나, 일정을 조정해 주세요.</p>
         </div>
       ) : sortMode === 'price' ? (
         <>
           <CompareSection
             title={PARKING_PARTNER_SECTION.title}
-            subtitle={
-              partnerFaceToFace
-                ? `${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 대면 가능 업체 우선 · 대면비 포함가`
-                : `${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 낮은 가격순`
-            }
+            subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 낮은 가격순`}
             items={partners}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
             terminal={search.terminal}
-            faceToFaceMode={partnerFaceToFace}
           />
 
           <CompareSection
@@ -290,8 +204,6 @@ export default function ComparePage({
           </p>
         </>
       )}
-
-      <CompareGuideLinks />
     </div>
   );
 }

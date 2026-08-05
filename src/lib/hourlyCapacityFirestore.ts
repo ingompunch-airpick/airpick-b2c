@@ -1,10 +1,9 @@
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import {
   evaluateHourlyCapacity,
   isHourlyCapActive,
   parseDepartureHour,
-  reservationInHourBucket,
   type HourlyCapCompany,
   type HourlyCapacityResult,
 } from '../utils/hourlyCapacity';
@@ -31,33 +30,33 @@ function normalizeDateYmd(raw: string): string {
   return `${m[1]}-${m[2]!.padStart(2, '0')}-${m[3]!.padStart(2, '0')}`;
 }
 
-async function fetchDayReservations(
+/**
+ * capacity/{companyId}__{날짜} — 시간대별 대수만 담긴 집계 문서.
+ * 예약 문서에는 손님 연락처·차량번호가 있어 브라우저에서 직접 조회하지 않는다.
+ * 갱신은 B2B Functions(onReservationSync)가 한다.
+ */
+async function fetchCapacityHours(
   companyId: string,
-  departureDate: string
-): Promise<Array<{ departureDate?: string; departureTime?: string; status?: string }>> {
-  const date = normalizeDateYmd(departureDate);
-  if (!date) return [];
-
+  date: string
+): Promise<Record<string, number>> {
   const ids = expandCompanyIds(companyId);
-  if (!ids.length) return [];
+  if (!ids.length) return {};
 
-  const base = collection(db, 'reservations');
-  const snaps =
-    ids.length === 1
-      ? [await getDocs(query(base, where('companyId', '==', ids[0]), where('departureDate', '==', date)))]
-      : [
-          await getDocs(
-            query(base, where('companyId', 'in', ids.slice(0, 10)), where('departureDate', '==', date))
-          ),
-        ];
+  const snaps = await Promise.all(
+    ids.map((id) => getDoc(doc(db, 'capacity', `${id}__${date}`)))
+  );
 
-  const byId = new Map<string, { departureDate?: string; departureTime?: string; status?: string }>();
+  const merged: Record<string, number> = {};
   for (const snap of snaps) {
-    for (const d of snap.docs) {
-      byId.set(d.id, d.data() as { departureDate?: string; departureTime?: string; status?: string });
+    if (!snap.exists()) continue;
+    const hours = (snap.data() as { hours?: Record<string, unknown> }).hours ?? {};
+    for (const [key, value] of Object.entries(hours)) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) continue;
+      merged[key] = (merged[key] ?? 0) + n;
     }
   }
-  return Array.from(byId.values());
+  return merged;
 }
 
 export async function countReservationsInDepartureHour(
@@ -68,9 +67,11 @@ export async function countReservationsInDepartureHour(
   const hour = parseDepartureHour(departureTime);
   if (hour === null) return { count: 0, hour: null };
 
-  const rows = await fetchDayReservations(companyId, departureDate);
-  const count = rows.filter((r) => reservationInHourBucket(r, departureDate, hour)).length;
-  return { count, hour };
+  const date = normalizeDateYmd(departureDate);
+  if (!date) return { count: 0, hour };
+
+  const hours = await fetchCapacityHours(companyId, date);
+  return { count: Number(hours[String(hour)] ?? 0), hour };
 }
 
 export async function fetchCompanyHourlyCap(companyId: string): Promise<HourlyCapCompany | null> {
@@ -115,10 +116,7 @@ export async function checkHourlyCapacityForBooking(
   });
 }
 
-/**
- * 한도 초과·시각 오류 시 Error throw. OFF면 즉시 통과.
- * 호출 전 ensureAnonymousAuth() 필요 (reservations 읽기).
- */
+/** 한도 초과·시각 오류 시 Error throw. OFF면 즉시 통과. */
 export async function assertHourlyCapacityAvailable(
   companyId: string,
   departureDate: string,

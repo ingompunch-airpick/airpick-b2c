@@ -225,25 +225,12 @@ async function fetchDeparture(key: string, date: string, flightId: string): Prom
     return hit.miss ? null : hit.item;
   }
 
-  const u = new URL(DEPARTURE_URL);
-  u.searchParams.set('serviceKey', key);
-  u.searchParams.set('type', 'json');
-  u.searchParams.set('pageNo', '1');
-  u.searchParams.set('numOfRows', '20');
-  u.searchParams.set('searchday', date);
-  u.searchParams.set('from_time', '0000');
-  u.searchParams.set('to_time', '2400');
-  u.searchParams.set('lang', 'K');
-  u.searchParams.set('flight_id', flightId);
-
-  const res = await fetch(u.toString());
-  if (!res.ok) throw new Error(`upstream_${res.status}`);
-  const json = (await res.json()) as Parameters<typeof parseDepartureItems>[0];
-  const { list } = parseDepartureItems(json);
-
-  const exact = list.filter((i) => String(i.flightId ?? '').toUpperCase() === flightId);
-  const pool = exact.length > 0 ? exact : list;
-  // Master 편 우선, 없으면 첫 결과
+  // 상세 전용 호출이 업스트림에서 자주 502/타임아웃 남 → 검색과 동일 목록 API로 조회 후 정확 매칭
+  const { items } = await fetchDepartureList(key, date, { flightId });
+  const exact = items.filter((i) => String(i.flightId ?? '').toUpperCase() === flightId);
+  const pool = exact.length > 0 ? exact : items.filter((i) =>
+    String(i.flightId ?? '').toUpperCase().startsWith(flightId)
+  );
   const master = pool.find((i) => String(i.codeshare ?? '').toLowerCase() === 'master');
   const item = master ?? pool[0] ?? null;
 
@@ -324,7 +311,7 @@ export const getIcnFlight = onRequest(
       logger.error('getIcnFlight failed', err);
       res.status(502).json({
         error: 'upstream_failed',
-        message: '운항 정보를 불러오지 못했습니다. 공공 API 활용신청·키를 확인해 주세요.',
+        message: '공항 운항 정보를 잠시 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
       });
     }
   }
@@ -392,7 +379,7 @@ export const getIcnFlightSearch = onRequest(
       logger.error('getIcnFlightSearch failed', err);
       res.status(502).json({
         error: 'upstream_failed',
-        message: '운항 정보를 불러오지 못했습니다. 공공 API 활용신청·키를 확인해 주세요.',
+        message: '공항 운항 정보를 잠시 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
       });
     }
   }

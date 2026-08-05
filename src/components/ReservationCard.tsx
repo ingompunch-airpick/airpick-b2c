@@ -169,7 +169,12 @@ export default function ReservationCard({
   company?: Company;
   onBookAirpick?: () => void;
   onCancel?: (password: string) => Promise<void>;
-  onSubmitReview?: (password: string, rating: number, body: string) => Promise<void>;
+  onSubmitReview?: (
+    password: string,
+    rating: number,
+    body: string,
+    photoDataUrls: string[]
+  ) => Promise<void>;
   lookupPassword?: string;
   /** 출고 알림톡 딥링크 — 후기 모달 자동 오픈 */
   autoOpenReview?: boolean;
@@ -471,8 +476,8 @@ export default function ReservationCard({
           companyName={displayCompanyName(reservation.companyName)}
           initialPassword={lookupPassword}
           onClose={() => setReviewOpen(false)}
-          onSubmit={async (password, rating, body) => {
-            await onSubmitReview(password, rating, body);
+          onSubmit={async (password, rating, body, photoDataUrls) => {
+            await onSubmitReview(password, rating, body, photoDataUrls);
             setReviewOpen(false);
           }}
         />

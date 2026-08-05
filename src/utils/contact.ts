@@ -15,6 +15,11 @@ export function formatPhoneDisplay(phone: string): string {
   return phone;
 }
 
+/** 예약 연락처 — 휴대전화만 (기사 연락·조회에 사용) */
+export function isValidMobilePhone(phone: string): boolean {
+  return /^01\d{8,9}$/.test(phoneDigits(phone));
+}
+
 /** 입력 중 연락처 — 010-0000-0000 형식 */
 export function formatPhoneInput(raw: string): string {
   const d = phoneDigits(raw).slice(0, 11);

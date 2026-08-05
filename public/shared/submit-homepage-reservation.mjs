@@ -32,7 +32,8 @@ export function createReceiptToken() {
 }
 
 export function createReservationId() {
-  return `res_${Date.now()}`;
+  const suffix = Math.random().toString(36).slice(2, 6);
+  return `res_${Date.now()}${suffix}`;
 }
 
 function trim(value) {

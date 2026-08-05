@@ -23,6 +23,9 @@ function normalizeReview(id: string, data: Record<string, unknown>): CompanyRevi
     companyId: String(data.companyId || ''),
     rating,
     body: data.body ? String(data.body) : undefined,
+    photoUrls: Array.isArray(data.photoUrls)
+      ? (data.photoUrls as unknown[]).map((u) => String(u || '').trim()).filter(Boolean)
+      : undefined,
     authorMask: String(data.authorMask || '익명'),
     carMask: data.carMask ? String(data.carMask) : undefined,
     createdAt: String(data.createdAt || ''),
@@ -118,7 +121,8 @@ export async function submitCompanyReview(
   reservationId: string,
   password: string,
   rating: number,
-  body?: string
+  body?: string,
+  photoDataUrls?: string[]
 ): Promise<void> {
   const pw = password.trim();
   if (!/^\d{4}$/.test(pw)) {
@@ -128,6 +132,8 @@ export async function submitCompanyReview(
     throw new Error('별점을 선택해 주세요.');
   }
 
+  const photos = (photoDataUrls ?? []).filter((u) => u.startsWith('data:image/')).slice(0, 3);
+
   const res = await fetch(REVIEW_API_PATH, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -136,6 +142,7 @@ export async function submitCompanyReview(
       password: pw,
       rating,
       body: body?.trim() ? body.trim().slice(0, 200) : undefined,
+      ...(photos.length ? { photos } : {}),
     }),
   });
   if (res.ok) return;
@@ -159,6 +166,8 @@ export async function submitCompanyReview(
       throw new Error('예약을 찾을 수 없습니다.');
     case 'invalid_rating':
       throw new Error('별점을 선택해 주세요.');
+    case 'photo_upload_failed':
+      throw new Error('사진 업로드에 실패했습니다. 사진을 빼고 다시 시도해 주세요.');
     default:
       throw new Error('후기 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.');
   }

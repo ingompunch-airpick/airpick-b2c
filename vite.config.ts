@@ -95,6 +95,8 @@ export default defineConfig({
       includeAssets: [
         'favicon-48.png',
         'favicon-32.png',
+        'favicon-16.png',
+        'favicon.svg',
         'icon-192.png',
         'icon-512.png',
         'brand-logo.webp',

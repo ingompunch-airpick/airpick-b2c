@@ -1,16 +1,19 @@
 import {
+  BadgeCheck,
   BookOpen,
   Building2,
   CircleHelp,
+  FileText,
   LayoutGrid,
   Mail,
+  ShieldCheck,
   Smartphone,
   Store,
   ChevronRight,
   X,
 } from 'lucide-react';
 import { openPartnerInquiryEmail } from '../constants/partnerContact';
-import { SITE_NAV_PRIMARY } from '../constants/siteNav';
+import { SITE_NAV_PRIMARY, SITE_NAV_SECONDARY } from '../constants/siteNav';
 
 const MENU_ICONS = {
   '/parking': LayoutGrid,
@@ -18,6 +21,10 @@ const MENU_ICONS = {
   '/guides/': BookOpen,
   '/partners/': Store,
   '/faq/': CircleHelp,
+  '/about/': Building2,
+  '/facts/': FileText,
+  '/for-partners/': BadgeCheck,
+  '/privacy/': ShieldCheck,
 } as const;
 
 function MenuItem({
@@ -72,7 +79,7 @@ export default function AppMenuSheet({
           </button>
         </div>
 
-        <nav className="space-y-2 p-3" aria-label="사이트 메뉴">
+        <nav className="space-y-2 overflow-y-auto p-3" aria-label="사이트 메뉴">
           {SITE_NAV_PRIMARY.map((item) => {
             const Icon = MENU_ICONS[item.href as keyof typeof MENU_ICONS] ?? CircleHelp;
             const goWeb = item.href !== '/faq/';
@@ -92,14 +99,24 @@ export default function AppMenuSheet({
               />
             );
           })}
-          <MenuItem
-            label="에어픽 소개"
-            icon={Building2}
-            onClick={() => {
-              onClose();
-              window.location.assign('/about/');
-            }}
-          />
+
+          <div className="my-2 border-t border-sky-border/60" />
+
+          {SITE_NAV_SECONDARY.map((item) => {
+            const Icon = MENU_ICONS[item.href as keyof typeof MENU_ICONS] ?? FileText;
+            return (
+              <MenuItem
+                key={item.href}
+                label={item.label}
+                icon={Icon}
+                onClick={() => {
+                  onClose();
+                  window.location.assign(item.href);
+                }}
+              />
+            );
+          })}
+
           <MenuItem
             label="입점 · 제휴 문의 (주차 / 이심)"
             icon={Mail}

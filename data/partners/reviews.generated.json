@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-08-03T14:35:30.426Z",
+  "companies": {
+    "gayu": {
+      "averageRating": 5,
+      "reviewCount": 1,
+      "ratingDistribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "recent": [
+        {
+          "id": "res_1785589789330",
+          "rating": 5,
+          "authorMask": "김*원",
+          "createdAt": "2026-08-01T17:28:38.214Z",
+          "body": "첫 방문이고 시간도 완전 일찍왔는데 다른업체와 달리 싫은 내색 없으셔서 놀랐습니다. 다음에 또 이용 하겠습니다.\n입고증 디자인도 이쁘네요 ㅎㅎ 번창하세요 사장님!",
+          "carMask": "61소02**",
+          "photoUrls": [
+            "https://firebasestorage.googleapis.com/v0/b/airpick-reservation.firebasestorage.app/o/reviews%2Fres_1785589789330%2F1785605317689_0.jpg?alt=media&token=98fe7d4f-5743-4330-ac7c-ac4936f97b46"
+          ]
+        }
+      ]
+    }
+  }
+}

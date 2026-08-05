@@ -1,22 +1,24 @@
-import { Star, X } from 'lucide-react';
+import { MapPin, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import InsuranceCoverageCard from './InsuranceCoverageCard';
+import ParkingMapPinPreview from './ParkingMapPinPreview';
 import {
   fetchCompanyReviewSnapshot,
   formatReviewDate,
   type CompanyReviewSnapshot,
 } from '../lib/reviews';
-import type { BookingSearch, Company, CompanyReview } from '../types';
+import type { BookingSearch, Company, CompanyParkingLot, CompanyReview } from '../types';
+import { listCompanyParkingLotsForDisplay } from '../utils/companyParking';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 import { displayCompanyName } from '../utils/display';
+import { companyPhotoUrl, companyThumbnailUrl } from '../utils/imageUrl';
 import {
   companySupportsIndoor,
   companySupportsOutdoor,
   parkingTypeLabel,
 } from '../utils/parkingType';
-import { formatParkingDistanceLotLabel, shouldShowInsuranceBadge } from '../utils/trustDisplay';
+import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { displayInsuranceLabel } from '../utils/trust';
-import { companyThumbnailUrl } from '../utils/imageUrl';
 import { cn } from '../utils/cn';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
@@ -50,6 +52,29 @@ function ReviewItem({ review }: { review: CompanyReview }) {
       {review.body?.trim() && (
         <p className="mt-1 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
       )}
+      {review.photoUrls?.length ? (
+        <div className="mt-2 -mx-0.5 flex gap-2 overflow-x-auto px-0.5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {review.photoUrls.map((url, index) => (
+            <a
+              key={`${url}_${index}`}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block shrink-0 overflow-hidden rounded-lg ring-1 ring-sky-border/60"
+            >
+              <img
+                src={companyPhotoUrl(url, 320)}
+                alt={`후기 사진 ${index + 1}`}
+                width={112}
+                height={112}
+                className="h-28 w-28 object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -59,6 +84,76 @@ function InfoRow({ label, value }: { label: string; value: string }) {
     <div className="flex gap-3 text-sm">
       <span className="w-16 shrink-0 font-semibold text-muted">{label}</span>
       <span className="font-medium leading-snug text-ink">{value}</span>
+    </div>
+  );
+}
+
+function LotPhotoStrip({ photos }: { photos?: string[] }) {
+  if (!photos?.length) return null;
+  return (
+    <div className="-mx-0.5 flex gap-2 overflow-x-auto px-0.5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {photos.map((url, index) => (
+        <a
+          key={`${url}_${index}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block shrink-0 overflow-hidden rounded-xl ring-1 ring-sky-border/60"
+        >
+          <img
+            src={companyPhotoUrl(url, 320)}
+            alt={`주차장 사진 ${index + 1}`}
+            width={160}
+            height={112}
+            className="h-28 w-40 object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      ))}
+      {photos.length > 1 ? <div className="w-6 shrink-0" aria-hidden /> : null}
+    </div>
+  );
+}
+
+function ParkingLotCard({ lot }: { lot: CompanyParkingLot }) {
+  const typeLabel = parkingTypeLabel(lot.type === 'indoor');
+  const hasLocation =
+    !!lot.parkingAddress?.trim() || (lot.lat != null && lot.lng != null) || !!lot.mapUrl;
+
+  return (
+    <div className="rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/60">
+      <div className="flex items-start gap-2">
+        <MapPin size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2.25} />
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-bold text-brand">
+            {lot.name || `${typeLabel} 주차장`}
+          </p>
+          {lot.parkingAddress?.trim() ? (
+            <p className="mt-0.5 text-sm font-semibold leading-snug text-ink">
+              {lot.parkingAddress.trim()}
+            </p>
+          ) : (
+            <p className="mt-0.5 text-xs font-medium text-muted">주소 미등록</p>
+          )}
+        </div>
+      </div>
+      {hasLocation ? (
+        <div className="mt-2.5">
+          <ParkingMapPinPreview
+            address={lot.parkingAddress}
+            mapUrl={lot.mapUrl}
+            lat={lot.lat}
+            lng={lot.lng}
+          />
+        </div>
+      ) : null}
+      {lot.photos?.length ? (
+        <div className="mt-2.5">
+          <p className="mb-1.5 text-[10px] font-bold text-muted">주차장 사진</p>
+          <LotPhotoStrip photos={lot.photos} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -151,13 +246,7 @@ export default function CompanyDetailSheet({
     .join(' · ');
 
   const telHref = buildTelHref(company.phone);
-
-  const indoorAddress = company.indoorParkingAddress?.trim() || null;
-  const outdoorAddress = company.outdoorParkingAddress?.trim() || null;
-  const parkingLotLine =
-    !indoorAddress && !outdoorAddress
-      ? formatParkingDistanceLotLabel(company, search.terminal, search.isIndoor)
-      : null;
+  const parkingLots = listCompanyParkingLotsForDisplay(company, search.isIndoor);
 
   const reviewsLoading = reviewSnapshot == null;
   const reviews = reviewSnapshot?.recent ?? [];
@@ -234,9 +323,6 @@ export default function CompanyDetailSheet({
                 </a>
               </div>
             )}
-            {indoorAddress && <InfoRow label="실내" value={indoorAddress} />}
-            {outdoorAddress && <InfoRow label="야외" value={outdoorAddress} />}
-            {parkingLotLine && <InfoRow label="주차장" value={parkingLotLine} />}
           </section>
 
           {showInsuranceCard && (
@@ -244,6 +330,15 @@ export default function CompanyDetailSheet({
               <InsuranceCoverageCard summary={insuranceLabel!} certificateUrl={certificateUrl} />
             </div>
           )}
+
+          {parkingLots.length > 0 ? (
+            <section className="mt-4 space-y-2">
+              <p className="text-xs font-bold text-brand">주차장 위치</p>
+              {parkingLots.map((lot) => (
+                <ParkingLotCard key={lot.id} lot={lot} />
+              ))}
+            </section>
+          ) : null}
 
           <section className="mt-4">
             <p className="text-xs font-bold text-brand">최근 후기</p>

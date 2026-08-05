@@ -4,6 +4,7 @@ import { logger } from 'firebase-functions';
 
 import { reservationPasswordMatches } from '../reservations/publicReservation';
 import { recomputeCompanyRating } from '../reviews/aggregate';
+import { uploadReviewPhotosFromDataUrls } from '../reviews/uploadPhotos';
 import { maskCarNumber } from '../utils/carNumber';
 
 const REVIEWABLE_STATUSES = new Set(['checked_out', 'completed_out']);
@@ -19,9 +20,15 @@ function maskAuthorName(name: string): string {
 
 /**
  * 고객 업체 후기 작성 — 출고 완료 예약 + 비밀번호 검증 후 reviews/{reservationId} 생성.
+ * 사진(선택, 최대 3장)은 data URL로 받아 Storage에 올린 뒤 photoUrls에 저장.
  */
 export const submitReview = onRequest(
-  { region: 'asia-northeast3', cors: true },
+  {
+    region: 'asia-northeast3',
+    cors: true,
+    timeoutSeconds: 120,
+    memory: '512MiB',
+  },
   async (req, res) => {
     if (req.method === 'OPTIONS') {
       res.status(204).send('');
@@ -38,6 +45,7 @@ export const submitReview = onRequest(
     const rating = Number(body.rating);
     const rawBody = body.body != null ? String(body.body) : '';
     const reviewBody = rawBody.trim().slice(0, BODY_MAX);
+    const photoDataUrls = body.photos;
 
     if (!id) {
       res.status(400).json({ error: 'missing_id' });
@@ -98,6 +106,15 @@ export const submitReview = onRequest(
         String(companySnap.data()?.name ?? '').trim() ||
         companyId;
 
+      let photoUrls: string[] = [];
+      try {
+        photoUrls = await uploadReviewPhotosFromDataUrls(id, photoDataUrls);
+      } catch (uploadErr) {
+        logger.error('submitReview_photo_upload_failed', { id, uploadErr });
+        res.status(502).json({ error: 'photo_upload_failed' });
+        return;
+      }
+
       const createdAt = new Date().toISOString();
       const carMask = maskCarNumber(String(data.carNumber ?? ''));
       await reviewRef.create({
@@ -106,6 +123,7 @@ export const submitReview = onRequest(
         reservationId: id,
         rating,
         ...(reviewBody ? { body: reviewBody } : {}),
+        ...(photoUrls.length ? { photoUrls } : {}),
         authorMask: maskAuthorName(String(data.userName ?? '')),
         ...(carMask ? { carMask } : {}),
         status: 'published',
@@ -123,6 +141,7 @@ export const submitReview = onRequest(
           companyId,
           rating,
           body: reviewBody || undefined,
+          photoUrls: photoUrls.length ? photoUrls : undefined,
           createdAt,
         },
         aggregate,

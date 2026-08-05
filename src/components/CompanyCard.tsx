@@ -1,5 +1,4 @@
 import { ChevronRight, ExternalLink, Star } from 'lucide-react';
-import { REVIEW_EMPTY_HINT } from '../constants/complianceCopy';
 import { PARKING_EXTERNAL_SECTION } from '../constants/marketing';
 import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { Company } from '../types';
@@ -16,7 +15,6 @@ export default function CompanyCard({
   layout = 'grid',
   reviewSnapshot,
   valetFee = null,
-  faceToFaceMode = false,
 }: {
   company: Company;
   price: number;
@@ -24,17 +22,11 @@ export default function CompanyCard({
   layout?: 'grid' | 'list';
   /** reviews 컬렉션 기준 — 없으면 후기 미표시 */
   reviewSnapshot?: CompanyReviewSnapshot;
-  /** 선택 터미널 발렛비 — null이면 발렛 미제공 */
+  /** 선택 터미널 발렛비 — null이면 발렛 미제공 (미입점 안내용) */
   valetFee?: number | null;
-  /** 입점 대면 희망 필터 활성 (입점 섹션만 true) */
-  faceToFaceMode?: boolean;
 }) {
   const name = displayCompanyName(company.name);
   const partner = isAirpickPartner(company);
-  const faceToFaceCapable = valetFee !== null;
-  /** 입점 + 대면 희망일 때만 대면 UI */
-  const premium = faceToFaceMode && partner && faceToFaceCapable;
-  const dimmed = faceToFaceMode && partner && !faceToFaceCapable;
   const thumbSrc = companyThumbnailUrl(company.image_url, 128);
 
   if (layout === 'grid') {
@@ -67,13 +59,7 @@ export default function CompanyCard({
     <button
       type="button"
       onClick={onSelect}
-      className={cn(
-        'flex w-full items-center gap-3 rounded-2xl p-4 text-left transition',
-        premium
-          ? 'bg-white shadow-[0_4px_16px_rgba(49,130,246,0.18)] ring-2 ring-brand/40 hover:ring-brand/60'
-          : 'bg-sky-soft shadow-[0_2px_8px_rgba(49,130,246,0.07)] hover:bg-sky-tint',
-        dimmed && 'opacity-55'
-      )}
+      className="flex w-full items-center gap-3 rounded-2xl bg-sky-soft p-4 text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition hover:bg-sky-tint"
     >
       <img
         src={thumbSrc}
@@ -96,16 +82,6 @@ export default function CompanyCard({
               홈페이지
             </span>
           )}
-          {premium && (
-            <span className="shrink-0 rounded-md bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
-              대면 입고
-            </span>
-          )}
-          {dimmed && (
-            <span className="shrink-0 rounded-md bg-sky-tint px-1.5 py-0.5 text-[10px] font-bold text-muted">
-              비대면 전용
-            </span>
-          )}
         </div>
         {partner && reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null ? (
           <div className="mt-2 flex items-end justify-between gap-3">
@@ -121,12 +97,9 @@ export default function CompanyCard({
             </p>
           </div>
         ) : partner ? (
-          <div className="mt-2 flex items-end justify-between gap-3">
-            <p className="min-w-0 text-[11px] font-medium text-muted">{REVIEW_EMPTY_HINT}</p>
-            <p className="shrink-0 text-lg font-bold tabular-nums text-brand">
-              {price.toLocaleString()}원
-            </p>
-          </div>
+          <p className="mt-2 text-lg font-bold tabular-nums text-brand">
+            {price.toLocaleString()}원
+          </p>
         ) : (
           <>
             <p className="mt-1 text-[11px] font-medium leading-snug text-muted">
@@ -142,19 +115,11 @@ export default function CompanyCard({
             <TrustBadges company={company} />
           </div>
         )}
-        {premium && valetFee != null && (
-          <p className="mt-0.5 text-[11px] font-bold text-brand">
-            {valetFee > 0 ? `대면비 +${valetFee.toLocaleString()}원 포함` : '대면 무료'}
-          </p>
-        )}
         {!partner && valetFee != null && valetFee > 0 && (
           <p className="mt-0.5 text-[11px] font-medium text-muted">
             발렛비 +{valetFee.toLocaleString()}원 포함
           </p>
         )}
-        <p className="mt-1 text-[11px] font-semibold text-muted">
-          {partner ? '업체 보기 · 예약' : '업체 홈페이지에서 예약'}
-        </p>
       </div>
       {partner ? (
         <ChevronRight size={20} className={cn('shrink-0 text-muted-light')} />

@@ -6,6 +6,7 @@ import {
   todaySeoulYmd,
   ymdToInputValue,
   type IcnFlightResponse,
+  type IcnFlightSearchItem,
 } from '../../lib/icnFlight';
 import { fetchDriveEta } from '../../lib/driveEta';
 import { fetchIcnAirportLive, type IcnAirportLiveResponse } from '../../lib/icnAirportLive';
@@ -21,16 +22,25 @@ import {
 import {
   clampTravelMinutes,
   computeLeaveBy,
+  parseHmToMinutes,
   resolveAirportArriveMinutes,
 } from '../../utils/leaveByCalculator';
 import {
   HOME_CALCULATE_CTA,
   HOME_CALCULATING,
   HOME_LEAVE_DISCLAIMER,
+  HOME_LONG_PARKING_BUSY_HINT,
+  HOME_CHECKIN_COUNTER_LABEL,
+  HOME_DEPARTURE_HALL_REF_HINT,
+  formatDepartureHallLiveLine,
   HOME_NEXT_PREP,
   HOME_PEAK_ADVISORY,
-  HOME_RESULT_EYEBROW,
-  HOME_TO_COMPARE_VALET_LEAVE,
+  HOME_RESULT_EYEBROW_MODE,
+  HOME_RESULT_SUMMARY_LINE,
+  HOME_TO_COMPARE_LONG_LINE,
+  HOME_TO_COMPARE_SAVED,
+  HOME_TO_COMPARE_VALET_HEAD,
+  HOME_TO_COMPARE_VALET_TIME,
   HOME_VALET_MODE_NOTE,
 } from '../../constants/marketing';
 import DateField from '../DateField';
@@ -133,12 +143,11 @@ export default function DepartureGuideCard({
 }: {
   onResultChange?: (hasResult: boolean) => void;
   onGoTab?: (tab: AppTab) => void;
-  onPrefillParkingSearch?: (
-    patch: Partial<BookingSearch>,
-    meta?: { valetLeaveByHm: string }
-  ) => void;
+  onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
 }) {
   const [flightId, setFlightId] = useState('');
+  /** 자동완성에서 고른 편 — 있으면 계산 시 상세 API 재호출 생략 */
+  const [pickedFlight, setPickedFlight] = useState<IcnFlightSearchItem | null>(null);
   const [date, setDate] = useState(() => ymdToInputValue(todaySeoulYmd()));
   const [parking, setParking] = useState<LeaveTravelMode>('long');
   const [homeAddress, setHomeAddress] = useState('');
@@ -172,6 +181,23 @@ export default function DepartureGuideCard({
       cancelled = true;
     };
   }, [flight]);
+
+  /** 자동완성으로 계산한 경우 체크인 카운터만 백그라운드 보강 */
+  useEffect(() => {
+    if (!flight?.flightId || flight.checkInCounter) return;
+    let cancelled = false;
+    void fetchIcnFlight(flight.flightId, flight.date).then((res) => {
+      if (cancelled || !res.ok || !res.data.checkInCounter) return;
+      setFlight((prev) =>
+        prev && prev.flightId === res.data.flightId
+          ? { ...prev, checkInCounter: res.data.checkInCounter }
+          : prev
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [flight?.flightId, flight?.date, flight?.checkInCounter]);
 
   const departureYmd = inputValueToYmd(date) || todaySeoulYmd();
   const isDepartureToday = departureYmd === todaySeoulYmd();
@@ -251,18 +277,47 @@ export default function DepartureGuideCard({
     setFlight(null);
     setAirportLive(null);
 
-    const flightRes = await fetchIcnFlight(id, dateYmd || todaySeoulYmd());
-    if (!flightRes.ok) {
-      setLoading(false);
-      setError(
-        flightRes.data?.message ||
-          (flightRes.status === 404
-            ? '해당 날짜에 출발편이 없습니다.'
-            : '운항 정보를 불러오지 못했습니다. 편명·날짜를 확인해 주세요.')
-      );
-      return;
+    let flightData: IcnFlightResponse | null = null;
+    const fromPick =
+      pickedFlight &&
+      normalizeFlightInput(pickedFlight.flightId) === id &&
+      !!pickedFlight.scheduleTime
+        ? pickedFlight
+        : null;
+
+    if (fromPick) {
+      flightData = {
+        flightId: fromPick.flightId,
+        airline: fromPick.airline,
+        destination: fromPick.destination,
+        destinationCode: fromPick.destinationCode,
+        date: dateYmd || todaySeoulYmd(),
+        scheduleTime: fromPick.scheduleTime,
+        estimatedTime: fromPick.estimatedTime,
+        remark: fromPick.remark,
+        terminal: fromPick.terminal,
+        terminalLabel: fromPick.terminalLabel,
+        terminalId: null,
+        checkInCounter: null,
+        codeshare: fromPick.codeshare,
+        masterFlightId: fromPick.masterFlightId,
+      };
+    } else {
+      const flightRes = await fetchIcnFlight(id, dateYmd || todaySeoulYmd());
+      if (!flightRes.ok) {
+        setLoading(false);
+        setError(
+          flightRes.data?.message ||
+            (flightRes.status === 404
+              ? '해당 날짜에 출발편이 없습니다.'
+              : '공항 운항 정보를 잠시 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+        );
+        return;
+      }
+      flightData = flightRes.data;
     }
-    if (!flightRes.data.scheduleTime) {
+
+    if (!flightData.scheduleTime) {
       setLoading(false);
       setError(
         '이 편의 예정 출발 시각이 아직 공개되지 않았습니다. 편명·날짜를 다시 확인해 주세요.'
@@ -270,8 +325,8 @@ export default function DepartureGuideCard({
       return;
     }
 
-    const term = (flightRes.data.terminal === 'T1' || flightRes.data.terminal === 'T2'
-      ? flightRes.data.terminal
+    const term = (flightData.terminal === 'T1' || flightData.terminal === 'T2'
+      ? flightData.terminal
       : 'T1') as 'T1' | 'T2';
 
     let travel = travelMinutes;
@@ -288,7 +343,7 @@ export default function DepartureGuideCard({
     }
 
     setTravelMinutes(travel);
-    setFlight(flightRes.data);
+    setFlight(flightData);
     setAirportLive(null);
     setAirportLiveLoading(true);
     setLoading(false);
@@ -313,15 +368,33 @@ export default function DepartureGuideCard({
     return { error: plan ? null : '이동 시간을 확인해 주세요.', plan, arrive };
   }, [flight, travelMinutes, airportMinutes]);
 
-  /** 주차대행 비교로 넘길 때 보여줄 출발 시각 (공항 내부 0분) */
-  const valetLeaveByHm = useMemo(() => {
+  /** 주차대행 비교로 넘길 때 · 장기 vs 대행 출발 시각 */
+  const leaveCompare = useMemo(() => {
     if (!leavePlan?.arrive?.arriveMinutes || travelMinutes == null) return null;
-    const plan = computeLeaveBy({
-      arriveMinutes: leavePlan.arrive.arriveMinutes,
-      travelMinutes: clampTravelMinutes(travelMinutes),
+    const travel = clampTravelMinutes(travelMinutes);
+    const arrive = leavePlan.arrive.arriveMinutes;
+    const longPlan = computeLeaveBy({
+      arriveMinutes: arrive,
+      travelMinutes: travel,
+      airportMinutes: airportInternalMinutes('long'),
+    });
+    const valetPlan = computeLeaveBy({
+      arriveMinutes: arrive,
+      travelMinutes: travel,
       airportMinutes: airportInternalMinutes('valet'),
     });
-    return plan?.leaveByHm ?? null;
+    if (!longPlan || !valetPlan) return null;
+    const longM = parseHmToMinutes(longPlan.leaveByHm);
+    const valetM = parseHmToMinutes(valetPlan.leaveByHm);
+    if (longM == null || valetM == null) return null;
+    let saved = valetM - longM;
+    if (saved < 0) saved += 24 * 60;
+    if (saved <= 0) return null;
+    return {
+      longLeaveByHm: longPlan.leaveByHm,
+      valetLeaveByHm: valetPlan.leaveByHm,
+      savedMinutes: saved,
+    };
   }, [leavePlan, travelMinutes]);
 
   const parkingLiveSummary = useMemo(() => {
@@ -329,22 +402,52 @@ export default function DepartureGuideCard({
     return summarizeParkingKind(airportLive, parking);
   }, [airportLive, parking]);
 
-  const showAirportLiveRef =
-    !!airportLive &&
-    (!!parkingLiveSummary ||
-      airportLive.congestion.available ||
-      !!airportLive.congestion.note);
+  /** 대행 CTA용 · 선택한 주차와 무관하게 장기주차장 혼잡만 */
+  const longParkingLive = useMemo(() => {
+    if (!airportLive) return null;
+    return summarizeParkingKind(airportLive, 'long');
+  }, [airportLive]);
+
+  const parkingModeLabel =
+    PARKING_MODES.find((m) => m.id === parking)?.label ?? PARKING_MODES[0].label;
+
+  const hallLive = airportLive?.congestion.busiest ?? null;
+
+  // short 선택 시 본문에 단기 혼잡도 표시 (장기는 CTA 설득용으로 유지)
+  const selectedParkingLive = parking === 'short' ? parkingLiveSummary : longParkingLive;
+  const selectedParkingBusy =
+    selectedParkingLive?.level === '혼잡' || selectedParkingLive?.level === '매우혼잡';
+  const selectedParkingLabel = parking === 'short' ? '지금 단기주차장' : '지금 장기주차장';
 
   return (
     <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(49,130,246,0.08)] ring-1 ring-sky-border">
       <form onSubmit={(e) => void onSubmit(e)} className="space-y-3 px-4 pb-4 pt-4">
-        <div className="grid grid-cols-[1.35fr_1fr] gap-2">
+        <div className="grid grid-cols-[1fr_1.35fr] gap-2">
+          <DateField
+            label="출발일"
+            value={date}
+            onChange={(next) => {
+              setDate(next);
+              setPickedFlight(null);
+              setFlight(null);
+              setAirportLive(null);
+              setError(null);
+            }}
+          />
           <label className="block">
             <span className="mb-1 block text-[11px] font-bold text-muted">항공편명</span>
             <FlightIdCombobox
               value={flightId}
               onChange={(next) => {
                 setFlightId(next);
+                setPickedFlight(null);
+                setFlight(null);
+                setAirportLive(null);
+                setError(null);
+              }}
+              onSelectFlight={(f) => {
+                setFlightId(f.flightId);
+                setPickedFlight(f);
                 setFlight(null);
                 setAirportLive(null);
                 setError(null);
@@ -354,7 +457,6 @@ export default function DepartureGuideCard({
               disabled={loading || etaLoading}
             />
           </label>
-          <DateField label="출발일" value={date} onChange={setDate} />
         </div>
 
         <div>
@@ -456,17 +558,86 @@ export default function DepartureGuideCard({
       {flight && leavePlan?.plan ? (
         <div className="border-t border-sky-border/60 bg-sky-soft/30 px-4 py-4">
           <div className="rounded-2xl bg-brand px-4 py-5 text-white shadow-[0_8px_24px_rgba(49,130,246,0.35)]">
-            <p className="text-[11px] font-bold opacity-90">{HOME_RESULT_EYEBROW}</p>
+            <p className="text-[11px] font-bold opacity-90">
+              {HOME_RESULT_EYEBROW_MODE(parkingModeLabel)}
+            </p>
             <p className="mt-1 text-[2.5rem] font-bold leading-none tracking-tight">
               {leavePlan.plan.leaveByHm}
             </p>
+            {leavePlan.arrive.departureHm ? (
+              <p className="mt-3 text-[12px] font-semibold leading-snug text-white/90">
+                {HOME_RESULT_SUMMARY_LINE({
+                  flightHm: leavePlan.arrive.departureHm,
+                  arriveHm: leavePlan.plan.arriveHm,
+                  travelMinutes: leavePlan.plan.travelMinutes,
+                })}
+              </p>
+            ) : null}
           </div>
 
-          {peakAdvisory ? (
-            <p className="mt-3 text-[11px] font-semibold leading-relaxed text-amber-800">
-              {HOME_PEAK_ADVISORY}
+          {leaveCompare && parking !== 'long' ? (
+            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-ink">
+              {HOME_TO_COMPARE_LONG_LINE(leaveCompare.longLeaveByHm)}
             </p>
           ) : null}
+
+          {(flight.checkInCounter ||
+            flight.terminal ||
+            flight.terminalLabel ||
+            parking !== 'valet' ||
+            hallLive ||
+            airportLiveLoading) && (
+            <div className="mt-3 space-y-2 rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/60">
+              {flight.checkInCounter || flight.terminal || flight.terminalLabel ? (
+                <p className="text-[12px] font-semibold leading-snug text-ink">
+                  {[
+                    flight.checkInCounter
+                      ? HOME_CHECKIN_COUNTER_LABEL(flight.checkInCounter)
+                      : null,
+                    flight.terminal || flight.terminalLabel || null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </p>
+              ) : null}
+
+              {parking !== 'valet' ? (
+                selectedParkingLive ? (
+                  <div>
+                    <p className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-ink">
+                      <span>{selectedParkingLabel}</span>
+                      <CongestionLevelBadge level={selectedParkingLive.level} />
+                    </p>
+                    {selectedParkingBusy ? (
+                      <p className="mt-1 text-[11px] font-medium leading-relaxed text-muted">
+                        {HOME_LONG_PARKING_BUSY_HINT}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : airportLiveLoading ? (
+                  <p className="text-[11px] font-medium text-muted">주차장 상황 확인 중…</p>
+                ) : null
+              ) : null}
+
+              {hallLive ? (
+                <div>
+                  <p className="inline-flex flex-wrap items-center gap-1.5 text-[12px] font-semibold text-ink">
+                    <span>{formatDepartureHallLiveLine(hallLive)}</span>
+                    <CongestionLevelBadge level={hallLive.level} />
+                  </p>
+                  <p className="mt-1 text-[10px] font-medium leading-relaxed text-muted">
+                    {HOME_DEPARTURE_HALL_REF_HINT}
+                  </p>
+                </div>
+              ) : airportLiveLoading ? (
+                <p className="text-[11px] font-medium text-muted">출국장 대기 확인 중…</p>
+              ) : airportLive?.congestion.note ? (
+                <p className="text-[11px] font-medium leading-relaxed text-muted">
+                  {airportLive.congestion.note}
+                </p>
+              ) : null}
+            </div>
+          )}
 
           <button
             type="button"
@@ -479,25 +650,32 @@ export default function DepartureGuideCard({
                 flight.terminal === 'T2' || flight.terminal === 'T1'
                   ? flight.terminal
                   : 'T1';
-              onPrefillParkingSearch?.(
-                {
-                  departureDate: depYmd,
-                  arrivalDate: addDaysYmd(depYmd, 6),
-                  terminal,
-                  arrivalTerminal: terminal,
-                },
-                valetLeaveByHm ? { valetLeaveByHm } : undefined
-              );
+              onPrefillParkingSearch?.({
+                departureDate: depYmd,
+                arrivalDate: addDaysYmd(depYmd, 6),
+                terminal,
+                arrivalTerminal: terminal,
+              });
               onGoTab?.('compare');
             }}
             className="mt-4 block w-full rounded-xl bg-white px-4 py-3.5 text-left ring-1 ring-sky-border/80 shadow-[0_4px_14px_rgba(49,130,246,0.12)]"
           >
-            <span className="block text-[13px] font-semibold leading-relaxed text-ink">
-              {valetLeaveByHm
-                ? HOME_TO_COMPARE_VALET_LEAVE(valetLeaveByHm)
-                : HOME_NEXT_PREP.parking.benefit}
-            </span>
-            <span className="mt-2 block text-[16px] font-bold text-brand">
+            {leaveCompare && parking !== 'valet' ? (
+              <div className="space-y-1.5">
+                <p className="text-[12px] font-bold text-ink">{HOME_TO_COMPARE_VALET_HEAD}</p>
+                <p className="text-[18px] font-bold tracking-tight text-ink">
+                  {HOME_TO_COMPARE_VALET_TIME(leaveCompare.valetLeaveByHm)}
+                </p>
+                <p className="text-[13px] font-bold text-brand">
+                  {HOME_TO_COMPARE_SAVED(leaveCompare.savedMinutes)}
+                </p>
+              </div>
+            ) : (
+              <span className="block text-[13px] font-semibold leading-relaxed text-ink">
+                {HOME_NEXT_PREP.parking.benefit}
+              </span>
+            )}
+            <span className="mt-2.5 block text-[16px] font-bold text-brand">
               {HOME_NEXT_PREP.parking.cta} →
             </span>
           </button>
@@ -563,63 +741,16 @@ export default function DepartureGuideCard({
                   {HOME_VALET_MODE_NOTE}
                 </p>
               ) : null}
+              {peakAdvisory ? (
+                <p className="text-[11px] font-medium leading-relaxed text-amber-800">
+                  {HOME_PEAK_ADVISORY}
+                </p>
+              ) : null}
               <p className="text-[10px] font-medium leading-relaxed text-muted">
                 {HOME_LEAVE_DISCLAIMER}
               </p>
             </div>
           </details>
-
-          {airportLiveLoading ? (
-            <p className="mt-3 text-[11px] font-medium text-muted">지금 공항 상황 불러오는 중…</p>
-          ) : showAirportLiveRef && airportLive ? (
-            <details className="group mt-2 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-sky-border/60">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[12px] font-bold text-ink [&::-webkit-details-marker]:hidden">
-                <span>지금 공항 상황</span>
-                <ChevronDown
-                  size={16}
-                  strokeWidth={2.5}
-                  className="shrink-0 text-brand transition-transform group-open:rotate-180"
-                  aria-hidden
-                />
-              </summary>
-              <div className="mt-2.5 border-t border-sky-border/50 pt-2.5">
-                <p className="text-[10px] font-bold tracking-wide text-muted">
-                  참고용 · 계산에 반영되지 않음
-                </p>
-                <ul className="mt-2 space-y-2">
-                  {parkingLiveSummary ? (
-                    <li className="flex items-center justify-between gap-3">
-                      <span className="text-[12px] font-semibold text-ink">
-                        {parking === 'short' ? '단기주차장' : '장기주차장'}
-                      </span>
-                      <CongestionLevelBadge level={parkingLiveSummary.level} />
-                    </li>
-                  ) : null}
-                  {airportLive.congestion.busiest ? (
-                    <li className="flex items-center justify-between gap-3">
-                      <span className="min-w-0 text-[12px] font-semibold leading-snug text-ink">
-                        출국장 {airportLive.congestion.busiest.gate}번
-                        {airportLive.congestion.busiest.side
-                          ? ` ${airportLive.congestion.busiest.side}`
-                          : ''}
-                        {airportLive.congestion.busiest.waitMinutes != null
-                          ? ` · 약 ${airportLive.congestion.busiest.waitMinutes}분`
-                          : ` · 약 ${airportLive.congestion.busiest.passengers}명`}
-                      </span>
-                      <CongestionLevelBadge level={airportLive.congestion.busiest.level} />
-                    </li>
-                  ) : airportLive.congestion.note ? (
-                    <li className="text-[12px] font-medium leading-relaxed text-muted">
-                      {airportLive.congestion.note}
-                    </li>
-                  ) : null}
-                </ul>
-                <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
-                  {airportLive.disclaimer}
-                </p>
-              </div>
-            </details>
-          ) : null}
         </div>
       ) : flight && leavePlan?.error ? (
         <p className="border-t border-sky-border/50 px-4 py-3 text-[11px] font-medium leading-relaxed text-amber-700">

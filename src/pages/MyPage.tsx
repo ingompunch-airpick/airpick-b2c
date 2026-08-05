@@ -77,9 +77,10 @@ export default function MyPage({
     reservation: Reservation,
     password: string,
     rating: number,
-    body: string
+    body: string,
+    photoDataUrls: string[]
   ) => {
-    await submitCompanyReview(reservation.id, password, rating, body);
+    await submitCompanyReview(reservation.id, password, rating, body, photoDataUrls);
     setReservations((prev) =>
       prev.map((r) => (r.id === reservation.id ? { ...r, hasReview: true } : r))
     );
@@ -240,8 +241,8 @@ export default function MyPage({
                   onReviewDeepLinkHandled?.();
                 }
               }}
-              onSubmitReview={(password, rating, body) =>
-                handleSubmitReview(reservation, password, rating, body)
+              onSubmitReview={(password, rating, body, photoDataUrls) =>
+                handleSubmitReview(reservation, password, rating, body, photoDataUrls)
               }
             />
           ))}

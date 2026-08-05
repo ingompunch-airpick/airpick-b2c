@@ -1,35 +1,11 @@
 import { ChevronDown } from 'lucide-react';
 import { AIRPICK_DEFINITION, COMPANY_LEGAL } from '../constants/companyLegal';
-import { SITE_NAV_PRIMARY, SITE_NAV_SECONDARY } from '../constants/siteNav';
 
+/** 홈·앱 하단 — 메뉴 링크는 ≡ 시트로. 여기는 사업자 정보만 */
 export default function SiteFooter() {
   return (
-    <footer className="mt-6 border-t border-sky-border/60 px-1 pt-4 pb-2">
-      <nav className="flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] font-bold" aria-label="사이트 메뉴">
-        {SITE_NAV_PRIMARY.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="text-ink underline-offset-2 hover:text-brand hover:underline"
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
-
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-bold">
-        {SITE_NAV_SECONDARY.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="text-muted underline-offset-2 hover:text-brand hover:underline"
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-
-      <details className="group mt-3">
+    <footer className="mt-6 border-t border-sky-border/60 px-1 pt-3 pb-2">
+      <details className="group">
         <summary className="flex cursor-pointer list-none items-center gap-1 text-[10px] font-bold text-muted [&::-webkit-details-marker]:hidden">
           <span>사업자 정보</span>
           <ChevronDown

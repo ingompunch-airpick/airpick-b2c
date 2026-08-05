@@ -19,7 +19,7 @@ import {
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
 import { createReceiptToken } from '../utils/receiptToken';
-import { normalizeCarNumber } from '../utils/carNumber';
+import { normalizeCarNumber, carNumberTail } from '../utils/carNumber';
 
 export interface BookingForm {
   userName: string;
@@ -101,8 +101,13 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
   };
 }
 
+/**
+ * 같은 밀리초에 두 건이 들어오면 문서가 덮어써지므로 임의 접미사를 붙인다.
+ * (추측으로 남의 예약 문서를 여는 것도 어려워진다.)
+ */
 export function createReservationId(): string {
-  return `res_${Date.now()}`;
+  const suffix = Math.random().toString(36).slice(2, 6);
+  return `res_${Date.now()}${suffix}`;
 }
 
 export async function ensureAnonymousAuth(): Promise<void> {
@@ -248,6 +253,7 @@ export async function submitReservation(
     userName: form.userName.trim(),
     carModel: form.carModel.trim(),
     carNumber: normalizeCarNumber(form.carNumber),
+    carNumberTail: carNumberTail(form.carNumber) ?? undefined,
     phone: form.phone.trim(),
     departureDate: search.departureDate,
     departureTime: search.departureTime,
