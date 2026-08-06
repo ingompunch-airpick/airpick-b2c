@@ -200,8 +200,6 @@ export default function DepartureGuideCard({
   }, [flight?.flightId, flight?.date, flight?.checkInCounter]);
 
   const departureYmd = inputValueToYmd(date) || todaySeoulYmd();
-  const isDepartureToday = departureYmd === todaySeoulYmd();
-  const showTrafficRefBadge = travelSource === 'naver' && !isDepartureToday;
   const peakAdvisory = flight != null && showPeakTravelAdvisory(departureYmd);
 
   const driveGoalTerminal = (flight?.terminal === 'T1' || flight?.terminal === 'T2'
@@ -485,11 +483,6 @@ export default function DepartureGuideCard({
           {etaError ? (
             <p className="mt-1 text-[10px] font-medium text-amber-700">{etaError}</p>
           ) : null}
-          {showTrafficRefBadge ? (
-            <p className="mt-1.5 inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-800 ring-1 ring-amber-200/80">
-              실시간 교통 미반영, 참고용
-            </p>
-          ) : null}
           {showTravelFallback ? (
             <div className="mt-2">
               <p className="mb-1.5 text-[10px] font-bold text-muted">이동 시간 직접 선택</p>
@@ -729,11 +722,6 @@ export default function DepartureGuideCard({
                   {flight.terminal || flight.terminalLabel
                     ? ` · ${flight.terminal || flight.terminalLabel}`
                     : ''}
-                </p>
-              ) : null}
-              {showTrafficRefBadge ? (
-                <p className="text-[10px] font-medium text-muted">
-                  이동시간 · 실시간 교통 미반영, 참고용
                 </p>
               ) : null}
               {parking === 'valet' ? (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DepartureGuideCard from '../components/map-home/DepartureGuideCard';
-import { HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
+import { HOME_CAMPAIGN, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
 import type { AppTab, BookingSearch } from '../types';
 
 /** 홈 — SEO Hook(출국시간) → 결과에서 주차대행 비교로 전환 */
@@ -12,6 +12,7 @@ export default function HomePage({
   onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
 }) {
   const [hasResult, setHasResult] = useState(false);
+  const showCampaign = Boolean(HOME_CAMPAIGN.title.trim());
 
   return (
     <div className="relative">
@@ -47,6 +48,19 @@ export default function HomePage({
           onGoTab={onGoTab}
           onPrefillParkingSearch={onPrefillParkingSearch}
         />
+
+        {showCampaign && !hasResult ? (
+          <div className="border-l-2 border-brand/70 pl-3.5">
+            <p className="text-[13px] font-semibold leading-relaxed text-ink/80">
+              {HOME_CAMPAIGN.title}
+            </p>
+            {HOME_CAMPAIGN.body.trim() ? (
+              <p className="mt-1 text-[12px] font-medium leading-relaxed text-muted">
+                {HOME_CAMPAIGN.body}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

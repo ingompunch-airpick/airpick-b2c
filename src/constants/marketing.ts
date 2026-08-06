@@ -89,6 +89,15 @@ export const HOME_HEADLINE = '주차 예약 하셨나요?';
 /** 히어로 서브 — 계산기 역할만 (주차 설득은 결과 CTA) */
 export const HOME_SUBHEAD = '집에서 나서야 할 추천 출발 시각을 알려드립니다.';
 
+/**
+ * 홈 · 계산 카드 아래 캠페인 (끝나면 title/body를 빈 문자열로)
+ * 입점 주차대행 기준 축하 후킹
+ */
+export const HOME_CAMPAIGN = {
+  title: '2026년, 여름휴가철 전 업체 만차, 무사고를 축하합니다.',
+  body: '',
+} as const;
+
 /** @deprecated 결과 CTA로 이동 — 계산 전 노출 안 함 */
 export const HOME_TRUST_HINT = '';
 
