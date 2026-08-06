@@ -125,7 +125,7 @@ export async function fetchCompanies(): Promise<Company[]> {
   const snap = await getDocs(collection(db, 'companies'));
   return snap.docs
     .map((d) => normalizeCompany(d.id, d.data() as Record<string, unknown>))
-    .filter((c): c is Company => c !== null && c.isOpen !== false)
+    .filter((c): c is Company => c !== null)
     .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }
 
@@ -133,7 +133,7 @@ export function subscribeCompanies(onData: (companies: Company[]) => void): () =
   return onSnapshot(collection(db, 'companies'), (snap) => {
     const list = snap.docs
       .map((d) => normalizeCompany(d.id, d.data() as Record<string, unknown>))
-      .filter((c): c is Company => c !== null && c.isOpen !== false)
+      .filter((c): c is Company => c !== null)
       .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
     onData(list);
   });

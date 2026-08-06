@@ -1,5 +1,6 @@
 import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { BookingSearch, Company, Terminal } from '../types';
+import { isCompanySoldOutForSearch } from './bookingPolicy';
 import { companyMatchesSearch, companyValetFee } from './parkingType';
 import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany } from './pricing';
 import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
@@ -13,6 +14,8 @@ export function isAirpickPartner(company: Company): boolean {
 export interface PricedCompany {
   company: Company;
   price: number;
+  /** 검색 일정 기준 예약 마감·만차 — 목록에 남기되 선택 불가 */
+  soldOut?: boolean;
 }
 
 function toPricingTerminal(terminal: Terminal): PricingTerminal {
@@ -74,22 +77,32 @@ export function priceCompaniesForSearch(
     .map((company) => ({
       company,
       price: calculateComparePrice(company, search),
+      soldOut: isCompanySoldOutForSearch(company, search),
     }));
+}
+
+/** 예약 가능 업체 먼저 → 만차는 하단 (그룹 내 기존 정렬 유지) */
+function sortSoldOutLast(items: PricedCompany[]): PricedCompany[] {
+  const open = items.filter((it) => !it.soldOut);
+  const full = items.filter((it) => it.soldOut);
+  return [...open, ...full];
 }
 
 /** 그룹 내 가격 오름차순 → 실후기 수·평점(있을 때만) → 이름 */
 function sortByPrice(items: PricedCompany[]): PricedCompany[] {
-  return [...items].sort((a, b) => {
-    if (a.price !== b.price) return a.price - b.price;
-    const aReviews = a.company.reviews_count || 0;
-    const bReviews = b.company.reviews_count || 0;
-    if (aReviews !== bReviews) return bReviews - aReviews;
-    if (aReviews > 0 && bReviews > 0) {
-      const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
-      if (ratingDiff !== 0) return ratingDiff;
-    }
-    return a.company.name.localeCompare(b.company.name, 'ko');
-  });
+  return sortSoldOutLast(
+    [...items].sort((a, b) => {
+      if (a.price !== b.price) return a.price - b.price;
+      const aReviews = a.company.reviews_count || 0;
+      const bReviews = b.company.reviews_count || 0;
+      if (aReviews !== bReviews) return bReviews - aReviews;
+      if (aReviews > 0 && bReviews > 0) {
+        const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
+        if (ratingDiff !== 0) return ratingDiff;
+      }
+      return a.company.name.localeCompare(b.company.name, 'ko');
+    })
+  );
 }
 
 export interface ParkingCompareSections {
@@ -101,9 +114,13 @@ export interface ParkingCompareSections {
 function sortPartnersForSearch(items: PricedCompany[], search: BookingSearch): PricedCompany[] {
   const byPrice = sortByPrice(items);
   if (!search.faceToFace) return byPrice;
-  const capable = byPrice.filter((it) => companyValetFee(it.company, search.terminal) != null);
-  const rest = byPrice.filter((it) => companyValetFee(it.company, search.terminal) == null);
-  return [...capable, ...rest];
+  const capable = byPrice.filter(
+    (it) => !it.soldOut && companyValetFee(it.company, search.terminal) != null
+  );
+  const rest = byPrice.filter(
+    (it) => it.soldOut || companyValetFee(it.company, search.terminal) == null
+  );
+  return sortSoldOutLast([...capable, ...rest]);
 }
 
 /** 섹션에 해당 터미널 대면 가능 업체가 하나라도 있는지 */
@@ -130,26 +147,28 @@ export function sortPartnersByRating(
   items: PricedCompany[],
   reviewSnapshots: Record<string, CompanyReviewSnapshot>
 ): PricedCompany[] {
-  return [...items].sort((a, b) => {
-    const aSnap = reviewSnapshots[a.company.id];
-    const bSnap = reviewSnapshots[b.company.id];
-    const aRating =
-      aSnap?.averageRating ?? (a.company.rating > 0 ? a.company.rating : null);
-    const bRating =
-      bSnap?.averageRating ?? (b.company.rating > 0 ? b.company.rating : null);
-    const aCount = aSnap?.count ?? a.company.reviews_count ?? 0;
-    const bCount = bSnap?.count ?? b.company.reviews_count ?? 0;
+  return sortSoldOutLast(
+    [...items].sort((a, b) => {
+      const aSnap = reviewSnapshots[a.company.id];
+      const bSnap = reviewSnapshots[b.company.id];
+      const aRating =
+        aSnap?.averageRating ?? (a.company.rating > 0 ? a.company.rating : null);
+      const bRating =
+        bSnap?.averageRating ?? (b.company.rating > 0 ? b.company.rating : null);
+      const aCount = aSnap?.count ?? a.company.reviews_count ?? 0;
+      const bCount = bSnap?.count ?? b.company.reviews_count ?? 0;
 
-    if (aRating == null && bRating == null) {
+      if (aRating == null && bRating == null) {
+        return a.company.name.localeCompare(b.company.name, 'ko');
+      }
+      if (aRating == null) return 1;
+      if (bRating == null) return -1;
+      if (bRating !== aRating) return bRating - aRating;
+      if (bCount !== aCount) return bCount - aCount;
+      if (a.price !== b.price) return a.price - b.price;
       return a.company.name.localeCompare(b.company.name, 'ko');
-    }
-    if (aRating == null) return 1;
-    if (bRating == null) return -1;
-    if (bRating !== aRating) return bRating - aRating;
-    if (bCount !== aCount) return bCount - aCount;
-    if (a.price !== b.price) return a.price - b.price;
-    return a.company.name.localeCompare(b.company.name, 'ko');
-  });
+    })
+  );
 }
 
 export function buildPartnerRatingList(

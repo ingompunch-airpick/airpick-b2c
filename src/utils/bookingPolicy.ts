@@ -76,3 +76,18 @@ export function bookingPolicyMessage(
   const dep = formatDateDisplay(departureDate);
   return `선택하신 입고일(${dep})은 예약이 마감된 날짜입니다.`;
 }
+
+/** 비교 목록 · 검색 일정 기준 예약 불가(만차·마감) */
+export function isCompanySoldOutForSearch(
+  company: { isOpen?: boolean; blockedDates?: string[]; sameDayBookingBlocked?: boolean },
+  search: { departureDate: string; arrivalDate: string }
+): boolean {
+  const check = checkBookingPolicy(
+    search.departureDate,
+    search.arrivalDate,
+    company.isOpen !== false,
+    company.blockedDates ?? [],
+    company.sameDayBookingBlocked === true
+  );
+  return !check.allowed;
+}

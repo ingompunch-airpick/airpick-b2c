@@ -65,7 +65,7 @@ function CompareSection({
   title: string;
   subtitle: string;
   items: PricedCompany[];
-  onSelect: (company: Company, price: number) => void;
+  onSelect: (company: Company, price: number, soldOut: boolean) => void;
   terminal?: BookingSearch['terminal'];
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
 }) {
@@ -78,13 +78,14 @@ function CompareSection({
         <p className="text-xs font-medium text-muted">{subtitle}</p>
       </div>
       <div className="space-y-3">
-        {items.map(({ company, price }) => (
+        {items.map(({ company, price, soldOut }) => (
           <CompanyCard
             key={company.id}
             company={company}
             price={price}
             layout="list"
-            onSelect={() => onSelect(company, price)}
+            soldOut={soldOut === true}
+            onSelect={() => onSelect(company, price, soldOut === true)}
             reviewSnapshot={reviewSnapshots[company.id]}
             valetFee={terminal ? companyValetFee(company, terminal) : null}
           />
@@ -138,7 +139,8 @@ export default function ComparePage({
     };
   }, [partnerIds.join('|')]);
 
-  const handleSelect = (company: Company, price: number) => {
+  const handleSelect = (company: Company, price: number, soldOut: boolean) => {
+    if (soldOut) return;
     if (isAirpickPartner(company)) {
       onBookOnAirpick(company, price);
     } else {
