@@ -18,7 +18,7 @@ const root = path.resolve(__dirname, '..');
 const pagesPath = path.join(root, 'data/partners/pages.json');
 const outPath = path.join(root, 'data/partners/reviews.generated.json');
 
-const RECENT_MAX = 10;
+const RECENT_MAX = 50;
 
 const firebaseConfig = {
   projectId: 'airpick-reservation',

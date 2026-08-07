@@ -341,7 +341,11 @@ export default function CompanyDetailSheet({
           ) : null}
 
           <section className="mt-4">
-            <p className="text-xs font-bold text-brand">최근 후기</p>
+            <p className="text-xs font-bold text-brand">
+              {reviewSnapshot && reviewSnapshot.count > 0
+                ? `실후기 ${reviewSnapshot.count}건`
+                : '실후기'}
+            </p>
             <div className="mt-2 space-y-2">
               {reviewsLoading ? (
                 <p className="rounded-xl bg-sky-bg py-6 text-center text-xs font-medium text-muted">

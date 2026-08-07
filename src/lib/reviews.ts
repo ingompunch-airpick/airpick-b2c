@@ -32,7 +32,7 @@ function normalizeReview(id: string, data: Record<string, unknown>): CompanyRevi
   };
 }
 
-function buildSnapshot(reviews: CompanyReview[], recentMax: number): CompanyReviewSnapshot {
+function buildSnapshot(reviews: CompanyReview[], recentMax?: number): CompanyReviewSnapshot {
   const sorted = [...reviews].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const count = sorted.length;
   const averageRating =
@@ -40,8 +40,15 @@ function buildSnapshot(reviews: CompanyReview[], recentMax: number): CompanyRevi
       ? Math.round((sorted.reduce((sum, r) => sum + r.rating, 0) / count) * 10) / 10
       : null;
 
+  const recent =
+    recentMax === undefined
+      ? sorted
+      : recentMax <= 0
+        ? []
+        : sorted.slice(0, recentMax);
+
   return {
-    recent: sorted.slice(0, recentMax),
+    recent,
     count,
     averageRating,
   };
@@ -67,10 +74,12 @@ async function fetchPublishedReviewsForCompany(companyId: string): Promise<Compa
     .filter((r): r is CompanyReview => r != null);
 }
 
-/** 업체 후기 집계 + 최근 목록 — reviews 컬렉션 기준 (company.reviews_count 미사용) */
+/** 업체 후기 집계 + 최근 목록 — reviews 컬렉션 기준 (company.reviews_count 미사용)
+ *  @param recentMax 표시할 최근 건수. 생략·undefined면 published 전체.
+ */
 export async function fetchCompanyReviewSnapshot(
   companyId: string,
-  recentMax = 5
+  recentMax?: number
 ): Promise<CompanyReviewSnapshot> {
   await ensureAnonymousAuth();
 
