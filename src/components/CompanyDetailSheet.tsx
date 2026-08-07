@@ -40,41 +40,51 @@ function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
 
 function ReviewItem({ review }: { review: CompanyReview }) {
   const identity = [review.authorMask, review.carMask].filter(Boolean).join(' · ');
+  const photos = (review.photoUrls ?? []).filter(Boolean).slice(0, 3);
   return (
     <div className="rounded-xl bg-sky-bg px-3.5 py-3 ring-1 ring-sky-border/50">
-      <div className="flex items-center justify-between gap-2">
-        <StarRating rating={review.rating} size={12} />
-        <span className="text-[10px] font-semibold text-muted-light">
-          {formatReviewDate(review.createdAt)}
-        </span>
-      </div>
-      <p className="mt-1.5 text-[11px] font-semibold text-muted">{identity || '익명'}</p>
-      {review.body?.trim() && (
-        <p className="mt-1 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
-      )}
-      {review.photoUrls?.length ? (
-        <div className="mt-2 -mx-0.5 flex gap-2 overflow-x-auto px-0.5 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {review.photoUrls.map((url, index) => (
-            <a
-              key={`${url}_${index}`}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block shrink-0 overflow-hidden rounded-lg ring-1 ring-sky-border/60"
-            >
-              <img
-                src={companyPhotoUrl(url, 320)}
-                alt={`후기 사진 ${index + 1}`}
-                width={112}
-                height={112}
-                className="h-28 w-28 object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          ))}
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <StarRating rating={review.rating} size={12} />
+            <span className="text-[10px] font-semibold text-muted-light">
+              {formatReviewDate(review.createdAt)}
+            </span>
+          </div>
+          <p className="mt-1.5 text-[11px] font-semibold text-muted">{identity || '익명'}</p>
+          {review.body?.trim() ? (
+            <p className="mt-1 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
+          ) : null}
         </div>
-      ) : null}
+        {photos.length > 0 ? (
+          <div
+            className={cn(
+              'grid shrink-0 gap-1',
+              photos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+            )}
+          >
+            {photos.map((url, index) => (
+              <a
+                key={`${url}_${index}`}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block overflow-hidden rounded-lg ring-1 ring-sky-border/60"
+              >
+                <img
+                  src={companyThumbnailUrl(url, 96)}
+                  alt={`후기 사진 ${index + 1}`}
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            ))}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
