@@ -20,7 +20,7 @@ export const APP_TAB_SOON = {
 export const MY_TAB_LABEL = '내 예약';
 
 /** 홈 탭 — 집→공항 출발 시각 계산 */
-export const HOME_TAB_LABEL = '출발시각';
+export const HOME_TAB_LABEL = '홈';
 
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
 export const BRAND_TAGLINE = '맡긴 차, 사진·위치까지';
@@ -32,12 +32,12 @@ export const BRAND_SUBLINE =
 /** 주차대행 탭 상단 — 공항만 표기 (탭명에 주차대행 이미 있음) */
 export const PARKING_PLATFORM_SUB = '인천공항';
 
-/** 주차 비교 허브 H1 (SEO·화면 공통) */
-export const PARKING_COMPARE_H1 = '인천공항 주차대행 비교';
+/** 주차 비교 허브 H1 (화면) — SEO 키워드는 document title에 유지 */
+export const PARKING_COMPARE_H1 = '주차대행, 아무 데나 예약하지 마세요.';
 
 /** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
 export const PARKING_COMPARE_DESC =
-  '입점 = 예약·보험·주차 위치 확인 · 미입점 = 참고 요금만 (보험·위치 보증 없음)';
+  '가격·보험·평점·주차환경까지 비교하고 검증된 업체만 예약하세요.';
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 · 에어픽';
 
@@ -52,10 +52,14 @@ export const ESIM_COMPARE_DOCUMENT_TITLE = '이심(eSIM) 가격 비교 | 에어�
 export const ESIM_COMPARE_SUB = '국가별 최저가 참고 비교';
 
 export const PARKING_PARTNER_SECTION = {
-  title: '에어픽 입점 · 바로 예약',
-  titleRating: '에어픽 입점 · 평점순',
-  subtitleNote: '예약 후 입고 사진·주차 위치·보험을 예약 탭에서 확인',
+  title: '에어픽 인증업체',
+  titleRating: '에어픽 인증업체',
+  subtitleNote: '실후기·평점·보험·주차환경을 기준으로 비교해요',
 } as const;
+
+/** 비교 섹션 타이틀 · 비교 가능 업체 수 */
+export const parkingPartnerSectionTitle = (count: number) =>
+  `에어픽 인증업체 ${count}곳`;
 
 export const PARKING_EXTERNAL_SECTION = {
   title: '미입점 · 가격 비교만',
@@ -82,12 +86,16 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /**
- * 홈 H1
+ * 홈 H1 — 주차대행 비교가 첫인상
  */
-export const HOME_HEADLINE = '주차 예약 하셨나요?';
+export const HOME_HEADLINE = '인천공항 주차대행, 한눈에 비교하세요.';
 
-/** 히어로 서브 — 계산기 역할만 (주차 설득은 결과 CTA) */
-export const HOME_SUBHEAD = '집에서 나서야 할 추천 출발 시각을 알려드립니다.';
+/** 히어로 서브 — 일정 직접 입력 → 비교 */
+export const HOME_SUBHEAD =
+  '맡기는·찾는 일정만 넣으면 가격·보험·평점까지 한눈에 비교할 수 있어요.';
+
+/** 홈 · 여행 정보 입력 후 결과로 */
+export const HOME_TRIP_CONTINUE_CTA = '내 여행에 맞는 서비스 보기';
 
 /**
  * 홈 · 계산 카드 아래 캠페인 (끝나면 title/body를 빈 문자열로)
@@ -193,7 +201,7 @@ export const HOME_TO_COMPARE_SAVED = (minutes: number) =>
   `${minutes}분 더 여유롭게 출발`;
 export const HOME_TO_COMPARE_LONG_CONGESTION = (level: string) =>
   `지금 장기주차장 · ${level}`;
-export const HOME_TO_COMPARE_TIME_HINT = '입고·출고 시간은 아래에서 직접 선택해 주세요.';
+export const HOME_TO_COMPARE_TIME_HINT = '맡기는·찾는 시간은 아래에서 직접 선택해 주세요.';
 
 /** @deprecated HOME_NEXT_PREP.parking 사용 */
 export const HOME_VALET_NOTE = {

@@ -355,12 +355,12 @@ export default function BookingModal({
 
             <div className="mt-3 grid grid-cols-2 gap-2">
               <TimeField
-                label="입고 시간"
+                label="맡기는 시간"
                 value={search.departureTime}
                 onChange={(departureTime) => setSearch((prev) => ({ ...prev, departureTime }))}
               />
               <TimeField
-                label="출고 시간"
+                label="찾는 시간"
                 value={search.arrivalTime}
                 onChange={(arrivalTime) => setSearch((prev) => ({ ...prev, arrivalTime }))}
               />
@@ -382,7 +382,7 @@ export default function BookingModal({
               <div className="mt-3 space-y-3 border-t border-sky-border/60 pt-3">
                 <div className="grid grid-cols-2 gap-2">
                   <DateField
-                    label="입고(출국)일"
+                    label="맡기는 날"
                     value={search.departureDate}
                     min={today}
                     onChange={(departureDate) => {
@@ -396,7 +396,7 @@ export default function BookingModal({
                     }}
                   />
                   <DateField
-                    label="출고(입국)일"
+                    label="찾는 날"
                     value={search.arrivalDate}
                     min={search.departureDate}
                     onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}

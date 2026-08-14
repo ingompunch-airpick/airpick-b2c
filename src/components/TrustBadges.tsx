@@ -8,10 +8,11 @@ import {
   shouldShowPhotosBadge,
 } from '../utils/trustDisplay';
 
+/** 보험을 앞에 — 영업·신뢰 핵심 신호 */
 const badgeConfig = [
-  { key: 'location' as const, icon: MapPin, label: '위치 공유' },
-  { key: 'photos' as const, icon: Camera, label: '사진 공유' },
-  { key: 'insurance' as const, icon: ShieldCheck, label: '보험' },
+  { key: 'insurance' as const, icon: ShieldCheck, label: '보험 가입' },
+  { key: 'photos' as const, icon: Camera, label: '입고사진' },
+  { key: 'location' as const, icon: MapPin, label: '주차장 확인' },
 ];
 
 export default function TrustBadges({
@@ -31,7 +32,10 @@ export default function TrustBadges({
         if (key === 'insurance' && !shouldShowInsuranceBadge(company)) return null;
 
         const text =
-          key === 'insurance' && insuranceLabel && insuranceLabel !== '보험'
+          key === 'insurance' &&
+          insuranceLabel &&
+          insuranceLabel !== '보험' &&
+          insuranceLabel !== '보험 가입'
             ? insuranceLabel
             : label;
 

@@ -1,7 +1,10 @@
 /** 집 → 공항 도착 시각 기준, 집에서 나설 시각 계산 */
 
-/** 국제선 권장: 출발 3시간 전 공항 도착 */
+/** 국제선 권장: 출발 3시간 전 공항 도착 (= 주차대행 맡기는 시각 기본) */
 export const DEFAULT_ARRIVE_BEFORE_MINUTES = 180;
+
+/** 입국 후 차 찾기까지 여유 (출국심사·수하물·이동) */
+export const DEFAULT_PICKUP_AFTER_ARRIVAL_MINUTES = 75;
 
 /** "10:25" / "1025" → 분(0–1439) */
 export function parseHmToMinutes(hm: string | null | undefined): number | null {
@@ -27,6 +30,77 @@ export function formatMinutesAsHm(totalMinutes: number): string {
   const day = ((Math.floor(totalMinutes / 60) % 24) + 24) % 24;
   const min = ((totalMinutes % 60) + 60) % 60;
   return `${String(day).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+}
+
+function addDaysYmd(ymd: string, days: number): string {
+  const d = new Date(`${ymd}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return ymd;
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+export type ValetScheduleFromFlight = {
+  /** 맡기기 / 찾기 시각 */
+  hm: string;
+  /** 맡기기 / 찾기 날짜 (자정 넘어가면 비행일과 다를 수 있음) */
+  dateYmd: string;
+  /** 정규화된 비행 시각 */
+  flightHm: string;
+};
+
+/**
+ * 출국편 출발 → 주차대행 맡기는 시각 (기본: 출발 3시간 전)
+ * 새벽에 출발하면 전날로 넘어갈 수 있음
+ */
+export function resolveValetDropOffFromFlightDeparture(
+  flightDepartureHm: string | null | undefined,
+  flightDateYmd: string,
+  minutesBefore: number = DEFAULT_ARRIVE_BEFORE_MINUTES
+): ValetScheduleFromFlight | null {
+  const flightMins = parseHmToMinutes(flightDepartureHm);
+  if (flightMins == null || !/^\d{4}-\d{2}-\d{2}$/.test(flightDateYmd)) return null;
+
+  let total = flightMins - Math.max(0, Math.floor(minutesBefore));
+  let dateYmd = flightDateYmd;
+  while (total < 0) {
+    total += 24 * 60;
+    dateYmd = addDaysYmd(dateYmd, -1);
+  }
+
+  return {
+    hm: formatMinutesAsHm(total),
+    dateYmd,
+    flightHm: formatMinutesAsHm(flightMins),
+  };
+}
+
+/**
+ * 입국편 도착 → 주차대행 찾는 시각 (기본: 도착 + 75분)
+ * 심야 도착이면 다음날로 넘어갈 수 있음
+ */
+export function resolveValetPickUpFromFlightArrival(
+  flightArrivalHm: string | null | undefined,
+  flightDateYmd: string,
+  minutesAfter: number = DEFAULT_PICKUP_AFTER_ARRIVAL_MINUTES
+): ValetScheduleFromFlight | null {
+  const flightMins = parseHmToMinutes(flightArrivalHm);
+  if (flightMins == null || !/^\d{4}-\d{2}-\d{2}$/.test(flightDateYmd)) return null;
+
+  let total = flightMins + Math.max(0, Math.floor(minutesAfter));
+  let dateYmd = flightDateYmd;
+  while (total >= 24 * 60) {
+    total -= 24 * 60;
+    dateYmd = addDaysYmd(dateYmd, 1);
+  }
+
+  return {
+    hm: formatMinutesAsHm(total),
+    dateYmd,
+    flightHm: formatMinutesAsHm(flightMins),
+  };
 }
 
 /** 출발시간 − 3시간 = 공항 도착 시각 */

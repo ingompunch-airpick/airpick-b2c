@@ -103,7 +103,7 @@ export default function CompanyCard({
             <p className="truncate text-base font-bold text-ink">{name}</p>
             {partner ? (
               <span className="shrink-0 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
-                에어픽 예약
+                에어픽 인증
               </span>
             ) : (
               <span className="shrink-0 rounded-md bg-sky-tint px-1.5 py-0.5 text-[10px] font-bold text-muted">
@@ -118,7 +118,9 @@ export default function CompanyCard({
                 <span className="text-lg font-bold tabular-nums text-ink">
                   {reviewSnapshot.averageRating.toFixed(1)}
                 </span>
-                <span className="text-[11px] font-medium text-muted">후기 {reviewSnapshot.count}</span>
+                <span className="text-[11px] font-medium text-muted">
+                  실후기 {reviewSnapshot.count}
+                </span>
               </div>
               <p className="shrink-0 text-lg font-bold tabular-nums text-brand">
                 {price.toLocaleString()}원

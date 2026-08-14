@@ -1,5 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { fetchIcnFlightSearch, type IcnFlightSearchItem } from '../../lib/icnFlight';
+import {
+  fetchIcnFlightSearch,
+  type IcnFlightDirection,
+  type IcnFlightSearchItem,
+} from '../../lib/icnFlight';
 import { cn } from '../../utils/cn';
 
 const DEBOUNCE_MS = 350;
@@ -9,14 +13,16 @@ function normalizeFlightInput(raw: string): string {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
 
-function formatFlightOption(f: IcnFlightSearchItem): string {
-  const dest =
+function formatFlightOption(f: IcnFlightSearchItem, direction: IcnFlightDirection): string {
+  const place =
     f.destination && f.destinationCode
       ? `${f.destination}(${f.destinationCode})`
       : f.destination ?? f.destinationCode ?? '';
+  /** 도착 API의 airport = 출발지(어디발), 출발 API = 목적지 */
+  const placePart = place ? (direction === 'arrival' ? `${place}발` : place) : '';
   const time = f.scheduleTime ?? f.estimatedTime ?? '—';
   const term = f.terminal ?? '';
-  const parts = [f.flightId, dest, time, term].filter(Boolean);
+  const parts = [f.flightId, placePart, time, term].filter(Boolean);
   return parts.join(' · ');
 }
 
@@ -25,14 +31,16 @@ export default function FlightIdCombobox({
   onChange,
   onSelectFlight,
   dateYmd,
+  direction = 'departure',
   placeholder,
   disabled,
 }: {
   value: string;
   onChange: (next: string) => void;
-  /** 목록에서 고르면 편명·시각·터미널이 함께 옴 (계산 시 재조회 생략용) */
+  /** 목록에서 고르면 편명·시각·터미널이 함께 옴 */
   onSelectFlight?: (flight: IcnFlightSearchItem) => void;
   dateYmd: string;
+  direction?: IcnFlightDirection;
   placeholder?: string;
   disabled?: boolean;
 }) {
@@ -44,9 +52,17 @@ export default function FlightIdCombobox({
   const [flights, setFlights] = useState<IcnFlightSearchItem[]>([]);
   const [truncated, setTruncated] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  /** 검색 완료 후 0건이어도 드롭다운 유지 */
+  const [searched, setSearched] = useState(false);
 
   const query = normalizeFlightInput(value);
   const canSearch = query.length >= MIN_QUERY_LEN && dateYmd.length === 8;
+  const emptyLabel =
+    direction === 'arrival'
+      ? '해당 귀국일에 도착편이 없습니다. 귀국일(도착일)을 확인해 주세요.'
+      : '해당 출국일에 출발편이 없습니다. 출국일을 확인해 주세요.';
+  const needDateLabel =
+    direction === 'arrival' ? '귀국일을 먼저 선택해 주세요.' : '출국일을 먼저 선택해 주세요.';
 
   useEffect(() => {
     if (!open || !canSearch) {
@@ -54,6 +70,7 @@ export default function FlightIdCombobox({
       setTruncated(false);
       setSearchError(null);
       setLoading(false);
+      setSearched(false);
       return;
     }
 
@@ -61,9 +78,11 @@ export default function FlightIdCombobox({
     const timer = window.setTimeout(() => {
       setLoading(true);
       setSearchError(null);
-      void fetchIcnFlightSearch(query, dateYmd).then((res) => {
+      setSearched(false);
+      void fetchIcnFlightSearch(query, dateYmd, direction).then((res) => {
         if (cancelled) return;
         setLoading(false);
+        setSearched(true);
         if (!res.ok) {
           setFlights([]);
           setTruncated(false);
@@ -85,7 +104,7 @@ export default function FlightIdCombobox({
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [query, dateYmd, canSearch, open]);
+  }, [query, dateYmd, direction, canSearch, open]);
 
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
@@ -102,7 +121,8 @@ export default function FlightIdCombobox({
     setActiveIndex(-1);
   };
 
-  const showList = open && canSearch && (loading || flights.length > 0 || !!searchError);
+  const showList =
+    open && canSearch && (loading || searched || flights.length > 0 || !!searchError);
 
   return (
     <div ref={rootRef} className="relative">
@@ -151,12 +171,14 @@ export default function FlightIdCombobox({
           ) : searchError ? (
             <li className="px-3 py-2.5 text-[12px] font-medium text-amber-700">{searchError}</li>
           ) : flights.length === 0 ? (
-            <li className="px-3 py-2.5 text-[12px] font-medium text-muted">
-              해당 조건의 출발편이 없습니다.
-            </li>
+            <li className="px-3 py-2.5 text-[12px] font-medium text-muted">{emptyLabel}</li>
           ) : (
             flights.map((f, idx) => (
-              <li key={f.flightId} role="option" aria-selected={idx === activeIndex}>
+              <li
+                key={`${f.flightId}_${f.scheduleTime ?? ''}`}
+                role="option"
+                aria-selected={idx === activeIndex}
+              >
                 <button
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
@@ -166,7 +188,9 @@ export default function FlightIdCombobox({
                     idx === activeIndex ? 'bg-sky-soft' : 'hover:bg-sky-soft/70'
                   )}
                 >
-                  <span className="text-[13px] font-bold text-ink">{formatFlightOption(f)}</span>
+                  <span className="text-[13px] font-bold text-ink">
+                    {formatFlightOption(f, direction)}
+                  </span>
                   {f.airline ? (
                     <span className="text-[10px] font-medium text-muted">{f.airline}</span>
                   ) : null}
@@ -183,7 +207,7 @@ export default function FlightIdCombobox({
       ) : null}
 
       {!dateYmd && open && query.length >= MIN_QUERY_LEN ? (
-        <p className="mt-1 text-[10px] font-medium text-muted">출발일을 먼저 선택해 주세요.</p>
+        <p className="mt-1 text-[10px] font-medium text-muted">{needDateLabel}</p>
       ) : null}
     </div>
   );

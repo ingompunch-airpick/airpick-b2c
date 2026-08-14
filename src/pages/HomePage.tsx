@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import DepartureGuideCard from '../components/map-home/DepartureGuideCard';
+import TripHomeHub from '../components/home/TripHomeHub';
 import { HOME_CAMPAIGN, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
-import type { AppTab, BookingSearch } from '../types';
+import type { AppTab, BookingSearch, EsimSearch } from '../types';
 
-/** 홈 — SEO Hook(출국시간) → 결과에서 주차대행 비교로 전환 */
+/** 홈 — 여행 정보 입력 → 주차(1)·이심(2)·출발시각(3) */
 export default function HomePage({
   onGoTab,
   onPrefillParkingSearch,
+  onPrefillEsimSearch,
 }: {
   onGoTab: (tab: AppTab) => void;
   onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
+  onPrefillEsimSearch?: (patch: Partial<EsimSearch>) => void;
 }) {
   const [hasResult, setHasResult] = useState(false);
   const showCampaign = Boolean(HOME_CAMPAIGN.title.trim());
@@ -43,10 +45,11 @@ export default function HomePage({
           ) : null}
         </header>
 
-        <DepartureGuideCard
+        <TripHomeHub
           onResultChange={setHasResult}
           onGoTab={onGoTab}
           onPrefillParkingSearch={onPrefillParkingSearch}
+          onPrefillEsimSearch={onPrefillEsimSearch}
         />
 
         {showCampaign && !hasResult ? (

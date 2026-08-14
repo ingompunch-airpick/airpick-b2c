@@ -10,6 +10,10 @@ const dataGoKrKey = defineSecret('DATA_GO_KR_SERVICE_KEY');
 
 const DEPARTURE_URL =
   'https://apis.data.go.kr/B551177/StatusOfPassengerFlightsDeOdp/getPassengerDeparturesDeOdp';
+const ARRIVAL_URL =
+  'https://apis.data.go.kr/B551177/StatusOfPassengerFlightsDeOdp/getPassengerArrivalsDeOdp';
+
+type FlightDirection = 'departure' | 'arrival';
 
 type FlightItem = {
   airline?: string;
@@ -186,18 +190,24 @@ function searchModeForQuery(q: string): 'airline' | 'flight_id' | null {
   return 'flight_id';
 }
 
-async function fetchDepartureList(
+function parseFlightDirection(raw: unknown): FlightDirection {
+  const v = String(raw ?? '').trim().toLowerCase();
+  return v === 'arrival' || v === 'arr' || v === 'in' ? 'arrival' : 'departure';
+}
+
+async function fetchFlightList(
   key: string,
   date: string,
+  direction: FlightDirection,
   opts: { airline?: string; flightId?: string }
 ): Promise<{ items: FlightItem[]; totalCount: number }> {
-  const cacheKey = `${date}:${opts.airline ?? ''}:${opts.flightId ?? ''}`;
+  const cacheKey = `${direction}:${date}:${opts.airline ?? ''}:${opts.flightId ?? ''}`;
   const hit = listCache.get(cacheKey);
   if (hit && Date.now() - hit.at < 60_000) {
     return { items: hit.items, totalCount: hit.totalCount };
   }
 
-  const u = new URL(DEPARTURE_URL);
+  const u = new URL(direction === 'arrival' ? ARRIVAL_URL : DEPARTURE_URL);
   u.searchParams.set('serviceKey', key);
   u.searchParams.set('type', 'json');
   u.searchParams.set('pageNo', '1');
@@ -218,15 +228,19 @@ async function fetchDepartureList(
   return { items: list, totalCount };
 }
 
-async function fetchDeparture(key: string, date: string, flightId: string): Promise<FlightItem | null> {
-  const cacheKey = `${date}:${flightId}`;
+async function fetchFlight(
+  key: string,
+  date: string,
+  flightId: string,
+  direction: FlightDirection
+): Promise<FlightItem | null> {
+  const cacheKey = `${direction}:${date}:${flightId}`;
   const hit = cache.get(cacheKey);
   if (hit && Date.now() - hit.at < 60_000) {
     return hit.miss ? null : hit.item;
   }
 
-  // 상세 전용 호출이 업스트림에서 자주 502/타임아웃 남 → 검색과 동일 목록 API로 조회 후 정확 매칭
-  const { items } = await fetchDepartureList(key, date, { flightId });
+  const { items } = await fetchFlightList(key, date, direction, { flightId });
   const exact = items.filter((i) => String(i.flightId ?? '').toUpperCase() === flightId);
   const pool = exact.length > 0 ? exact : items.filter((i) =>
     String(i.flightId ?? '').toUpperCase().startsWith(flightId)
@@ -239,7 +253,7 @@ async function fetchDeparture(key: string, date: string, flightId: string): Prom
 }
 
 /**
- * GET /api/icn-flight?flightId=KE101&date=20260719
+ * GET /api/icn-flight?flightId=KE101&date=20260719&direction=departure|arrival
  */
 export const getIcnFlight = onRequest(
   {
@@ -262,6 +276,7 @@ export const getIcnFlight = onRequest(
     const flightId = normalizeFlightId(String(req.query.flightId ?? req.query.flight_id ?? ''));
     const dateRaw = String(req.query.date ?? '').replace(/\D/g, '');
     const date = dateRaw.length === 8 ? dateRaw : seoulYmd();
+    const direction = parseFlightDirection(req.query.direction ?? req.query.dir);
 
     if (!flightId || flightId.length < 3) {
       res.status(400).json({ error: 'invalid_flight_id' });
@@ -275,13 +290,17 @@ export const getIcnFlight = onRequest(
     }
 
     try {
-      const item = await fetchDeparture(key, date, flightId);
+      const item = await fetchFlight(key, date, flightId, direction);
       if (!item) {
         res.status(404).json({
           error: 'not_found',
           flightId,
           date,
-          message: '해당 날짜에 출발편이 없습니다. 편명·날짜를 확인해 주세요.',
+          direction,
+          message:
+            direction === 'arrival'
+              ? '해당 날짜에 도착편이 없습니다. 편명·날짜를 확인해 주세요.'
+              : '해당 날짜에 출발편이 없습니다. 편명·날짜를 확인해 주세요.',
         });
         return;
       }
@@ -296,6 +315,7 @@ export const getIcnFlight = onRequest(
         destination: item.airport ?? null,
         destinationCode: item.airportCode ?? null,
         date,
+        direction,
         scheduleTime: formatSchedule(item.scheduleDateTime),
         estimatedTime: formatSchedule(item.estimatedDateTime),
         remark: item.remark ?? null,
@@ -318,10 +338,10 @@ export const getIcnFlight = onRequest(
 );
 
 /**
- * GET /api/icn-flight-search?q=KE&date=20260719
+ * GET /api/icn-flight-search?q=KE&date=20260719&direction=departure|arrival
  * - 2글자 이상: 항상 flight_id prefix 검색 (KE → KE101…)
  * - mode=airline 은 2글자 IATA 입력임을 UI/로그용으로만 표기
- *   (업스트림 airline= 는 IATA를 무시하고 전체 출발 목록을 주는 경우가 있음)
+ *   (업스트림 airline= 는 IATA를 무시하고 전체 목록을 주는 경우가 있음)
  */
 export const getIcnFlightSearch = onRequest(
   {
@@ -345,6 +365,7 @@ export const getIcnFlightSearch = onRequest(
     const dateRaw = String(req.query.date ?? '').replace(/\D/g, '');
     const date = dateRaw.length === 8 ? dateRaw : seoulYmd();
     const mode = searchModeForQuery(query);
+    const direction = parseFlightDirection(req.query.direction ?? req.query.dir);
 
     if (!query || !mode) {
       res.status(400).json({
@@ -361,7 +382,7 @@ export const getIcnFlightSearch = onRequest(
     }
 
     try {
-      const upstream = await fetchDepartureList(key, date, { flightId: query });
+      const upstream = await fetchFlightList(key, date, direction, { flightId: query });
 
       const flights = buildFlightSearchResults(upstream.items, query).map(mapFlightSummary);
       const truncated = upstream.totalCount > flights.length || upstream.items.length >= SEARCH_ROW_LIMIT;
@@ -371,6 +392,7 @@ export const getIcnFlightSearch = onRequest(
         date,
         query,
         mode,
+        direction,
         flights,
         truncated,
         source: 'data.go.kr / B551177/StatusOfPassengerFlightsDeOdp',

@@ -4,9 +4,11 @@ import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
 import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
 import {
+  PARKING_COMPARE_DESC,
   PARKING_COMPARE_H1,
   PARKING_EXTERNAL_SECTION,
   PARKING_PARTNER_SECTION,
+  parkingPartnerSectionTitle,
 } from '../constants/marketing';
 import { mergeParkingCompareCompanies, openExternalBooking } from '../lib/parkingCompare';
 import {
@@ -31,7 +33,7 @@ function SortTabs({
   onChange: (mode: CompareSortMode) => void;
 }) {
   const tabs: { id: CompareSortMode; label: string }[] = [
-    { id: 'rating', label: '평점순' },
+    { id: 'rating', label: '추천순' },
     { id: 'price', label: '가격순' },
   ];
 
@@ -150,7 +152,7 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
-      <PageHero line={PARKING_COMPARE_H1} />
+      <PageHero line={PARKING_COMPARE_H1} desc={PARKING_COMPARE_DESC} />
       <SearchPanel search={search} onChange={onSearchChange} />
       <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
@@ -168,8 +170,8 @@ export default function ComparePage({
       ) : sortMode === 'price' ? (
         <>
           <CompareSection
-            title={PARKING_PARTNER_SECTION.title}
-            subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${partners.length}곳 · 낮은 가격순`}
+            title={parkingPartnerSectionTitle(partners.length)}
+            subtitle={PARKING_PARTNER_SECTION.subtitleNote}
             items={partners}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
@@ -178,7 +180,7 @@ export default function ComparePage({
 
           <CompareSection
             title={PARKING_EXTERNAL_SECTION.title}
-            subtitle={`${PARKING_EXTERNAL_SECTION.subtitleNote} · ${externals.length}곳 · 낮은 가격순`}
+            subtitle={`${PARKING_EXTERNAL_SECTION.subtitleNote} · ${externals.length}곳`}
             items={externals}
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
@@ -189,12 +191,12 @@ export default function ComparePage({
         <>
           {ratingPartners.length === 0 ? (
             <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-              평점순 비교는 에어픽 입점 업체만 제공합니다.
+              추천순 비교는 에어픽 인증 업체만 제공합니다.
             </p>
           ) : (
             <CompareSection
-              title={PARKING_PARTNER_SECTION.titleRating}
-              subtitle={`${PARKING_PARTNER_SECTION.subtitleNote} · ${ratingPartners.length}곳 · 높은 평점순 · 실후기 기준`}
+              title={parkingPartnerSectionTitle(ratingPartners.length)}
+              subtitle={PARKING_PARTNER_SECTION.subtitleNote}
               items={ratingPartners}
               onSelect={handleSelect}
               reviewSnapshots={reviewSnapshots}

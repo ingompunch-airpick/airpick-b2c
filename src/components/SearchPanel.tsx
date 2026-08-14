@@ -49,7 +49,7 @@ export default function SearchPanel({
     >
       <div className="grid grid-cols-2 gap-2">
         <DateField
-          label="입고(출국)"
+          label="맡기는 날"
           value={search.departureDate}
           min={today}
           onChange={(departureDate) => {
@@ -61,7 +61,7 @@ export default function SearchPanel({
           }}
         />
         <DateField
-          label="출고(입국)"
+          label="찾는 날"
           value={search.arrivalDate}
           min={search.departureDate}
           onChange={(arrivalDate) => onChange({ ...search, arrivalDate })}
@@ -70,12 +70,12 @@ export default function SearchPanel({
 
       <div className="mt-2 grid grid-cols-2 gap-2">
         <TimeField
-          label="입고 시간"
+          label="맡기는 시간"
           value={search.departureTime}
           onChange={(departureTime) => onChange({ ...search, departureTime })}
         />
         <TimeField
-          label="출고 시간"
+          label="찾는 시간"
           value={search.arrivalTime}
           onChange={(arrivalTime) => onChange({ ...search, arrivalTime })}
         />
@@ -121,7 +121,7 @@ export default function SearchPanel({
         {search.isIndoor ? parkingTypeLabel(true) : parkingTypeLabel(false)}
       </p>
       <p className="mt-1 text-center text-[10px] font-medium text-muted-light">
-        입·출차 시간 기준 야간 할증 포함
+        맡기는·찾는 시간 기준 야간 할증 포함
       </p>
     </div>
   );

@@ -13,7 +13,7 @@ import {
   trackTabView,
 } from './lib/analytics';
 import HomePage from './pages/HomePage';
-import type { AppTab, BookingSearch, Company } from './types';
+import type { AppTab, BookingSearch, Company, EsimSearch } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
   ESIM_TAB_LABEL,
@@ -23,6 +23,7 @@ import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
   isSeoDocumentPath,
+  readEsimCountryCode,
   readInitialTab,
   readParkingCompanyId,
   readReviewReservationId,
@@ -30,6 +31,8 @@ import {
   tabFromPathname,
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
+import { defaultEsimSearch } from './utils/esimSearch';
+import { normalizeEsimSearch } from './lib/esimCatalog';
 import { calculatePrice } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 
@@ -42,7 +45,7 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: `주차예약 하셨나요? · 에어픽`,
+  home: `인천공항 주차대행, 한눈에 비교하세요. · 에어픽`,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
   my: '내 예약 · 에어픽',
@@ -51,6 +54,10 @@ const DOCUMENT_TITLE: Record<AppTab, string> = {
 export default function App() {
   const [tab, setTabState] = useState<AppTab>(() => readInitialTab());
   const [search, setSearch] = useState<BookingSearch>(defaultBookingSearch);
+  const [esimSearch, setEsimSearch] = useState<EsimSearch>(() => {
+    const fromUrl = readEsimCountryCode();
+    return fromUrl ? { ...defaultEsimSearch, countryCode: fromUrl } : defaultEsimSearch;
+  });
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [partnerDetail, setPartnerDetail] = useState<{ company: Company; price: number } | null>(
@@ -79,6 +86,10 @@ export default function App() {
 
   const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
     setSearch((prev) => ({ ...prev, ...patch }));
+  };
+
+  const prefillEsimFromTrip = (patch: Partial<EsimSearch>) => {
+    setEsimSearch((prev) => normalizeEsimSearch({ ...prev, ...patch }));
   };
 
   useEffect(() => {
@@ -148,6 +159,7 @@ export default function App() {
         <HomePage
           onGoTab={(next) => setTab(next)}
           onPrefillParkingSearch={prefillFromLeaveBy}
+          onPrefillEsimSearch={prefillEsimFromTrip}
         />
       );
     }
@@ -194,7 +206,7 @@ export default function App() {
         }}
       />
     );
-  }, [tab, search, companies, lastReservationId, reviewReservationId]);
+  }, [tab, search, esimSearch, companies, lastReservationId, reviewReservationId]);
 
   const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
 

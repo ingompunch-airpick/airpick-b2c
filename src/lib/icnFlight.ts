@@ -1,9 +1,12 @@
+export type IcnFlightDirection = 'departure' | 'arrival';
+
 export interface IcnFlightResponse {
   flightId: string;
   airline: string | null;
   destination: string | null;
   destinationCode: string | null;
   date: string;
+  direction?: IcnFlightDirection;
   scheduleTime: string | null;
   estimatedTime: string | null;
   remark: string | null;
@@ -35,6 +38,7 @@ export interface IcnFlightSearchResponse {
   date: string;
   query: string;
   mode: 'airline' | 'flight_id';
+  direction?: IcnFlightDirection;
   flights: IcnFlightSearchItem[];
   truncated?: boolean;
   error?: string;
@@ -43,13 +47,18 @@ export interface IcnFlightSearchResponse {
 
 export async function fetchIcnFlightSearch(
   query: string,
-  date: string
+  date: string,
+  direction: IcnFlightDirection = 'departure'
 ): Promise<
   | { ok: true; data: IcnFlightSearchResponse }
   | { ok: false; status: number; data: IcnFlightSearchResponse | null }
 > {
   const q = query.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const qs = new URLSearchParams({ q, date: date.replace(/\D/g, '') });
+  const qs = new URLSearchParams({
+    q,
+    date: date.replace(/\D/g, ''),
+    direction,
+  });
   try {
     const res = await fetch(`/api/icn-flight-search?${qs.toString()}`);
     const data = (await res.json().catch(() => null)) as IcnFlightSearchResponse | null;
@@ -62,9 +71,10 @@ export async function fetchIcnFlightSearch(
 
 export async function fetchIcnFlight(
   flightId: string,
-  date?: string
+  date?: string,
+  direction: IcnFlightDirection = 'departure'
 ): Promise<{ ok: true; data: IcnFlightResponse } | { ok: false; status: number; data: IcnFlightResponse | null }> {
-  const qs = new URLSearchParams({ flightId: flightId.trim() });
+  const qs = new URLSearchParams({ flightId: flightId.trim(), direction });
   if (date) qs.set('date', date.replace(/\D/g, ''));
   try {
     const res = await fetch(`/api/icn-flight?${qs.toString()}`);
