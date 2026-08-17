@@ -37,7 +37,7 @@ export const KAKAO_BRAND_REPLY = [
 
 /** 음성·짧은 브랜드 답변 (한 호흡) */
 export const VOICE_BRAND_BLURB =
-  '에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산, 주차대행 비교, 이심 가격비교 플랫폼입니다. 고객센터는 공일공 이오오육 오칠사육, 아홉시부터 열여덟시까지입니다.';
+  '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산, 주차대행 비교, 이심 가격비교 플랫폼입니다. 고객센터는 공일공 이오오육 오칠사육, 아홉시부터 열여덟시까지입니다.';
 
 /** 음성·고객센터만 */
 export const VOICE_SUPPORT_BLURB = `에어픽 고객센터 번호는 ${formatPhoneDisplay(COMPANY_LEGAL.phone)}이고, 운영 시간은 ${COMPANY_LEGAL.supportHours}입니다. 카카오톡 상담도 됩니다.`;

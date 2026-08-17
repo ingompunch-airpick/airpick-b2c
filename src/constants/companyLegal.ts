@@ -3,8 +3,8 @@
 export const COMPANY_LEGAL = {
   /** 대외 브랜드명 */
   serviceName: '에어픽',
-  /** 운영·사업자 상호 */
-  name: '곰컴퍼니',
+  /** 운영·사업자 상호 (사업자등록 기준) */
+  name: '에어픽 주차대행 비교센터',
   registrationNumber: '776-32-01655',
   representative: '김인원',
   address: '인천시 중구 자연대로29, 2017호',
@@ -31,7 +31,7 @@ export const COMPANY_LEGAL = {
  * 채널·랜딩·FAQ에서 이 문장을 그대로 쓴다.
  */
 export const AIRPICK_DEFINITION =
-  '에어픽은 곰컴퍼니가 운영하는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.';
+  '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.';
 
 /** 메타·OG용 짧은 보조 (확정 요금·최저가 단정 금지) */
 export const AIRPICK_DEFINITION_META =

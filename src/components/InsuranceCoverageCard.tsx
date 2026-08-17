@@ -1,4 +1,5 @@
 import { ExternalLink, ShieldCheck } from 'lucide-react';
+import { CANONICAL_INSURANCE_PRODUCT_NAME, INSURANCE_DISCLAIMER } from '../utils/insurance';
 import { cn } from '../utils/cn';
 
 export default function InsuranceCoverageCard({
@@ -33,6 +34,14 @@ export default function InsuranceCoverageCard({
             <p className="mt-0.5 text-[11px] font-semibold text-muted">{detail}</p>
           ) : null}
         </div>
+      </div>
+
+      <div className="mt-2.5 rounded-lg bg-white/80 px-3 py-2 ring-1 ring-sky-border/50">
+        <p className="text-[10px] font-medium leading-relaxed text-muted">
+          사고 발생 시{' '}
+          <span className="font-bold text-ink">{CANONICAL_INSURANCE_PRODUCT_NAME}</span>{' '}
+          보장 적용 · {INSURANCE_DISCLAIMER}
+        </p>
       </div>
 
       {cert ? (
