@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
 import PageHero from '../components/PageHero';
@@ -19,25 +19,15 @@ import {
   formatEsimSearchSummary,
   formatEsimSimType,
 } from '../utils/esimLabels';
-import { defaultEsimSearch } from '../utils/esimSearch';
 
 export default function EsimPage({
-  initialCountryCode,
+  search,
+  onSearchChange,
 }: {
-  initialCountryCode?: string;
+  search: EsimSearch;
+  onSearchChange: (next: EsimSearch) => void;
 }) {
-  const [search, setSearch] = useState<EsimSearch>(() => ({
-    ...defaultEsimSearch,
-    ...(initialCountryCode ? { countryCode: initialCountryCode } : {}),
-  }));
   const [selected, setSelected] = useState<EsimProduct | null>(null);
-
-  useEffect(() => {
-    if (!initialCountryCode) return;
-    setSearch((prev) =>
-      prev.countryCode === initialCountryCode ? prev : { ...prev, countryCode: initialCountryCode }
-    );
-  }, [initialCountryCode]);
 
   const offers = useMemo(() => compareEsimOffers(search), [search]);
   const updatedLabel = formatEsimOffersUpdatedAt(ESIM_OFFERS_UPDATED_AT);
@@ -53,7 +43,7 @@ export default function EsimPage({
       <PageHero sub={ESIM_COMPARE_SUB} line={ESIM_COMPARE_H1} desc={ESIM_COMPARE_DESC} />
       <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
-      <EsimSearchPanel search={search} onChange={setSearch} />
+      <EsimSearchPanel search={search} onChange={onSearchChange} />
 
       <div className="flex items-start justify-between gap-3 px-1">
         <div className="min-w-0">

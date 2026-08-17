@@ -30,8 +30,14 @@ export default function EsimProductCard({
           <p className="mt-0.5 line-clamp-2 text-xs font-medium text-muted">{product.description}</p>
         ) : null}
         <p className="mt-1 text-lg font-bold text-brand tabular-nums">
-          {product.price.toLocaleString()}원
-          <span className="ml-1 text-[11px] font-semibold text-muted">참고가</span>
+          {product.price > 0 ? (
+            <>
+              {product.price.toLocaleString()}원
+              <span className="ml-1 text-[11px] font-semibold text-muted">참고가</span>
+            </>
+          ) : (
+            <span className="text-base text-muted">가격 미입력</span>
+          )}
         </p>
       </div>
       <ExternalLink

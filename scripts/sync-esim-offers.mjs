@@ -131,7 +131,8 @@ function parseOfferRow(get, rowNum, partner) {
   const speed = (get('speed') || 'lte').toLowerCase();
   const type = (get('type') || partner.simType).toLowerCase();
   const days = Number(get('days'));
-  const price = Number(String(get('price')).replace(/,/g, ''));
+  const priceRaw = String(get('price') ?? '').replace(/,/g, '').trim();
+  const price = priceRaw === '' ? 0 : Number(priceRaw);
 
   if (!VALID_DATA_PLANS.has(dataPlan)) {
     throw new Error(`Row ${rowNum}: invalid dataPlan "${get('dataPlan')}"`);
@@ -161,6 +162,7 @@ function parseOfferRow(get, rowNum, partner) {
     price: Math.round(price),
     description: get('description') || undefined,
     isActive: parseBool(get('isActive') || undefined, true),
+    pricePending: priceRaw === '',
   };
 }
 
@@ -177,6 +179,7 @@ function rowsToPartnerOffers(rows, partner, sourceLabel) {
 
   const idx = Object.fromEntries(header.map((h, i) => [h, i]));
   const offers = [];
+  let skippedEmpty = 0;
 
   for (let r = 1; r < rows.length; r++) {
     const cells = rows[r];
@@ -185,9 +188,18 @@ function rowsToPartnerOffers(rows, partner, sourceLabel) {
     const get = (col) => (cells[idx[col]] ?? '').trim();
     if (!get('countryCode') || !get('dataPlan')) continue;
     if (header.includes('isActive') && !parseBool(get('isActive'), true)) continue;
-    if (Number(String(get('price')).replace(/,/g, '')) <= 0) continue;
 
-    offers.push(parseOfferRow(get, r + 1, partner));
+    const offer = parseOfferRow(get, r + 1, partner);
+    if (offer.pricePending) skippedEmpty += 1;
+    // 가격 미입력이어도 시트 행은 반영 (내일 입력분 대비 · UI는 「가격 미입력」)
+    const { pricePending: _pending, ...rest } = offer;
+    offers.push(rest);
+  }
+
+  if (skippedEmpty > 0) {
+    console.warn(
+      `  ${sourceLabel}: ${skippedEmpty} rows with empty price (included as 0 · fill sheet then re-sync)`
+    );
   }
 
   return offers;
@@ -277,12 +289,13 @@ async function loadPartnerTabOffers() {
   let offerSources = [];
 
   if (resolved?.offerUrls) {
+    await writeFile(partnersCsvPath, partnersCsv.replace(/^\uFEFF/, ''), 'utf8');
     for (const [key, url] of Object.entries(resolved.offerUrls)) {
       if (!url || String(url).includes('여기에')) continue;
-      offerSources.push({
-        fileName: `${key}.csv`,
-        csv: await fetchCsv(url, key),
-      });
+      const csv = await fetchCsv(url, key);
+      const fileName = `${key}.csv`;
+      await writeFile(path.join(offersDir, fileName), csv.replace(/^\uFEFF/, ''), 'utf8');
+      offerSources.push({ fileName, csv });
     }
   }
 
