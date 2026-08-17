@@ -1,11 +1,51 @@
+# Firestore 규칙 정본
+
+**프로젝트:** `airpick-reservation` (B2B · B2C · 홈페이지 예약 공유)  
+**목적:** B2B/B2C 저장소에 각각 다른 `firestore.rules`가 있어, 나중에 배포한 쪽이 다른 쪽 보호를 지우는 문제를 막기 위함입니다.
+
+**적용 상태:** B2B `firestore.rules` · B2C `Documents/GitHub/airpick-b2c/firestore.rules` 동기화됨.  
+프로덕션 반영: B2B에서 `firebase deploy --only firestore:rules --project airpick-reservation`  
+**(B2C에서는 rules 배포하지 말 것)**
+
+## 배포 원칙 (중요)
+
+1. **정본은 이 문서의 규칙 블록 하나**입니다.
+2. 반영 시 **B2B `firestore.rules`와 B2C `firestore.rules`를 동일 내용으로 맞춘 뒤**, 한곳에서만 배포하세요.
+   - 예: B2B에서만 `firebase deploy --only firestore:rules`
+   - B2C에서는 rules 배포 스크립트를 끄거나, 같은 파일을 복사해 두고 “B2B가 정본”이라고 README에 적기
+3. Functions·Storage rules도 **B2B에서만** 배포합니다.  
+   → 소유권·라이브 함수 목록: [`docs/FIREBASE_DEPLOY_OWNERSHIP.md`](./FIREBASE_DEPLOY_OWNERSHIP.md)  
+   → 통합 전까지 Functions **전체** 배포 금지 (`docs/LAUNCH_CHECKLIST.md`)
+
+## 권한 모델 (요약)
+
+| 컬렉션 | 클라이언트 | Cloud Functions (Admin SDK) |
+|--------|------------|------------------------------|
+| `companies` create/delete | **불가** | `adminUpsertCompany` / `adminDeleteCompany` |
+| `companies` HQ 프로필 (핀·보험·사진·password·status 등) | **불가** | `adminUpsertCompany` / `adminSetCompanyStatus` |
+| `companies/.../secrets` (로그인 비번) | **불가** | Admin SDK만 (`verifyPartnerLogin` 검증) |
+| `companies` 운영 필드 (요금·직원·마감·isOpen 등) | 로그인 후 update 허용 | — |
+| `system_settings` / `parking_lots` write | **불가** | 필요 시 Functions |
+| `reviews` write | **불가** | Functions만 |
+| `reservations` | 로그인 + 필드 검증 | 보안 필드·삭제는 본사/Functions |
+
+## 아직 안 넣은 것 (다음 단계)
+
+- `.env` 본사 비밀번호 로그인 제거 → **완료** (Gate Firebase 이메일 로그인)
+- Firebase Custom Claims `companyId` 로 가맹점 update 범위 제한
+
+---
+
+## 정본 규칙 (복사해 `firestore.rules`에 사용)
+
+```
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
     // ── Helpers ─────────────────────────────────────────────────────────────
-    // 정본: airpick2-b-to-b/firestore.rules (+ docs/FIRESTORE_RULES_CANONICAL.md)
-    // B2C는 이 파일을 동기화만 하고, rules 배포는 B2B에서만 한다
+    // 정본: docs/FIRESTORE_RULES_CANONICAL.md — B2B·B2C 동일 유지, rules 배포는 한곳에서만
 
     function isSignedIn() {
       return request.auth != null;
@@ -19,41 +59,6 @@ service cloud.firestore {
           'drive5746@gmail.com',
           'ingompunch@gmail.com'
         ];
-    }
-
-    /** 파트너 커스텀 토큰 — verifyPartnerLogin 발급 claim */
-    function partnerCompanyId() {
-      return isSignedIn()
-        && request.auth.token.partnerCompanyId is string
-        && request.auth.token.partnerCompanyId.size() > 0
-        ? request.auth.token.partnerCompanyId
-        : '';
-    }
-
-    function isPartner() {
-      return partnerCompanyId().size() > 0;
-    }
-
-    /** 대표 + 하위 업체 스코프 (없으면 빈 리스트) */
-    function partnerCompanyIds() {
-      return isSignedIn()
-        && request.auth.token.partnerCompanyIds is list
-        ? request.auth.token.partnerCompanyIds
-        : [];
-    }
-
-    /** 와와 별칭 문서 companyId 합산 */
-    function isWawaCompanyId(cid) {
-      return cid in ['wawa', 'wawa_valet', '와와', '와와발렛'];
-    }
-
-    function partnerCanAccessCompany(cid) {
-      return isPartner()
-        && (
-          partnerCompanyId() == cid
-          || cid in partnerCompanyIds()
-          || (isWawaCompanyId(partnerCompanyId()) && isWawaCompanyId(cid))
-        );
     }
 
     function isValidCompanyId(companyId) {
@@ -85,8 +90,7 @@ service cloud.firestore {
         'peakSurcharge',
         'valetFeeT1',
         'valetFeeT2',
-        // employees 는 upsertCompanyEmployees (Admin SDK) 만
-        'pickupLocation',
+        'employees',
         'isOpen',
         'blockedDates',
         'cancelCutoffHours',
@@ -141,46 +145,19 @@ service cloud.firestore {
         .hasAny(['reservationPassword', 'receiptToken', 'createdBy', 'createdAt', 'userId']);
     }
 
-    function canListReservation() {
-      return isPlatformAdmin()
-        || (
-          isPartner()
-          && resource.data.companyId is string
-          && partnerCanAccessCompany(resource.data.companyId)
-        );
-    }
-
-    /** 단건 get — B2C MY·영수증(문서 ID)·접수 직후. 비밀번호는 secrets. list 는 막음. */
-    function canGetReservation() {
-      return isSignedIn();
-    }
-
     // ── reservations ───────────────────────────────────────────────────────
 
     match /reservations/{reservationId} {
-      // list: 본사 전체 · 파트너는 자기 업체(와와 별칭 포함)만
-      // get: 로그인 세션(손님 단건·영수증). 목록 훑기는 list 로 막음
-      allow get: if canGetReservation();
-      allow list: if canListReservation();
+      allow read: if isSignedIn();
 
       allow create: if isSignedIn()
         && isValidReservationId(reservationId)
         && validReservationWrite();
 
-      // 파트너는 자기 업체만 수정. 손님 클라이언트 수정은 CF(취소 등)로 이전됨.
       allow update: if isSignedIn()
         && isValidReservationId(reservationId)
         && validReservationWrite()
-        && reservationProtectedFieldsUnchanged()
-        && (
-          isPlatformAdmin()
-          || (
-            isPartner()
-            && resource.data.companyId is string
-            && partnerCanAccessCompany(resource.data.companyId)
-            && request.resource.data.companyId == resource.data.companyId
-          )
-        );
+        && reservationProtectedFieldsUnchanged();
 
       // 고객·파트너는 상태 변경으로 취소. 문서 삭제는 본사만.
       allow delete: if isPlatformAdmin() && isValidReservationId(reservationId);
@@ -195,18 +172,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // ── capacity (시간당 입고 집계 — 대수만) ───────────────────────────────
-    // 손님 화면이 마감 확인용으로 읽는다. 갱신은 onReservationSync(Admin SDK)만.
-
+    // capacity/{companyId}__{날짜} — 시간당 입고 대수만. 갱신은 onReservationSync만.
     match /capacity/{capacityId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // ── customers (방문 횟수 — 전화 숫자 키) ───────────────────────────────
-
+    // customers/{phoneKey} — visitCount (Functions만 쓰기)
     match /customers/{phoneKey} {
-      allow read: if isPlatformAdmin() || isPartner();
+      allow read: if isSignedIn();
       allow create, update, delete: if false;
     }
 
@@ -218,18 +192,11 @@ service cloud.firestore {
       // 생성·삭제는 Cloud Functions(adminUpsertCompany / adminDeleteCompany)만
       allow create, delete: if false;
 
-      // 본사 전체 · 파트너는 자기 업체 운영 필드만
-      allow update: if isValidCompanyId(companyId)
-        && onlyPartnerOperationalFieldsChanged()
-        && (
-          isPlatformAdmin()
-          || partnerCanAccessCompany(companyId)
-        );
-
-      // 로그인 비밀번호 — Admin SDK만
-      match /secrets/{secretId} {
-        allow read, write: if false;
-      }
+      // 가맹점: 요금·발레·직원·마감·영업여부 등 운영 필드만
+      // 핀·보험·사진·password·status·정산메모 등 → Functions만
+      allow update: if isSignedIn()
+        && isValidCompanyId(companyId)
+        && onlyPartnerOperationalFieldsChanged();
     }
 
     // ── system_settings / parking_lots ─────────────────────────────────────
@@ -250,29 +217,17 @@ service cloud.firestore {
       allow read: if isSignedIn() && resource.data.status == 'published';
       allow create, update, delete: if false;
     }
-
-    // ── FCM 디바이스 토큰 (파트너 앱 푸시) ───────────────────────────────
-    match /fcmTokens/{tokenId} {
-      allow read: if false;
-      allow create, update: if isSignedIn()
-        && request.resource.data.token is string
-        && request.resource.data.token.size() > 10
-        && request.resource.data.companyId is string
-        && request.resource.data.companyId.size() > 0
-        && request.resource.data.scopeCompanyIds is list
-        && request.resource.data.enabled is bool
-        && (
-          isPlatformAdmin()
-          || partnerCanAccessCompany(request.resource.data.companyId)
-        );
-      allow delete: if isSignedIn()
-        && (
-          isPlatformAdmin()
-          || (
-            resource.data.companyId is string
-            && partnerCanAccessCompany(resource.data.companyId)
-          )
-        );
-    }
   }
 }
+```
+
+## 반영 후 스모크 테스트
+
+- [ ] 가맹점 마스터에서 요금 저장 → 성공
+- [ ] 가맹점이 브라우저에서 companies의 `indoorParkingAddress` / `password` / `status`를 직접 바꾸려 하면 → 실패
+- [ ] 본사 AdminDashboard에서 주소·사진·보험 저장 (Callable) → 성공
+- [ ] 본사에서 업체 생성·삭제·상태 토글 (Callable) → 성공
+- [ ] B2C에서 예약 생성 → 성공
+- [ ] B2C/B2B가 `reservationPassword` / `createdBy`를 클라이언트로 바꾸려 하면 → 실패
+- [ ] MY에서 published 후기 목록 조회 → 성공
+- [ ] 예약 문서 클라이언트 삭제 시도(비본사) → 실패
