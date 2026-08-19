@@ -4,6 +4,11 @@ import { isCompanySoldOutForSearch } from './bookingPolicy';
 import { companyMatchesSearch, companyValetFee } from './parkingType';
 import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany } from './pricing';
 import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
+import {
+  shouldShowInsuranceBadge,
+  shouldShowLocationBadge,
+  shouldShowPhotosBadge,
+} from './trustDisplay';
 
 export { companyMatchesSearch, companySupportsIndoor, companySupportsOutdoor } from './parkingType';
 
@@ -88,18 +93,35 @@ function sortSoldOutLast(items: PricedCompany[]): PricedCompany[] {
   return [...open, ...full];
 }
 
-/** 그룹 내 가격 오름차순 → 실후기 수·평점(있을 때만) → 이름 */
-function sortByPrice(items: PricedCompany[]): PricedCompany[] {
+function countTrustBadges(company: Company): number {
+  return (
+    (shouldShowInsuranceBadge(company) ? 1 : 0) +
+    (shouldShowPhotosBadge(company) ? 1 : 0) +
+    (shouldShowLocationBadge(company) ? 1 : 0)
+  );
+}
+
+/** 그룹 내 가격 오름차순 → 실후기 수·평점 → 신뢰 배지 수 → 이름 */
+function sortByPrice(
+  items: PricedCompany[],
+  reviewSnapshots: Record<string, CompanyReviewSnapshot> = {}
+): PricedCompany[] {
   return sortSoldOutLast(
     [...items].sort((a, b) => {
       if (a.price !== b.price) return a.price - b.price;
-      const aReviews = a.company.reviews_count || 0;
-      const bReviews = b.company.reviews_count || 0;
+      const aSnap = reviewSnapshots[a.company.id];
+      const bSnap = reviewSnapshots[b.company.id];
+      const aReviews = aSnap?.count ?? a.company.reviews_count ?? 0;
+      const bReviews = bSnap?.count ?? b.company.reviews_count ?? 0;
       if (aReviews !== bReviews) return bReviews - aReviews;
       if (aReviews > 0 && bReviews > 0) {
-        const ratingDiff = (b.company.rating || 0) - (a.company.rating || 0);
+        const aRating = aSnap?.averageRating ?? a.company.rating ?? 0;
+        const bRating = bSnap?.averageRating ?? b.company.rating ?? 0;
+        const ratingDiff = bRating - aRating;
         if (ratingDiff !== 0) return ratingDiff;
       }
+      const badgeDiff = countTrustBadges(b.company) - countTrustBadges(a.company);
+      if (badgeDiff !== 0) return badgeDiff;
       return a.company.name.localeCompare(b.company.name, 'ko');
     })
   );
@@ -111,8 +133,12 @@ export interface ParkingCompareSections {
 }
 
 /** 대면 희망 시: 대면 가능 입점 업체를 상단으로(그 안에서 최저가순) */
-function sortPartnersForSearch(items: PricedCompany[], search: BookingSearch): PricedCompany[] {
-  const byPrice = sortByPrice(items);
+function sortPartnersForSearch(
+  items: PricedCompany[],
+  search: BookingSearch,
+  reviewSnapshots: Record<string, CompanyReviewSnapshot> = {}
+): PricedCompany[] {
+  const byPrice = sortByPrice(items, reviewSnapshots);
   if (!search.faceToFace) return byPrice;
   const capable = byPrice.filter(
     (it) => !it.soldOut && companyValetFee(it.company, search.terminal) != null
@@ -134,11 +160,12 @@ export function sectionHasFaceToFace(items: PricedCompany[], terminal: Terminal)
  */
 export function buildParkingCompareSections(
   companies: Company[],
-  search: BookingSearch
+  search: BookingSearch,
+  reviewSnapshots: Record<string, CompanyReviewSnapshot> = {}
 ): ParkingCompareSections {
   const priced = priceCompaniesForSearch(companies, search);
-  const partners = sortPartnersForSearch(priced.filter((item) => isAirpickPartner(item.company)), search);
-  const externals = sortByPrice(priced.filter((item) => !isAirpickPartner(item.company)));
+  const partners = sortPartnersForSearch(priced.filter((item) => isAirpickPartner(item.company)), search, reviewSnapshots);
+  const externals = sortByPrice(priced.filter((item) => !isAirpickPartner(item.company)), reviewSnapshots);
   return { partners, externals };
 }
 

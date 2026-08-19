@@ -114,7 +114,10 @@ export default function ComparePage({
   );
   const merged = mergeParkingCompareCompanies(companies);
   const compareSearch = useMemo(() => ({ ...search, faceToFace: false as const }), [search]);
-  const { partners, externals } = buildParkingCompareSections(merged, compareSearch);
+  const { partners, externals } = useMemo(
+    () => buildParkingCompareSections(merged, compareSearch, reviewSnapshots),
+    [merged, compareSearch, reviewSnapshots]
+  );
   const totalCount = partners.length + externals.length;
 
   const partnerIds = useMemo(
