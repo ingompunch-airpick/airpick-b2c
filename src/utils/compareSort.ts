@@ -4,6 +4,11 @@ import { isCompanySoldOutForSearch } from './bookingPolicy';
 import { companyMatchesSearch, companyValetFee } from './parkingType';
 import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany } from './pricing';
 import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
+import {
+  shouldShowInsuranceBadge,
+  shouldShowLocationBadge,
+  shouldShowPhotosBadge,
+} from './trustDisplay';
 
 export { companyMatchesSearch, companySupportsIndoor, companySupportsOutdoor } from './parkingType';
 
@@ -88,7 +93,15 @@ function sortSoldOutLast(items: PricedCompany[]): PricedCompany[] {
   return [...open, ...full];
 }
 
-/** 그룹 내 가격 오름차순 → 실후기 수·평점(reviewSnapshots 우선) → 이름 */
+function countTrustBadges(company: Company): number {
+  return (
+    (shouldShowInsuranceBadge(company) ? 1 : 0) +
+    (shouldShowPhotosBadge(company) ? 1 : 0) +
+    (shouldShowLocationBadge(company) ? 1 : 0)
+  );
+}
+
+/** 그룹 내 가격 오름차순 → 실후기 수·평점 → 신뢰 배지 수 → 이름 */
 function sortByPrice(
   items: PricedCompany[],
   reviewSnapshots: Record<string, CompanyReviewSnapshot> = {}
@@ -107,6 +120,8 @@ function sortByPrice(
         const ratingDiff = bRating - aRating;
         if (ratingDiff !== 0) return ratingDiff;
       }
+      const badgeDiff = countTrustBadges(b.company) - countTrustBadges(a.company);
+      if (badgeDiff !== 0) return badgeDiff;
       return a.company.name.localeCompare(b.company.name, 'ko');
     })
   );
