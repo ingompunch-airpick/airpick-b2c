@@ -4,7 +4,6 @@ import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
 import Header from './components/Header';
 import SiteFooter from './components/SiteFooter';
-import ComingSoonPanel from './components/map-home/ComingSoonPanel';
 import { subscribeCompanies } from './lib/companies';
 import {
   trackCtaClick,
@@ -37,6 +36,7 @@ import { calculatePrice } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
+const EsimPage = lazy(() => import('./pages/EsimPage'));
 const MyPage = lazy(() => import('./pages/MyPage'));
 const CompanyDetailSheet = lazy(() => import('./components/CompanyDetailSheet'));
 const BookingModal = lazy(() => import('./components/BookingModal'));
@@ -174,11 +174,7 @@ export default function App() {
       );
     }
     if (tab === 'esim') {
-      return (
-        <div className="pt-2">
-          <ComingSoonPanel label={ESIM_TAB_LABEL} />
-        </div>
-      );
+      return <EsimPage search={esimSearch} onSearchChange={setEsimSearch} />;
     }
     return (
       <MyPage

@@ -13,7 +13,7 @@ export const ESIM_GUIDE_TITLE = '이심(eSIM) 이용 가이드';
 
 /** 아직 공개하지 않는 앱 탭 */
 export const APP_TAB_SOON = {
-  esim: true,
+  esim: false,
 } as const;
 
 /** 예약 탭 */
