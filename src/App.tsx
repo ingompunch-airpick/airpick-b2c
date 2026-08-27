@@ -15,7 +15,6 @@ import HomePage from './pages/HomePage';
 import type { AppTab, BookingSearch, Company, EsimSearch } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
-  ESIM_TAB_LABEL,
   PARKING_COMPARE_DOCUMENT_TITLE,
 } from './constants/marketing';
 import {
