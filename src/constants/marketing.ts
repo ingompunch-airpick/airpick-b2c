@@ -19,7 +19,7 @@ export const APP_TAB_SOON = {
 /** 예약 탭 */
 export const MY_TAB_LABEL = '내 예약';
 
-/** 홈 탭 — 집→공항 출발 시각 계산 */
+/** 홈 탭 — 여행 일정 → 주차대행 비교(1)·출발시각(선택) */
 export const HOME_TAB_LABEL = '홈';
 
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */

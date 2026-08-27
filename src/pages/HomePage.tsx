@@ -3,7 +3,7 @@ import TripHomeHub from '../components/home/TripHomeHub';
 import { HOME_CAMPAIGN, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
 import type { AppTab, BookingSearch, EsimSearch } from '../types';
 
-/** 홈 — 여행 정보 입력 → 주차(1)·이심(2)·출발시각(3) */
+/** 홈 — 여행 일정 입력 → 주차대행 비교(1) · 출발시각(선택) */
 export default function HomePage({
   onGoTab,
   onPrefillParkingSearch,
