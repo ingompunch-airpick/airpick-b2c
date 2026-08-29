@@ -231,7 +231,7 @@ export default function TripHomeHub({
         <div className="space-y-3 px-4 py-4">
           <article className="rounded-xl bg-sky-soft/50 px-3.5 py-3.5 ring-1 ring-sky-border/70">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[13px] font-bold text-ink">주차대행</p>
+              <p className="text-[13px] font-bold text-ink">{HOME_NEXT_PREP.parking.title}</p>
               <span className="rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold text-white">
                 1
               </span>
@@ -240,7 +240,7 @@ export default function TripHomeHub({
               인천공항 {terminal} · {days}일
             </p>
             <p className="mt-0.5 text-[11px] font-medium text-muted">
-              야간 할증·실후기·보험 반영 · 최저가부터
+              {HOME_NEXT_PREP.parking.benefit}
             </p>
             <button
               type="button"
@@ -254,13 +254,13 @@ export default function TripHomeHub({
           {!APP_TAB_SOON.esim ? (
             <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-sky-border/70">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-bold text-ink">eSIM</p>
+                <p className="text-[13px] font-bold text-ink">{HOME_NEXT_PREP.esim.title}</p>
                 <span className="rounded-full bg-sky-tint px-2 py-0.5 text-[10px] font-bold text-brand">
                   2
                 </span>
               </div>
               <p className="mt-1 text-[12px] font-semibold text-ink">{days}일</p>
-              <p className="mt-0.5 text-[11px] font-medium text-muted">용량·가격 비교</p>
+              <p className="mt-0.5 text-[11px] font-medium text-muted">{HOME_NEXT_PREP.esim.body}</p>
               <button
                 type="button"
                 onClick={goEsimCompare}
@@ -389,6 +389,12 @@ export default function TripHomeHub({
   return (
     <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(49,130,246,0.08)] ring-1 ring-sky-border">
       <form onSubmit={continueToResult} className="space-y-3.5 px-4 pb-4 pt-4">
+        <div>
+          <p className="text-[10px] font-bold tracking-wide text-[#9a7b3c]">여행 일정</p>
+          <p className="mt-0.5 text-[12px] font-semibold text-ink">
+            맡기는 날부터 준비를 시작하세요
+          </p>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <DateField
             label="맡기는 날"

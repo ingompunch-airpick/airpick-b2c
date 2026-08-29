@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import CompanyCard from '../components/CompanyCard';
 import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
 import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
 import {
+  AIRPICK_VERIFIED,
   PARKING_COMPARE_DESC,
   PARKING_COMPARE_H1,
   PARKING_EXTERNAL_SECTION,
@@ -63,6 +65,9 @@ function CompareSection({
   onSelect,
   terminal,
   reviewSnapshots,
+  collapsible = false,
+  defaultOpen = true,
+  muted = false,
 }: {
   title: string;
   subtitle: string;
@@ -70,29 +75,70 @@ function CompareSection({
   onSelect: (company: Company, price: number, soldOut: boolean) => void;
   terminal?: BookingSearch['terminal'];
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
+  collapsible?: boolean;
+  defaultOpen?: boolean;
+  muted?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   if (items.length === 0) return null;
+
+  const header = (
+    <div className={cn('px-1', muted && 'opacity-80')}>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className={cn('text-sm font-bold', muted ? 'text-muted' : 'text-ink')}>{title}</h3>
+        {collapsible ? (
+          <ChevronDown
+            size={16}
+            className={cn(
+              'shrink-0 text-muted transition-transform',
+              open && 'rotate-180'
+            )}
+            aria-hidden
+          />
+        ) : null}
+      </div>
+      <p className="text-xs font-medium text-muted">{subtitle}</p>
+    </div>
+  );
+
+  const list = (
+    <div className="space-y-3">
+      {items.map(({ company, price, soldOut }) => (
+        <CompanyCard
+          key={company.id}
+          company={company}
+          price={price}
+          layout="list"
+          soldOut={soldOut === true}
+          onSelect={() => onSelect(company, price, soldOut === true)}
+          reviewSnapshot={reviewSnapshots[company.id]}
+          valetFee={terminal ? companyValetFee(company, terminal) : null}
+        />
+      ))}
+    </div>
+  );
+
+  if (collapsible) {
+    return (
+      <section className="space-y-3">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="w-full rounded-xl bg-sky-soft/40 px-2 py-2.5 text-left ring-1 ring-sky-border/50"
+          aria-expanded={open}
+        >
+          {header}
+        </button>
+        {open ? list : null}
+      </section>
+    );
+  }
 
   return (
     <section className="space-y-3">
-      <div className="px-1">
-        <h3 className="text-sm font-bold text-ink">{title}</h3>
-        <p className="text-xs font-medium text-muted">{subtitle}</p>
-      </div>
-      <div className="space-y-3">
-        {items.map(({ company, price, soldOut }) => (
-          <CompanyCard
-            key={company.id}
-            company={company}
-            price={price}
-            layout="list"
-            soldOut={soldOut === true}
-            onSelect={() => onSelect(company, price, soldOut === true)}
-            reviewSnapshot={reviewSnapshots[company.id]}
-            valetFee={terminal ? companyValetFee(company, terminal) : null}
-          />
-        ))}
-      </div>
+      {header}
+      {list}
     </section>
   );
 }
@@ -188,13 +234,16 @@ export default function ComparePage({
             onSelect={handleSelect}
             reviewSnapshots={reviewSnapshots}
             terminal={search.terminal}
+            collapsible
+            defaultOpen={false}
+            muted
           />
         </>
       ) : (
         <>
           {ratingPartners.length === 0 ? (
             <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
-              추천순 비교는 에어픽 인증 업체만 제공합니다.
+              추천순은 {AIRPICK_VERIFIED.label} 파트너만 제공합니다.
             </p>
           ) : (
             <CompareSection
@@ -206,9 +255,11 @@ export default function ComparePage({
               terminal={search.terminal}
             />
           )}
-          <p className="px-1 text-center text-[11px] font-medium text-muted">
-            미입점 업체는 평점을 제공하지 않습니다. 가격만 보려면 가격순 탭을 선택하세요.
-          </p>
+          {externals.length > 0 ? (
+            <p className="px-1 text-center text-[11px] font-medium text-muted">
+              에어픽 미입점 · 시장 참고 가격은 가격순 탭에서 확인할 수 있어요.
+            </p>
+          ) : null}
         </>
       )}
     </div>

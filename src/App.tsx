@@ -2,6 +2,12 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { ComparePageSkeleton } from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
+import BrandIntroGate, {
+  clearBrandIntroSeen,
+  hasSeenBrandIntro,
+  markBrandIntroSeen,
+  shouldForceBrandIntro,
+} from './components/BrandIntroGate';
 import Header from './components/Header';
 import SiteFooter from './components/SiteFooter';
 import { subscribeCompanies } from './lib/companies';
@@ -50,8 +56,25 @@ const DOCUMENT_TITLE: Record<AppTab, string> = {
   my: '내 예약 · 에어픽',
 };
 
+function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
+  if (shouldForceBrandIntro()) {
+    clearBrandIntroSeen();
+    return true;
+  }
+  if (hasSeenBrandIntro()) return false;
+  /** 직링크(/parking, /esim, /my)는 게이트 스킵 */
+  if (initialTab !== 'home') {
+    markBrandIntroSeen();
+    return false;
+  }
+  return true;
+}
+
 export default function App() {
   const [tab, setTabState] = useState<AppTab>(() => readInitialTab());
+  const [showBrandIntro, setShowBrandIntro] = useState(() =>
+    shouldShowBrandIntroOnLaunch(readInitialTab())
+  );
   const [search, setSearch] = useState<BookingSearch>(defaultBookingSearch);
   const [esimSearch, setEsimSearch] = useState<EsimSearch>(() => {
     const fromUrl = readEsimCountryCode();
@@ -81,6 +104,20 @@ export default function App() {
     setTabState(next);
     syncUrlToTab(next, mode);
     window.scrollTo(0, 0);
+  };
+
+  const dismissBrandIntro = (next: AppTab) => {
+    markBrandIntroSeen();
+    setShowBrandIntro(false);
+    setTab(next, 'replace');
+    trackCtaClick(
+      next === 'compare'
+        ? 'brand_intro_parking'
+        : next === 'esim'
+          ? 'brand_intro_esim'
+          : 'brand_intro_home',
+      'brand_intro'
+    );
   };
 
   const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
@@ -159,6 +196,7 @@ export default function App() {
           onGoTab={(next) => setTab(next)}
           onPrefillParkingSearch={prefillFromLeaveBy}
           onPrefillEsimSearch={prefillEsimFromTrip}
+          partnerCount={companies.filter((c) => isAirpickPartner(c)).length}
         />
       );
     }
@@ -204,6 +242,16 @@ export default function App() {
   }, [tab, search, esimSearch, companies, lastReservationId, reviewReservationId]);
 
   const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
+
+  if (showBrandIntro) {
+    return (
+      <BrandIntroGate
+        onParking={() => dismissBrandIntro('compare')}
+        onEsim={() => dismissBrandIntro('esim')}
+        onSkipHome={() => dismissBrandIntro('home')}
+      />
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-sky-bg text-ink">

@@ -103,11 +103,11 @@ export default function CompanyCard({
             <p className="truncate text-base font-bold text-ink">{name}</p>
             {partner ? (
               <span className="shrink-0 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
-                에어픽 인증
+                VERIFIED
               </span>
             ) : (
               <span className="shrink-0 rounded-md bg-sky-tint px-1.5 py-0.5 text-[10px] font-bold text-muted">
-                홈페이지
+                미입점 · 참고
               </span>
             )}
           </div>

@@ -1,17 +1,25 @@
 import { useState } from 'react';
 import TripHomeHub from '../components/home/TripHomeHub';
-import { HOME_CAMPAIGN, HOME_HEADLINE, HOME_SUBHEAD } from '../constants/marketing';
+import VerifiedStrip from '../components/home/VerifiedStrip';
+import {
+  HOME_CAMPAIGN,
+  HOME_EYEBROW_PREMIUM,
+  HOME_HEADLINE,
+  HOME_SUBHEAD,
+} from '../constants/marketing';
 import type { AppTab, BookingSearch, EsimSearch } from '../types';
 
-/** 홈 — 여행 일정 입력 → 주차대행 비교(1) · 출발시각(선택) */
+/** 홈 — 얇은 게이트웨이: 검증 → 일정 → 주차대행(강) */
 export default function HomePage({
   onGoTab,
   onPrefillParkingSearch,
   onPrefillEsimSearch,
+  partnerCount = 0,
 }: {
   onGoTab: (tab: AppTab) => void;
   onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
   onPrefillEsimSearch?: (patch: Partial<EsimSearch>) => void;
+  partnerCount?: number;
 }) {
   const [hasResult, setHasResult] = useState(false);
   const showCampaign = Boolean(HOME_CAMPAIGN.title.trim());
@@ -19,31 +27,38 @@ export default function HomePage({
   return (
     <div className="relative">
       <div
-        className="pointer-events-none absolute inset-x-0 -top-2 -mx-4 h-[min(52vh,420px)]"
+        className="pointer-events-none absolute inset-x-0 -top-2 -mx-4 h-[min(36vh,280px)]"
         aria-hidden
         style={{
           background:
-            'radial-gradient(ellipse 90% 70% at 50% 0%, #cfe4fb 0%, #edf4fc 55%, transparent 75%)',
+            'radial-gradient(ellipse 90% 70% at 50% 0%, rgba(207,228,251,0.55) 0%, rgba(237,244,252,0.35) 50%, transparent 75%)',
         }}
       />
 
-      <div className="relative space-y-5 pt-2">
+      <div className="relative space-y-4 pt-2">
         <header className={`transition-all duration-300 ${hasResult ? 'opacity-70' : ''}`}>
+          {!hasResult ? (
+            <p className="mb-1.5 text-[10px] font-bold tracking-[0.12em] text-[#9a7b3c]">
+              {HOME_EYEBROW_PREMIUM}
+            </p>
+          ) : null}
           <h1
-            className={`font-bold tracking-tight text-ink ${
+            className={`whitespace-pre-line font-bold tracking-tight text-ink ${
               hasResult
                 ? 'text-xl leading-snug'
-                : 'text-[1.65rem] leading-tight sm:text-[1.9rem]'
+                : 'text-[1.55rem] leading-[1.25] sm:text-[1.75rem]'
             }`}
           >
             {HOME_HEADLINE}
           </h1>
           {!hasResult ? (
-            <p className="mt-2 max-w-[20rem] text-[13px] font-medium leading-snug text-muted">
+            <p className="mt-2 max-w-[22rem] text-[13px] font-medium leading-snug text-muted">
               {HOME_SUBHEAD}
             </p>
           ) : null}
         </header>
+
+        {!hasResult ? <VerifiedStrip partnerCount={partnerCount} /> : null}
 
         <TripHomeHub
           onResultChange={setHasResult}
