@@ -99,17 +99,10 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const dismissBrandIntro = (next: AppTab) => {
+  const dismissBrandIntro = () => {
     setShowBrandIntro(false);
-    setTab(next, 'replace');
-    trackCtaClick(
-      next === 'compare'
-        ? 'brand_intro_parking'
-        : next === 'esim'
-          ? 'brand_intro_esim'
-          : 'brand_intro_home',
-      'brand_intro'
-    );
+    setTab('home', 'replace');
+    trackCtaClick('brand_intro_enter', 'brand_intro');
   };
 
   const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
@@ -236,13 +229,7 @@ export default function App() {
   const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
 
   if (showBrandIntro) {
-    return (
-      <BrandIntroGate
-        onParking={() => dismissBrandIntro('compare')}
-        onEsim={() => dismissBrandIntro('esim')}
-        onSkipHome={() => dismissBrandIntro('home')}
-      />
-    );
+    return <BrandIntroGate onEnter={dismissBrandIntro} />;
   }
 
   return (

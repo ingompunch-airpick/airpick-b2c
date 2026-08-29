@@ -115,21 +115,19 @@ export const HOME_HEADLINE = '좋은 여행은,\n출발 전부터 달라집니�
 /** 히어로 서브 — 인천·검증을 하단에 명시 */
 export const HOME_SUBHEAD = '인천공항 주차대행 · 에어픽이 검증한 파트너만';
 
-/** 브랜드 인트로 게이트 (영상은 추후) */
+/** 브랜드 인트로 게이트 — 영상으로 격 올린 뒤 홈에서 후킹 */
 export const BRAND_INTRO = {
   storageKey: 'airpick_intro_seen',
   /** 홈(/) 접속·새로고침마다 표시. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
   eyebrow: 'PREMIUM AIRPORT SERVICES',
   line: '좋은 여행은, 출발 전부터 달라집니다.',
-  parkingLabel: '주차대행',
-  parkingHint: '검증된 파트너',
-  esimLabel: '이심 · 유심',
-  esimHint: '해외 데이터 준비',
-  skipLabel: '여행 일정 입력하기',
+  enterCta: '시작하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',
   videoMobile: '/brand/intro-mobile.mp4',
+  posterDesktop: '/brand/intro-desktop-poster.jpg',
+  posterMobile: '/brand/intro-mobile-poster.jpg',
 } as const;
 
 /** 홈 · 여행 정보 입력 후 결과로 */
