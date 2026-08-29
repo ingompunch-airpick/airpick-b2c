@@ -40,12 +40,12 @@ export default function CompanyCard({
         disabled={soldOut}
         aria-disabled={soldOut}
         className={cn(
-          'relative flex flex-col items-center gap-2 rounded-2xl bg-sky-soft p-3 text-center shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition',
-          soldOut ? 'cursor-not-allowed' : 'hover:bg-sky-tint'
+          'relative flex flex-col items-center gap-2 rounded-2xl bg-neutral-50 p-3 text-center shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8 transition',
+          soldOut ? 'cursor-not-allowed' : 'hover:bg-[#0f1a2e]/[0.04]'
         )}
       >
         <div className={cn('contents', soldOut && 'pointer-events-none opacity-40')}>
-          <div className="h-14 w-14 overflow-hidden rounded-full bg-sky-tint">
+          <div className="h-14 w-14 overflow-hidden rounded-full bg-[#0f1a2e]/[0.06]">
             <img
               src={thumbSrc}
               alt={name}
@@ -57,12 +57,12 @@ export default function CompanyCard({
             />
           </div>
           <span className="line-clamp-1 text-xs font-bold text-ink">{name}</span>
-          <span className="text-sm font-bold text-brand tabular-nums">
+          <span className="text-sm font-bold text-[#0f1a2e] tabular-nums">
             {price.toLocaleString()}원
           </span>
         </div>
         {soldOut ? (
-          <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-sky-bg/55">
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-white/70">
             <span className="rounded-lg bg-ink/80 px-2.5 py-1 text-sm font-black tracking-wide text-white shadow-sm">
               만차
             </span>
@@ -79,8 +79,8 @@ export default function CompanyCard({
       disabled={soldOut}
       aria-disabled={soldOut}
       className={cn(
-        'relative flex w-full items-center gap-3 overflow-hidden rounded-2xl bg-sky-soft p-4 text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition',
-        soldOut ? 'cursor-not-allowed' : 'hover:bg-sky-tint'
+        'relative flex w-full items-center gap-3 overflow-hidden rounded-2xl bg-neutral-50 p-4 text-left shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8 transition',
+        soldOut ? 'cursor-not-allowed' : 'hover:bg-[#0f1a2e]/[0.04]'
       )}
     >
       <div
@@ -94,7 +94,7 @@ export default function CompanyCard({
           alt={name}
           width={64}
           height={64}
-          className="h-16 w-16 shrink-0 rounded-2xl object-cover ring-2 ring-sky-tint"
+          className="h-16 w-16 shrink-0 rounded-2xl object-cover ring-2 ring-[#0f1a2e]/10"
           loading="lazy"
           decoding="async"
         />
@@ -102,11 +102,11 @@ export default function CompanyCard({
           <div className="flex flex-wrap items-center gap-1.5">
             <p className="truncate text-base font-bold text-ink">{name}</p>
             {partner ? (
-              <span className="shrink-0 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
+              <span className="shrink-0 text-[10px] font-bold tracking-[0.06em] text-[#9a7b3c]">
                 VERIFIED
               </span>
             ) : (
-              <span className="shrink-0 rounded-md bg-sky-tint px-1.5 py-0.5 text-[10px] font-bold text-muted">
+              <span className="shrink-0 rounded-md bg-[#0f1a2e]/[0.06] px-1.5 py-0.5 text-[10px] font-bold text-muted">
                 미입점 · 참고
               </span>
             )}
@@ -122,12 +122,12 @@ export default function CompanyCard({
                   실후기 {reviewSnapshot.count}
                 </span>
               </div>
-              <p className="shrink-0 text-lg font-bold tabular-nums text-brand">
+              <p className="shrink-0 text-lg font-bold tabular-nums text-[#0f1a2e]">
                 {price.toLocaleString()}원
               </p>
             </div>
           ) : partner ? (
-            <p className="mt-2 text-lg font-bold tabular-nums text-brand">
+            <p className="mt-2 text-lg font-bold tabular-nums text-[#0f1a2e]">
               {price.toLocaleString()}원
             </p>
           ) : (
@@ -135,7 +135,7 @@ export default function CompanyCard({
               <p className="mt-1 text-[11px] font-medium leading-snug text-muted">
                 {PARKING_EXTERNAL_SECTION.cardNote}
               </p>
-              <p className="mt-2 text-lg font-bold text-brand tabular-nums">
+              <p className="mt-2 text-lg font-bold text-[#0f1a2e] tabular-nums">
                 {price.toLocaleString()}원
               </p>
             </>
@@ -159,7 +159,7 @@ export default function CompanyCard({
       </div>
 
       {soldOut ? (
-        <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-sky-bg/55">
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/70">
           <span className="rounded-xl bg-ink/85 px-4 py-2 text-lg font-black tracking-wider text-white shadow-md ring-1 ring-white/20">
             만차
           </span>

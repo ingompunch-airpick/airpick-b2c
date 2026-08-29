@@ -1,8 +1,9 @@
 /** 사이트링크·크롤용 고정 내비 (≡ 메뉴·정적 페이지와 동일 순서) */
-/** 이심 비교는 앱에서 Soon — 공개 전까지 내비에서 제외 */
+/** 이심은 앱 탭 — 공개 내비에도 노출 */
 
 export const SITE_NAV_PRIMARY = [
-  { href: '/parking', label: '주차대행 비교' },
+  { href: '/parking', label: '주차대행' },
+  { href: '/esim', label: '이심' },
   { href: '/guides/', label: '가이드' },
   { href: '/partners/', label: '입점 업체' },
   { href: '/faq/', label: 'FAQ' },

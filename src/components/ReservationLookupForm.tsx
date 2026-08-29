@@ -27,9 +27,9 @@ export default function ReservationLookupForm({
   const canSubmit = value.trim() !== '' && /^\d{4}$/.test(password.trim());
 
   return (
-    <div className="rounded-2xl bg-sky-soft p-4 shadow-[0_2px_12px_rgba(49,130,246,0.08)]">
-      <div className="mb-3 flex items-center gap-2 rounded-xl bg-sky-tint px-3 py-2.5">
-        <Search size={18} className="shrink-0 text-brand" />
+    <div className="rounded-2xl bg-neutral-50 p-4 shadow-[0_2px_12px_rgba(15,26,46,0.06)] ring-1 ring-[#0f1a2e]/10">
+      <div className="mb-3 flex items-center gap-2 rounded-xl bg-[#0f1a2e]/[0.06] px-3 py-2.5">
+        <Search size={18} className="shrink-0 text-[#0f1a2e]" />
         <span className="text-sm font-bold text-ink">예약 조회</span>
       </div>
 
@@ -42,8 +42,8 @@ export default function ReservationLookupForm({
             className={cn(
               'flex-1 rounded-xl py-2.5 text-xs font-bold transition-colors',
               mode === id
-                ? 'bg-brand text-white shadow-sm'
-                : 'bg-sky-bg text-muted ring-1 ring-sky-border'
+                ? 'bg-[#0f1a2e] text-white shadow-sm'
+                : 'bg-white text-muted ring-1 ring-[#0f1a2e]/12'
             )}
           >
             {label}
@@ -57,7 +57,7 @@ export default function ReservationLookupForm({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={active.placeholder}
-          className="w-full rounded-xl border border-sky-border bg-sky-bg px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
+          className="w-full rounded-xl border border-[#0f1a2e]/12 bg-white px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-[#0f1a2e]"
         />
       </label>
 
@@ -71,7 +71,7 @@ export default function ReservationLookupForm({
           value={password}
           onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
           placeholder="예약 시 입력한 4자리"
-          className="w-full rounded-xl border border-sky-border bg-sky-bg px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
+          className="w-full rounded-xl border border-[#0f1a2e]/12 bg-white px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-[#0f1a2e]"
         />
       </label>
 
@@ -79,7 +79,7 @@ export default function ReservationLookupForm({
         type="button"
         disabled={loading || !canSubmit}
         onClick={() => onLookup(mode, value, password)}
-        className="mt-3 w-full rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-60"
+        className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#1a2740] disabled:opacity-60"
       >
         {loading ? '조회 중…' : '예약 조회하기'}
       </button>

@@ -1,13 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import CompanyCard from '../components/CompanyCard';
-import PageHero from '../components/PageHero';
 import SearchPanel from '../components/SearchPanel';
-import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
 import {
   AIRPICK_VERIFIED,
-  PARKING_COMPARE_DESC,
-  PARKING_COMPARE_H1,
   PARKING_EXTERNAL_SECTION,
   PARKING_PARTNER_SECTION,
   parkingPartnerSectionTitle,
@@ -40,7 +36,7 @@ function SortTabs({
   ];
 
   return (
-    <div className="flex rounded-xl bg-sky-soft p-1 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+    <div className="flex rounded-xl bg-neutral-50 p-1 shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -48,7 +44,7 @@ function SortTabs({
           onClick={() => onChange(tab.id)}
           className={cn(
             'flex-1 rounded-lg py-2 text-sm font-bold transition',
-            mode === tab.id ? 'bg-white text-brand shadow-sm' : 'text-muted hover:text-ink'
+            mode === tab.id ? 'bg-white text-[#0f1a2e] shadow-sm' : 'text-muted hover:text-ink'
           )}
         >
           {tab.label}
@@ -125,7 +121,7 @@ function CompareSection({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="w-full rounded-xl bg-sky-soft/40 px-2 py-2.5 text-left ring-1 ring-sky-border/50"
+          className="w-full rounded-xl bg-neutral-50 px-2 py-2.5 text-left ring-1 ring-[#0f1a2e]/10"
           aria-expanded={open}
         >
           {header}
@@ -201,14 +197,12 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
-      <PageHero line={PARKING_COMPARE_H1} desc={PARKING_COMPARE_DESC} />
       <SearchPanel search={search} onChange={onSearchChange} />
-      <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 
       {totalCount === 0 ? (
-        <div className="space-y-3 rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+        <div className="space-y-3 rounded-2xl bg-neutral-50 p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
           <p>
             {search.isIndoor
               ? '실내 주차를 제공하는 업체가 없습니다.'
@@ -242,7 +236,7 @@ export default function ComparePage({
       ) : (
         <>
           {ratingPartners.length === 0 ? (
-            <p className="rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+            <p className="rounded-2xl bg-neutral-50 p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
               추천순은 {AIRPICK_VERIFIED.label} 파트너만 제공합니다.
             </p>
           ) : (

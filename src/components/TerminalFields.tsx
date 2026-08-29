@@ -11,7 +11,7 @@ export default function TerminalFields({
   onDepartureChange,
   onDifferentArrivalChange,
   onArrivalChange,
-  inactiveClassName = 'bg-sky-bg text-muted',
+  inactiveClassName = 'bg-white text-muted ring-1 ring-[#0f1a2e]/10',
 }: {
   departure: Terminal;
   arrival: Terminal;
@@ -33,7 +33,7 @@ export default function TerminalFields({
             onClick={() => onDepartureChange(t)}
             className={cn(
               'rounded-xl py-2 text-xs font-bold transition-colors',
-              departure === t ? 'bg-sky-deep text-brand' : inactiveClassName
+              departure === t ? 'bg-[#0f1a2e] text-white' : inactiveClassName
             )}
           >
             {terminalLabel(t)}
@@ -46,7 +46,7 @@ export default function TerminalFields({
           type="checkbox"
           checked={differentArrival}
           onChange={(e) => onDifferentArrivalChange(e.target.checked)}
-          className="h-4 w-4 rounded border-sky-border text-brand"
+          className="h-4 w-4 rounded border-[#0f1a2e]/20 text-[#0f1a2e]"
         />
         <span className="text-[11px] font-semibold text-muted">귀국 터미널이 다릅니다</span>
       </label>
@@ -62,7 +62,7 @@ export default function TerminalFields({
                 onClick={() => onArrivalChange(t)}
                 className={cn(
                   'rounded-xl py-2 text-xs font-bold transition-colors',
-                  arrival === t ? 'bg-sky-deep text-brand' : inactiveClassName
+                  arrival === t ? 'bg-[#0f1a2e] text-white' : inactiveClassName
                 )}
               >
                 {terminalLabel(t)}

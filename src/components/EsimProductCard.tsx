@@ -17,10 +17,10 @@ export default function EsimProductCard({
     <button
       type="button"
       onClick={onSelect}
-      className="flex w-full items-center gap-3 rounded-2xl bg-sky-soft p-4 text-left shadow-[0_2px_8px_rgba(49,130,246,0.07)] transition hover:bg-sky-tint"
+      className="flex w-full items-center gap-3 rounded-2xl bg-neutral-50 p-4 text-left shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8 transition hover:bg-[#0f1a2e]/[0.04]"
     >
       {rank != null && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-tint text-xs font-bold text-brand">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0f1a2e]/[0.06] text-xs font-bold text-[#0f1a2e]">
           {rank}
         </div>
       )}
@@ -29,7 +29,7 @@ export default function EsimProductCard({
         {product.description ? (
           <p className="mt-0.5 line-clamp-2 text-xs font-medium text-muted">{product.description}</p>
         ) : null}
-        <p className="mt-1 text-lg font-bold text-brand tabular-nums">
+        <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
           {product.price > 0 ? (
             <>
               {product.price.toLocaleString()}원
@@ -42,7 +42,7 @@ export default function EsimProductCard({
       </div>
       <ExternalLink
         size={18}
-        className={cn('shrink-0', hasLink ? 'text-brand' : 'text-muted-light')}
+        className={cn('shrink-0', hasLink ? 'text-[#0f1a2e]' : 'text-muted-light')}
       />
     </button>
   );

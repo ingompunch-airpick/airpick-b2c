@@ -206,15 +206,15 @@ export default function TripHomeHub({
 
   if (step === 'result') {
     return (
-      <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(49,130,246,0.08)] ring-1 ring-sky-border">
-        <div className="flex items-start justify-between gap-3 border-b border-sky-border/50 px-4 py-3.5">
+      <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_28px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/10">
+        <div className="flex items-start justify-between gap-3 border-b border-[#0f1a2e]/8 px-4 py-3.5">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold text-brand">차 맡기기 → 찾기</p>
-            <p className="mt-0.5 text-[15px] font-bold text-ink">
+            <p className="text-[10px] font-bold tracking-wide text-[#0f1a2e]/45">여행 일정</p>
+            <p className="mt-0.5 text-[15px] font-bold text-[#0f1a2e]">
               {formatDateDisplay(departureDate)} {departureTime} → {formatDateDisplay(arrivalDate)}{' '}
               {arrivalTime}
             </p>
-            <p className="mt-0.5 text-[12px] font-medium text-muted">
+            <p className="mt-0.5 text-[12px] font-medium text-[#0f1a2e]/50">
               출국 {terminal}
               {arrivalTerminal !== terminal ? ` · 입국 ${arrivalTerminal}` : ''} · {days}일
             </p>
@@ -222,59 +222,59 @@ export default function TripHomeHub({
           <button
             type="button"
             onClick={() => setStep('input')}
-            className="shrink-0 rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand ring-1 ring-sky-border/70"
+            className="shrink-0 rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15"
           >
             수정
           </button>
         </div>
 
         <div className="space-y-3 px-4 py-4">
-          <article className="rounded-xl bg-sky-soft/50 px-3.5 py-3.5 ring-1 ring-sky-border/70">
+          <article className="rounded-xl bg-[#0f1a2e]/[0.04] px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/10">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[13px] font-bold text-ink">{HOME_NEXT_PREP.parking.title}</p>
-              <span className="rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold text-white">
+              <p className="text-[13px] font-bold text-[#0f1a2e]">{HOME_NEXT_PREP.parking.title}</p>
+              <span className="rounded-full bg-[#0f1a2e] px-2 py-0.5 text-[10px] font-bold text-white">
                 1
               </span>
             </div>
-            <p className="mt-1 text-[12px] font-semibold text-ink">
+            <p className="mt-1 text-[12px] font-semibold text-[#0f1a2e]">
               인천공항 {terminal} · {days}일
             </p>
-            <p className="mt-0.5 text-[11px] font-medium text-muted">
+            <p className="mt-0.5 text-[11px] font-medium text-[#0f1a2e]/50">
               {HOME_NEXT_PREP.parking.benefit}
             </p>
             <button
               type="button"
               onClick={goParkingCompare}
-              className="mt-3 w-full rounded-xl bg-brand py-3 text-[15px] font-bold text-white shadow-[0_6px_16px_rgba(49,130,246,0.35)]"
+              className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3 text-[15px] font-bold text-white shadow-[0_6px_16px_rgba(15,26,46,0.25)]"
             >
               {HOME_NEXT_PREP.parking.cta}
             </button>
           </article>
 
           {!APP_TAB_SOON.esim ? (
-            <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-sky-border/70">
+            <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/10">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-bold text-ink">{HOME_NEXT_PREP.esim.title}</p>
-                <span className="rounded-full bg-sky-tint px-2 py-0.5 text-[10px] font-bold text-brand">
+                <p className="text-[13px] font-bold text-[#0f1a2e]">{HOME_NEXT_PREP.esim.title}</p>
+                <span className="rounded-full bg-[#c9a962]/20 px-2 py-0.5 text-[10px] font-bold text-[#9a7b3c]">
                   2
                 </span>
               </div>
-              <p className="mt-1 text-[12px] font-semibold text-ink">{days}일</p>
-              <p className="mt-0.5 text-[11px] font-medium text-muted">{HOME_NEXT_PREP.esim.body}</p>
+              <p className="mt-1 text-[12px] font-semibold text-[#0f1a2e]">{days}일</p>
+              <p className="mt-0.5 text-[11px] font-medium text-[#0f1a2e]/50">{HOME_NEXT_PREP.esim.body}</p>
               <button
                 type="button"
                 onClick={goEsimCompare}
-                className="mt-3 w-full rounded-xl bg-sky-bg py-2.5 text-[14px] font-bold text-ink ring-1 ring-sky-border/80"
+                className="mt-3 w-full rounded-xl bg-neutral-50 py-2.5 text-[14px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/10"
               >
                 {HOME_NEXT_PREP.esim.cta}
               </button>
             </article>
           ) : null}
 
-          <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-sky-border/70">
+          <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/10">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[13px] font-bold text-ink">출발시각</p>
-              <span className="rounded-full bg-sky-soft px-2 py-0.5 text-[10px] font-bold text-muted">
+              <p className="text-[13px] font-bold text-[#0f1a2e]">출발시각</p>
+              <span className="rounded-full bg-neutral-50 px-2 py-0.5 text-[10px] font-bold text-[#0f1a2e]/45">
                 {APP_TAB_SOON.esim ? '2' : '3'}
               </span>
             </div>
@@ -294,7 +294,7 @@ export default function TripHomeHub({
                   </p>
                 ) : null}
                 <details className="group mt-2.5">
-                  <summary className="flex cursor-pointer list-none items-center gap-1 text-[11px] font-bold text-brand [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center gap-1 text-[11px] font-bold text-[#9a7b3c] [&::-webkit-details-marker]:hidden">
                     어떻게 계산했나요?
                     <ChevronDown
                       size={14}
@@ -302,7 +302,7 @@ export default function TripHomeHub({
                       aria-hidden
                     />
                   </summary>
-                  <dl className="mt-2 space-y-1.5 border-t border-sky-border/50 pt-2 text-[11px]">
+                  <dl className="mt-2 space-y-1.5 border-t border-[#0f1a2e]/10 pt-2 text-[11px]">
                     <div className="flex justify-between gap-3">
                       <dt className="text-muted">차 맡기기 (공항 도착)</dt>
                       <dd className="font-bold text-ink">{leavePlan.plan.arriveHm}</dd>
@@ -338,7 +338,7 @@ export default function TripHomeHub({
                     setShowTravelFallback(false);
                   }}
                   placeholder="예: 서울시 강남구 …"
-                  className="w-full rounded-xl bg-sky-soft/90 px-3 py-2.5 text-sm font-semibold text-ink outline-none ring-1 ring-sky-border/70 placeholder:font-medium placeholder:text-muted focus:ring-2 focus:ring-brand/35"
+                  className="w-full rounded-xl bg-neutral-50 px-3 py-2.5 text-sm font-semibold text-ink outline-none ring-1 ring-[#0f1a2e]/12 placeholder:font-medium placeholder:text-muted focus:ring-2 focus:ring-[#0f1a2e]/25"
                 />
                 {etaError ? (
                   <p className="text-[10px] font-medium text-amber-700">{etaError}</p>
@@ -358,8 +358,8 @@ export default function TripHomeHub({
                         className={cn(
                           'rounded-full px-3 py-1.5 text-[11px] font-bold',
                           travelMinutes === m && travelSource === 'manual'
-                            ? 'bg-ink text-white'
-                            : 'bg-sky-bg text-muted ring-1 ring-sky-border/60'
+                            ? 'bg-[#0f1a2e] text-white'
+                            : 'bg-neutral-50 text-muted ring-1 ring-[#0f1a2e]/12'
                         )}
                       >
                         {m}분
@@ -371,7 +371,7 @@ export default function TripHomeHub({
                   type="button"
                   disabled={etaLoading}
                   onClick={() => void runLeaveBy()}
-                  className="w-full rounded-xl bg-sky-bg py-2.5 text-[14px] font-bold text-ink ring-1 ring-sky-border/80 disabled:opacity-60"
+                  className="w-full rounded-xl bg-neutral-50 py-2.5 text-[14px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12 disabled:opacity-60"
                 >
                   {etaLoading ? HOME_CALCULATING : '출발 시각 계산하기'}
                 </button>
@@ -387,16 +387,17 @@ export default function TripHomeHub({
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(49,130,246,0.08)] ring-1 ring-sky-border">
+    <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_28px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/10">
       <form onSubmit={continueToResult} className="space-y-3.5 px-4 pb-4 pt-4">
         <div>
-          <p className="text-[10px] font-bold tracking-wide text-[#9a7b3c]">여행 일정</p>
-          <p className="mt-0.5 text-[12px] font-semibold text-ink">
-            맡기는 날부터 준비를 시작하세요
+          <p className="text-[10px] font-bold tracking-wide text-[#0f1a2e]/45">여행 일정</p>
+          <p className="mt-0.5 text-[12px] font-semibold text-[#0f1a2e]">
+            주차·이심 준비에 쓸 출국·귀국 일정이에요
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <DateField
+            tone="premium"
             label="맡기는 날"
             value={departureDate}
             onChange={(next) => {
@@ -404,11 +405,16 @@ export default function TripHomeHub({
               if (arrivalDate < next) setArrivalDate(addDaysInput(next, 5));
             }}
           />
-          <TimeField label="맡기는 시간" value={departureTime} onChange={setDepartureTime} />
+          <TimeField
+            tone="premium"
+            label="맡기는 시간"
+            value={departureTime}
+            onChange={setDepartureTime}
+          />
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-bold text-muted">출국 터미널</p>
+          <p className="mb-1.5 text-[11px] font-bold text-[#0f1a2e]/50">출국 터미널</p>
           <div className="flex gap-2">
             {(['T1', 'T2'] as const).map((t) => (
               <button
@@ -421,8 +427,8 @@ export default function TripHomeHub({
                 className={cn(
                   'flex-1 rounded-xl py-2.5 text-[13px] font-bold transition',
                   terminal === t
-                    ? 'bg-brand text-white'
-                    : 'bg-sky-soft/80 text-ink ring-1 ring-sky-border/60'
+                    ? 'bg-[#0f1a2e] text-white'
+                    : 'bg-neutral-50 text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12'
                 )}
               >
                 {t}
@@ -433,16 +439,22 @@ export default function TripHomeHub({
 
         <div className="grid grid-cols-2 gap-2">
           <DateField
+            tone="premium"
             label="찾는 날"
             value={arrivalDate}
             min={departureDate}
             onChange={setArrivalDate}
           />
-          <TimeField label="찾는 시간" value={arrivalTime} onChange={setArrivalTime} />
+          <TimeField
+            tone="premium"
+            label="찾는 시간"
+            value={arrivalTime}
+            onChange={setArrivalTime}
+          />
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-bold text-muted">입국 터미널</p>
+          <p className="mb-1.5 text-[11px] font-bold text-[#0f1a2e]/50">입국 터미널</p>
           <div className="flex gap-2">
             {(['T1', 'T2'] as const).map((t) => (
               <button
@@ -452,8 +464,8 @@ export default function TripHomeHub({
                 className={cn(
                   'flex-1 rounded-xl py-2.5 text-[13px] font-bold transition',
                   arrivalTerminal === t
-                    ? 'bg-brand text-white'
-                    : 'bg-sky-soft/80 text-ink ring-1 ring-sky-border/60'
+                    ? 'bg-[#0f1a2e] text-white'
+                    : 'bg-neutral-50 text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12'
                 )}
               >
                 {t}
@@ -462,7 +474,7 @@ export default function TripHomeHub({
           </div>
         </div>
 
-        <p className="text-[10px] font-medium text-muted">
+        <p className="text-[10px] font-medium text-[#0f1a2e]/45">
           맡기는·찾는 시간으로 야간 할증을 반영합니다. 항공편은 예약 단계에서 입력해요.
         </p>
 
@@ -472,7 +484,7 @@ export default function TripHomeHub({
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-brand py-3.5 text-[15px] font-bold text-white shadow-[0_6px_16px_rgba(49,130,246,0.35)]"
+          className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[15px] font-bold text-white shadow-[0_6px_16px_rgba(15,26,46,0.25)]"
         >
           {HOME_TRIP_CONTINUE_CTA}
         </button>

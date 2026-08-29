@@ -1,13 +1,13 @@
 /** 에어픽 B2C 마케팅 — 위치 · 사진 · 보험 통일 카피 */
 
 /** 하단 네비 · 가이드 등에서 쓰는 탭 이름 (주차장과 구분) */
-export const PARKING_TAB_LABEL = '주차대행 비교';
+export const PARKING_TAB_LABEL = '주차대행';
 
 /** 공항주변스팟 탭 — 지도 허브 (장소형) */
 export const SPOTS_TAB_LABEL = '공항주변스팟';
 
 /** 이심 — 탭·Hero·통계 등 사용자-facing (검색 메인 키워드: 이심) */
-export const ESIM_TAB_LABEL = '이심 비교';
+export const ESIM_TAB_LABEL = '이심';
 export const ESIM_STATS_LABEL = '이심 제휴사';
 export const ESIM_GUIDE_TITLE = '이심(eSIM) 이용 가이드';
 
@@ -19,7 +19,7 @@ export const APP_TAB_SOON = {
 /** 예약 탭 */
 export const MY_TAB_LABEL = '내 예약';
 
-/** 홈 탭 — 여행 일정 → 주차대행 비교(1)·출발시각(선택) */
+/** 홈 탭 — 왜 에어픽(후킹). 일정은 주차·이심 탭 */
 export const HOME_TAB_LABEL = '홈';
 
 /** 주차대행 탭 · 예약 탭 공통 헤드라인 (입고 후 추적 강조) */
@@ -104,16 +104,84 @@ export const AIRPICK_TRACKING_UPSELL = {
   cta: '에어픽에서 예약하기',
 } as const;
 
-/** 홈 Hero eyebrow */
-export const HOME_EYEBROW_PREMIUM = 'PREMIUM AIRPORT SERVICES';
+/**
+ * 홈 히어로 — 경험 훅 (인트로 무드 연결). 선별 권위는 서브·VERIFIED에서
+ */
+export const HOME_HEADLINE = '여유로운 출국,\n검증한 주차부터.';
+
+export const HOME_SUBHEAD =
+  '에어픽이 확인한 공식 파트너만 모았습니다. 보험·위치·입고 사진까지.';
+
+/** 홈 · 맡겨도 되는 파트너의 기준 (선정 = 왜 에어픽, 한 블록) */
+export const HOME_TRUST_CRITERIA = {
+  eyebrow: 'AIRPICK VERIFIED',
+  title: '맡겨도 되는 파트너의 기준',
+  items: [
+    {
+      id: 'insurance',
+      title: '보험 확인',
+      body: '사고에 대비할 보험이 확인된 파트너만 등록합니다.',
+    },
+    {
+      id: 'location',
+      title: '주차 위치 공개',
+      body: '맡긴 차량의 위치를 예약 후 확인할 수 있습니다.',
+    },
+    {
+      id: 'photos',
+      title: '입고 사진 공개',
+      body: '인계 시점의 차량 상태를 사진으로 남깁니다.',
+    },
+  ],
+  criteriaCta: '선정 기준 자세히',
+  criteriaHref: '/guides/partner-vs-external/#verified',
+} as const;
 
 /**
- * 홈 H1 — 프리미엄 톤 (SEO 키워드「비교」는 document title에 유지)
+ * 홈 하단 · 왜 에어픽인가
+ * (기준 3개가 ‘우리가 확인하는 것’이라면, 여기는 ‘우리가 걸러 내는 것’)
  */
-export const HOME_HEADLINE = '좋은 여행은,\n출발 전부터 달라집니다.';
+export const HOME_WHY_AIRPICK = {
+  eyebrow: 'WHY AIRPICK',
+  title: '왜 에어픽인가요?',
+  lead: '가격만 모아 두지 않습니다. 맡기기 불안한 곳은 먼저 걸러 냅니다.',
+  items: [
+    {
+      id: 'no-insurance',
+      title: '무보험 영업을 막습니다',
+      body: '보험 없이 영업하는 업체는 공식 파트너가 될 수 없습니다. 사고 뒤 책임 소재가 불분명한 곳은 처음부터 제외합니다.',
+    },
+    {
+      id: 'no-lot',
+      title: '주차장 없는 영업을 막습니다',
+      body: '계약·확인된 주차장 없이 운영하는 곳은 올리지 않습니다. 차가 어디에 보관되는지 밝힐 수 있어야 합니다.',
+    },
+    {
+      id: 'high-risk',
+      title: '불안한 운영 이력을 막습니다',
+      body: '사고·불만이 두드러지거나 운영이 불안정한 업체는 선별에서 제외합니다. 평소에도 맡길 수 있는 곳만 남깁니다.',
+    },
+  ],
+} as const;
 
-/** 히어로 서브 — 인천·검증을 하단에 명시 */
-export const HOME_SUBHEAD = '인천공항 주차대행 · 에어픽이 검증한 파트너만';
+/** 홈 · 신뢰 수치 — 기준을 다시 설명하지 않고 강도만 */
+export const HOME_TRUST_STATS = {
+  insuranceValue: '100%',
+  insuranceLabel: 'VERIFIED 보험 확인',
+  parkingValue: '100%',
+  parkingLabel: 'VERIFIED 주차장 확인',
+  partnersLabel: '공식 파트너',
+  ratingLabel: '실후기 평점',
+} as const;
+
+/** 홈 · 후킹 CTA — 일정은 각 탭에서 */
+export const HOME_HOOK_CTA = {
+  parking: '검증 파트너 예약하기',
+  esim: '이심 요금 보기',
+} as const;
+
+/** @deprecated 홈 일정 게이트웨이 제거 후 미사용에 가깝음 */
+export const HOME_EYEBROW_PREMIUM = 'PREMIUM AIRPORT SERVICES';
 
 /** 브랜드 인트로 게이트 — 영상으로 격 올린 뒤 홈에서 후킹 */
 export const BRAND_INTRO = {

@@ -27,10 +27,10 @@ function MyMenuButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-between rounded-2xl bg-sky-soft px-4 py-3.5 text-left ring-1 ring-sky-border/60 transition-colors hover:bg-sky-tint"
+      className="flex w-full items-center justify-between rounded-2xl bg-neutral-50 px-4 py-3.5 text-left ring-1 ring-[#0f1a2e]/10 transition-colors hover:bg-[#0f1a2e]/[0.04]"
     >
       <span className="flex min-w-0 items-center gap-2.5">
-        <Icon size={18} className="shrink-0 text-brand" strokeWidth={2} />
+        <Icon size={18} className="shrink-0 text-[#0f1a2e]" strokeWidth={2} />
         <span className="text-sm font-bold text-ink">{label}</span>
       </span>
       <ChevronRight size={18} className="shrink-0 text-muted-light" />
@@ -190,8 +190,8 @@ export default function MyPage({
 
   return (
     <div className="space-y-4 pb-8">
-      <section className="rounded-3xl bg-gradient-to-br from-sky-tint to-sky-soft p-5 shadow-[0_4px_16px_rgba(49,130,246,0.1)]">
-        <p className="text-xs font-bold text-brand">예약 · 맡긴 차 확인</p>
+      <section className="rounded-3xl bg-neutral-50 p-5 ring-1 ring-[#0f1a2e]/10">
+        <p className="text-xs font-bold text-[#0f1a2e]">예약 · 맡긴 차 확인</p>
         <h1 className="mt-1 text-xl font-bold leading-tight text-ink">{BRAND_TAGLINE}</h1>
         <p className="mt-2 text-sm font-medium text-muted">{BRAND_SUBLINE}</p>
       </section>
@@ -204,13 +204,13 @@ export default function MyPage({
       />
 
       {lastReservationId && !searched && reservations.length > 0 && (
-        <p className="px-1 text-xs font-semibold text-brand">
+        <p className="px-1 text-xs font-semibold text-[#0f1a2e]">
           방금 접수한 예약을 먼저 보여드립니다
         </p>
       )}
 
       {reviewLinkHint && (
-        <p className="rounded-2xl bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800 ring-1 ring-amber-100">
+        <p className="rounded-2xl bg-neutral-50 px-4 py-3 text-xs font-semibold text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10">
           {reviewLinkHint}
         </p>
       )}
@@ -248,7 +248,7 @@ export default function MyPage({
           ))}
         </div>
       ) : searched && !loading ? (
-        <div className="rounded-2xl bg-sky-soft px-4 py-8 text-center shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+        <div className="rounded-2xl bg-neutral-50 px-4 py-8 text-center shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
           <p className="text-sm font-bold text-ink">일치하는 예약이 없습니다</p>
           <p className="mt-1 text-xs font-medium text-muted">
             차량번호(또는 연락처)와 예약 비밀번호 4자리를 확인해 주세요
@@ -262,7 +262,7 @@ export default function MyPage({
           </button>
         </div>
       ) : !loading && !lastReservationId ? (
-        <p className="rounded-2xl bg-sky-tint px-4 py-3 text-center text-sm text-muted">
+        <p className="rounded-2xl bg-[#0f1a2e]/[0.06] px-4 py-3 text-center text-sm text-muted">
           차량번호(또는 연락처)와 예약 비밀번호로 예약을 조회해 보세요
         </p>
       ) : null}

@@ -2,9 +2,15 @@ import { ChevronDown } from 'lucide-react';
 import { AIRPICK_DEFINITION, COMPANY_LEGAL } from '../constants/companyLegal';
 
 /** 홈·앱 하단 — 메뉴 링크는 ≡ 시트로. 여기는 사업자 정보만 */
-export default function SiteFooter() {
+export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'premium' }) {
   return (
-    <footer className="mt-6 border-t border-sky-border/60 px-1 pt-3 pb-2">
+    <footer
+      className={
+        tone === 'premium'
+          ? 'mt-6 border-t border-[#0f1a2e]/10 px-1 pt-3 pb-2'
+          : 'mt-6 border-t border-sky-border/60 px-1 pt-3 pb-2'
+      }
+    >
       <details className="group">
         <summary className="flex cursor-pointer list-none items-center gap-1 text-[10px] font-bold text-muted [&::-webkit-details-marker]:hidden">
           <span>사업자 정보</span>

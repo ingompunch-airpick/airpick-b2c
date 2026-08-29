@@ -33,14 +33,17 @@ export default function TimeField({
   value,
   onChange,
   placeholder = '시:분 선택',
+  tone = 'default',
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  tone?: 'default' | 'premium';
 }) {
   const inputId = useId();
   const [open, setOpen] = useState(false);
+  const premium = tone === 'premium';
   const containerRef = useRef<HTMLDivElement>(null);
   const hourColRef = useRef<HTMLDivElement>(null);
   const minuteColRef = useRef<HTMLDivElement>(null);
@@ -93,9 +96,19 @@ export default function TimeField({
     setOpen((v) => !v);
   };
 
+  const activeFill = premium ? 'bg-[#0f1a2e] text-white' : 'bg-brand text-white';
+  const softBg = premium ? 'bg-neutral-50' : 'bg-sky-bg';
+  const softHover = premium ? 'hover:bg-[#0f1a2e]/[0.04]' : 'hover:bg-sky-soft';
+
   return (
     <div className="relative block" ref={containerRef}>
-      <span id={inputId} className="mb-1 block text-[11px] font-bold text-muted">
+      <span
+        id={inputId}
+        className={cn(
+          'mb-1 block text-[11px] font-bold',
+          premium ? 'text-[#0f1a2e]/50' : 'text-muted'
+        )}
+      >
         {label}
       </span>
       <button
@@ -104,8 +117,12 @@ export default function TimeField({
         className={cn(
           'flex w-full items-center gap-2 rounded-xl border px-3 py-2.5 text-left transition-colors',
           open
-            ? 'border-brand bg-sky-soft ring-2 ring-brand/25'
-            : 'border-sky-border bg-sky-bg hover:bg-sky-soft active:bg-sky-tint'
+            ? premium
+              ? 'border-[#0f1a2e]/30 bg-neutral-50 ring-2 ring-[#0f1a2e]/20'
+              : 'border-brand bg-sky-soft ring-2 ring-brand/25'
+            : premium
+              ? 'border-[#0f1a2e]/12 bg-neutral-50 hover:bg-[#0f1a2e]/[0.04] active:bg-[#0f1a2e]/[0.06]'
+              : 'border-sky-border bg-sky-bg hover:bg-sky-soft active:bg-sky-tint'
         )}
         aria-labelledby={inputId}
         aria-expanded={open}
@@ -114,7 +131,7 @@ export default function TimeField({
         <span
           className={cn(
             'flex-1 text-sm font-semibold tabular-nums',
-            hasValue ? 'text-ink' : 'text-muted'
+            hasValue ? (premium ? 'text-[#0f1a2e]' : 'text-ink') : 'text-muted'
           )}
         >
           {hasValue ? displayLabel(value) : placeholder}
@@ -122,8 +139,15 @@ export default function TimeField({
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 z-50 mt-2 min-w-[190px] rounded-2xl border border-sky-border bg-white p-2 shadow-[0_12px_32px_rgba(49,130,246,0.18)]">
-          <div className="mb-2 grid grid-cols-2 gap-1 rounded-xl bg-sky-bg p-1">
+        <div
+          className={cn(
+            'absolute left-0 right-0 z-50 mt-2 min-w-[190px] rounded-2xl border bg-white p-2',
+            premium
+              ? 'border-[#0f1a2e]/10 shadow-[0_12px_32px_rgba(15,26,46,0.16)]'
+              : 'border-sky-border shadow-[0_12px_32px_rgba(49,130,246,0.18)]'
+          )}
+        >
+          <div className={cn('mb-2 grid grid-cols-2 gap-1 rounded-xl p-1', softBg)}>
             {(['AM', 'PM'] as const).map((p) => (
               <button
                 key={p}
@@ -131,7 +155,7 @@ export default function TimeField({
                 onClick={() => set({ period: p })}
                 className={cn(
                   'rounded-lg py-1.5 text-xs font-bold transition-colors',
-                  period === p ? 'bg-brand text-white shadow-sm' : 'text-muted hover:text-ink'
+                  period === p ? `${activeFill} shadow-sm` : 'text-muted hover:text-ink'
                 )}
               >
                 {p === 'AM' ? '오전' : '오후'}
@@ -144,7 +168,10 @@ export default function TimeField({
               <span className="pb-1 text-center text-[10px] font-bold text-muted-light">시</span>
               <div
                 ref={hourColRef}
-                className="h-36 overflow-y-auto scroll-smooth rounded-xl bg-sky-bg/60 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className={cn(
+                  'h-36 overflow-y-auto scroll-smooth rounded-xl p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+                  premium ? 'bg-neutral-50/80' : 'bg-sky-bg/60'
+                )}
               >
                 {HOURS.map((h) => {
                   const active = h === hour12;
@@ -156,7 +183,7 @@ export default function TimeField({
                       onClick={() => set({ hour12: h })}
                       className={cn(
                         'mb-0.5 w-full rounded-lg py-2 text-center text-sm font-semibold tabular-nums transition-colors',
-                        active ? 'bg-brand text-white' : 'text-ink hover:bg-sky-soft'
+                        active ? activeFill : cn('text-ink', softHover)
                       )}
                     >
                       {h}
@@ -170,7 +197,10 @@ export default function TimeField({
               <span className="pb-1 text-center text-[10px] font-bold text-muted-light">분</span>
               <div
                 ref={minuteColRef}
-                className="h-36 overflow-y-auto scroll-smooth rounded-xl bg-sky-bg/60 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className={cn(
+                  'h-36 overflow-y-auto scroll-smooth rounded-xl p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+                  premium ? 'bg-neutral-50/80' : 'bg-sky-bg/60'
+                )}
               >
                 {MINUTES.map((m) => {
                   const active = m === selectedMinute;
@@ -182,7 +212,7 @@ export default function TimeField({
                       onClick={() => set({ minute: m })}
                       className={cn(
                         'mb-0.5 w-full rounded-lg py-2 text-center text-sm font-semibold tabular-nums transition-colors',
-                        active ? 'bg-brand text-white' : 'text-ink hover:bg-sky-soft'
+                        active ? activeFill : cn('text-ink', softHover)
                       )}
                     >
                       {String(m).padStart(2, '0')}
@@ -196,7 +226,10 @@ export default function TimeField({
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="mt-2 w-full rounded-xl bg-brand py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
+            className={cn(
+              'mt-2 w-full rounded-xl py-2 text-sm font-bold text-white transition-colors',
+              premium ? 'bg-[#0f1a2e] hover:bg-[#1a2740]' : 'bg-brand hover:bg-brand-dark'
+            )}
           >
             확인
           </button>

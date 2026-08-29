@@ -24,13 +24,21 @@ function isSoonTab(id: AppTab): boolean {
 export default function BottomNav({
   active,
   onChange,
+  wide = false,
 }: {
   active: AppTab;
   onChange: (tab: AppTab) => void;
+  tone?: 'default' | 'premium';
+  wide?: boolean;
 }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-sky-border bg-sky-bg/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
-      <div className="mx-auto flex max-w-lg items-stretch justify-around">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200/90 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
+      <div
+        className={cn(
+          'mx-auto flex items-stretch justify-around',
+          wide ? 'max-w-lg md:max-w-6xl' : 'max-w-lg'
+        )}
+      >
         {tabs.map(({ id, label, icon: Icon }) => {
           const isActive = active === id;
           const soon = isSoonTab(id);
@@ -47,7 +55,11 @@ export default function BottomNav({
               }}
               className={cn(
                 'flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[10px] font-semibold leading-tight transition-colors',
-                isActive ? 'text-brand' : soon ? 'text-muted-light/80' : 'text-muted-light'
+                isActive
+                  ? 'text-[#0f1a2e]'
+                  : soon
+                    ? 'text-muted-light/80'
+                    : 'text-muted-light'
               )}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />

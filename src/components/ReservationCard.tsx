@@ -47,13 +47,13 @@ function StatusTimeline({ status }: { status: string }) {
               <div
                 className={cn(
                   'h-2.5 w-2.5 rounded-full',
-                  i <= step ? 'bg-brand' : 'bg-sky-tint ring-2 ring-sky-border'
+                  i <= step ? 'bg-[#0f1a2e]' : 'bg-[#0f1a2e]/[0.06] ring-2 ring-[#0f1a2e]/10'
                 )}
               />
               <span
                 className={cn(
                   'text-[9px] font-semibold',
-                  i <= step ? 'text-brand' : 'text-muted-light'
+                  i <= step ? 'text-[#0f1a2e]' : 'text-muted-light'
                 )}
               >
                 {label}
@@ -63,7 +63,7 @@ function StatusTimeline({ status }: { status: string }) {
               <div
                 className={cn(
                   'mx-0.5 mb-4 h-0.5 flex-1',
-                  i < step ? 'bg-brand' : 'bg-sky-tint'
+                  i < step ? 'bg-[#0f1a2e]' : 'bg-[#0f1a2e]/[0.06]'
                 )}
               />
             )}
@@ -89,17 +89,17 @@ function TrustBlock({
     <div
       className={cn(
         'rounded-2xl p-4',
-        highlight ? 'bg-brand/5 ring-1 ring-brand/15' : 'bg-sky-bg ring-1 ring-sky-border/60'
+        highlight ? 'bg-[#0f1a2e]/[0.04] ring-1 ring-[#0f1a2e]/15' : 'bg-white ring-1 ring-[#0f1a2e]/10'
       )}
     >
       <div className="flex items-center gap-2">
         <div
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-xl',
-            highlight ? 'bg-brand/15' : 'bg-sky-tint'
+            highlight ? 'bg-[#0f1a2e]/[0.1]' : 'bg-[#0f1a2e]/[0.06]'
           )}
         >
-          <Icon size={16} className="text-brand" strokeWidth={2.25} />
+          <Icon size={16} className="text-[#0f1a2e]" strokeWidth={2.25} />
         </div>
         <p className="text-sm font-bold text-ink">{title}</p>
       </div>
@@ -136,7 +136,7 @@ function PhotoStrip({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block shrink-0 overflow-hidden rounded-xl ring-1 ring-sky-border/60 shadow-sm"
+          className="block shrink-0 overflow-hidden rounded-xl ring-1 ring-[#0f1a2e]/10 shadow-sm"
         >
           <img
             src={companyPhotoUrl(url, size === 'md' ? 320 : 128)}
@@ -231,10 +231,10 @@ export default function ReservationCard({
     getStatusStep(reservation.status) < 1;
 
   return (
-    <article className="rounded-3xl bg-sky-soft p-5 shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+    <article className="rounded-3xl bg-neutral-50 p-5 shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <span className="inline-flex rounded-full bg-brand/10 px-2.5 py-0.5 text-[11px] font-bold text-brand">
+          <span className="inline-flex rounded-full bg-[#0f1a2e]/[0.06] px-2.5 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
             {statusLabel}
           </span>
           <h3 className="mt-2 text-base font-bold text-ink">
@@ -250,7 +250,7 @@ export default function ReservationCard({
       </div>
 
       <p className="mt-2 text-xs font-medium text-muted">{formatSchedule(reservation)}</p>
-      <p className="mt-1 text-lg font-bold text-brand tabular-nums">
+      <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
         {reservation.totalPrice.toLocaleString()}원
       </p>
 
@@ -332,7 +332,7 @@ export default function ReservationCard({
             )}
           </>
         ) : (
-          <div className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
+          <div className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10">
             <p className="text-sm font-bold text-ink">{AIRPICK_TRACKING_UPSELL.title}</p>
             <p className="mt-1.5 text-xs font-medium leading-relaxed text-muted">
               {AIRPICK_TRACKING_UPSELL.body}
@@ -341,7 +341,7 @@ export default function ReservationCard({
               <button
                 type="button"
                 onClick={onBookAirpick}
-                className="mt-3 w-full rounded-xl bg-brand py-2.5 text-xs font-bold text-white"
+                className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-2.5 text-xs font-bold text-white"
               >
                 {AIRPICK_TRACKING_UPSELL.cta}
               </button>
@@ -353,7 +353,7 @@ export default function ReservationCard({
           {buildTelHref(company?.phone) ? (
             <a
               href={buildTelHref(company?.phone)}
-              className="flex items-center justify-center gap-2 rounded-xl bg-sky-tint py-3 text-xs font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#0f1a2e]/[0.06] py-3 text-xs font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12 transition-colors hover:bg-neutral-50"
             >
               <Phone size={14} strokeWidth={2.25} />
               {displayCompanyName(reservation.companyName)} ·{' '}
@@ -382,7 +382,7 @@ export default function ReservationCard({
           <button
             type="button"
             onClick={() => setReviewOpen(true)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand py-2.5 text-xs font-bold text-white"
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-2.5 text-xs font-bold text-white"
           >
             <Star size={14} strokeWidth={2.25} />
             후기 작성
@@ -396,7 +396,7 @@ export default function ReservationCard({
             <button
               type="button"
               onClick={() => setCancelOpen(true)}
-              className="w-full rounded-xl bg-sky-bg py-2.5 text-xs font-bold text-muted ring-1 ring-sky-border/60 transition-colors hover:text-rose-500"
+              className="w-full rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/10 transition-colors hover:text-rose-500"
             >
               예약 취소
             </button>
@@ -430,7 +430,7 @@ export default function ReservationCard({
                     setCancelPw('');
                     setCancelError('');
                   }}
-                  className="flex-1 rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-sky-border/70"
+                  className="flex-1 rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/12"
                 >
                   닫기
                 </button>
@@ -448,7 +448,7 @@ export default function ReservationCard({
         </div>
       )}
 
-      <details className="mt-4 rounded-2xl bg-sky-bg px-4 py-3 ring-1 ring-sky-border/60">
+      <details className="mt-4 rounded-2xl bg-white px-4 py-3 ring-1 ring-[#0f1a2e]/10">
         <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-bold text-muted">
           예약 상세
           <ChevronRight size={16} className="text-muted-light" />

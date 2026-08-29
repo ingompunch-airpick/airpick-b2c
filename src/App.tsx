@@ -34,7 +34,6 @@ import {
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
 import { defaultEsimSearch } from './utils/esimSearch';
-import { normalizeEsimSearch } from './lib/esimCatalog';
 import { calculatePrice } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 
@@ -105,14 +104,6 @@ export default function App() {
     trackCtaClick('brand_intro_enter', 'brand_intro');
   };
 
-  const prefillFromLeaveBy = (patch: Partial<BookingSearch>) => {
-    setSearch((prev) => ({ ...prev, ...patch }));
-  };
-
-  const prefillEsimFromTrip = (patch: Partial<EsimSearch>) => {
-    setEsimSearch((prev) => normalizeEsimSearch({ ...prev, ...patch }));
-  };
-
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
       setCompanies(list.filter((c) => c.id !== 'airpick' && c.id !== 'air25'));
@@ -175,13 +166,20 @@ export default function App() {
   }, []);
 
   const page = useMemo(() => {
+    const partners = companies.filter((c) => isAirpickPartner(c));
+    const partnerReviewWeight = partners.reduce((sum, c) => sum + (c.reviews_count || 0), 0);
+    const partnerAvgRating =
+      partnerReviewWeight > 0
+        ? partners.reduce((sum, c) => sum + (c.rating || 0) * (c.reviews_count || 0), 0) /
+          partnerReviewWeight
+        : null;
+
     if (tab === 'home') {
       return (
         <HomePage
           onGoTab={(next) => setTab(next)}
-          onPrefillParkingSearch={prefillFromLeaveBy}
-          onPrefillEsimSearch={prefillEsimFromTrip}
-          partnerCount={companies.filter((c) => isAirpickPartner(c)).length}
+          partnerCount={partners.length}
+          partnerAvgRating={partnerAvgRating}
         />
       );
     }
@@ -232,20 +230,41 @@ export default function App() {
     return <BrandIntroGate onEnter={dismissBrandIntro} />;
   }
 
+  const homeTone = tab === 'home';
+
   return (
-    <div className="min-h-dvh bg-sky-bg text-ink">
-      <div className="mx-auto min-h-dvh max-w-lg bg-sky-bg pb-24">
-        <Header onOpenMenu={() => setMenuOpen(true)} />
-        <main className="px-4 pt-1 pb-5">
-          {loading && tab === 'compare' ? (
-            <ComparePageSkeleton />
-          ) : (
+    <div className="min-h-dvh bg-white text-ink">
+      {homeTone ? (
+        <div className="min-h-dvh">
+          {/* 헤더 네이비 풀블리드 — PC 좌우도 끊기지 않음 */}
+          <div className="bg-[#0f1a2e]">
+            <div className="mx-auto max-w-6xl">
+              <Header tone="premium" onOpenMenu={() => setMenuOpen(true)} />
+            </div>
+          </div>
+          <main>
             <Suspense fallback={pageFallback}>{page}</Suspense>
-          )}
-          <SiteFooter />
-        </main>
-      </div>
-      <BottomNav active={tab} onChange={(next) => setTab(next)} />
+          </main>
+        </div>
+      ) : (
+        <div className="mx-auto min-h-dvh max-w-lg bg-white pb-24">
+          <Header tone="default" onOpenMenu={() => setMenuOpen(true)} />
+          <main className="px-4 pt-1 pb-5">
+            {loading && tab === 'compare' ? (
+              <ComparePageSkeleton />
+            ) : (
+              <Suspense fallback={pageFallback}>{page}</Suspense>
+            )}
+            <SiteFooter tone="default" />
+          </main>
+        </div>
+      )}
+      <BottomNav
+        active={tab}
+        tone={homeTone ? 'premium' : 'default'}
+        wide={homeTone}
+        onChange={(next) => setTab(next)}
+      />
 
       <Suspense fallback={null}>
         {partnerDetail && (

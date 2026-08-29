@@ -1,84 +1,90 @@
-import { useState } from 'react';
-import TripHomeHub from '../components/home/TripHomeHub';
-import VerifiedStrip from '../components/home/VerifiedStrip';
+import HomeHookCtas from '../components/home/HomeHookCtas';
+import HomeTrustCriteria from '../components/home/HomeTrustCriteria';
+import HomeTrustStats from '../components/home/HomeTrustStats';
+import HomeWhyAirpick from '../components/home/HomeWhyAirpick';
+import SiteFooter from '../components/SiteFooter';
 import {
+  AIRPICK_VERIFIED,
   HOME_CAMPAIGN,
-  HOME_EYEBROW_PREMIUM,
   HOME_HEADLINE,
   HOME_SUBHEAD,
 } from '../constants/marketing';
-import type { AppTab, BookingSearch, EsimSearch } from '../types';
+import type { AppTab } from '../types';
 
-/** 홈 — 얇은 게이트웨이: 검증 → 일정 → 주차대행(강) */
+/**
+ * 홈 — 네이비 히어로(풀블리드) → 흰 시트가 살짝 올라타며 이어짐.
+ * md+: 히어로 2열, 본문 2열.
+ */
 export default function HomePage({
   onGoTab,
-  onPrefillParkingSearch,
-  onPrefillEsimSearch,
   partnerCount = 0,
+  partnerAvgRating = null,
 }: {
   onGoTab: (tab: AppTab) => void;
-  onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
-  onPrefillEsimSearch?: (patch: Partial<EsimSearch>) => void;
   partnerCount?: number;
+  partnerAvgRating?: number | null;
 }) {
-  const [hasResult, setHasResult] = useState(false);
   const showCampaign = Boolean(HOME_CAMPAIGN.title.trim());
 
   return (
-    <div className="relative">
-      <div
-        className="pointer-events-none absolute inset-x-0 -top-2 -mx-4 h-[min(36vh,280px)]"
-        aria-hidden
-        style={{
-          background:
-            'radial-gradient(ellipse 90% 70% at 50% 0%, rgba(207,228,251,0.55) 0%, rgba(237,244,252,0.35) 50%, transparent 75%)',
-        }}
-      />
-
-      <div className="relative space-y-4 pt-2">
-        <header className={`transition-all duration-300 ${hasResult ? 'opacity-70' : ''}`}>
-          {!hasResult ? (
-            <p className="mb-1.5 text-[10px] font-bold tracking-[0.12em] text-[#9a7b3c]">
-              {HOME_EYEBROW_PREMIUM}
-            </p>
-          ) : null}
-          <h1
-            className={`whitespace-pre-line font-bold tracking-tight text-ink ${
-              hasResult
-                ? 'text-xl leading-snug'
-                : 'text-[1.55rem] leading-[1.25] sm:text-[1.75rem]'
-            }`}
-          >
-            {HOME_HEADLINE}
-          </h1>
-          {!hasResult ? (
-            <p className="mt-2 max-w-[22rem] text-[13px] font-medium leading-snug text-muted">
-              {HOME_SUBHEAD}
-            </p>
-          ) : null}
-        </header>
-
-        {!hasResult ? <VerifiedStrip partnerCount={partnerCount} /> : null}
-
-        <TripHomeHub
-          onResultChange={setHasResult}
-          onGoTab={onGoTab}
-          onPrefillParkingSearch={onPrefillParkingSearch}
-          onPrefillEsimSearch={onPrefillEsimSearch}
+    <div>
+      {/* 풀블리드 네이비 — 헤더와 한 면, 하단은 시트에 넘김 */}
+      <section className="relative bg-[#0f1a2e] px-5 pb-14 pt-5 text-white sm:px-8 md:px-10 md:pb-20 md:pt-8 lg:px-12">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 55% at 85% -10%, rgba(201,169,98,0.12) 0%, transparent 55%), radial-gradient(ellipse 50% 40% at 10% 100%, rgba(201,169,98,0.05) 0%, transparent 50%)',
+          }}
         />
 
-        {showCampaign && !hasResult ? (
-          <div className="border-l-2 border-brand/70 pl-3.5">
-            <p className="text-[13px] font-semibold leading-relaxed text-ink/80">
-              {HOME_CAMPAIGN.title}
+        <div className="relative mx-auto grid max-w-5xl gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-end md:gap-12 lg:gap-16">
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.2em] text-[#c9a962] md:text-[11px]">
+              {AIRPICK_VERIFIED.label}
             </p>
-            {HOME_CAMPAIGN.body.trim() ? (
-              <p className="mt-1 text-[12px] font-medium leading-relaxed text-muted">
-                {HOME_CAMPAIGN.body}
+            <h1 className="mt-3 max-w-xl whitespace-pre-line text-[1.75rem] font-bold leading-[1.18] tracking-tight sm:text-[2rem] md:mt-4 md:text-[2.5rem] md:leading-[1.12] lg:text-[2.75rem]">
+              {HOME_HEADLINE}
+            </h1>
+            {HOME_SUBHEAD.trim() ? (
+              <p className="mt-3.5 max-w-md text-[13px] font-medium leading-relaxed text-white/58 md:mt-5 md:text-[15px] md:leading-relaxed">
+                {HOME_SUBHEAD}
               </p>
             ) : null}
           </div>
-        ) : null}
+
+          <div className="md:pb-1">
+            <HomeHookCtas onGoTab={onGoTab} tone="dark" />
+          </div>
+        </div>
+      </section>
+
+      {/* 흰 시트 — 둥근 상단이 네이비를 살짝 덮어 끊김·맞닿음 모두 완화 */}
+      <div className="relative z-[1] -mt-6 rounded-t-[1.75rem] bg-white px-5 pb-28 pt-8 shadow-[0_-12px_40px_rgba(15,26,46,0.12)] sm:px-8 md:-mt-8 md:rounded-t-[2rem] md:px-10 md:pb-28 md:pt-10 lg:px-12">
+        <div className="mx-auto max-w-5xl space-y-10 md:space-y-14">
+          <HomeTrustStats partnerCount={partnerCount} avgRating={partnerAvgRating} />
+
+          <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
+            <HomeTrustCriteria />
+            <HomeWhyAirpick />
+          </div>
+
+          {showCampaign ? (
+            <div className="border-l-2 border-[#c9a962]/50 pl-3.5">
+              <p className="text-[13px] font-semibold leading-relaxed text-[#0f1a2e]/80">
+                {HOME_CAMPAIGN.title}
+              </p>
+              {HOME_CAMPAIGN.body.trim() ? (
+                <p className="mt-1 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/50">
+                  {HOME_CAMPAIGN.body}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <SiteFooter tone="premium" />
+        </div>
       </div>
     </div>
   );

@@ -2,13 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import EsimProductCard from '../components/EsimProductCard';
 import EsimSearchPanel from '../components/EsimSearchPanel';
-import PageHero from '../components/PageHero';
 import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
-import {
-  ESIM_COMPARE_DESC,
-  ESIM_COMPARE_H1,
-  ESIM_COMPARE_SUB,
-} from '../constants/marketing';
 import { ESIM_OFFERS_UPDATED_AT } from '../config/esimPartnerOffers';
 import { getEsimCountryName } from '../config/esimCountries';
 import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
@@ -40,7 +34,6 @@ export default function EsimPage({
 
   return (
     <div className="space-y-5">
-      <PageHero sub={ESIM_COMPARE_SUB} line={ESIM_COMPARE_H1} desc={ESIM_COMPARE_DESC} />
       <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
 
       <EsimSearchPanel search={search} onChange={onSearchChange} />
@@ -62,10 +55,10 @@ export default function EsimPage({
       </div>
 
       {offers.length === 0 ? (
-        <div className="space-y-3 rounded-2xl bg-sky-soft p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(49,130,246,0.07)]">
+        <div className="space-y-3 rounded-2xl bg-neutral-50 p-8 text-center text-sm text-muted ring-1 ring-[#0f1a2e]/10">
           <p>선택하신 조건의 제휴 요금이 아직 없습니다.</p>
           <p className="text-xs">다른 용량·일수를 선택하거나, 초보 가이드를 확인해 보세요.</p>
-          <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-brand">
+          <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-[#0f1a2e]">
             <li>
               <a href="/guides/esim-beginner/" className="underline-offset-2 hover:underline">
                 유심·이심 초보 가이드
@@ -97,9 +90,9 @@ export default function EsimPage({
       )}
 
       {selected && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-sky-deep/60 p-4 backdrop-blur-sm sm:items-center">
-          <div className="w-full max-w-lg rounded-3xl bg-sky-soft p-5 shadow-xl">
-            <p className="text-xs font-bold text-brand">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-[#0f1a2e]/45 p-4 backdrop-blur-sm sm:items-center">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-5 shadow-xl ring-1 ring-[#0f1a2e]/10">
+            <p className="text-xs font-bold text-[#0f1a2e]">
               {formatEsimSimType(selected.type)} ·{' '}
               {selected.region || getEsimCountryName(selected.countryCode)}
             </p>
@@ -110,7 +103,7 @@ export default function EsimPage({
             {selected.description && (
               <p className="mt-2 text-sm text-muted">{selected.description}</p>
             )}
-            <p className="mt-3 text-xl font-bold text-brand tabular-nums">
+            <p className="mt-3 text-xl font-bold text-[#0f1a2e] tabular-nums">
               {selected.price.toLocaleString()}원
               <span className="ml-1 text-sm font-semibold text-muted">참고가</span>
             </p>
@@ -118,27 +111,23 @@ export default function EsimPage({
               제휴사 <span className="font-bold text-ink">{selected.partnerName}</span>
               에서 최종 요금·결제·개통이 진행됩니다.
             </p>
-            <button
-              type="button"
-              disabled={!selected.partnerUrl?.trim()}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-50"
-              onClick={handleGoPartner}
-            >
-              제휴사에서 보기
-              <ExternalLink size={16} />
-            </button>
-            {!selected.partnerUrl?.trim() && (
-              <p className="mt-2 text-center text-[11px] font-semibold text-muted">
-                제휴 링크 등록 후 이용할 수 있습니다.
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={() => setSelected(null)}
-              className="mt-2 w-full py-2 text-sm font-semibold text-muted"
-            >
-              닫기
-            </button>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setSelected(null)}
+                className="flex-1 rounded-xl bg-neutral-50 py-3 text-sm font-bold text-ink ring-1 ring-[#0f1a2e]/10"
+              >
+                닫기
+              </button>
+              <button
+                type="button"
+                onClick={handleGoPartner}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-3 text-sm font-bold text-white"
+              >
+                제휴사에서 보기
+                <ExternalLink size={16} />
+              </button>
+            </div>
           </div>
         </div>
       )}

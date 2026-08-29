@@ -32,7 +32,7 @@ function AccordionSection<T extends string | number>({
   onSelect: (next: T) => void;
 }) {
   return (
-    <div className="border-b border-sky-border/50 last:border-b-0">
+    <div className="border-b border-[#0f1a2e]/10 last:border-b-0">
       <button
         type="button"
         onClick={onToggle}
@@ -40,7 +40,7 @@ function AccordionSection<T extends string | number>({
       >
         <span className="text-sm font-bold text-ink">{label}</span>
         <span className="flex min-w-0 items-center gap-1.5">
-          <span className="truncate text-sm font-semibold text-brand">{valueLabel}</span>
+          <span className="truncate text-sm font-semibold text-[#0f1a2e]">{valueLabel}</span>
           <ChevronDown
             size={18}
             className={cn('shrink-0 text-muted transition-transform', open && 'rotate-180')}
@@ -59,7 +59,7 @@ function AccordionSection<T extends string | number>({
                   onClick={() => onSelect(opt.id)}
                   className={cn(
                     'flex w-full items-center rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition-colors',
-                    selected ? 'bg-sky-deep text-brand' : 'text-ink hover:bg-sky-bg'
+                    selected ? 'bg-[#0f1a2e] text-white' : 'text-ink hover:bg-white'
                   )}
                 >
                   {opt.label}
@@ -75,9 +75,9 @@ function AccordionSection<T extends string | number>({
 
 function StaticRow({ label, valueLabel }: { label: string; valueLabel: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-sky-border/50 py-3.5 last:border-b-0">
+    <div className="flex items-center justify-between gap-3 border-b border-[#0f1a2e]/10 py-3.5 last:border-b-0">
       <span className="text-sm font-bold text-ink">{label}</span>
-      <span className="text-sm font-semibold text-brand">{valueLabel}</span>
+      <span className="text-sm font-semibold text-[#0f1a2e]">{valueLabel}</span>
     </div>
   );
 }
@@ -136,7 +136,7 @@ export default function EsimSearchPanel({
   };
 
   return (
-    <div className="rounded-2xl bg-sky-soft px-4 shadow-[0_2px_12px_rgba(49,130,246,0.08)]">
+    <div className="rounded-2xl bg-neutral-50 px-4 shadow-[0_2px_12px_rgba(15,26,46,0.06)] ring-1 ring-[#0f1a2e]/10">
       {simTypeOptions.length > 1 ? (
         <AccordionSection
           label="유형"
