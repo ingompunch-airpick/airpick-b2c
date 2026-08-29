@@ -1,6 +1,6 @@
 import { HOME_WHY_AIRPICK } from '../../constants/marketing';
 
-/** 홈 하단 — 왜 에어픽인가 (테두리 박스 대신 타이포 중심) */
+/** 홈 · 고객이 에어픽을 선택하는 이유 */
 export default function HomeWhyAirpick() {
   return (
     <section>

@@ -19,6 +19,11 @@ export default function HomeTrustCriteria() {
           <h2 className="mt-1 text-[1.2rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.4rem]">
             {HOME_TRUST_CRITERIA.title}
           </h2>
+          {HOME_TRUST_CRITERIA.lead ? (
+            <p className="mt-2 max-w-md text-[13px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[14px]">
+              {HOME_TRUST_CRITERIA.lead}
+            </p>
+          ) : null}
         </div>
         <a
           href={HOME_TRUST_CRITERIA.criteriaHref}
