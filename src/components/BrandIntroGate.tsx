@@ -40,6 +40,21 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
+/** Tailwind md(768px) — 한쪽에만 영상 마운트해서 대역폭 절약 */
+function useIsMdUp(): boolean {
+  const [mdUp, setMdUp] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const onChange = () => setMdUp(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return mdUp;
+}
+
 function IntroVideo({
   src,
   className,
@@ -149,7 +164,7 @@ function IntroPanel({
   );
 }
 
-/** 브랜드 게이트 — PC: 좌 영상 / 우 패널, 모바일: 배경 영상 + 오버레이 */
+/** 브랜드 게이트 — PC: 좌 desktop 영상 / 우 패널, 모바일: mobile 영상 배경 + 오버레이 */
 export default function BrandIntroGate({
   onParking,
   onEsim,
@@ -160,39 +175,48 @@ export default function BrandIntroGate({
   onSkipHome: () => void;
 }) {
   const reducedMotion = usePrefersReducedMotion();
-  /** 모바일용 없으면 desktop 사용 (없는 URL이 HTML 200으로 떨어지면 재생 실패하므로 probe 하지 않음) */
-  const videoSrc = BRAND_INTRO.videoDesktop;
+  const mdUp = useIsMdUp();
 
   return (
     <div className="fixed inset-0 z-[80] bg-[#0a1628] text-white">
-      {/* 모바일: 풀블리드 배경 영상 */}
-      <div className="absolute inset-0 md:hidden">
-        <IntroVideo
-          src={videoSrc}
-          reducedMotion={reducedMotion}
-          className="h-full w-full object-cover"
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/55 to-[#0a1628]/30"
-          aria-hidden
-        />
-      </div>
-
-      {/* PC: 좌 영상 / 우 패널 */}
-      <div className="relative mx-auto flex h-full w-full max-w-6xl md:grid md:grid-cols-[minmax(0,1.6fr)_minmax(20rem,1fr)]">
-        <div className="relative hidden min-h-0 overflow-hidden md:block">
+      {/* 모바일: 풀블리드 세로 영상 */}
+      {!mdUp ? (
+        <div className="absolute inset-0">
           <IntroVideo
-            src={videoSrc}
+            src={BRAND_INTRO.videoMobile}
             reducedMotion={reducedMotion}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="h-full w-full object-cover"
           />
           <div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0a1628]/85"
+            className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/55 to-[#0a1628]/30"
             aria-hidden
           />
         </div>
+      ) : null}
 
-        <div className="relative mx-auto flex h-full w-full max-w-lg md:max-w-none md:bg-[#0a1628]/92">
+      {/* PC: 좌 가로 영상 / 우 패널 */}
+      <div
+        className={
+          mdUp
+            ? 'relative mx-auto grid h-full w-full max-w-6xl grid-cols-[minmax(0,1.6fr)_minmax(20rem,1fr)]'
+            : 'relative mx-auto flex h-full w-full max-w-lg'
+        }
+      >
+        {mdUp ? (
+          <div className="relative min-h-0 overflow-hidden">
+            <IntroVideo
+              src={BRAND_INTRO.videoDesktop}
+              reducedMotion={reducedMotion}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0a1628]/85"
+              aria-hidden
+            />
+          </div>
+        ) : null}
+
+        <div className={`relative flex h-full w-full ${mdUp ? 'bg-[#0a1628]/92' : ''}`}>
           <IntroPanel onParking={onParking} onEsim={onEsim} onSkipHome={onSkipHome} />
         </div>
       </div>

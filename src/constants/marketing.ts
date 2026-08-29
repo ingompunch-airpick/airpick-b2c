@@ -127,7 +127,7 @@ export const BRAND_INTRO = {
   esimLabel: '이심 · 유심',
   esimHint: '해외 데이터 준비',
   skipLabel: '여행 일정 입력하기',
-  /** public/brand — 모바일용 없으면 desktop으로 폴백 */
+  /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',
   videoMobile: '/brand/intro-mobile.mp4',
 } as const;
