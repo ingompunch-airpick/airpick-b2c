@@ -118,6 +118,7 @@ export const HOME_SUBHEAD = '인천공항 주차대행 · 에어픽이 검증한
 /** 브랜드 인트로 게이트 (영상은 추후) */
 export const BRAND_INTRO = {
   storageKey: 'airpick_intro_seen',
+  /** 홈(/) 접속·새로고침마다 표시. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
   eyebrow: 'PREMIUM AIRPORT SERVICES',
   line: '좋은 여행은, 출발 전부터 달라집니다.',

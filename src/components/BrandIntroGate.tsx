@@ -3,23 +3,16 @@ import { Car, ChevronRight, Smartphone } from 'lucide-react';
 import { BRAND_INTRO } from '../constants/marketing';
 
 export function hasSeenBrandIntro(): boolean {
-  try {
-    return sessionStorage.getItem(BRAND_INTRO.storageKey) === '1';
-  } catch {
-    return true;
-  }
+  return false;
 }
 
 export function markBrandIntroSeen(): void {
-  try {
-    sessionStorage.setItem(BRAND_INTRO.storageKey, '1');
-  } catch {
-    /* ignore */
-  }
+  /* 인트로는 홈 진입마다 표시 — 영구 숨김 없음 */
 }
 
 export function clearBrandIntroSeen(): void {
   try {
+    localStorage.removeItem(BRAND_INTRO.storageKey);
     sessionStorage.removeItem(BRAND_INTRO.storageKey);
   } catch {
     /* ignore */

@@ -4,8 +4,6 @@ import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
 import BrandIntroGate, {
   clearBrandIntroSeen,
-  hasSeenBrandIntro,
-  markBrandIntroSeen,
   shouldForceBrandIntro,
 } from './components/BrandIntroGate';
 import Header from './components/Header';
@@ -61,13 +59,8 @@ function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
     clearBrandIntroSeen();
     return true;
   }
-  if (hasSeenBrandIntro()) return false;
-  /** 직링크(/parking, /esim, /my)는 게이트 스킵 */
-  if (initialTab !== 'home') {
-    markBrandIntroSeen();
-    return false;
-  }
-  return true;
+  /** 직링크(/parking, /esim, /my)는 게이트 스킵 — 홈(/) 접속마다 인트로 */
+  return initialTab === 'home';
 }
 
 export default function App() {
@@ -107,7 +100,6 @@ export default function App() {
   };
 
   const dismissBrandIntro = (next: AppTab) => {
-    markBrandIntroSeen();
     setShowBrandIntro(false);
     setTab(next, 'replace');
     trackCtaClick(
