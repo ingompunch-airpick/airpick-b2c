@@ -1,13 +1,14 @@
-import { Camera, MapPin, ShieldCheck } from 'lucide-react';
+import { Camera, Gauge, MapPin, ShieldCheck } from 'lucide-react';
 import { HOME_TRUST_CRITERIA } from '../../constants/marketing';
 
 const ICONS = {
   insurance: ShieldCheck,
   location: MapPin,
+  safety: Gauge,
   photos: Camera,
 } as const;
 
-/** 홈 본론 — 카드 남발 없이 한 덩어리로 */
+/** 홈 · 입점·운영 기준 */
 export default function HomeTrustCriteria() {
   return (
     <section>

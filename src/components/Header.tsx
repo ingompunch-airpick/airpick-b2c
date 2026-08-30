@@ -2,37 +2,33 @@ import { Menu } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import { cn } from '../utils/cn';
 
+/** 앱 공통 — 네이비 스티키 헤더 (홈·탭 동일) */
 export default function Header({
   onOpenMenu,
-  tone = 'default',
+  wide = false,
 }: {
   onOpenMenu?: () => void;
-  tone?: 'default' | 'premium';
+  /** 홈·PC 넓은 레이아웃 */
+  wide?: boolean;
 }) {
-  const premium = tone === 'premium';
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-40 flex items-center justify-between overflow-visible',
-        premium
-          ? 'bg-[#0f1a2e] px-5 py-3 sm:px-8 md:px-10 md:py-3.5 lg:px-12'
-          : 'border-b border-neutral-200/90 bg-white/90 px-4 py-2 backdrop-blur-md md:px-8'
-      )}
-    >
-      <BrandLogo variant={premium ? 'premium' : 'color'} />
-      <button
-        type="button"
-        onClick={onOpenMenu}
+    <header className="sticky top-0 z-40 w-full bg-[#0f1a2e]">
+      <div
         className={cn(
-          'rounded-full p-2 transition-colors',
-          premium
-            ? 'text-white/80 hover:bg-white/10 hover:text-white'
-            : 'text-muted hover:bg-neutral-100'
+          'mx-auto flex items-center justify-between overflow-visible px-5 py-3 sm:px-8 md:py-3.5',
+          wide ? 'max-w-6xl md:px-10 lg:px-12' : 'max-w-lg md:px-8'
         )}
-        aria-label="메뉴"
       >
-        <Menu size={20} strokeWidth={1.75} />
-      </button>
+        <BrandLogo variant="premium" />
+        <button
+          type="button"
+          onClick={onOpenMenu}
+          className="rounded-full p-2 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          aria-label="메뉴"
+        >
+          <Menu size={20} strokeWidth={1.75} />
+        </button>
+      </div>
     </header>
   );
 }

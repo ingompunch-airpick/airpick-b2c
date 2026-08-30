@@ -112,11 +112,11 @@ export const HOME_HEADLINE = '여유로운 출국,\n검증한 주차부터.';
 export const HOME_SUBHEAD =
   '에어픽이 확인한 공식 파트너만 모았습니다. 보험·위치·입고 사진까지.';
 
-/** 홈 · 입점 파트너 기준 — 선별·품질을 긍정적으로 전달 */
+/** 홈 · 입점·운영 기준 — 검증 후 동일 운영 기준 적용 */
 export const HOME_TRUST_CRITERIA = {
   eyebrow: 'AIRPICK VERIFIED',
-  title: '입점된 파트너의 기준',
-  lead: '에어픽에 올라온 업체는 모두, 아래 기준을 통과한 공식 파트너입니다.',
+  title: '에어픽이 직접 확인합니다',
+  lead: '입점부터 운영까지, 아래 기준을 통과·준수하는 업체만 공식 파트너로 둡니다.',
   items: [
     {
       id: 'insurance',
@@ -129,8 +129,13 @@ export const HOME_TRUST_CRITERIA = {
       body: '계약·확인된 주차 시설을 운영하는 업체만 선별합니다. 차량이 어디에 보관되는지 밝힐 수 있어야 합니다.',
     },
     {
+      id: 'safety',
+      title: '안전 운행',
+      body: '에어픽 공식 파트너는 과속·신호위반·주정차위반을 하지 않도록 운영 기준을 준수합니다.',
+    },
+    {
       id: 'photos',
-      title: '인계 기록',
+      title: '차량 인계 기록',
       body: '입고 사진과 주차 위치를 예약 후 확인할 수 있습니다. 맡기는 순간부터 기록이 남습니다.',
     },
   ],
@@ -140,38 +145,56 @@ export const HOME_TRUST_CRITERIA = {
 
 /**
  * 홈 · 왜 에어픽인가 — 고객이 에어픽을 선택하는 이유
+ * 대표 사진 1장 + 짧은 캡션 + 증거형 01~03 (사진 3장 금지)
  */
 export const HOME_WHY_AIRPICK = {
   eyebrow: 'WHY AIRPICK',
   title: '왜 고객들이 에어픽을 이용할까요?',
+  /** 대표 이미지 위/옆 짧은 스토리 문장 */
+  caption: '차를 맡긴 순간, 여행이 시작됩니다.',
   lead: '출국 전부터 돌아올 때까지, 차량 관리가 걱정되지 않도록.',
+  imageSrc: '/brand/home-why-airport-handoff.webp',
+  imageFallbackSrc: '/brand/home-why-airport-handoff.jpg',
+  imageAlt: '공항에서 차량을 맡기고 캐리어를 끌고 터미널로 향하는 여행객',
   items: [
     {
       id: 'curated',
       title: '믿고 고르는 파트너',
       body: '검색 결과만 잔뜩 나오는 게 아닙니다. 기준을 통과한 공식 파트너만 모아 두었습니다.',
+      evidence: 'AIRPICK VERIFIED',
     },
     {
       id: 'after-handoff',
       title: '맡긴 뒤에도 확인',
       body: '입고 사진과 주차 위치를 예약 내역에서 바로 확인할 수 있습니다. 여행 중에도 마음이 놓입니다.',
+      evidence: '입고 사진 · 주차 위치',
     },
     {
       id: 'reviews',
       title: '실후기로 미리 보기',
       body: '실제 이용 고객의 평가와 후기를 보고, 나에게 맞는 파트너를 고를 수 있습니다.',
+      evidence: '실제 이용 고객 후기',
     },
   ],
 } as const;
 
-/** 홈 · 신뢰 수치 — 기준을 다시 설명하지 않고 강도만 */
+/** 홈 · 신뢰 수치 — 검증·선별·결과 (에어픽 예약 차량 기준) */
 export const HOME_TRUST_STATS = {
   insuranceValue: '100%',
-  insuranceLabel: 'VERIFIED 보험 확인',
+  insuranceLabel: '보험 확인',
   parkingValue: '100%',
-  parkingLabel: 'VERIFIED 주차장 확인',
-  partnersLabel: '공식 파트너',
-  ratingLabel: '실후기 평점',
+  parkingLabel: '주차장 확인',
+  partnersLabel: '엄선된 공식 파트너',
+  accidentValue: '0건',
+  accidentLabel: '2026년 사고차량',
+} as const;
+
+/** 홈 · 여행 확장 서비스 (히어로 아래) */
+export const HOME_TRAVEL_SERVICES = {
+  eyebrow: 'TRAVEL SERVICES',
+  title: '여행 준비도 에어픽에서',
+  lead: '주차 예약 후, 출국 전에 필요한 여행 서비스를 이어서 준비할 수 있습니다.',
+  esimCta: '이심 요금 보기',
 } as const;
 
 /** 홈 · 후킹 CTA — 일정은 각 탭에서 */

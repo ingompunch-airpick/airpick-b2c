@@ -167,19 +167,12 @@ export default function App() {
 
   const page = useMemo(() => {
     const partners = companies.filter((c) => isAirpickPartner(c));
-    const partnerReviewWeight = partners.reduce((sum, c) => sum + (c.reviews_count || 0), 0);
-    const partnerAvgRating =
-      partnerReviewWeight > 0
-        ? partners.reduce((sum, c) => sum + (c.rating || 0) * (c.reviews_count || 0), 0) /
-          partnerReviewWeight
-        : null;
 
     if (tab === 'home') {
       return (
         <HomePage
           onGoTab={(next) => setTab(next)}
           partnerCount={partners.length}
-          partnerAvgRating={partnerAvgRating}
         />
       );
     }
@@ -234,34 +227,22 @@ export default function App() {
 
   return (
     <div className="min-h-dvh bg-white text-ink">
-      {homeTone ? (
-        <div className="min-h-dvh">
-          {/* 헤더 네이비 풀블리드 — PC 좌우도 끊기지 않음 */}
-          <div className="bg-[#0f1a2e]">
-            <div className="mx-auto max-w-6xl">
-              <Header tone="premium" onOpenMenu={() => setMenuOpen(true)} />
-            </div>
-          </div>
-          <main>
+      <Header wide={homeTone} onOpenMenu={() => setMenuOpen(true)} />
+      <main>
+        {loading && tab === 'compare' ? (
+          <ComparePageSkeleton />
+        ) : homeTone ? (
+          <Suspense fallback={pageFallback}>{page}</Suspense>
+        ) : (
+          <div className="mx-auto max-w-lg px-4 pt-1 pb-24">
             <Suspense fallback={pageFallback}>{page}</Suspense>
-          </main>
-        </div>
-      ) : (
-        <div className="mx-auto min-h-dvh max-w-lg bg-white pb-24">
-          <Header tone="default" onOpenMenu={() => setMenuOpen(true)} />
-          <main className="px-4 pt-1 pb-5">
-            {loading && tab === 'compare' ? (
-              <ComparePageSkeleton />
-            ) : (
-              <Suspense fallback={pageFallback}>{page}</Suspense>
-            )}
             <SiteFooter tone="default" />
-          </main>
-        </div>
-      )}
+          </div>
+        )}
+      </main>
       <BottomNav
         active={tab}
-        tone={homeTone ? 'premium' : 'default'}
+        tone="premium"
         wide={homeTone}
         onChange={(next) => setTab(next)}
       />

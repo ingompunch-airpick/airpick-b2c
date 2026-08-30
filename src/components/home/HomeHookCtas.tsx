@@ -2,13 +2,16 @@ import { APP_TAB_SOON, HOME_HOOK_CTA } from '../../constants/marketing';
 import type { AppTab } from '../../types';
 import { cn } from '../../utils/cn';
 
-/** 홈 · 후킹 CTA — 모바일 세로 / md+ 가로 */
+/** 홈 · 히어로 CTA — 주차 1순위. 이심은 HomeTravelServices */
 export default function HomeHookCtas({
   onGoTab,
   tone = 'light',
+  showEsim = false,
 }: {
   onGoTab: (tab: AppTab) => void;
   tone?: 'light' | 'dark';
+  /** false면 주차 버튼만 (홈 히어로) */
+  showEsim?: boolean;
 }) {
   const dark = tone === 'dark';
 
@@ -27,7 +30,7 @@ export default function HomeHookCtas({
       >
         {HOME_HOOK_CTA.parking}
       </button>
-      {!APP_TAB_SOON.esim ? (
+      {showEsim && !APP_TAB_SOON.esim ? (
         <button
           type="button"
           onClick={() => onGoTab('esim')}

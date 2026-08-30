@@ -1,10 +1,10 @@
 import HomeHookCtas from '../components/home/HomeHookCtas';
+import HomeTravelServices from '../components/home/HomeTravelServices';
 import HomeTrustCriteria from '../components/home/HomeTrustCriteria';
 import HomeTrustStats from '../components/home/HomeTrustStats';
 import HomeWhyAirpick from '../components/home/HomeWhyAirpick';
 import SiteFooter from '../components/SiteFooter';
 import {
-  AIRPICK_VERIFIED,
   HOME_CAMPAIGN,
   HOME_HEADLINE,
   HOME_SUBHEAD,
@@ -18,18 +18,16 @@ import type { AppTab } from '../types';
 export default function HomePage({
   onGoTab,
   partnerCount = 0,
-  partnerAvgRating = null,
 }: {
   onGoTab: (tab: AppTab) => void;
   partnerCount?: number;
-  partnerAvgRating?: number | null;
 }) {
   const showCampaign = Boolean(HOME_CAMPAIGN.title.trim());
 
   return (
     <div>
       {/* 풀블리드 네이비 — 헤더와 한 면, 하단은 시트에 넘김 */}
-      <section className="relative bg-[#0f1a2e] px-5 pb-14 pt-5 text-white sm:px-8 md:px-10 md:pb-20 md:pt-8 lg:px-12">
+      <section className="relative bg-[#0f1a2e] px-5 pb-14 pt-4 text-white sm:px-8 md:px-10 md:pb-20 md:pt-6 lg:px-12">
         <div
           className="pointer-events-none absolute inset-0"
           aria-hidden
@@ -41,10 +39,7 @@ export default function HomePage({
 
         <div className="relative mx-auto grid max-w-5xl gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-end md:gap-12 lg:gap-16">
           <div>
-            <p className="text-[10px] font-bold tracking-[0.2em] text-[#c9a962] md:text-[11px]">
-              {AIRPICK_VERIFIED.label}
-            </p>
-            <h1 className="mt-3 max-w-xl whitespace-pre-line text-[1.75rem] font-bold leading-[1.18] tracking-tight sm:text-[2rem] md:mt-4 md:text-[2.5rem] md:leading-[1.12] lg:text-[2.75rem]">
+            <h1 className="max-w-xl whitespace-pre-line text-[1.75rem] font-bold leading-[1.18] tracking-tight sm:text-[2rem] md:text-[2.5rem] md:leading-[1.12] lg:text-[2.75rem]">
               {HOME_HEADLINE}
             </h1>
             {HOME_SUBHEAD.trim() ? (
@@ -55,7 +50,7 @@ export default function HomePage({
           </div>
 
           <div className="md:pb-1">
-            <HomeHookCtas onGoTab={onGoTab} tone="dark" />
+            <HomeHookCtas onGoTab={onGoTab} tone="dark" showEsim={false} />
           </div>
         </div>
       </section>
@@ -63,12 +58,14 @@ export default function HomePage({
       {/* 흰 시트 — 둥근 상단이 네이비를 살짝 덮어 끊김·맞닿음 모두 완화 */}
       <div className="relative z-[1] -mt-6 rounded-t-[1.75rem] bg-white px-5 pb-28 pt-8 shadow-[0_-12px_40px_rgba(15,26,46,0.12)] sm:px-8 md:-mt-8 md:rounded-t-[2rem] md:px-10 md:pb-28 md:pt-10 lg:px-12">
         <div className="mx-auto max-w-5xl space-y-10 md:space-y-14">
-          <HomeTrustStats partnerCount={partnerCount} avgRating={partnerAvgRating} />
+          <HomeTrustStats partnerCount={partnerCount} />
 
           <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
             <HomeTrustCriteria />
             <HomeWhyAirpick />
           </div>
+
+          <HomeTravelServices onGoTab={onGoTab} />
 
           {showCampaign ? (
             <div className="border-l-2 border-[#c9a962]/50 pl-3.5">
