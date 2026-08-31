@@ -1,4 +1,5 @@
-import { HOME_WHY_AIRPICK } from '../../constants/marketing';
+import { HOME_HERO_TRUST_CHIPS, HOME_WHY_AIRPICK } from '../../constants/marketing';
+import { cn } from '../../utils/cn';
 
 /** 홈 · WHY — 대표 사진 1장 + 캡션 + 증거형 01~03 */
 export default function HomeWhyAirpick() {
@@ -34,22 +35,44 @@ export default function HomeWhyAirpick() {
       </p>
 
       <ol className="mt-6 space-y-5 border-t border-[#0f1a2e]/10 pt-6 md:mt-7 md:space-y-6">
-        {HOME_WHY_AIRPICK.items.map((item, index) => (
-          <li key={item.id} className="grid grid-cols-[2rem_1fr] gap-3 md:gap-4">
-            <span className="text-[13px] font-bold tabular-nums text-[#c9a962]">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <div className="min-w-0">
-              <p className="text-[14px] font-bold text-[#0f1a2e]">{item.title}</p>
-              <p className="mt-1 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[13px]">
-                {item.body}
-              </p>
-              <p className="mt-2 text-[10px] font-bold tracking-[0.08em] text-[#9a7b3c]">
-                {item.evidence}
-              </p>
-            </div>
-          </li>
-        ))}
+        {HOME_WHY_AIRPICK.items.map((item, index) => {
+          const isHandoff = item.id === 'after-handoff';
+          return (
+            <li
+              key={item.id}
+              className={cn(
+                'grid grid-cols-[2rem_1fr] gap-3 md:gap-4',
+                isHandoff && '-mx-1 rounded-xl border border-[#c9a962]/25 bg-[#c9a962]/[0.06] px-3 py-4'
+              )}
+            >
+              <span className="text-[13px] font-bold tabular-nums text-[#c9a962]">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[14px] font-bold text-[#0f1a2e]">{item.title}</p>
+                <p className="mt-1 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[13px]">
+                  {item.body}
+                </p>
+                {isHandoff ? (
+                  <ul className="mt-2.5 flex flex-wrap gap-1.5">
+                    {HOME_HERO_TRUST_CHIPS.map((chip) => (
+                      <li
+                        key={chip}
+                        className="rounded-full border border-[#c9a962]/30 bg-white px-2 py-0.5 text-[9px] font-bold tracking-wide text-[#9a7b3c] md:text-[10px]"
+                      >
+                        {chip}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-2 text-[10px] font-bold tracking-[0.08em] text-[#9a7b3c]">
+                    {item.evidence}
+                  </p>
+                )}
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </section>
   );

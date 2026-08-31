@@ -1,4 +1,4 @@
-import { Camera, Gauge, MapPin, ShieldCheck } from 'lucide-react';
+import { Camera, ChevronRight, Gauge, MapPin, ShieldCheck } from 'lucide-react';
 import { HOME_TRUST_CRITERIA } from '../../constants/marketing';
 
 const ICONS = {
@@ -28,9 +28,10 @@ export default function HomeTrustCriteria() {
         </div>
         <a
           href={HOME_TRUST_CRITERIA.criteriaHref}
-          className="text-[12px] font-bold text-[#0f1a2e]/45 underline-offset-2 hover:text-[#0f1a2e] hover:underline"
+          className="inline-flex items-center gap-0.5 text-[12px] font-bold text-[#0f1a2e]/50 transition-colors hover:text-[#0f1a2e]"
         >
           {HOME_TRUST_CRITERIA.criteriaCta}
+          <ChevronRight size={14} strokeWidth={2.25} aria-hidden />
         </a>
       </div>
 

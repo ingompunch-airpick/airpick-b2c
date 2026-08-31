@@ -109,8 +109,10 @@ export const AIRPICK_TRACKING_UPSELL = {
  */
 export const HOME_HEADLINE = '여유로운 출국,\n검증한 주차부터.';
 
-export const HOME_SUBHEAD =
-  '에어픽이 확인한 공식 파트너만 모았습니다. 보험·위치·입고 사진까지.';
+export const HOME_SUBHEAD = '에어픽이 확인한 공식 파트너만 모았습니다.';
+
+/** 홈 히어로 · 신뢰 칩 (WHY 02 증거와 동일 문구) */
+export const HOME_HERO_TRUST_CHIPS = ['보험 확인', '주차 위치', '입고 사진'] as const;
 
 /** 홈 · 입점·운영 기준 — 검증 후 동일 운영 기준 적용 */
 export const HOME_TRUST_CRITERIA = {
@@ -211,8 +213,9 @@ export const BRAND_INTRO = {
   storageKey: 'airpick_intro_seen',
   /** 홈(/) 접속·새로고침마다 표시. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
-  eyebrow: 'PREMIUM AIRPORT SERVICES',
-  line: '좋은 여행은, 출발 전부터 달라집니다.',
+  eyebrow: '인천공항 검증된 서비스',
+  line: '믿을 수 있는 곳에 맡기면, 여행이 편해집니다.',
+  hint: '주차대행 · 여행 준비',
   enterCta: '시작하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',

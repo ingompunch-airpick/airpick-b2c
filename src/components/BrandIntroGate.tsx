@@ -147,6 +147,11 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
           <p className="mt-5 max-w-[16rem] text-[15px] font-medium leading-relaxed text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
             {BRAND_INTRO.line}
           </p>
+          {BRAND_INTRO.hint ? (
+            <p className="mt-2.5 text-[11px] font-semibold tracking-wide text-white/55">
+              {BRAND_INTRO.hint}
+            </p>
+          ) : null}
 
           <button
             type="button"

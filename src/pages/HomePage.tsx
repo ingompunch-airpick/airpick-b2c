@@ -1,4 +1,5 @@
 import HomeHookCtas from '../components/home/HomeHookCtas';
+import HomeHeroTrustChips from '../components/home/HomeHeroTrustChips';
 import HomeTravelServices from '../components/home/HomeTravelServices';
 import HomeTrustCriteria from '../components/home/HomeTrustCriteria';
 import HomeTrustStats from '../components/home/HomeTrustStats';
@@ -37,19 +38,20 @@ export default function HomePage({
           }}
         />
 
-        <div className="relative mx-auto grid max-w-5xl gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-end md:gap-12 lg:gap-16">
+        <div className="relative mx-auto grid max-w-5xl gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-end md:gap-14 lg:gap-16">
           <div>
             <h1 className="max-w-xl whitespace-pre-line text-[1.75rem] font-bold leading-[1.18] tracking-tight sm:text-[2rem] md:text-[2.5rem] md:leading-[1.12] lg:text-[2.75rem]">
               {HOME_HEADLINE}
             </h1>
             {HOME_SUBHEAD.trim() ? (
-              <p className="mt-3.5 max-w-md text-[13px] font-medium leading-relaxed text-white/58 md:mt-5 md:text-[15px] md:leading-relaxed">
+              <p className="mt-3.5 max-w-md text-[13px] font-medium leading-relaxed text-white/58 md:mt-4 md:text-[14px]">
                 {HOME_SUBHEAD}
               </p>
             ) : null}
+            <HomeHeroTrustChips />
           </div>
 
-          <div className="md:pb-1">
+          <div className="pt-2 md:pb-1 md:pt-6">
             <HomeHookCtas onGoTab={onGoTab} tone="dark" showEsim={false} />
           </div>
         </div>
