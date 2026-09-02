@@ -9,6 +9,12 @@ export interface CompanyInsurance {
   updatedAt?: string;
 }
 
+/** B2B 입점 심사 서류 — 사업자등록증·주차장 계약서 */
+export interface CompanyVerificationDocuments {
+  businessRegistrationUrl?: string;
+  parkingContractUrl?: string;
+}
+
 /** B2B 업체 주차장 (실내·야외 다수) */
 export interface CompanyParkingLot {
   id: string;
@@ -72,6 +78,8 @@ export interface Company {
   sharesInsurance?: boolean;
   /** B2B 마스터 — 업체 보험 안내 (표시용) */
   insurance?: CompanyInsurance;
+  /** B2B 업로드 — 사업자등록증·주차장 계약서 */
+  verificationDocuments?: CompanyVerificationDocuments;
   /** @deprecated insurance.enrolled 사용 */
   hasInsurance?: boolean;
   /** @deprecated insurance.provider 사용 */

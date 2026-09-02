@@ -5,6 +5,7 @@ import { deriveParkingAddressesFromCompanyData } from '../utils/companyParking';
 import { parseAllParkingDistancesFromFirestore } from '../utils/parkingDistances';
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { mergePartnerPricing } from '../utils/pricing';
+import { parseVerificationDocuments } from '../utils/verificationDocuments';
 
 export interface CompanyBookingPolicy {
   isOpen: boolean;
@@ -93,6 +94,7 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
       ? String(data.outdoorPricingProfile)
       : undefined,
     insurance,
+    verificationDocuments: parseVerificationDocuments(data),
     hasInsurance: insurance?.enrolled,
     insuranceProvider: insurance?.provider,
     insuranceLimit: insurance?.coverageLimitWon,

@@ -1,6 +1,6 @@
 import { MapPin, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import InsuranceCoverageCard from './InsuranceCoverageCard';
+import CompanyVerificationDocuments from './CompanyVerificationDocuments';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
 import {
   fetchCompanyReviewSnapshot,
@@ -17,8 +17,6 @@ import {
   companySupportsOutdoor,
   parkingTypeLabel,
 } from '../utils/parkingType';
-import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
-import { displayInsuranceLabel } from '../utils/trust';
 import { cn } from '../utils/cn';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
@@ -262,10 +260,6 @@ export default function CompanyDetailSheet({
   const reviews = reviewSnapshot?.recent ?? [];
   const reviewCount = reviewSnapshot?.count ?? 0;
   const reviewAverage = reviewSnapshot?.averageRating;
-  const insuranceLabel = displayInsuranceLabel(company);
-  const showInsuranceCard = shouldShowInsuranceBadge(company) && !!insuranceLabel;
-  const certificateUrl = company.insurance?.certificateUrl?.trim() || undefined;
-
   return (
     <div className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center sm:p-4">
       <button
@@ -335,11 +329,9 @@ export default function CompanyDetailSheet({
             )}
           </section>
 
-          {showInsuranceCard && (
-            <div className="mt-4">
-              <InsuranceCoverageCard summary={insuranceLabel!} certificateUrl={certificateUrl} />
-            </div>
-          )}
+          <div className="mt-4">
+            <CompanyVerificationDocuments company={company} />
+          </div>
 
           {parkingLots.length > 0 ? (
             <section className="mt-4 space-y-2">
