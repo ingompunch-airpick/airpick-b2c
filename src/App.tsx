@@ -1,5 +1,9 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { ComparePageSkeleton } from './components/LoadingSkeletons';
+import {
+  ComparePageSkeleton,
+  EsimPageSkeleton,
+  MyPageSkeleton,
+} from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
 import BrandIntroGate, {
@@ -36,6 +40,7 @@ import { defaultBookingSearch } from './utils/dates';
 import { defaultEsimSearch } from './utils/esimSearch';
 import { calculatePrice } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
+import { prefetchAppTab } from './utils/prefetchTabs';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
 const EsimPage = lazy(() => import('./pages/EsimPage'));
@@ -52,6 +57,13 @@ const DOCUMENT_TITLE: Record<AppTab, string> = {
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
   my: '내 예약 · 에어픽',
 };
+
+function tabPageFallback(tab: AppTab) {
+  if (tab === 'compare') return <ComparePageSkeleton />;
+  if (tab === 'esim') return <EsimPageSkeleton />;
+  if (tab === 'my') return <MyPageSkeleton />;
+  return null;
+}
 
 function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
   if (shouldForceBrandIntro()) {
@@ -116,6 +128,36 @@ export default function App() {
     trackTabView(tab);
     document.title = DOCUMENT_TITLE[tab];
   }, [tab]);
+
+  /** 홈 진입 후 유휴 시 주차·이심·예약 청크 프리페치 */
+  useEffect(() => {
+    if (showBrandIntro) return;
+    const run = () => prefetchAppTab('compare');
+    const runRest = () => {
+      prefetchAppTab('esim');
+      prefetchAppTab('my');
+    };
+    let idleId = 0;
+    let timeoutId = 0;
+    const ric = window.requestIdleCallback;
+    if (typeof ric === 'function') {
+      idleId = ric(() => {
+        run();
+        timeoutId = window.setTimeout(runRest, 400);
+      });
+    } else {
+      timeoutId = window.setTimeout(() => {
+        run();
+        window.setTimeout(runRest, 400);
+      }, 800);
+    }
+    return () => {
+      if (idleId && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [showBrandIntro]);
 
   /** /parking?company= → 상세 시트 프리필 */
   useEffect(() => {
@@ -217,7 +259,7 @@ export default function App() {
     );
   }, [tab, search, esimSearch, companies, lastReservationId, reviewReservationId]);
 
-  const pageFallback = tab === 'compare' ? <ComparePageSkeleton /> : null;
+  const pageFallback = tabPageFallback(tab);
 
   if (showBrandIntro) {
     return <BrandIntroGate onEnter={dismissBrandIntro} />;
@@ -245,6 +287,7 @@ export default function App() {
         tone="premium"
         wide={homeTone}
         onChange={(next) => setTab(next)}
+        onPrefetchTab={prefetchAppTab}
       />
 
       <Suspense fallback={null}>

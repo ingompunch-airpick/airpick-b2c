@@ -9,7 +9,7 @@ export const SPOTS_TAB_LABEL = '공항주변스팟';
 /** 이심 — 탭·Hero·통계 등 사용자-facing (검색 메인 키워드: 이심) */
 export const ESIM_TAB_LABEL = '이심';
 export const ESIM_STATS_LABEL = '이심 제휴사';
-export const ESIM_GUIDE_TITLE = '이심(eSIM) 이용 가이드';
+export const ESIM_GUIDE_TITLE = '이심(eSIM), 처음이면 뭐부터?';
 
 /** 아직 공개하지 않는 앱 탭 */
 export const APP_TAB_SOON = {
@@ -89,11 +89,11 @@ export const PARKING_EXTERNAL_SECTION = {
 
 /** 주차 비교 탭 하단 · 빈 결과 안내 등 내부 링크 */
 export const PARKING_COMPARE_GUIDE_LINKS = [
-  { href: '/guides/parking-compare/', label: '주차대행 비교·예약 가이드' },
-  { href: '/guides/parking-insurance/', label: '보험 확인법' },
-  { href: '/guides/partner-vs-external/', label: 'VERIFIED vs 미입점' },
-  { href: '/guides/official-vs-private/', label: '공식 주차장 vs 사설' },
-  { href: '/guides/t1-t2-unseo/', label: 'T1·T2·운서역 고르기' },
+  { href: '/guides/parking-compare/', label: '주차대행, 어떻게 비교·예약하나요?' },
+  { href: '/guides/parking-insurance/', label: '보험, 예약 전에 뭘 확인하나요?' },
+  { href: '/guides/partner-vs-external/', label: '입점과 미입점, 뭐가 다른가요?' },
+  { href: '/guides/official-vs-private/', label: '공식 vs 사설, 뭐가 다른가요?' },
+  { href: '/guides/t1-t2-unseo/', label: 'T1·T2·운서역, 어떻게 고르나요?' },
   { href: '/faq/', label: '자주 묻는 질문' },
 ] as const;
 

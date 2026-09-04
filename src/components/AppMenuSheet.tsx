@@ -13,19 +13,22 @@ import {
   X,
 } from 'lucide-react';
 import { openPartnerInquiryEmail } from '../constants/partnerContact';
-import { SITE_NAV_PRIMARY, SITE_NAV_SECONDARY } from '../constants/siteNav';
+import { SITE_NAV_SECTIONS } from '../constants/siteNav';
 
-const MENU_ICONS = {
+const MENU_ICONS: Record<string, typeof CircleHelp> = {
   '/parking': LayoutGrid,
   '/esim': Smartphone,
   '/guides/': BookOpen,
+  '/guides/partner-vs-external/': Store,
+  '/guides/parking-insurance/': ShieldCheck,
   '/partners/': Store,
   '/faq/': CircleHelp,
   '/about/': Building2,
   '/facts/': FileText,
   '/for-partners/': BadgeCheck,
   '/privacy/': ShieldCheck,
-} as const;
+  'mailto:partner': Mail,
+};
 
 function MenuItem({
   label,
@@ -66,9 +69,9 @@ export default function AppMenuSheet({
         aria-label="메뉴 닫기"
         onClick={onClose}
       />
-      <div className="absolute right-0 top-0 flex h-full w-[min(100%,280px)] flex-col bg-sky-soft shadow-xl">
+      <div className="absolute right-0 top-0 flex h-full w-[min(100%,300px)] flex-col bg-sky-soft shadow-xl">
         <div className="flex items-center justify-between border-b border-sky-border/70 px-4 py-3">
-          <p className="text-sm font-bold text-ink">메뉴</p>
+          <p className="text-sm font-bold text-ink">더보기</p>
           <button
             type="button"
             onClick={onClose}
@@ -79,52 +82,38 @@ export default function AppMenuSheet({
           </button>
         </div>
 
-        <nav className="space-y-2 overflow-y-auto p-3" aria-label="사이트 메뉴">
-          {SITE_NAV_PRIMARY.map((item) => {
-            const Icon = MENU_ICONS[item.href as keyof typeof MENU_ICONS] ?? CircleHelp;
-            const goWeb = item.href !== '/faq/';
-            return (
-              <MenuItem
-                key={item.href}
-                label={item.label}
-                icon={Icon}
-                onClick={() => {
-                  onClose();
-                  if (goWeb) {
-                    window.location.assign(item.href);
-                  } else {
-                    onOpenSupport();
-                  }
-                }}
-              />
-            );
-          })}
-
-          <div className="my-2 border-t border-sky-border/60" />
-
-          {SITE_NAV_SECONDARY.map((item) => {
-            const Icon = MENU_ICONS[item.href as keyof typeof MENU_ICONS] ?? FileText;
-            return (
-              <MenuItem
-                key={item.href}
-                label={item.label}
-                icon={Icon}
-                onClick={() => {
-                  onClose();
-                  window.location.assign(item.href);
-                }}
-              />
-            );
-          })}
-
-          <MenuItem
-            label="입점 · 제휴 문의 (주차 / 이심)"
-            icon={Mail}
-            onClick={() => {
-              onClose();
-              openPartnerInquiryEmail();
-            }}
-          />
+        <nav className="space-y-5 overflow-y-auto p-3 pb-8" aria-label="사이트 메뉴">
+          {SITE_NAV_SECTIONS.map((section) => (
+            <div key={section.id}>
+              <p className="mb-2 px-1 text-[11px] font-bold tracking-wide text-muted">
+                {section.title}
+              </p>
+              <div className="space-y-2">
+                {section.items.map((item) => {
+                  const Icon = MENU_ICONS[item.href] ?? CircleHelp;
+                  return (
+                    <MenuItem
+                      key={`${section.id}-${item.href}`}
+                      label={item.label}
+                      icon={Icon}
+                      onClick={() => {
+                        onClose();
+                        if (item.openInApp === 'faq') {
+                          onOpenSupport();
+                          return;
+                        }
+                        if (item.href === 'mailto:partner') {
+                          openPartnerInquiryEmail();
+                          return;
+                        }
+                        window.location.assign(item.href);
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
       </div>
     </div>

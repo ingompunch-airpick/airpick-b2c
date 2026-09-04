@@ -24,10 +24,12 @@ function isSoonTab(id: AppTab): boolean {
 export default function BottomNav({
   active,
   onChange,
+  onPrefetchTab,
   wide = false,
 }: {
   active: AppTab;
   onChange: (tab: AppTab) => void;
+  onPrefetchTab?: (tab: AppTab) => void;
   tone?: 'default' | 'premium';
   wide?: boolean;
 }) {
@@ -48,9 +50,12 @@ export default function BottomNav({
               key={id}
               href={href}
               aria-current={isActive ? 'page' : undefined}
+              onPointerEnter={() => onPrefetchTab?.(id)}
+              onTouchStart={() => onPrefetchTab?.(id)}
               onClick={(e) => {
                 if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
                 e.preventDefault();
+                onPrefetchTab?.(id);
                 onChange(id);
               }}
               className={cn(

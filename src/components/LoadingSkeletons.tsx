@@ -48,3 +48,34 @@ export function ComparePageSkeleton() {
     </div>
   );
 }
+
+/** lazy 청크 로딩 — 이심 비교 탭 */
+export function EsimPageSkeleton() {
+  return (
+    <div className="space-y-5" aria-busy="true" aria-label="이심 요금 불러오는 중">
+      <Skeleton className="h-3 w-full max-w-sm" />
+      <Skeleton className="h-40 w-full rounded-3xl" />
+      <div className="flex justify-between gap-3 px-0.5">
+        <Skeleton className="h-8 w-40" />
+        <Skeleton className="h-8 w-16" />
+      </div>
+      <div className="space-y-2.5">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-[4.25rem] w-full rounded-2xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** lazy 청크 로딩 — 내 예약 탭 */
+export function MyPageSkeleton() {
+  return (
+    <div className="space-y-4" aria-busy="true" aria-label="예약 화면 불러오는 중">
+      <Skeleton className="h-28 w-full rounded-3xl" />
+      <Skeleton className="h-36 w-full rounded-3xl" />
+      <Skeleton className="h-4 w-32" />
+      <Skeleton className="h-40 w-full rounded-3xl" />
+    </div>
+  );
+}
