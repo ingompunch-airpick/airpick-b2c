@@ -3,7 +3,7 @@ import { BRAND_INTRO } from '../constants/marketing';
 import { cn } from '../utils/cn';
 
 /** 캐시 무효화 */
-const LOGO_VER = '6';
+const LOGO_VER = '7';
 
 type BrandLogoVariant = 'light' | 'premium' | 'gold' | 'color' | 'white';
 
