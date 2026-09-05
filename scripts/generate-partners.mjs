@@ -367,9 +367,9 @@ ${reviewsSectionHtml(reviewBundle)}
       <section class="section">
         <h2>함께 보면 좋은 글</h2>
         <ul>
-          <li><a href="/guides/parking-compare/">인천공항 주차대행 비교·예약 가이드</a></li>
-          <li><a href="/guides/partner-vs-external/">입점 vs 미입점</a></li>
-          <li><a href="/guides/official-vs-private/">공식 주차장 vs 사설 주차대행</a></li>
+          <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
+          <li><a href="/guides/partner-vs-external/">입점과 미입점, 뭐가 다른가요?</a></li>
+          <li><a href="/guides/official-vs-private/">공식 vs 사설, 뭐가 다른가요?</a></li>
           <li><a href="/guides/">가이드 모음</a></li>
           <li><a href="/parking">전체 업체 요금 비교</a></li>
           <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
@@ -484,7 +484,7 @@ ${JSON.stringify(graph, null, 2)}
         <p class="answer"><strong>${esc(answer)}</strong></p>
         <p>${esc(AIRPICK_DEFINITION)} 아래 입점 업체를 고른 뒤, 일정 넣어 비교·예약하세요.</p>
         <a class="cta" href="/parking">주차대행 비교 · 예약</a>
-        <a class="cta secondary" href="/guides/partner-vs-external/">입점 vs 미입점 가이드</a>
+        <a class="cta secondary" href="/guides/partner-vs-external/">입점과 미입점, 뭐가 다른가요?</a>
       </header>
 
       <section class="section">
@@ -508,7 +508,7 @@ ${JSON.stringify(graph, null, 2)}
         <h2>함께 보면</h2>
         <ul>
           <li><a href="/parking">전체 업체 요금 비교</a></li>
-          <li><a href="/guides/parking-compare/">비교·예약 가이드</a></li>
+          <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
           <li><a href="/for-partners/">입점사 배지 · 소개 링크</a></li>
           <li><a href="/faq/">자주 묻는 질문</a></li>
           <li><a href="/facts/">사실 확인 · AI·보도용</a></li>

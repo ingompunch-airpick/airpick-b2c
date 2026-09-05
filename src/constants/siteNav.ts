@@ -30,8 +30,8 @@ export const SITE_NAV_SECTIONS = [
     title: '입점·신뢰',
     items: [
       { href: '/partners/', label: '입점 업체' },
-      { href: '/guides/partner-vs-external/', label: '입점 vs 미입점' },
-      { href: '/guides/parking-insurance/', label: '보험 확인법' },
+      { href: '/guides/partner-vs-external/', label: '입점과 미입점, 뭐가 다른가요?' },
+      { href: '/guides/parking-insurance/', label: '보험, 예약 전에 뭘 확인하나요?' },
     ],
   },
   {

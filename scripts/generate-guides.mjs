@@ -266,10 +266,10 @@ function renderIndex(pages) {
       {
         '@type': 'CollectionPage',
         '@id': `${url}#webpage`,
-        name: '인천공항 주차대행·이심 가이드 · 에어픽',
+        name: '인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽',
         url,
         description:
-          '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 꿀팁, 이심(eSIM) 초보 가이드 모음',
+          '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 전 예약, 이심(eSIM)까지 — 질문형 가이드 모음',
         isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
         breadcrumb: { '@id': `${url}#breadcrumb` },
         mainEntity: { '@id': `${url}#itemlist` },
@@ -297,15 +297,15 @@ function renderIndex(pages) {
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#3182F6" />
-    <title>인천공항 주차대행·이심 가이드 · 에어픽</title>
+    <title>인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽</title>
     <meta
       name="description"
-      content="인천공항 주차대행·발렛파킹 비교, 공식 주차장 vs 사설, T1·T2·운서역, 장기·단기주차, 해외여행 꿀팁, 이심(eSIM) 초보 가이드를 모았습니다."
+      content="인천공항 주차대행·발렛 비교, 공식 vs 사설, T1·T2·운서, 장기·단기, 해외여행 전 예약, 이심(eSIM)까지 — 뭐부터 보면 될지 질문형으로 모았습니다."
     />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="인천공항 주차대행·이심 가이드 · 에어픽" />
-    <meta property="og:description" content="비교·사설·터미널·장단기·해외여행 꿀팁·이심(eSIM)까지 가이드 모음." />
+    <meta property="og:title" content="인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽" />
+    <meta property="og:description" content="비교·사설·터미널·장단기·여행 전 예약·이심까지, 질문형 가이드 모음." />
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
@@ -327,9 +327,9 @@ ${JSON.stringify(graph, null, 2)}
       </nav>
       <header class="hero">
         <p class="eyebrow">에어픽 가이드</p>
-        <h1>인천공항 주차대행·이심 가이드</h1>
+        <h1>인천공항 주차대행·이심, 뭐부터 보면 되나요?</h1>
         <p>
-          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 체크, 이심(eSIM) 초보까지.
+          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 예약, 이심(eSIM)까지.
           읽은 뒤 <a href="/parking">주차대행 비교</a> 또는 <a href="/esim">이심 비교</a>로 이어 가세요.
         </p>
         <a class="cta" href="/parking">주차대행 비교·예약</a>

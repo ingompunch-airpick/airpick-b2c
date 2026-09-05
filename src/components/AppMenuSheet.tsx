@@ -98,7 +98,7 @@ export default function AppMenuSheet({
                       icon={Icon}
                       onClick={() => {
                         onClose();
-                        if (item.openInApp === 'faq') {
+                        if ('openInApp' in item && item.openInApp === 'faq') {
                           onOpenSupport();
                           return;
                         }
