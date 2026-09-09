@@ -11,35 +11,36 @@
     'Noto Sans KR',
     sans-serif;
 
-  /* Soft sky palette — unified across the app */
-  --color-sky-bg: #edf4fc;
-  --color-sky-soft: #e4eff9;
-  --color-sky-tint: #d9ebfa;
-  --color-sky-deep: #cce5f8;
-  --color-sky-border: #c8dff5;
-  --color-brand: #3182f6;
-  --color-brand-dark: #1b64da;
-  --color-brand-soft: #e8f2ff;
-  --color-ink: #191f28;
+  /* Premium navy · gold — soft cool surfaces (legacy sky-* token names kept) */
+  --color-sky-bg: #f3f5f8;
+  --color-sky-soft: #eef1f5;
+  --color-sky-tint: #e6ebf2;
+  --color-sky-deep: #d5dde8;
+  --color-sky-border: #d0d7e2;
+  --color-brand: #0f1a2e;
+  --color-brand-dark: #071018;
+  --color-brand-soft: #eef1f5;
+  --color-gold: #c9a244;
+  --color-ink: #0f1a2e;
   --color-muted: #6b7a8a;
   --color-muted-light: #94a3b8;
-  --color-border: #c8dff5;
-  --color-surface: #e4eff9;
+  --color-border: #d0d7e2;
+  --color-surface: #eef1f5;
 
   /* Marketing / B2B landings (partner, future eSIM·insurance hubs) */
   --color-mkt-bg: #ffffff;
   --color-mkt-sub: #f8fafc;
   --color-mkt-border: #e5e7eb;
-  --color-mkt-ink: #111827;
+  --color-mkt-ink: #0f1a2e;
   --color-mkt-muted: #6b7280;
-  --color-mkt-brand: #3182f6;
-  --color-mkt-accent: #1d4ed8;
-  --color-mkt-dark: #0f172a;
+  --color-mkt-brand: #0f1a2e;
+  --color-mkt-accent: #b8923a;
+  --color-mkt-dark: #0f1a2e;
   --color-mkt-dark-card: #111827;
   --radius-mkt: 1.5rem;
   --radius-mkt-pill: 999px;
-  --shadow-mkt: 0 8px 30px rgba(17, 24, 39, 0.06);
-  --shadow-mkt-hover: 0 12px 40px rgba(49, 130, 246, 0.14);
+  --shadow-mkt: 0 8px 30px rgba(15, 26, 46, 0.06);
+  --shadow-mkt-hover: 0 12px 40px rgba(15, 26, 46, 0.12);
 }
 
 @layer base {
@@ -65,21 +66,21 @@
 
 @layer utilities {
   .text-outline-navy {
-    -webkit-text-stroke: 0.75px #3a7fd8;
+    -webkit-text-stroke: 0.75px #0f1a2e;
     paint-order: stroke fill;
     text-shadow:
-      0 1px 0 rgba(42, 111, 212, 0.55),
-      1px 0 0 rgba(42, 111, 212, 0.45),
-      0 -1px 0 rgba(42, 111, 212, 0.45),
-      -1px 0 0 rgba(42, 111, 212, 0.45);
+      0 1px 0 rgba(15, 26, 46, 0.35),
+      1px 0 0 rgba(15, 26, 46, 0.25),
+      0 -1px 0 rgba(15, 26, 46, 0.25),
+      -1px 0 0 rgba(15, 26, 46, 0.25);
   }
 
   .shadow-card {
-    box-shadow: 0 8px 28px rgba(49, 130, 246, 0.1);
+    box-shadow: 0 8px 28px rgba(15, 26, 46, 0.08);
   }
 
   .shadow-card-strong {
-    box-shadow: 0 10px 32px rgba(49, 130, 246, 0.22);
+    box-shadow: 0 10px 32px rgba(15, 26, 46, 0.16);
   }
 
   .shadow-mkt {

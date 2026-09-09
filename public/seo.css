@@ -1,12 +1,14 @@
-/* SEO 정적 페이지 공통 — 앱 sky 팔레트와 맞춤 */
+/* SEO 정적 페이지 — 에어픽 프리미엄(네이비·골드) */
 :root {
-  --sky-bg: #edf4fc;
-  --sky-soft: #e4eff9;
-  --sky-tint: #d9ebfa;
-  --sky-border: #c8dff5;
-  --brand: #3182f6;
-  --brand-dark: #1b64da;
-  --ink: #191f28;
+  --sky-bg: #f3f5f8;
+  --sky-soft: #eef1f5;
+  --sky-tint: #e6ebf2;
+  --sky-border: #d0d7e2;
+  --brand: #0f1a2e;
+  --brand-dark: #071018;
+  --gold: #c9a244;
+  --gold-dark: #b8923a;
+  --ink: #0f1a2e;
   --muted: #6b7a8a;
   --muted-light: #94a3b8;
 }
@@ -35,7 +37,7 @@ body {
 }
 
 a {
-  color: var(--brand);
+  color: var(--gold-dark);
   text-decoration: none;
 }
 
@@ -62,8 +64,12 @@ a:hover {
   font-weight: 700;
 }
 
+.topnav a {
+  color: var(--ink);
+}
+
 .topnav .brand {
-  color: var(--brand);
+  color: var(--ink);
   font-size: 0.9375rem;
   margin-right: auto;
 }
@@ -71,15 +77,16 @@ a:hover {
 .hero {
   border-radius: 1.5rem;
   padding: 1.25rem;
-  background: linear-gradient(135deg, var(--sky-tint), var(--sky-soft));
-  box-shadow: 0 4px 16px rgba(49, 130, 246, 0.1);
+  background: linear-gradient(145deg, #0f1a2e 0%, #1a2740 55%, #243552 100%);
+  box-shadow: 0 8px 28px rgba(15, 26, 46, 0.18);
+  color: #fff;
 }
 
 .hero .eyebrow {
   margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--gold);
 }
 
 .hero h1 {
@@ -87,20 +94,25 @@ a:hover {
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.03em;
+  color: #fff;
 }
 
 .hero p {
   margin: 0.75rem 0 0;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .hero p.answer {
-  color: var(--ink);
+  color: #fff;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.45;
+}
+
+.hero a {
+  color: var(--gold);
 }
 
 .section {
@@ -112,14 +124,14 @@ a:hover {
   padding: 0 0.125rem;
   font-size: 0.6875rem;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--gold-dark);
 }
 
 .card {
   border-radius: 1rem;
   padding: 0.875rem 1rem;
-  background: var(--sky-soft);
-  border: 1px solid color-mix(in srgb, var(--sky-border) 60%, transparent);
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--sky-border) 80%, transparent);
 }
 
 .card + .card {
@@ -128,8 +140,8 @@ a:hover {
 
 .card.accent {
   background: #fff;
-  border: 2px solid color-mix(in srgb, var(--brand) 25%, transparent);
-  box-shadow: 0 2px 10px rgba(49, 130, 246, 0.08);
+  border: 1.5px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  box-shadow: 0 2px 12px rgba(15, 26, 46, 0.06);
 }
 
 .card h3 {
@@ -139,7 +151,7 @@ a:hover {
 }
 
 .card.accent h3 {
-  color: var(--brand);
+  color: var(--ink);
 }
 
 .card p,
@@ -191,8 +203,8 @@ a:hover {
 details.faq {
   border-radius: 1rem;
   padding: 0.75rem 1rem;
-  background: var(--sky-soft);
-  border: 1px solid color-mix(in srgb, var(--sky-border) 60%, transparent);
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--sky-border) 80%, transparent);
 }
 
 details.faq + details.faq {
@@ -229,7 +241,7 @@ details.faq p.answer {
   padding: 0 0.125rem;
   font-size: 0.6875rem;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--gold-dark);
 }
 
 .footer-note {
@@ -245,25 +257,34 @@ details.faq p.answer {
   margin-right: 0.5rem;
   padding: 0.65rem 1rem;
   border-radius: 0.75rem;
-  background: var(--brand);
-  color: #fff !important;
+  background: var(--gold);
+  color: #0f1a2e !important;
   font-size: 0.8125rem;
   font-weight: 700;
   text-decoration: none !important;
 }
 
 .cta:hover {
-  background: var(--brand-dark);
+  background: var(--gold-dark);
 }
 
 .cta.secondary {
   background: transparent;
-  color: var(--brand) !important;
-  box-shadow: inset 0 0 0 1.5px var(--brand);
+  color: #fff !important;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
 }
 
 .cta.secondary:hover {
-  background: rgba(49, 130, 246, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.section .cta.secondary {
+  color: var(--ink) !important;
+  box-shadow: inset 0 0 0 1.5px var(--sky-border);
+}
+
+.section .cta.secondary:hover {
+  background: var(--sky-soft);
 }
 
 .evidence {
@@ -281,4 +302,3 @@ details.faq p.answer {
 .evidence li + li {
   margin-top: 0.35rem;
 }
-

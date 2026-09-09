@@ -26,7 +26,7 @@ export default function HomeCategoryCard({
       className={cn(
         'relative overflow-hidden rounded-3xl shadow-card ring-1',
         featured
-          ? 'bg-gradient-to-br from-[#5a9ff8] to-[#3182f6] ring-brand/20'
+          ? 'bg-gradient-to-br from-[#1a2740] to-[#0f1a2e] ring-[#c9a244]/25'
           : 'bg-white ring-sky-border/70 shadow-card'
       )}
     >

@@ -292,7 +292,7 @@ function renderPartner(p, reviewsByCompany) {
     <meta charset="UTF-8" />
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#3182F6" />
+    <meta name="theme-color" content="#0f1a2e" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}" />
     <link rel="canonical" href="${esc(url)}" />
@@ -458,7 +458,7 @@ function renderHub(partners, reviewsByCompany) {
     <meta charset="UTF-8" />
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#3182F6" />
+    <meta name="theme-color" content="#0f1a2e" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}" />
     <link rel="canonical" href="${esc(url)}" />
@@ -509,7 +509,7 @@ ${JSON.stringify(graph, null, 2)}
         <ul>
           <li><a href="/parking">전체 업체 요금 비교</a></li>
           <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
-          <li><a href="/for-partners/">입점사 배지 · 소개 링크</a></li>
+          <li><a href="/partner">입점 · 제휴 안내</a></li>
           <li><a href="/faq/">자주 묻는 질문</a></li>
           <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
         </ul>

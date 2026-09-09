@@ -3,7 +3,7 @@ import { BRAND_INTRO } from '../constants/marketing';
 import { cn } from '../utils/cn';
 
 /** 캐시 무효화 */
-const LOGO_VER = '7';
+const LOGO_VER = '8';
 
 type BrandLogoVariant = 'light' | 'premium' | 'gold' | 'color' | 'white';
 
@@ -61,53 +61,14 @@ function BrandMarkWordmark({ wordmarkClass }: { wordmarkClass: string }) {
 }
 
 /**
- * light: 골드 마크 + 네이비 AIRPICK (제품 탭 · 흰 헤더)
- * premium: 골드 마크 + 흰 AIRPICK (홈 · 네이비 헤더)
- * color / white: 레거시 풀로고 (예비)
+ * light / color / white: 골드 마크 + 네이비 AIRPICK
+ * premium / gold: 골드 마크 + 흰 AIRPICK (네이비 헤더)
  */
 export default function BrandLogo({ variant = 'light' }: { variant?: BrandLogoVariant }) {
-  if (variant === 'premium' || variant === 'gold') {
-    return (
-      <BrandLogoLink className="gap-2.5 md:gap-3">
-        <BrandMarkWordmark wordmarkClass="text-white" />
-      </BrandLogoLink>
-    );
-  }
-
-  if (variant === 'light') {
-    return (
-      <BrandLogoLink className="gap-2.5 md:gap-3">
-        <BrandMarkWordmark wordmarkClass="text-[#0f1a2e]" />
-      </BrandLogoLink>
-    );
-  }
-
-  const src =
-    variant === 'white'
-      ? {
-          webp: `/brand-logo-white.webp?v=${LOGO_VER}`,
-          png: `/brand-logo-white-sm.png?v=${LOGO_VER}`,
-        }
-      : {
-          webp: `/brand-logo.webp?v=${LOGO_VER}`,
-          png: `/brand-logo-sm.png?v=${LOGO_VER}`,
-        };
-
+  const darkWordmark = variant === 'premium' || variant === 'gold';
   return (
-    <BrandLogoLink>
-      <picture className="overflow-visible">
-        <source type="image/webp" srcSet={src.webp} />
-        <img
-          src={src.png}
-          alt="AirPick"
-          width={288}
-          height={144}
-          className="block h-20 w-auto max-w-none select-none object-contain object-left"
-          draggable={false}
-          decoding="async"
-          fetchPriority="high"
-        />
-      </picture>
+    <BrandLogoLink className="gap-2.5 md:gap-3">
+      <BrandMarkWordmark wordmarkClass={darkWordmark ? 'text-white' : 'text-[#0f1a2e]'} />
     </BrandLogoLink>
   );
 }

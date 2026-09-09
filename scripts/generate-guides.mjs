@@ -157,7 +157,7 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
     <meta charset="UTF-8" />
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#3182F6" />
+    <meta name="theme-color" content="#0f1a2e" />
     <title>${esc(page.title)}</title>
     <meta name="description" content="${esc(page.description)}" />
     <meta name="keywords" content="${esc(page.keywords)}" />
@@ -296,7 +296,7 @@ function renderIndex(pages) {
     <meta charset="UTF-8" />
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#3182F6" />
+    <meta name="theme-color" content="#0f1a2e" />
     <title>인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽</title>
     <meta
       name="description"

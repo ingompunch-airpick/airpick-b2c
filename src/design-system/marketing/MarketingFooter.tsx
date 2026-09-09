@@ -10,7 +10,6 @@ type MarketingFooterProps = {
 const DEFAULT_LINKS: FooterLink[] = [
   { href: '/#services', label: '서비스' },
   { href: '/partner#apply', label: '파트너' },
-  { href: '/for-partners/', label: '입점사 자료' },
   { href: '/about/', label: '소개' },
   { href: '/privacy/', label: '개인정보' },
 ];
