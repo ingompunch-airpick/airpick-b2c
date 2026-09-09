@@ -2,7 +2,7 @@ import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { isCompanySoldOutForSearch } from './bookingPolicy';
 import { companyMatchesSearch, companyValetFee } from './parkingType';
-import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany } from './pricing';
+import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany, applyAffiliateCustomerDiscount } from './pricing';
 import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
 import {
   shouldShowInsuranceBadge,
@@ -27,7 +27,11 @@ function toPricingTerminal(terminal: Terminal): PricingTerminal {
   return terminal === 'T2' ? '2T' : '1T';
 }
 
-export function calculateComparePrice(company: Company, search: BookingSearch): number {
+export function calculateComparePrice(
+  company: Company,
+  search: BookingSearch,
+  affiliateDiscountWon = 0
+): number {
   const totalDays = getParkingDayCount(search.departureDate, search.arrivalDate);
   const terminal = toPricingTerminal(search.terminal);
   /** 비교 화면은 현금·계좌 기준 (카드 결제 시 현장 +10%) */
@@ -70,18 +74,23 @@ export function calculateComparePrice(company: Company, search: BookingSearch): 
     base += valet;
   }
 
+  /** 입점 예약에만 제휴 할인 적용 (미입점 참고가는 원가 유지) */
+  if (isAirpickPartner(company) && affiliateDiscountWon > 0) {
+    return applyAffiliateCustomerDiscount(base, affiliateDiscountWon);
+  }
   return base;
 }
 
 export function priceCompaniesForSearch(
   companies: Company[],
-  search: BookingSearch
+  search: BookingSearch,
+  affiliateDiscountWon = 0
 ): PricedCompany[] {
   return companies
     .filter((company) => companyMatchesSearch(company, search))
     .map((company) => ({
       company,
-      price: calculateComparePrice(company, search),
+      price: calculateComparePrice(company, search, affiliateDiscountWon),
       soldOut: isCompanySoldOutForSearch(company, search),
     }));
 }
@@ -161,9 +170,10 @@ export function sectionHasFaceToFace(items: PricedCompany[], terminal: Terminal)
 export function buildParkingCompareSections(
   companies: Company[],
   search: BookingSearch,
-  reviewSnapshots: Record<string, CompanyReviewSnapshot> = {}
+  reviewSnapshots: Record<string, CompanyReviewSnapshot> = {},
+  affiliateDiscountWon = 0
 ): ParkingCompareSections {
-  const priced = priceCompaniesForSearch(companies, search);
+  const priced = priceCompaniesForSearch(companies, search, affiliateDiscountWon);
   const partners = sortPartnersForSearch(priced.filter((item) => isAirpickPartner(item.company)), search, reviewSnapshots);
   const externals = sortByPrice(priced.filter((item) => !isAirpickPartner(item.company)), reviewSnapshots);
   return { partners, externals };
@@ -201,9 +211,10 @@ export function sortPartnersByRating(
 export function buildPartnerRatingList(
   companies: Company[],
   search: BookingSearch,
-  reviewSnapshots: Record<string, CompanyReviewSnapshot>
+  reviewSnapshots: Record<string, CompanyReviewSnapshot>,
+  affiliateDiscountWon = 0
 ): PricedCompany[] {
-  const priced = priceCompaniesForSearch(companies, search).filter((item) =>
+  const priced = priceCompaniesForSearch(companies, search, affiliateDiscountWon).filter((item) =>
     isAirpickPartner(item.company)
   );
   return sortPartnersByRating(priced, reviewSnapshots);

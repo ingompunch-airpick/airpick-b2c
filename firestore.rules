@@ -138,7 +138,16 @@ service cloud.firestore {
      */
     function reservationProtectedFieldsUnchanged() {
       return !request.resource.data.diff(resource.data).affectedKeys()
-        .hasAny(['reservationPassword', 'receiptToken', 'createdBy', 'createdAt', 'userId']);
+        .hasAny([
+          'reservationPassword',
+          'receiptToken',
+          'createdBy',
+          'createdAt',
+          'userId',
+          'affiliateCode',
+          'affiliateCustomerDiscountWon',
+          'affiliateReferrerCreditWon',
+        ]);
     }
 
     function canListReservation() {
@@ -242,6 +251,35 @@ service cloud.firestore {
     match /parking_lots/{lotId} {
       allow read: if true;
       allow write: if false;
+    }
+
+    // ── affiliates (B2C 추천·제휴) ─────────────────────────────────────────
+    // 정본: B2B firestore.rules 와 동일. 단건 get 은 비교·예약 할인 조회용.
+
+    match /affiliates/{affiliateId} {
+      allow get: if affiliateId.matches('^[a-z0-9_]{3,16}$');
+      allow list: if isPlatformAdmin();
+      allow create, update: if isPlatformAdmin()
+        && affiliateId.matches('^[a-z0-9_]{3,16}$')
+        && request.resource.data.keys().hasAll([
+          'code', 'name', 'status', 'createdAt', 'updatedAt',
+          'customerDiscountWon', 'referrerCreditWon'
+        ])
+        && request.resource.data.code == affiliateId
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.status in ['active', 'suspended']
+        && request.resource.data.createdAt is string
+        && request.resource.data.updatedAt is string
+        && request.resource.data.customerDiscountWon is number
+        && request.resource.data.customerDiscountWon >= 0
+        && request.resource.data.customerDiscountWon <= 1000000
+        && request.resource.data.referrerCreditWon is number
+        && request.resource.data.referrerCreditWon >= 0
+        && request.resource.data.referrerCreditWon <= 1000000;
+      allow delete: if isPlatformAdmin()
+        && affiliateId.matches('^[a-z0-9_]{3,16}$');
     }
 
     // ── reviews (후기 — 쓰기는 Cloud Functions만) ─────────────────────────

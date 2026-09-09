@@ -5,6 +5,7 @@ import './index.css';
 import App from './App.tsx';
 import AdminReviewsPage from './pages/AdminReviewsPage.tsx';
 import ReceiptPage from './pages/ReceiptPage.tsx';
+import { AffiliateProvider } from './context/AffiliateContext.tsx';
 import { parseReceiptIdFromPath } from './lib/receipt';
 import { recoverStolenSeoDocument } from './utils/appPath';
 
@@ -22,7 +23,9 @@ async function boot() {
       ) : receiptId ? (
         <ReceiptPage reservationId={receiptId} />
       ) : (
-        <App />
+        <AffiliateProvider>
+          <App />
+        </AffiliateProvider>
       )}
     </StrictMode>
   );

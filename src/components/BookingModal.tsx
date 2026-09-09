@@ -14,7 +14,9 @@ import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
 import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
-import { getPriceBreakdown } from '../utils/pricing';
+import { getPriceBreakdown, withAffiliateDiscount } from '../utils/pricing';
+import { useAffiliateOffer } from '../context/AffiliateContext';
+import { isAirpickPartner } from '../utils/compareSort';
 import {
   companySupportsIndoor,
   companySupportsOutdoor,
@@ -80,22 +82,26 @@ export default function BookingModal({
   /** 대면 입고 UI 임시 비활성 — 검색 토글·카드 뱃지 제거됨 */
   const faceToFaceApplied = false;
   const valetFee = 0;
+  const { offer: affiliateOffer } = useAffiliateOffer();
+  const affiliateDiscountWon =
+    isAirpickPartner(company) && affiliateOffer
+      ? affiliateOffer.customerDiscountWon
+      : 0;
 
-  const breakdown = useMemo(
-    () =>
-      getPriceBreakdown(
-        company,
-        search.departureDate,
-        search.arrivalDate,
-        search.isIndoor,
-        isT2,
-        search.departureTime,
-        search.arrivalTime,
-        search.isCardPayment === true,
-        valetFee
-      ),
-    [company, search, arrivalTerminal, isT2, valetFee]
-  );
+  const breakdown = useMemo(() => {
+    const base = getPriceBreakdown(
+      company,
+      search.departureDate,
+      search.arrivalDate,
+      search.isIndoor,
+      isT2,
+      search.departureTime,
+      search.arrivalTime,
+      search.isCardPayment === true,
+      valetFee
+    );
+    return withAffiliateDiscount(base, affiliateDiscountWon);
+  }, [company, search, isT2, valetFee, affiliateDiscountWon]);
 
   const today = todayYmd();
 
@@ -192,7 +198,14 @@ export default function BookingModal({
         payload,
         form,
         breakdown.total,
-        faceToFaceApplied ? { valetFee } : undefined
+        faceToFaceApplied ? { valetFee } : undefined,
+        affiliateOffer && isAirpickPartner(company)
+          ? {
+              code: affiliateOffer.code,
+              customerDiscountWon: breakdown.affiliateDiscountWon ?? 0,
+              referrerCreditWon: affiliateOffer.referrerCreditWon,
+            }
+          : undefined
       );
       saveRecentReservation({
         id,

@@ -21,6 +21,7 @@ import {
   type PricedCompany,
 } from '../utils/compareSort';
 import { companyValetFee } from '../utils/parkingType';
+import { useAffiliateOffer } from '../context/AffiliateContext';
 import { cn } from '../utils/cn';
 
 function SortTabs({
@@ -154,11 +155,14 @@ export default function ComparePage({
   const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
     {}
   );
+  const { offer: affiliateOffer } = useAffiliateOffer();
+  const affiliateDiscountWon = affiliateOffer?.customerDiscountWon ?? 0;
   const merged = mergeParkingCompareCompanies(companies);
   const compareSearch = useMemo(() => ({ ...search, faceToFace: false as const }), [search]);
   const { partners, externals } = useMemo(
-    () => buildParkingCompareSections(merged, compareSearch, reviewSnapshots),
-    [merged, compareSearch, reviewSnapshots]
+    () =>
+      buildParkingCompareSections(merged, compareSearch, reviewSnapshots, affiliateDiscountWon),
+    [merged, compareSearch, reviewSnapshots, affiliateDiscountWon]
   );
   const totalCount = partners.length + externals.length;
 
@@ -168,8 +172,9 @@ export default function ComparePage({
   );
 
   const ratingPartners = useMemo(
-    () => buildPartnerRatingList(merged, compareSearch, reviewSnapshots),
-    [merged, compareSearch, reviewSnapshots]
+    () =>
+      buildPartnerRatingList(merged, compareSearch, reviewSnapshots, affiliateDiscountWon),
+    [merged, compareSearch, reviewSnapshots, affiliateDiscountWon]
   );
 
   useEffect(() => {
@@ -198,6 +203,15 @@ export default function ComparePage({
   return (
     <div className="space-y-5">
       <SearchPanel search={search} onChange={onSearchChange} />
+
+      {affiliateOffer && affiliateDiscountWon > 0 ? (
+        <p className="rounded-xl bg-[#0f1a2e] px-3.5 py-2.5 text-[12px] font-semibold leading-relaxed text-white">
+          제휴 할인 적용 중 · 입점 예약{' '}
+          <span className="text-[#c9a962]">
+            −{affiliateDiscountWon.toLocaleString('ko-KR')}원
+          </span>
+        </p>
+      ) : null}
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 

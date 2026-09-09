@@ -146,6 +146,33 @@ export interface PriceBreakdown {
   /** 발렛(직접 인계) 추가요금 — 없으면 0 */
   valetFee: number;
   total: number;
+  /** 제휴 링크 손님 할인(원) — 적용 후 total 에 반영됨 */
+  affiliateDiscountWon?: number;
+  /** 할인 전 합계 */
+  subtotalBeforeAffiliate?: number;
+}
+
+/** 제휴 손님 할인(원) 적용. 합계가 0 미만이 되지 않게 함 */
+export function applyAffiliateCustomerDiscount(total: number, discountWon: number): number {
+  const d = Math.max(0, Math.round(Number(discountWon) || 0));
+  if (d <= 0) return Math.max(0, Math.round(total));
+  return Math.max(0, Math.round(total) - d);
+}
+
+export function withAffiliateDiscount(
+  breakdown: PriceBreakdown,
+  discountWon: number
+): PriceBreakdown {
+  const d = Math.max(0, Math.round(Number(discountWon) || 0));
+  if (d <= 0) return breakdown;
+  const subtotal = breakdown.total;
+  const applied = Math.min(d, subtotal);
+  return {
+    ...breakdown,
+    subtotalBeforeAffiliate: subtotal,
+    affiliateDiscountWon: applied,
+    total: applyAffiliateCustomerDiscount(subtotal, applied),
+  };
 }
 
 export function getPriceBreakdown(

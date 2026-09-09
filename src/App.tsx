@@ -38,8 +38,9 @@ import {
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
 import { defaultEsimSearch } from './utils/esimSearch';
-import { calculatePrice } from './utils/pricing';
+import { calculatePrice, applyAffiliateCustomerDiscount } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
+import { useAffiliateOffer } from './context/AffiliateContext';
 import { prefetchAppTab } from './utils/prefetchTabs';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
@@ -103,6 +104,8 @@ export default function App() {
   const [supportOpen, setSupportOpen] = useState(false);
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
+  const { offer: affiliateOffer } = useAffiliateOffer();
+  const affiliateDiscountWon = affiliateOffer?.customerDiscountWon ?? 0;
 
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
@@ -168,20 +171,23 @@ export default function App() {
       setPendingCompanyId(null);
       return;
     }
-    const price = calculatePrice(
-      company,
-      search.departureDate,
-      search.arrivalDate,
-      search.isIndoor,
-      search.terminal === 'T2',
-      search.departureTime,
-      search.arrivalTime,
-      false
+    const price = applyAffiliateCustomerDiscount(
+      calculatePrice(
+        company,
+        search.departureDate,
+        search.arrivalDate,
+        search.isIndoor,
+        search.terminal === 'T2',
+        search.departureTime,
+        search.arrivalTime,
+        false
+      ),
+      affiliateDiscountWon
     );
     setPartnerDetail({ company, price });
     clearParkingCompanyQuery();
     setPendingCompanyId(null);
-  }, [tab, loading, pendingCompanyId, companies, search]);
+  }, [tab, loading, pendingCompanyId, companies, search, affiliateDiscountWon]);
 
   useEffect(() => {
     const path = window.location.pathname;

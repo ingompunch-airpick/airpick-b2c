@@ -93,6 +93,15 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     createdBy: data.createdBy ? String(data.createdBy) : undefined,
     faceToFace: data.faceToFace === true,
     valetFee: typeof data.valetFee === 'number' ? data.valetFee : undefined,
+    affiliateCode: data.affiliateCode ? String(data.affiliateCode) : undefined,
+    affiliateCustomerDiscountWon:
+      typeof data.affiliateCustomerDiscountWon === 'number'
+        ? data.affiliateCustomerDiscountWon
+        : undefined,
+    affiliateReferrerCreditWon:
+      typeof data.affiliateReferrerCreditWon === 'number'
+        ? data.affiliateReferrerCreditWon
+        : undefined,
     hasReview: data.hasReview === true,
     checkedInBy: data.checkedInBy ? String(data.checkedInBy) : undefined,
     checkedInAt: data.checkedInAt ? String(data.checkedInAt) : undefined,
@@ -233,7 +242,13 @@ export async function submitReservation(
   form: BookingForm,
   totalPrice: number,
   /** 대면 입고가 실제 적용된 경우에만 전달 (업체 미지원 시 undefined) */
-  faceToFace?: { valetFee: number }
+  faceToFace?: { valetFee: number },
+  /** 제휴 링크 스냅샷 — B2B affiliates 기준 */
+  affiliate?: {
+    code: string;
+    customerDiscountWon: number;
+    referrerCreditWon: number;
+  }
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
@@ -288,6 +303,18 @@ export async function submitReservation(
   if (faceToFace) {
     payload.faceToFace = true;
     payload.valetFee = faceToFace.valetFee;
+  }
+
+  if (affiliate?.code) {
+    payload.affiliateCode = affiliate.code;
+    payload.affiliateCustomerDiscountWon = Math.max(
+      0,
+      Math.round(affiliate.customerDiscountWon || 0)
+    );
+    payload.affiliateReferrerCreditWon = Math.max(
+      0,
+      Math.round(affiliate.referrerCreditWon || 0)
+    );
   }
 
   await setDoc(doc(db, 'reservations', id), payload);

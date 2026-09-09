@@ -170,6 +170,12 @@ export interface Reservation {
   faceToFace?: boolean;
   /** 대면 입고 발렛비 (totalPrice에 이미 포함) */
   valetFee?: number;
+  /** 에어픽 B2C 제휴·추천 코드 */
+  affiliateCode?: string;
+  /** 예약 시점 스냅샷 — 손님 할인(원) */
+  affiliateCustomerDiscountWon?: number;
+  /** 예약 시점 스냅샷 — 제휴 페이백(원) */
+  affiliateReferrerCreditWon?: number;
   /** 출고 완료 예약에 대한 업체 후기 작성 여부 (lookup API) */
   hasReview?: boolean;
   /** B2B 입고 완료 담당 (직원 이름 또는 「업체 담당」) */
