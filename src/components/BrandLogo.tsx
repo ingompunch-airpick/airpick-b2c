@@ -3,7 +3,7 @@ import { BRAND_INTRO } from '../constants/marketing';
 import { cn } from '../utils/cn';
 
 /** 캐시 무효화 */
-const LOGO_VER = '8';
+const LOGO_VER = '9';
 
 type BrandLogoVariant = 'light' | 'premium' | 'gold' | 'color' | 'white';
 
@@ -35,7 +35,7 @@ function BrandLogoLink({
 function BrandMarkWordmark({ wordmarkClass }: { wordmarkClass: string }) {
   return (
     <>
-      <picture>
+      <picture className="brand-mark-motion inline-block origin-center will-change-transform">
         <source type="image/webp" srcSet={`/brand-mark-gold.webp?v=${LOGO_VER}`} />
         <img
           src={`/brand-mark-gold.png?v=${LOGO_VER}`}

@@ -112,6 +112,25 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  .brand-mark-motion {
+    animation: none !important;
+  }
+}
+
+/** 헤더 골드 마크 — 아주 약한 float + tilt */
+@keyframes brand-mark-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.2deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(1.2deg);
+  }
+}
+
+.brand-mark-motion {
+  animation: brand-mark-float 5.5s ease-in-out infinite;
 }
 
 @media print {
