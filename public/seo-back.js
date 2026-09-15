@@ -1,7 +1,22 @@
-/** SEO 정적 페이지 뒤로가기 — 같은 출처에서 왔으면 history.back, 아니면 href(/) */
+/** SEO 정적 페이지 뒤로가기 — 더보기에서 왔으면 메뉴로, 아니면 이전/홈 */
 (function () {
+  var MENU_KEY = 'airpick_open_menu';
+
   document.querySelectorAll('[data-seo-back]').forEach(function (el) {
     el.addEventListener('click', function (e) {
+      var fromMenu = false;
+      try {
+        fromMenu = sessionStorage.getItem(MENU_KEY) === '1';
+      } catch (_) {
+        fromMenu = false;
+      }
+
+      if (fromMenu) {
+        e.preventDefault();
+        window.location.href = '/?menu=1';
+        return;
+      }
+
       var ref = document.referrer;
       var sameOrigin = false;
       if (ref) {

@@ -35,6 +35,10 @@ import {
   syncUrlToTab,
   tabFromPathname,
 } from './utils/appPath';
+import {
+  consumeReturnToMenu,
+  shouldReturnToMenuOnLaunch,
+} from './utils/returnToMenu';
 import { defaultBookingSearch } from './utils/dates';
 import { calculatePrice, applyAffiliateCustomerDiscount } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
@@ -65,6 +69,7 @@ function tabPageFallback(tab: AppTab) {
 }
 
 function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
+  if (shouldReturnToMenuOnLaunch()) return false;
   if (shouldForceBrandIntro()) {
     clearBrandIntroSeen();
     return true;
@@ -94,8 +99,9 @@ export default function App() {
   const [pendingCompanyId, setPendingCompanyId] = useState<string | null>(() =>
     readParkingCompanyId()
   );
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(() => shouldReturnToMenuOnLaunch());
   const [supportOpen, setSupportOpen] = useState(false);
+  const [supportFromMenu, setSupportFromMenu] = useState(false);
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
   const { offer: affiliateOffer } = useAffiliateOffer();
@@ -112,6 +118,10 @@ export default function App() {
     setTab('home', 'replace');
     trackCtaClick('brand_intro_enter', 'brand_intro');
   };
+
+  useEffect(() => {
+    if (menuOpen) consumeReturnToMenu();
+  }, [menuOpen]);
 
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
@@ -245,6 +255,7 @@ export default function App() {
         }}
         onOpenSupport={() => {
           trackCtaClick('open_faq', 'reservation');
+          setSupportFromMenu(false);
           setSupportOpen(true);
         }}
         onOpenParkingGuide={() => {
@@ -329,12 +340,23 @@ export default function App() {
             onClose={() => setMenuOpen(false)}
             onOpenSupport={() => {
               trackCtaClick('open_faq', 'menu');
+              setSupportFromMenu(true);
               setSupportOpen(true);
             }}
           />
         )}
 
-        {supportOpen && <SupportPage onBack={() => setSupportOpen(false)} />}
+        {supportOpen && (
+          <SupportPage
+            onBack={() => {
+              setSupportOpen(false);
+              if (supportFromMenu) {
+                setSupportFromMenu(false);
+                setMenuOpen(true);
+              }
+            }}
+          />
+        )}
 
         {esimGuideOpen && <EsimGuidePage onBack={() => setEsimGuideOpen(false)} />}
 

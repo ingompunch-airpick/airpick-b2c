@@ -13,6 +13,9 @@ import {
   X,
 } from 'lucide-react';
 import {
+  markReturnToMenu,
+} from '../utils/returnToMenu';
+import {
   openPartnerInquiryEmail,
   openPartnerInquiryKakao,
 } from '../constants/partnerContact';
@@ -99,19 +102,22 @@ export default function AppMenuSheet({
                       label={item.label}
                       icon={Icon}
                       onClick={() => {
-                        onClose();
                         if ('openInApp' in item && item.openInApp === 'faq') {
                           onOpenSupport();
                           return;
                         }
                         if (item.href === 'kakao:partner') {
+                          onClose();
                           openPartnerInquiryKakao();
                           return;
                         }
                         if (item.href === 'mailto:partner') {
+                          onClose();
                           openPartnerInquiryEmail();
                           return;
                         }
+                        markReturnToMenu();
+                        onClose();
                         window.location.assign(item.href);
                       }}
                     />
