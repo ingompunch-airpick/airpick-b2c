@@ -2,7 +2,7 @@
 
 사이트: [www.에어픽.kr](https://www.에어픽.kr/)  
 기준 소스: `src/constants/officialAnswers.ts` · `src/constants/support.ts` · `public/faq/`  
-정의 정본: `AIRPICK_DEFINITION` — 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교
+정의 정본: `AIRPICK_DEFINITION` — 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내
 
 | 문서 | 내용 |
 | --- | --- |

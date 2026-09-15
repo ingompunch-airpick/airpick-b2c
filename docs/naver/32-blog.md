@@ -17,7 +17,7 @@
 | 주차 | 초안 파일 | 권장 본문 링크 |
 |------|-----------|----------------|
 | 1 | [blog-drafts/01-parking-compare.md](./blog-drafts/01-parking-compare.md) | /guides/parking-compare/ |
-| 2 | [blog-drafts/02-partner-vs-external.md](./blog-drafts/02-partner-vs-external.md) | /guides/partner-vs-external/ |
+| 2 | [blog-drafts/02-partner-vs-external.md](./blog-drafts/02-partner-vs-external.md) | /partners/ |
 | 3 | [blog-drafts/03-terminal.md](./blog-drafts/03-terminal.md) | /guides/t1-t2-unseo/ |
 | 4 | [blog-drafts/04-esim.md](./blog-drafts/04-esim.md) | /guides/esim-beginner/ |
 | 5 | [blog-drafts/05-parking-insurance.md](./blog-drafts/05-parking-insurance.md) | /guides/parking-insurance/ |

@@ -35,7 +35,7 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
       question: '에어픽에서 이심(eSIM)을 바로 구매할 수 있나요?',
       shortAnswer: SHORT_ANSWERS.esimBuy,
       answer:
-        '아니요. 에어픽은 제휴 할인 링크만 안내합니다. 구매·개통은 제휴사 사이트에서 진행해 주세요.',
+        '아니요. 에어픽은 제휴 할인 링크만 안내합니다. 구매·개통은 제휴사(예: 유심사) 사이트에서 진행해 주세요.',
     },
     {
       id: 'esim-diff',
@@ -46,10 +46,10 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
     },
     {
       id: 'esim-price',
-      question: '에어픽에 표시된 이심(eSIM) 할인이 최종 금액인가요?',
+      question: '에어픽 이심(eSIM) 할인이 최종 금액인가요?',
       shortAnswer: SHORT_ANSWERS.esimPrice,
       answer:
-        '제휴사 사이트에서 적용되는 할인·요금입니다. 쿠폰·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요.',
+        '할인은 제휴사 사이트에서 적용됩니다. 쿠폰·옵션·기간에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요. 고객센터·환불 등도 제휴사 정책입니다.',
     },
     {
       id: 'esim-support',

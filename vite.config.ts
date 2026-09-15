@@ -217,7 +217,7 @@ export default defineConfig({
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
-        description: '인천공항 출국시간 계산 · 주차대행 비교 · 이심(eSIM) 가격비교',
+        description: '인천공항 출국시간 계산 · 주차대행 비교 · 이심(eSIM) 제휴 할인',
         theme_color: '#0f1a2e',
         background_color: '#EDF4FC',
         display: 'standalone',

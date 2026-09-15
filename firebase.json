@@ -48,6 +48,16 @@
         "type": 301
       },
       {
+        "source": "/guides/partner-vs-external",
+        "destination": "/partners/",
+        "type": 301
+      },
+      {
+        "source": "/guides/partner-vs-external/",
+        "destination": "/partners/",
+        "type": 301
+      },
+      {
         "source": "/r/:id/",
         "destination": "/r/:id",
         "type": 301

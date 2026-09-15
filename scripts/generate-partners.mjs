@@ -15,7 +15,7 @@ const reviewsPath = path.join(root, 'data/partners/reviews.generated.json');
 const outRoot = path.join(root, 'public/partners');
 
 const AIRPICK_DEFINITION =
-  '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 가격비교 플랫폼입니다.';
+  '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다.';
 
 function esc(s) {
   return String(s ?? '')
@@ -52,7 +52,7 @@ function navHtml() {
   return `<nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
         <a href="/parking">주차대행 비교</a>
-        <a href="/esim">이심 비교</a>
+        <a href="/esim">이심</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>

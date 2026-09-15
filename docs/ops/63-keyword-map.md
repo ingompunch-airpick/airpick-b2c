@@ -17,7 +17,7 @@
 | 쿼리 예 | 정본 URL |
 |---------|----------|
 | 인천공항 주차대행 비교 / 가격비교 | `/parking` · `/guides/parking-compare/` |
-| 입점 vs 미입점 / 입점 주차대행 | `/guides/partner-vs-external/` · `/partners/` |
+| 공식 파트너 / 입점 주차대행 | `/partners/` · `/about/` |
 | T1 T2 주차대행 / 운서 | `/guides/t1-t2-unseo/` |
 | 공식 vs 사설 | `/guides/official-vs-private/` |
 | 장단기 주차 | `/guides/long-vs-short/` |
