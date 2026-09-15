@@ -36,6 +36,27 @@ function formatUpdated(iso) {
   return `${m[1]}.${m[2]}.${m[3]}`;
 }
 
+function pageChrome(title) {
+  return `<header class="page-bar">
+        <a class="page-bar-back" href="/" data-seo-back aria-label="뒤로">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </a>
+        <p class="page-bar-title">${esc(title)}</p>
+      </header>
+      <nav class="topnav" aria-label="사이트 메뉴">
+        <a class="brand" href="/">에어픽</a>
+        <a href="/parking">주차대행 비교</a>
+        <a href="/esim">이심</a>
+        <a href="/guides/">가이드</a>
+        <a href="/partners/">입점 업체</a>
+        <a href="/faq/">FAQ</a>
+      </nav>`;
+}
+
+function seoBackScript() {
+  return `<script src="/seo-back.js" defer></script>`;
+}
+
 function howToJsonLd(howTo, pageUrl) {
   if (!howTo?.name || !Array.isArray(howTo.steps) || howTo.steps.length === 0) return null;
   return {
@@ -178,14 +199,7 @@ ${JSON.stringify(graph, null, 2)}
   </head>
   <body>
     <div class="wrap">
-      <nav class="topnav" aria-label="사이트 메뉴">
-        <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차대행 비교</a>
-        <a href="/esim">이심</a>
-        <a href="/guides/">가이드</a>
-        <a href="/partners/">입점 업체</a>
-        <a href="/faq/">FAQ</a>
-      </nav>
+      ${pageChrome(page.h1)}
 
       <header class="hero">
         <p class="eyebrow">${esc(page.eyebrow)}</p>
@@ -235,6 +249,7 @@ ${faqHtml}
 
       <p class="footer-note">에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·제휴사·공식 안내를 확인하세요. 주차대행 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
     </div>
+    ${seoBackScript()}
   </body>
 </html>
 `;
@@ -318,14 +333,7 @@ ${JSON.stringify(graph, null, 2)}
   </head>
   <body>
     <div class="wrap">
-      <nav class="topnav" aria-label="사이트 메뉴">
-        <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차대행 비교</a>
-        <a href="/esim">이심</a>
-        <a href="/guides/">가이드</a>
-        <a href="/partners/">입점 업체</a>
-        <a href="/faq/">FAQ</a>
-      </nav>
+      ${pageChrome('가이드')}
       <header class="hero">
         <p class="eyebrow">에어픽 가이드</p>
         <h1>인천공항 주차대행·이심, 뭐부터 보면 되나요?</h1>
@@ -348,6 +356,7 @@ ${items}
         <a class="cta secondary" href="/">출국시간 계산하기</a>
       </section>
     </div>
+    ${seoBackScript()}
   </body>
 </html>
 `;

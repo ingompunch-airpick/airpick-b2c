@@ -48,8 +48,14 @@ function terminalsLabel(p) {
   return t.length ? t.join(' · ') : '1터미널 · 2터미널';
 }
 
-function navHtml() {
-  return `<nav class="topnav" aria-label="사이트 메뉴">
+function pageChrome(title) {
+  return `<header class="page-bar">
+        <a class="page-bar-back" href="/" data-seo-back aria-label="뒤로">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </a>
+        <p class="page-bar-title">${esc(title)}</p>
+      </header>
+      <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
         <a href="/parking">주차대행 비교</a>
         <a href="/esim">이심</a>
@@ -57,6 +63,10 @@ function navHtml() {
         <a href="/partners/">입점 업체</a>
         <a href="/faq/">FAQ</a>
       </nav>`;
+}
+
+function seoBackScript() {
+  return `<script src="/seo-back.js" defer></script>`;
 }
 
 function formatReviewDate(iso) {
@@ -311,7 +321,7 @@ ${JSON.stringify(graph, null, 2)}
   </head>
   <body>
     <div class="wrap">
-      ${navHtml()}
+      ${pageChrome(h1)}
 
       <header class="hero">
         <p class="eyebrow">에어픽 입점</p>
@@ -387,6 +397,7 @@ ${reviewsSectionHtml(reviewBundle)}
 
       <p class="footer-note">${esc(AIRPICK_DEFINITION)} 업체 현장 정책은 예약·문의 시 확인해 주세요.</p>
     </div>
+    ${seoBackScript()}
   </body>
 </html>
 `;
@@ -476,7 +487,7 @@ ${JSON.stringify(graph, null, 2)}
   </head>
   <body>
     <div class="wrap">
-      ${navHtml()}
+      ${pageChrome('입점 업체')}
 
       <header class="hero">
         <p class="eyebrow">에어픽 입점</p>
@@ -517,6 +528,7 @@ ${JSON.stringify(graph, null, 2)}
 
       <p class="footer-note">${esc(AIRPICK_DEFINITION)}</p>
     </div>
+    ${seoBackScript()}
   </body>
 </html>
 `;
