@@ -10,7 +10,7 @@ export default function SupportPage({
   categories = ALL_FAQ_CATEGORIES,
   title = '자주 묻는 질문',
   heroTitle = '앱·예약·조회 FAQ',
-  heroDescription = '입·출고, 차량 상태, 현장 일정 등은 예약하신 주차장(업체)으로 문의해 주세요.',
+  heroDescription = '차 입고·출고·현장 일정은 예약하신 업체로 문의해 주세요. 앱·예약 조회는 여기서 확인해 주세요.',
 }: {
   onBack: () => void;
   categories?: FaqCategory[];

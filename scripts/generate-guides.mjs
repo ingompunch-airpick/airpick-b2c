@@ -221,14 +221,13 @@ ${faqHtml}
       </section>
 
       <section class="section">
-        <h2>관련 가이드 · 비교</h2>
+        <h2>더 알아보기</h2>
         <ul>
             ${otherGuides}
-            <li><a href="/parking">인천공항 주차대행 비교</a> — 요금·예약</li>
-            <li><a href="/partners/">입점 업체 목록</a></li>
+            <li><a href="/parking">인천공항 주차대행 비교</a></li>
+            <li><a href="/partners/">입점 업체</a></li>
             <li><a href="/esim">이심(eSIM) 제휴 할인</a></li>
             <li><a href="/faq/">자주 묻는 질문</a></li>
-            <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
         </ul>
         <p style="margin-top:1.25rem">
           <a class="cta" href="${esc(page.ctaHref)}">${esc(page.ctaLabel)}</a>
@@ -236,18 +235,7 @@ ${faqHtml}
         </p>
       </section>
 
-      <section class="section evidence">
-        <h2>근거 · 사실</h2>
-        <ul>
-          <li>에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다.</li>
-          ${updatedLabel ? `<li>이 글 마지막 업데이트: <strong>${updatedLabel}</strong></li>` : ''}
-          <li>주차대행 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다. 후기는 실후기만 노출합니다.</li>
-          <li>이심(eSIM)은 제휴 할인 링크만 안내하며, 구매·개통은 제휴사에서 진행합니다.</li>
-          <li>공식 사실 요약: <a href="/facts/">사실 확인</a> · <a href="/about/">사업자 정보</a></li>
-        </ul>
-      </section>
-
-      <p class="footer-note">에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다. 가이드는 참고용이며, 최종 요금·규정은 업체·제휴사·공식 안내를 확인하세요. 주차대행 표시 요금은 일정 기준 예상·참고가이며 변동될 수 있습니다.</p>
+      <p class="footer-note">가이드는 참고용이에요. 최종 요금·규정은 비교·예약 화면과 업체·제휴사 안내를 확인해 주세요.</p>
     </div>
     ${seoBackScript()}
   </body>
@@ -282,10 +270,10 @@ function renderIndex(pages) {
       {
         '@type': 'CollectionPage',
         '@id': `${url}#webpage`,
-        name: '인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽',
+        name: '출국 전에 궁금한 것부터 · 에어픽',
         url,
         description:
-          '인천공항 주차대행·발렛 비교, 공식 vs 사설, T1/T2·운서, 장기·단기, 해외여행 전 예약, 이심(eSIM)까지 — 질문형 가이드 모음',
+          '주차대행 비교, 터미널, 보험, 이심 준비까지 — 출국 전 자주 묻는 가이드',
         isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
         breadcrumb: { '@id': `${url}#breadcrumb` },
         mainEntity: { '@id': `${url}#itemlist` },
@@ -336,13 +324,13 @@ ${JSON.stringify(graph, null, 2)}
       ${pageChrome('가이드')}
       <header class="hero">
         <p class="eyebrow">에어픽 가이드</p>
-        <h1>인천공항 주차대행·이심, 뭐부터 보면 되나요?</h1>
+        <h1>출국 전에 궁금한 것부터</h1>
         <p>
-          비교·예약, 공식 vs 사설, 터미널·운서, 장기·단기, 해외여행 전 예약, 이심(eSIM)까지.
-          읽은 뒤 <a href="/parking">주차대행 비교</a> 또는 <a href="/esim">이심</a>로 이어 가세요.
+          주차대행 비교, 터미널 고르기, 보험, 이심 준비까지 — 자주 물어보시는 내용을 짧게 모았어요.
+          읽은 뒤 <a href="/parking">비교·예약</a>이나 <a href="/esim">이심 할인</a>으로 이어 가시면 됩니다.
         </p>
         <a class="cta" href="/parking">주차대행 비교·예약</a>
-        <a class="cta secondary" href="/esim">이심</a>
+        <a class="cta secondary" href="/esim">이심 제휴 할인</a>
       </header>
       <section class="section">
         <h2>가이드 목록</h2>

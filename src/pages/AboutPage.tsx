@@ -1,7 +1,7 @@
 import { Building2, ChevronLeft, Clock3, MessageCircle, Phone } from 'lucide-react';
 import type { ReactNode } from 'react';
 import {
-  AIRPICK_DEFINITION,
+  AIRPICK_CUSTOMER_PITCH,
   AIRPICK_SERVICES,
   COMPANY_LEGAL,
   PARTNER_BENEFITS,
@@ -37,10 +37,9 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
               <p className="text-sm font-bold text-ink">{COMPANY_LEGAL.serviceName}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{AIRPICK_DEFINITION}</p>
+          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{AIRPICK_CUSTOMER_PITCH}</p>
           <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
-            에어픽이 확인한 공식 파트너만 비교·예약합니다. 예약 후 주차 위치·입고 사진·보험을 예약
-            탭에서 확인할 수 있습니다.
+            확인된 업체만 비교·예약하고, 맡긴 뒤에는 위치·사진·보험을 예약 탭에서 볼 수 있어요.
           </p>
           <a
             href={COMPANY_LEGAL.siteUrl}

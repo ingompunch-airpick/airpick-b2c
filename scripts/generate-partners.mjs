@@ -14,8 +14,9 @@ const dataPath = path.join(root, 'data/partners/pages.json');
 const reviewsPath = path.join(root, 'data/partners/reviews.generated.json');
 const outRoot = path.join(root, 'public/partners');
 
-const AIRPICK_DEFINITION =
-  '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다.';
+/** 고객 본문용 — 정의문 대신 */
+const CUSTOMER_PITCH =
+  '인천공항 출국 전에 나설 시각을 잡고, 확인된 주차대행만 비교·예약하세요. 이심은 제휴 할인으로 준비할 수 있어요.';
 
 function esc(s) {
   return String(s ?? '')
@@ -201,13 +202,13 @@ function renderPartner(p, reviewsByCompany) {
   const particle = topicParticle(name);
   const description =
     p.description?.trim() ||
-    `${name}${particle} 에어픽 입점 인천공항 주차대행입니다. 실내·야외, 터미널, 보험 안내를 확인하고 일정 넣어 비교·예약하세요.`;
+    `${name}${particle} 에어픽에서 비교·예약할 수 있는 인천공항 주차대행이에요. 일정 넣고 요금·보험을 확인해 보세요.`;
   const h1 = `${name} · 인천공항 주차대행`;
   const directAnswer =
     p.answer?.trim() ||
-    `${name}${particle} 에어픽 입점 주차대행입니다. 일정을 넣고 비교·예약한 뒤, 위치·사진·보험은 예약 탭에서 확인하세요.`;
+    `${name}${particle} 에어픽 입점 업체예요. 일정 넣어 예약하면, 맡긴 뒤 위치·사진·보험을 앱에서 볼 수 있어요.`;
   const prototypeNote = p.isPrototype
-    ? `<p class="note">이 페이지는 공개 URL·본문 구조 검증용 프로토타입입니다. 실제 입점 정보로 교체될 수 있습니다.</p>`
+    ? `<p class="note">이 페이지는 공개용 초안이에요. 입점 정보가 바뀌면 바로 반영됩니다.</p>`
     : '';
 
   const imageHtml = p.imageUrl?.trim()
@@ -328,14 +329,13 @@ ${JSON.stringify(graph, null, 2)}
         <h1>${esc(h1)}</h1>
         <p class="answer"><strong>${esc(directAnswer)}</strong></p>
         <p>
-          ${esc(AIRPICK_DEFINITION)}
-          ${esc(name)}${particle} 에어픽에 입점한 인천공항 주차대행·발렛입니다.
-          요금은 출국·귀국 일정·터미널·실내/야외에 따라 달라지므로,
-          <strong>확정가 대신 비교 화면에서 일정을 넣고</strong> 확인한 뒤 예약하세요.
+          ${esc(name)}${particle} 에어픽에서 예약할 수 있는 인천공항 주차대행이에요.
+          요금은 출국·귀국 일정·터미널·실내/야외에 따라 달라지니,
+          <strong>일정을 넣은 뒤</strong> 비교 화면에서 확인하고 예약해 주세요.
         </p>
         ${prototypeNote}
-        <a class="cta" href="/parking">이 업체 기준으로 일정 넣고 비교·예약</a>
-        <a class="cta secondary" href="/partners/">입점 업체 목록</a>
+        <a class="cta" href="/parking">일정 넣고 비교·예약</a>
+        <a class="cta secondary" href="/partners/">다른 입점 업체</a>
       </header>
 
       <section class="section">
@@ -361,41 +361,31 @@ ${JSON.stringify(graph, null, 2)}
             </tr>${reviewTableRowHtml(reviewBundle)}
           </tbody>
         </table>
-        <p class="note">표시 금액·보장 한도를 이 페이지에 고정해 두지 않습니다. 최신 안내는 에어픽 앱·비교 화면을 기준으로 하세요.</p>
+        <p class="note">이 페이지에 확정 요금은 적어 두지 않아요. 최신 요금·보장은 비교·예약 화면을 기준으로 해 주세요.</p>
       </section>
 ${reviewsSectionHtml(reviewBundle)}
       <section class="section">
         <h2>에어픽에서 예약하면</h2>
         <ul>
-          <li>일정·1·2터미널·실내/야외 기준 <strong>예상 요금 비교</strong></li>
-          <li>입점 예약 후 <strong>주차 위치·입고 사진·보험 안내</strong>를 예약 탭에서 확인 (제공 업체)</li>
-          <li>현장 결제 — 앱에서 카드 결제를 받지 않습니다</li>
+          <li>일정·터미널·실내/야외 기준으로 <strong>예상 요금</strong>을 비교할 수 있어요</li>
+          <li>맡긴 뒤 <strong>주차 위치·입고 사진·보험 안내</strong>를 예약 탭에서 볼 수 있어요</li>
+          <li>결제는 <strong>현장 결제</strong>예요 (앱에서 카드 결제 없음)</li>
         </ul>
         <a class="cta" href="/parking">주차대행 비교 열기</a>
       </section>
 
       <section class="section">
-        <h2>함께 보면 좋은 글</h2>
+        <h2>더 알아보기</h2>
         <ul>
           <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
           <li><a href="/guides/parking-insurance/">보험, 예약 전에 뭘 확인하나요?</a></li>
-          <li><a href="/guides/official-vs-private/">공식 vs 사설, 뭐가 다른가요?</a></li>
-          <li><a href="/guides/">가이드 모음</a></li>
+          <li><a href="/guides/official-vs-private/">공식 주차장 vs 사설 대행</a></li>
           <li><a href="/parking">전체 업체 요금 비교</a></li>
-          <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
+          <li><a href="/faq/">자주 묻는 질문</a></li>
         </ul>
       </section>
 
-      <section class="section evidence">
-        <h2>근거 · 사실</h2>
-        <ul>
-          <li>${esc(name)}${particle} 에어픽 <strong>입점</strong> 주차대행입니다. (비교 플랫폼의 입점사)</li>
-          <li>확정 요금·가짜 별점을 이 페이지에 두지 않습니다. 실후기는 이 페이지·앱에만 노출됩니다.</li>
-          <li>운영사·정의: <a href="/facts/">사실 확인</a> · <a href="/about/">소개</a></li>
-        </ul>
-      </section>
-
-      <p class="footer-note">${esc(AIRPICK_DEFINITION)} 업체 현장 정책은 예약·문의 시 확인해 주세요.</p>
+      <p class="footer-note">현장 입고·출고·차량 문의는 예약하신 업체로, 앱·예약 조회는 에어픽 고객센터로 문의해 주세요.</p>
     </div>
     ${seoBackScript()}
   </body>
@@ -407,9 +397,9 @@ function renderHub(partners, reviewsByCompany) {
   const url = 'https://www.에어픽.kr/partners/';
   const title = '에어픽 입점 주차대행 업체 · 인천공항';
   const description =
-    '에어픽에 입점한 인천공항 주차대행·발렛 업체 목록입니다. 일정 넣어 비교·예약한 뒤 위치·사진·보험을 확인하세요.';
+    '에어픽에서 예약할 수 있는 인천공항 주차대행 목록. 일정 넣어 비교하고, 맡긴 뒤 위치·사진·보험을 확인하세요.';
   const answer =
-    '입점 업체는 에어픽에서 비교·예약하고, 예약 후 주차 위치·입고 사진·보험 안내를 앱에서 확인합니다.';
+    '에어픽이 확인한 업체만 모았어요. 비교·예약하고, 맡긴 뒤에는 위치·사진·보험까지 앱에서 볼 수 있어요.';
 
   const listItems = partners.map((p, i) => ({
     '@type': 'ListItem',
@@ -490,43 +480,41 @@ ${JSON.stringify(graph, null, 2)}
       ${pageChrome('입점 업체')}
 
       <header class="hero">
-        <p class="eyebrow">에어픽 입점</p>
-        <h1>입점 주차대행 업체</h1>
+        <p class="eyebrow">공식 파트너</p>
+        <h1>에어픽에서 예약할 수 있는 업체</h1>
         <p class="answer"><strong>${esc(answer)}</strong></p>
-        <p>${esc(AIRPICK_DEFINITION)} 아래 입점 업체를 고른 뒤, 일정 넣어 비교·예약하세요.</p>
-        <a class="cta" href="/parking">주차대행 비교 · 예약</a>
-        <a class="cta secondary" href="/guides/parking-insurance/">보험 확인법</a>
+        <p>지금 입점한 주차대행이에요. 아래에서 고른 뒤, 출국·귀국 일정을 넣고 바로 비교해 보세요.</p>
+        <a class="cta" href="/parking">일정 넣고 비교·예약</a>
+        <a class="cta secondary" href="/guides/parking-insurance/">보험은 어떻게 확인하나요?</a>
       </header>
 
       <section class="section">
-        <h2>입점 업체 목록</h2>
+        <h2>입점 업체</h2>
         <ul>
         ${cards}
         </ul>
       </section>
 
-      <section class="section evidence">
-        <h2>근거 · 사실</h2>
+      <section class="section">
+        <h2>알아두면 좋아요</h2>
         <ul>
-          <li>${esc(AIRPICK_DEFINITION)}</li>
-          <li>이 목록의 공개 입점 페이지: <strong>${partners.length}곳</strong></li>
-          <li>요금·가짜 별점은 이 페이지에 박지 않습니다. 실후기는 각 업체 페이지·앱에만 노출됩니다.</li>
-          <li>공식 사실: <a href="/facts/">사실 확인</a></li>
+          <li>확정 요금·가짜 별점은 이 페이지에 박아 두지 않아요. 실이용 후기만 보여 드립니다.</li>
+          <li>요금은 일정·터미널·실내/야외를 넣은 뒤 비교 화면에서 확인해 주세요.</li>
+          <li>현장 입고·출고는 예약하신 업체, 앱·예약 조회는 에어픽 고객센터로 문의해 주세요.</li>
         </ul>
       </section>
 
       <section class="section">
-        <h2>함께 보면</h2>
+        <h2>더 알아보기</h2>
         <ul>
-          <li><a href="/parking">전체 업체 요금 비교</a></li>
+          <li><a href="/parking">주차대행 요금 비교</a></li>
           <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
-          <li><a href="/partner">입점 · 제휴 안내</a></li>
           <li><a href="/faq/">자주 묻는 질문</a></li>
-          <li><a href="/facts/">사실 확인 · AI·보도용</a></li>
+          <li><a href="/about/">에어픽 소개 · 고객센터</a></li>
         </ul>
       </section>
 
-      <p class="footer-note">${esc(AIRPICK_DEFINITION)}</p>
+      <p class="footer-note">${esc(CUSTOMER_PITCH)}</p>
     </div>
     ${seoBackScript()}
   </body>
