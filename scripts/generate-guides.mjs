@@ -301,15 +301,15 @@ function renderIndex(pages) {
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f1a2e" />
-    <title>인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽</title>
+    <title>출국 전에 궁금한 것부터 · 에어픽</title>
     <meta
       name="description"
-      content="인천공항 주차대행·발렛 비교, 공식 vs 사설, T1·T2·운서, 장기·단기, 해외여행 전 예약, 이심(eSIM)까지 — 뭐부터 보면 될지 질문형으로 모았습니다."
+      content="주차대행 비교, 터미널, 보험, 이심 준비까지 — 출국 전 자주 묻는 가이드를 모았어요."
     />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="인천공항 주차대행·이심, 뭐부터 보면 되나요? · 에어픽" />
-    <meta property="og:description" content="비교·사설·터미널·장단기·여행 전 예약·이심까지, 질문형 가이드 모음." />
+    <meta property="og:title" content="출국 전에 궁금한 것부터 · 에어픽" />
+    <meta property="og:description" content="주차대행·터미널·보험·이심, 출국 전 궁금한 것부터." />
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
