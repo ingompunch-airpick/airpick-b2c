@@ -3,8 +3,6 @@
  * 현재: Sheet/정적 데이터·Firestore 구독 결과를 조합.
  * 이후: MySQL/PostgreSQL 등으로 교체해도 UI는 이 인터페이스만 보면 됨.
  */
-import { ESIM_COUNTRIES } from '../config/esimCountries';
-import { ESIM_PARTNER_OFFERS } from '../config/esimPartnerOffers';
 import { OFFICIAL_PARKING_LOTS, type OfficialParkingLot } from '../data/officialParkingLots';
 import type { Company } from '../types';
 import { ICN_TERMINAL_COORDS } from '../utils/airportDistance';
@@ -33,13 +31,6 @@ export interface ValetPartnerCard {
   sharesPhotos: boolean;
   rating: number | null;
   reviewCount: number;
-}
-
-export interface EsimCountryCard {
-  countryCode: string;
-  name: string;
-  offerCount: number;
-  fromPrice: number;
 }
 
 export function getValetServicePins(): HomeMapPin[] {
@@ -117,18 +108,4 @@ export function listValetPartnerCards(companies: Company[]): ValetPartnerCard[] 
       };
     })
     .sort((a, b) => a.price - b.price);
-}
-
-export function listEsimCountryCards(): EsimCountryCard[] {
-  const active = ESIM_PARTNER_OFFERS.filter((p) => p.isActive !== false);
-  return ESIM_COUNTRIES.map((country) => {
-    const offers = active.filter((p) => p.countryCode === country.code);
-    const fromPrice = offers.length > 0 ? Math.min(...offers.map((p) => p.price)) : 0;
-    return {
-      countryCode: country.code,
-      name: country.name,
-      offerCount: offers.length,
-      fromPrice,
-    };
-  }).filter((c) => c.offerCount > 0);
 }

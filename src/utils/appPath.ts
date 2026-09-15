@@ -130,20 +130,7 @@ export function clearParkingCompanyQuery(): void {
   window.history.replaceState({ tab: 'compare' }, '', '/parking');
 }
 
-/** `/esim?country=JP` */
-export function readEsimCountryCode(): string | null {
-  if (typeof window === 'undefined') return null;
-  if (normalizePathname(window.location.pathname) !== '/esim') return null;
-  const code = new URLSearchParams(window.location.search).get('country')?.trim().toUpperCase();
-  return code || null;
-}
-
 export function pathForParking(companyId?: string): string {
   if (!companyId) return '/parking';
   return `/parking?company=${encodeURIComponent(companyId)}`;
-}
-
-export function pathForEsim(countryCode?: string): string {
-  if (!countryCode) return '/esim';
-  return `/esim?country=${encodeURIComponent(countryCode)}`;
 }

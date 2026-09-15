@@ -35,21 +35,60 @@ export const PARKING_PLATFORM_SUB = '인천공항';
 /** 주차 비교 허브 H1 (화면) — SEO 키워드는 document title에 유지 */
 export const PARKING_COMPARE_H1 = '주차대행, 아무 데나 예약하지 마세요.';
 
-/** 주차 비교 탭 상단 — 입점·미입점 모두 포함 */
+/** 주차 비교 탭 상단 */
 export const PARKING_COMPARE_DESC =
-  '예약·입고 추적은 AIRPICK VERIFIED만. 가격·보험·평점까지 보고 검증 파트너부터 예약하세요.';
+  '에어픽이 확인한 공식 파트너만 비교합니다. 가격·보험·평점 보고 바로 예약하세요.';
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 · 에어픽';
 
-/** 이심 비교 허브 H1 (SEO·화면 공통) — 메인 키워드 이심, eSIM 병기 */
-export const ESIM_COMPARE_H1 = '이심(eSIM) 가격 비교';
+/** 이심 허브 H1 (SEO·화면 공통) */
+export const ESIM_COMPARE_H1 = '이심';
 
 export const ESIM_COMPARE_DESC =
-  '나라·용량·일수로 제휴 이심 참고가를 비교합니다. 구매·개통은 제휴사에서 진행합니다.';
+  '에어픽 × 유심사 프로모션. 제휴 할인 링크로 이동해 구매·개통하세요.';
 
-export const ESIM_COMPARE_DOCUMENT_TITLE = '이심(eSIM) 가격 비교 | 에어픽';
+export const ESIM_COMPARE_DOCUMENT_TITLE = '이심(eSIM) 제휴 할인 | 에어픽';
 
-export const ESIM_COMPARE_SUB = '국가별 최저가 참고 비교';
+export const ESIM_COMPARE_SUB = '제휴사 할인 링크로 바로가기';
+
+/** 이심 탭 본문 */
+export const ESIM_HUB_LEAD = '출국 전 데이터, 제휴 할인으로 준비하세요';
+export const ESIM_HUB_DESC = '에어픽 × 유심사 프로모션';
+
+/** 이심 탭 · 제휴 할인 허브 */
+export const ESIM_HUB = {
+  title: '이심',
+  cobrand: 'AIRPICK × USIMSA',
+  cobrandKo: '에어픽 × 유심사',
+  promoLabel: '프로모션',
+  heroSub: '에어픽 제휴 할인으로 유심사에서 바로 구매하세요',
+  whyTitle: '왜 에어픽에서 이심을?',
+  whyItems: [
+    {
+      id: 'discount',
+      title: '제휴 할인',
+      body: '에어픽 전용 링크로 들어가면 기간 할인이 적용됩니다.',
+    },
+    {
+      id: 'ready',
+      title: '출국 전 한곳에서',
+      body: '주차대행 예약한 뒤, 같은 앱에서 데이터도 이어서 준비합니다.',
+    },
+    {
+      id: 'partner',
+      title: '구매·개통은 제휴사',
+      body: '결제·설치·문의는 유심사에서 진행됩니다. 에어픽은 링크만 안내합니다.',
+    },
+  ],
+  stepsTitle: '이용 방법',
+  steps: [
+    { id: '1', title: '할인 링크 열기', body: '아래 제휴사 버튼을 눌러 유심사로 이동합니다.' },
+    { id: '2', title: '요금제 고르기', body: '나라·일수·용량을 유심사에서 선택하고 결제합니다.' },
+    { id: '3', title: '개통·설치', body: 'eSIM 설치·문의는 유심사 안내를 따르면 됩니다.' },
+  ],
+  footerNote:
+    '요금·결제·개통·환불은 제휴사 정책을 따릅니다. 표시 할인은 제휴 기간·조건에 따라 달라질 수 있습니다.',
+} as const;
 
 /** AIRPICK VERIFIED — 홈 띠·비교 섹션·선정 기준 공통 */
 export const AIRPICK_VERIFIED = {
@@ -57,7 +96,7 @@ export const AIRPICK_VERIFIED = {
   eyebrow: '공식 파트너',
   homeLine: '에어픽이 직접 확인한 공식 파트너',
   criteriaCta: '선정 기준 보기',
-  criteriaHref: '/guides/partner-vs-external/#verified',
+  criteriaHref: '/partners/',
   checklist: [
     '사업자 확인',
     '보험 가입 확인',
@@ -71,27 +110,18 @@ export const AIRPICK_VERIFIED = {
 } as const;
 
 export const PARKING_PARTNER_SECTION = {
-  title: 'AIRPICK VERIFIED',
-  titleRating: 'AIRPICK VERIFIED',
+  title: '공식 파트너',
+  titleRating: '공식 파트너',
   subtitleNote: '에어픽이 직접 확인한 공식 파트너 · 실후기·보험·주차환경',
 } as const;
 
-/** 비교 섹션 타이틀 · 검증 파트너 수 */
-export const parkingPartnerSectionTitle = (count: number) =>
-  `AIRPICK VERIFIED ${count}곳`;
-
-export const PARKING_EXTERNAL_SECTION = {
-  title: '에어픽 미입점 · 시장 참고 가격',
-  subtitleNote: '참고 요금만 제공 · 보험·주차장 위치는 에어픽이 보증하지 않음',
-  /** 카드·섹션용 한 줄 */
-  cardNote: '시장 참고 가격 · 보험·주차장 위치는 보증하지 않습니다',
-} as const;
+/** 비교 섹션 타이틀 · 공식 파트너 수 */
+export const parkingPartnerSectionTitle = (count: number) => `공식 파트너 ${count}곳`;
 
 /** 주차 비교 탭 하단 · 빈 결과 안내 등 내부 링크 */
 export const PARKING_COMPARE_GUIDE_LINKS = [
   { href: '/guides/parking-compare/', label: '주차대행, 어떻게 비교·예약하나요?' },
   { href: '/guides/parking-insurance/', label: '보험, 예약 전에 뭘 확인하나요?' },
-  { href: '/guides/partner-vs-external/', label: '입점과 미입점, 뭐가 다른가요?' },
   { href: '/guides/official-vs-private/', label: '공식 vs 사설, 뭐가 다른가요?' },
   { href: '/guides/t1-t2-unseo/', label: 'T1·T2·운서역, 어떻게 고르나요?' },
   { href: '/faq/', label: '자주 묻는 질문' },
@@ -141,8 +171,8 @@ export const HOME_TRUST_CRITERIA = {
       body: '입고 사진과 주차 위치를 예약 후 확인할 수 있습니다. 맡기는 순간부터 기록이 남습니다.',
     },
   ],
-  criteriaCta: '입점 기준 자세히',
-  criteriaHref: '/guides/partner-vs-external/#verified',
+  criteriaCta: '입점 업체 보기',
+  criteriaHref: '/partners/',
 } as const;
 
 /**
@@ -228,13 +258,13 @@ export const HOME_TRAVEL_SERVICES = {
   eyebrow: 'TRAVEL SERVICES',
   title: '여행 준비도 에어픽에서',
   lead: '주차 예약 후, 출국 전에 필요한 여행 서비스를 이어서 준비할 수 있습니다.',
-  esimCta: '이심 요금 보기',
+  esimCta: '이심 제휴 할인',
 } as const;
 
 /** 홈 · 후킹 CTA — 일정은 각 탭에서 */
 export const HOME_HOOK_CTA = {
   parking: '검증 파트너 예약하기',
-  esim: '이심 요금 보기',
+  esim: '이심 제휴 할인',
 } as const;
 
 /** @deprecated 홈 일정 게이트웨이 제거 후 미사용에 가깝음 */
@@ -338,7 +368,7 @@ export const HOME_NEXT_PREP = {
   esim: {
     title: '이심',
     body: '출국 전 데이터도 준비하세요.',
-    cta: '이심 요금 보기',
+    cta: '이심 제휴 할인',
     href: '/esim',
   },
   reserve: {
@@ -401,9 +431,9 @@ export const HOME_EYEBROW = HOME_EYEBROW_PREMIUM;
 export const HOME_PLATFORM_SUB = '';
 
 export const HOME_ESIM = {
-  headline: '이심 비교 · 제휴 요금',
-  highlights: ['제휴사별 참고 요금', '나라·용량·일수', '낮은 가격순 정렬'],
-  cta: '이심 요금 비교하기',
+  headline: '이심 제휴 할인',
+  highlights: ['제휴사 할인 링크', '구매·개통은 제휴사에서', '에어픽 내 결제 없음'],
+  cta: '이심 제휴 할인 보기',
 } as const;
 
 export const PARTNER_PROMISE = '에어픽 제휴 업체는 맡긴 뒤에도 보입니다';

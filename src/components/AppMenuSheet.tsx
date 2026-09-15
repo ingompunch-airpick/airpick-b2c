@@ -22,7 +22,6 @@ const MENU_ICONS: Record<string, typeof CircleHelp> = {
   '/parking': LayoutGrid,
   '/esim': Smartphone,
   '/guides/': BookOpen,
-  '/guides/partner-vs-external/': Store,
   '/guides/parking-insurance/': ShieldCheck,
   '/partners/': Store,
   '/faq/': CircleHelp,

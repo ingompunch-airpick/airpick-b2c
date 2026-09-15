@@ -20,7 +20,7 @@ export const SITE_NAV_SECTIONS = [
     title: '이용 안내',
     items: [
       { href: '/parking', label: '주차대행 비교' },
-      { href: '/esim', label: '이심(eSIM) 비교' },
+      { href: '/esim', label: '이심(eSIM) 제휴 할인' },
       { href: '/guides/', label: '가이드' },
       { href: '/faq/', label: 'FAQ', openInApp: 'faq' },
     ],
@@ -30,7 +30,6 @@ export const SITE_NAV_SECTIONS = [
     title: '입점·신뢰',
     items: [
       { href: '/partners/', label: '입점 업체' },
-      { href: '/guides/partner-vs-external/', label: '입점과 미입점, 뭐가 다른가요?' },
       { href: '/guides/parking-insurance/', label: '보험, 예약 전에 뭘 확인하나요?' },
     ],
   },

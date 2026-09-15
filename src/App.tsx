@@ -20,7 +20,7 @@ import {
   trackTabView,
 } from './lib/analytics';
 import HomePage from './pages/HomePage';
-import type { AppTab, BookingSearch, Company, EsimSearch } from './types';
+import type { AppTab, BookingSearch, Company } from './types';
 import {
   ESIM_COMPARE_DOCUMENT_TITLE,
   PARKING_COMPARE_DOCUMENT_TITLE,
@@ -29,7 +29,6 @@ import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
   isSeoDocumentPath,
-  readEsimCountryCode,
   readInitialTab,
   readParkingCompanyId,
   readReviewReservationId,
@@ -37,7 +36,6 @@ import {
   tabFromPathname,
 } from './utils/appPath';
 import { defaultBookingSearch } from './utils/dates';
-import { defaultEsimSearch } from './utils/esimSearch';
 import { calculatePrice, applyAffiliateCustomerDiscount } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 import { useAffiliateOffer } from './context/AffiliateContext';
@@ -81,10 +79,6 @@ export default function App() {
     shouldShowBrandIntroOnLaunch(readInitialTab())
   );
   const [search, setSearch] = useState<BookingSearch>(defaultBookingSearch);
-  const [esimSearch, setEsimSearch] = useState<EsimSearch>(() => {
-    const fromUrl = readEsimCountryCode();
-    return fromUrl ? { ...defaultEsimSearch, countryCode: fromUrl } : defaultEsimSearch;
-  });
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [partnerDetail, setPartnerDetail] = useState<{ company: Company; price: number } | null>(
@@ -235,7 +229,7 @@ export default function App() {
       );
     }
     if (tab === 'esim') {
-      return <EsimPage search={esimSearch} onSearchChange={setEsimSearch} />;
+      return <EsimPage />;
     }
     return (
       <MyPage
@@ -263,7 +257,7 @@ export default function App() {
         }}
       />
     );
-  }, [tab, search, esimSearch, companies, lastReservationId, reviewReservationId]);
+  }, [tab, search, companies, lastReservationId, reviewReservationId]);
 
   const pageFallback = tabPageFallback(tab);
 

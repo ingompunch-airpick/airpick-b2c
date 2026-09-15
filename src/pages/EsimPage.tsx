@@ -1,136 +1,177 @@
-import { ExternalLink } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import EsimProductCard from '../components/EsimProductCard';
-import EsimSearchPanel from '../components/EsimSearchPanel';
-import { PRICE_DISCLAIMER } from '../constants/complianceCopy';
-import { ESIM_OFFERS_UPDATED_AT } from '../config/esimPartnerOffers';
-import { getEsimCountryName } from '../config/esimCountries';
-import { compareEsimOffers, openPartnerOffer } from '../lib/esim';
-import type { EsimProduct, EsimSearch } from '../types';
+import { ExternalLink, Headset, Percent, Plane, ShieldCheck, Smartphone } from 'lucide-react';
 import {
-  formatEsimDataPlan,
-  formatEsimOffersUpdatedAt,
-  formatEsimSearchSummary,
-  formatEsimSimType,
-} from '../utils/esimLabels';
+  esimAffiliateCtaLabel,
+  isEsimPromoActive,
+  listActiveEsimAffiliatePartners,
+  type EsimAffiliatePartner,
+} from '../config/esimAffiliatePartners';
+import { ESIM_HUB } from '../constants/marketing';
+import { openEsimAffiliatePartner } from '../lib/esim';
 
-export default function EsimPage({
-  search,
-  onSearchChange,
-}: {
-  search: EsimSearch;
-  onSearchChange: (next: EsimSearch) => void;
-}) {
-  const [selected, setSelected] = useState<EsimProduct | null>(null);
+const WHY_ICONS = {
+  discount: Percent,
+  ready: Plane,
+  partner: ShieldCheck,
+} as const;
 
-  const offers = useMemo(() => compareEsimOffers(search), [search]);
-  const updatedLabel = formatEsimOffersUpdatedAt(ESIM_OFFERS_UPDATED_AT);
-
-  const handleGoPartner = () => {
-    if (!selected) return;
-    openPartnerOffer(selected);
-    setSelected(null);
-  };
+function PartnerPromoCard({ partner }: { partner: EsimAffiliatePartner }) {
+  const promoOn = isEsimPromoActive(partner);
+  const cta = esimAffiliateCtaLabel(partner);
+  const pct = partner.discountPercent;
 
   return (
-    <div className="space-y-5">
-      <p className="px-1 text-[11px] font-medium leading-relaxed text-muted">{PRICE_DISCLAIMER}</p>
-
-      <EsimSearchPanel search={search} onChange={onSearchChange} />
-
-      <div className="flex items-start justify-between gap-3 px-1">
-        <div className="min-w-0">
-          <p className="text-xs font-medium text-muted">{formatEsimSearchSummary(search)}</p>
-          {offers.length > 0 && (
-            <p className="mt-1 text-xs font-bold text-ink">{offers.length}곳 · 가격 낮은 순</p>
-          )}
+    <section className="overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0f1a2e] via-[#16233d] to-[#1a2744] text-white shadow-[0_12px_36px_rgba(15,26,46,0.22)]">
+      <div className="relative px-5 pb-5 pt-6">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-6 -top-8 h-36 w-36 rounded-full bg-[#c9a244]/15 blur-2xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center justify-center opacity-[0.14]"
+        >
+          <Smartphone size={120} strokeWidth={1.25} />
         </div>
-        {updatedLabel && (
-          <p className="shrink-0 pt-0.5 text-right text-[10px] font-medium leading-snug text-muted">
-            마지막 수정
-            <br />
-            <span className="tabular-nums text-muted-light">{updatedLabel}</span>
-          </p>
-        )}
-      </div>
 
-      {offers.length === 0 ? (
-        <div className="space-y-3 rounded-2xl bg-neutral-50 p-8 text-center text-sm text-muted ring-1 ring-[#0f1a2e]/10">
-          <p>선택하신 조건의 제휴 요금이 아직 없습니다.</p>
-          <p className="text-xs">다른 용량·일수를 선택하거나, 초보 가이드를 확인해 보세요.</p>
-          <ul className="mx-auto max-w-xs space-y-1.5 text-left text-xs font-semibold text-[#0f1a2e]">
-            <li>
-              <a href="/guides/esim-beginner/" className="underline-offset-2 hover:underline">
-                유심·이심 초보 가이드
-              </a>
-            </li>
-            <li>
-              <a href="/guides/" className="underline-offset-2 hover:underline">
-                가이드 모음
-              </a>
-            </li>
-            <li>
-              <a href="/faq/" className="underline-offset-2 hover:underline">
-                자주 묻는 질문
-              </a>
-            </li>
-          </ul>
+        <div className="relative">
+          {promoOn && pct != null ? (
+            <p className="inline-flex items-center rounded-full bg-[#c9a244]/20 px-2.5 py-1 text-[11px] font-bold tracking-wide text-[#e8d5a3] ring-1 ring-[#c9a244]/35">
+              에어픽 제휴 · {pct}% 할인
+              {partner.promoPeriodLabel ? ` · ${partner.promoPeriodLabel}` : ''}
+            </p>
+          ) : (
+            <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white/80 ring-1 ring-white/15">
+              에어픽 제휴 · {partner.name}
+            </p>
+          )}
+
+          <h2 className="mt-3 text-[1.35rem] font-bold leading-snug tracking-tight">
+            {promoOn && pct != null ? (
+              <>
+                {partner.name}
+                <span className="text-[#e8d5a3]">{pct}%</span> 할인으로
+                <br />
+                해외 데이터를 준비하세요
+              </>
+            ) : (
+              <>
+                {partner.name}에서
+                <br />
+                해외 데이터를 준비하세요
+              </>
+            )}
+          </h2>
+          <p className="mt-2 max-w-[18rem] text-[12px] font-medium leading-relaxed text-white/65">
+            {partner.note ?? '에어픽 × 유심사 프로모션'}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => openEsimAffiliatePartner(partner)}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#c9a244] py-3.5 text-[15px] font-bold text-[#0f1a2e] shadow-[0_8px_20px_rgba(201,162,68,0.35)] transition hover:bg-[#d4b15a]"
+          >
+            {cta}
+            <ExternalLink size={16} strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function EsimPage() {
+  const partners = listActiveEsimAffiliatePartners();
+
+  return (
+    <div className="space-y-6">
+      <header className="px-0.5">
+        <p className="text-[11px] font-bold tracking-[0.14em] text-[#c9a244]">
+          {ESIM_HUB.cobrand}
+        </p>
+        <h1 className="mt-1 text-[1.65rem] font-bold tracking-tight text-[#0f1a2e]">
+          {ESIM_HUB.title}
+        </h1>
+        <p className="mt-1.5 text-[13px] font-semibold leading-relaxed text-[#0f1a2e]/70">
+          {ESIM_HUB.cobrandKo}{' '}
+          <span className="text-[#c9a244]">{ESIM_HUB.promoLabel}</span>
+        </p>
+      </header>
+
+      {partners.length === 0 ? (
+        <div className="rounded-2xl bg-neutral-50 p-8 text-center text-sm text-muted ring-1 ring-[#0f1a2e]/10">
+          <p>제휴 할인 링크를 준비 중입니다.</p>
         </div>
       ) : (
-        <div className="space-y-2.5">
-          {offers.map((product, index) => (
-            <EsimProductCard
-              key={product.id}
-              product={product}
-              rank={index + 1}
-              onSelect={() => setSelected(product)}
-            />
+        <div className="space-y-3">
+          {partners.map((partner) => (
+            <PartnerPromoCard key={partner.id} partner={partner} />
           ))}
         </div>
       )}
 
-      {selected && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-[#0f1a2e]/45 p-4 backdrop-blur-sm sm:items-center">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-5 shadow-xl ring-1 ring-[#0f1a2e]/10">
-            <p className="text-xs font-bold text-[#0f1a2e]">
-              {formatEsimSimType(selected.type)} ·{' '}
-              {selected.region || getEsimCountryName(selected.countryCode)}
-            </p>
-            <h2 className="mt-1 text-lg font-bold text-ink">{selected.partnerName}</h2>
-            <p className="mt-1 text-sm text-muted">
-              {formatEsimDataPlan(selected.dataPlan)} · {selected.days}일
-            </p>
-            {selected.description && (
-              <p className="mt-2 text-sm text-muted">{selected.description}</p>
-            )}
-            <p className="mt-3 text-xl font-bold text-[#0f1a2e] tabular-nums">
-              {selected.price.toLocaleString()}원
-              <span className="ml-1 text-sm font-semibold text-muted">참고가</span>
-            </p>
-            <p className="mt-2 text-[11px] font-medium leading-relaxed text-muted">
-              제휴사 <span className="font-bold text-ink">{selected.partnerName}</span>
-              에서 최종 요금·결제·개통이 진행됩니다.
-            </p>
-            <div className="mt-5 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setSelected(null)}
-                className="flex-1 rounded-xl bg-neutral-50 py-3 text-sm font-bold text-ink ring-1 ring-[#0f1a2e]/10"
+      <section className="space-y-3">
+        <h2 className="px-0.5 text-center text-[15px] font-bold text-[#0f1a2e]">
+          {ESIM_HUB.whyTitle}
+        </h2>
+        <ul className="overflow-hidden rounded-[1.5rem] bg-white ring-1 ring-[#0f1a2e]/10">
+          {ESIM_HUB.whyItems.map((item, index) => {
+            const Icon = WHY_ICONS[item.id as keyof typeof WHY_ICONS] ?? Headset;
+            return (
+              <li
+                key={item.id}
+                className={
+                  index === 0
+                    ? 'flex gap-3.5 px-4 py-4'
+                    : 'flex gap-3.5 border-t border-[#0f1a2e]/8 px-4 py-4'
+                }
               >
-                닫기
-              </button>
-              <button
-                type="button"
-                onClick={handleGoPartner}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-3 text-sm font-bold text-white"
-              >
-                제휴사에서 보기
-                <ExternalLink size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0f1a2e]/[0.06] text-[#0f1a2e]">
+                  <Icon size={18} strokeWidth={2.25} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold text-[#0f1a2e]">{item.title}</p>
+                  <p className="mt-0.5 text-[12px] font-medium leading-relaxed text-muted">{item.body}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="px-0.5 text-[15px] font-bold text-[#0f1a2e]">{ESIM_HUB.stepsTitle}</h2>
+        <ol className="space-y-2.5">
+          {ESIM_HUB.steps.map((step) => (
+            <li
+              key={step.id}
+              className="flex gap-3 rounded-2xl bg-neutral-50 px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/8"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0f1a2e] text-[11px] font-bold text-white">
+                {step.id}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[13px] font-bold text-[#0f1a2e]">{step.title}</p>
+                <p className="mt-0.5 text-[12px] font-medium leading-relaxed text-muted">{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <p className="px-0.5 text-[11px] font-medium leading-relaxed text-muted">{ESIM_HUB.footerNote}</p>
+
+      <ul className="space-y-1.5 px-0.5 pb-1 text-xs font-semibold text-[#0f1a2e]">
+        <li>
+          <a href="/guides/esim-beginner/" className="underline-offset-2 hover:underline">
+            해외여행 이심(eSIM), 처음이면 뭐부터?
+          </a>
+        </li>
+        <li>
+          <a href="/faq/" className="underline-offset-2 hover:underline">
+            자주 묻는 질문
+          </a>
+        </li>
+      </ul>
     </div>
   );
 }

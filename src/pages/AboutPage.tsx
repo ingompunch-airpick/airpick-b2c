@@ -4,7 +4,7 @@ import {
   AIRPICK_DEFINITION,
   AIRPICK_SERVICES,
   COMPANY_LEGAL,
-  PARTNER_VS_EXTERNAL,
+  PARTNER_BENEFITS,
 } from '../constants/companyLegal';
 import { listOfficialChannelLinks } from '../constants/officialChannels';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
@@ -39,8 +39,8 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           </div>
           <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{AIRPICK_DEFINITION}</p>
           <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
-            입점 업체는 비교·예약 후 주차 위치·입고 사진·보험을 예약 탭에서 확인할 수 있고, 미입점
-            업체는 가격 비교만 제공하며 보험·주차장 위치는 보증하지 않습니다.
+            에어픽이 확인한 공식 파트너만 비교·예약합니다. 예약 후 주차 위치·입고 사진·보험을 예약
+            탭에서 확인할 수 있습니다.
           </p>
           <a
             href={COMPANY_LEGAL.siteUrl}
@@ -83,18 +83,8 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           </ul>
         </Section>
 
-        <Section title="입점 업체와 미입점 업체">
-          <div className="space-y-3">
-            <CompareBlock
-              title={PARTNER_VS_EXTERNAL.partner.title}
-              accent
-              points={PARTNER_VS_EXTERNAL.partner.points}
-            />
-            <CompareBlock
-              title={PARTNER_VS_EXTERNAL.external.title}
-              points={PARTNER_VS_EXTERNAL.external.points}
-            />
-          </div>
+        <Section title="공식 파트너">
+          <CompareBlock title={PARTNER_BENEFITS.title} accent points={PARTNER_BENEFITS.points} />
         </Section>
 
         <Section title="고객센터 · 공식 채널">

@@ -368,7 +368,7 @@ ${reviewsSectionHtml(reviewBundle)}
         <h2>함께 보면 좋은 글</h2>
         <ul>
           <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
-          <li><a href="/guides/partner-vs-external/">입점과 미입점, 뭐가 다른가요?</a></li>
+          <li><a href="/guides/parking-insurance/">보험, 예약 전에 뭘 확인하나요?</a></li>
           <li><a href="/guides/official-vs-private/">공식 vs 사설, 뭐가 다른가요?</a></li>
           <li><a href="/guides/">가이드 모음</a></li>
           <li><a href="/parking">전체 업체 요금 비교</a></li>
@@ -484,7 +484,7 @@ ${JSON.stringify(graph, null, 2)}
         <p class="answer"><strong>${esc(answer)}</strong></p>
         <p>${esc(AIRPICK_DEFINITION)} 아래 입점 업체를 고른 뒤, 일정 넣어 비교·예약하세요.</p>
         <a class="cta" href="/parking">주차대행 비교 · 예약</a>
-        <a class="cta secondary" href="/guides/partner-vs-external/">입점과 미입점, 뭐가 다른가요?</a>
+        <a class="cta secondary" href="/guides/parking-insurance/">보험 확인법</a>
       </header>
 
       <section class="section">
@@ -498,7 +498,7 @@ ${JSON.stringify(graph, null, 2)}
         <h2>근거 · 사실</h2>
         <ul>
           <li>${esc(AIRPICK_DEFINITION)}</li>
-          <li>이 목록의 공개 입점 페이지: <strong>${partners.length}곳</strong> (미입점은 여기 없음)</li>
+          <li>이 목록의 공개 입점 페이지: <strong>${partners.length}곳</strong></li>
           <li>요금·가짜 별점은 이 페이지에 박지 않습니다. 실후기는 각 업체 페이지·앱에만 노출됩니다.</li>
           <li>공식 사실: <a href="/facts/">사실 확인</a></li>
         </ul>

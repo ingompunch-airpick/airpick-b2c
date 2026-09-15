@@ -1,13 +1,13 @@
-import type { FaqCategory } from './support';
 import { ESIM_TAB_LABEL } from './marketing';
 import { SHORT_ANSWERS } from './officialAnswers';
+import type { FaqCategory } from './support';
 
-/** 초보자 유심/eSIM 이용 가이드 — 예약 탭 */
+/** 초보자 이심 이용 가이드 — 예약 탭 */
 export const ESIM_GUIDE_STEPS = [
   {
-    id: 'compare',
-    title: `1. ${ESIM_TAB_LABEL} 탭에서 요금 비교`,
-    body: `하단 「${ESIM_TAB_LABEL}」 탭 → eSIM·유심, 나라, 용량, 일수를 선택하면 제휴사별 가격이 낮은 순으로 표시됩니다.`,
+    id: 'partner',
+    title: `1. ${ESIM_TAB_LABEL} 탭에서 제휴 할인 링크`,
+    body: `하단 「${ESIM_TAB_LABEL}」 탭에서 제휴사 할인 링크로 이동합니다. 에어픽 안에서 요금 비교·결제하지 않습니다.`,
   },
   {
     id: 'esim-vs-usim',
@@ -16,8 +16,8 @@ export const ESIM_GUIDE_STEPS = [
   },
   {
     id: 'purchase',
-    title: '3. 제휴사에서 구매',
-    body: '에어픽은 가격 비교만 제공합니다. 카드를 누르면 해당 제휴사 사이트로 이동해 주문·결제·개통을 진행합니다.',
+    title: '3. 제휴사에서 구매·개통',
+    body: '할인 링크로 제휴사 사이트에 들어가 요금제를 고르고 결제·개통합니다. 주문·환불·개통 문의는 해당 제휴사로 하세요.',
   },
   {
     id: 'after',
@@ -35,7 +35,7 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
       question: '에어픽에서 이심(eSIM)을 바로 구매할 수 있나요?',
       shortAnswer: SHORT_ANSWERS.esimBuy,
       answer:
-        '아니요. 에어픽은 제휴 요금 비교만 제공합니다. 원하는 요금제를 선택한 뒤 제휴사 사이트에서 구매·개통해 주세요.',
+        '아니요. 에어픽은 제휴 할인 링크만 안내합니다. 구매·개통은 제휴사 사이트에서 진행해 주세요.',
     },
     {
       id: 'esim-diff',
@@ -46,17 +46,10 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
     },
     {
       id: 'esim-price',
-      question: '에어픽에 표시된 이심(eSIM) 가격이 최종 금액인가요?',
+      question: '에어픽에 표시된 이심(eSIM) 할인이 최종 금액인가요?',
       shortAnswer: SHORT_ANSWERS.esimPrice,
       answer:
-        '제휴사가 제공한 참고 요금입니다. 제휴사 사이트에서 쿠폰·환율·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요.',
-    },
-    {
-      id: 'esim-update',
-      question: '이심(eSIM) 요금은 언제 업데이트되나요?',
-      shortAnswer:
-        '이심 비교 탭 상단 「마지막 수정」일을 보세요. 제휴 요금은 수시로 바뀔 수 있습니다.',
-      answer: `${ESIM_TAB_LABEL} 탭 상단 「마지막 수정」 날짜를 참고해 주세요. 제휴사 요금은 수시로 변동될 수 있습니다.`,
+        '제휴사 사이트에서 적용되는 할인·요금입니다. 쿠폰·옵션에 따라 달라질 수 있으니 결제 전 최종 금액을 확인해 주세요.',
     },
     {
       id: 'esim-support',

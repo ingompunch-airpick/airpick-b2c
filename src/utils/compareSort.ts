@@ -64,18 +64,13 @@ export function calculateComparePrice(
     );
   }
 
-  /**
-   * 발렛비 반영:
-   * - 미입점(홈페이지 이동): 항상 가격에 포함
-   * - 입점(에어픽 예약): 손님이 대면(faceToFace) 선택 시에만 포함
-   */
+  /** 발렛비 — 대면(faceToFace) 선택 시에만 포함 */
   const valet = companyValetFee(company, search.terminal);
-  if (valet != null && (!isAirpickPartner(company) || search.faceToFace)) {
+  if (valet != null && search.faceToFace) {
     base += valet;
   }
 
-  /** 입점 예약에만 제휴 할인 적용 (미입점 참고가는 원가 유지) */
-  if (isAirpickPartner(company) && affiliateDiscountWon > 0) {
+  if (affiliateDiscountWon > 0) {
     return applyAffiliateCustomerDiscount(base, affiliateDiscountWon);
   }
   return base;
@@ -136,12 +131,7 @@ function sortByPrice(
   );
 }
 
-export interface ParkingCompareSections {
-  partners: PricedCompany[];
-  externals: PricedCompany[];
-}
-
-/** 대면 희망 시: 대면 가능 입점 업체를 상단으로(그 안에서 최저가순) */
+/** 대면 희망 시: 대면 가능 업체를 상단으로(그 안에서 최저가순) */
 function sortPartnersForSearch(
   items: PricedCompany[],
   search: BookingSearch,
@@ -163,20 +153,17 @@ export function sectionHasFaceToFace(items: PricedCompany[], terminal: Terminal)
   return items.some((item) => companyValetFee(item.company, terminal) != null);
 }
 
-/**
- * 입점 업체 먼저(그룹 내 최저가순) → 그 아래 비입점 업체.
- * 입점만 대면 희망 시 대면 가능 업체를 상단으로 정렬한다.
- */
-export function buildParkingCompareSections(
+/** 공식 파트너만 · 가격순 (대면 희망 시 대면 가능 우선) */
+export function buildPartnerPriceList(
   companies: Company[],
   search: BookingSearch,
   reviewSnapshots: Record<string, CompanyReviewSnapshot> = {},
   affiliateDiscountWon = 0
-): ParkingCompareSections {
-  const priced = priceCompaniesForSearch(companies, search, affiliateDiscountWon);
-  const partners = sortPartnersForSearch(priced.filter((item) => isAirpickPartner(item.company)), search, reviewSnapshots);
-  const externals = sortByPrice(priced.filter((item) => !isAirpickPartner(item.company)), reviewSnapshots);
-  return { partners, externals };
+): PricedCompany[] {
+  const priced = priceCompaniesForSearch(companies, search, affiliateDiscountWon).filter((item) =>
+    isAirpickPartner(item.company)
+  );
+  return sortPartnersForSearch(priced, search, reviewSnapshots);
 }
 
 /** 입점 업체만 · 실후기 평점 높은 순 (후기 없으면 하단) */

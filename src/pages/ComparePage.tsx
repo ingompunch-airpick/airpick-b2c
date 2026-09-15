@@ -1,26 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
 import CompanyCard from '../components/CompanyCard';
 import SearchPanel from '../components/SearchPanel';
-import {
-  AIRPICK_VERIFIED,
-  PARKING_EXTERNAL_SECTION,
-  PARKING_PARTNER_SECTION,
-  parkingPartnerSectionTitle,
-} from '../constants/marketing';
-import { mergeParkingCompareCompanies, openExternalBooking } from '../lib/parkingCompare';
+import { PARKING_PARTNER_SECTION, parkingPartnerSectionTitle } from '../constants/marketing';
+import { listParkingCompareCompanies } from '../lib/parkingCompare';
 import {
   fetchReviewSnapshotsByCompanyIds,
   type CompanyReviewSnapshot,
 } from '../lib/reviews';
 import type { BookingSearch, Company, CompareSortMode } from '../types';
 import {
-  buildParkingCompareSections,
+  buildPartnerPriceList,
   buildPartnerRatingList,
-  isAirpickPartner,
   type PricedCompany,
 } from '../utils/compareSort';
-import { companyValetFee } from '../utils/parkingType';
 import { useAffiliateOffer } from '../context/AffiliateContext';
 import { cn } from '../utils/cn';
 
@@ -55,87 +47,40 @@ function SortTabs({
   );
 }
 
-function CompareSection({
+function PartnerList({
   title,
   subtitle,
   items,
   onSelect,
-  terminal,
   reviewSnapshots,
-  collapsible = false,
-  defaultOpen = true,
-  muted = false,
 }: {
   title: string;
   subtitle: string;
   items: PricedCompany[];
   onSelect: (company: Company, price: number, soldOut: boolean) => void;
-  terminal?: BookingSearch['terminal'];
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
-  collapsible?: boolean;
-  defaultOpen?: boolean;
-  muted?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-
   if (items.length === 0) return null;
-
-  const header = (
-    <div className={cn('px-1', muted && 'opacity-80')}>
-      <div className="flex items-center justify-between gap-2">
-        <h3 className={cn('text-sm font-bold', muted ? 'text-muted' : 'text-ink')}>{title}</h3>
-        {collapsible ? (
-          <ChevronDown
-            size={16}
-            className={cn(
-              'shrink-0 text-muted transition-transform',
-              open && 'rotate-180'
-            )}
-            aria-hidden
-          />
-        ) : null}
-      </div>
-      <p className="text-xs font-medium text-muted">{subtitle}</p>
-    </div>
-  );
-
-  const list = (
-    <div className="space-y-3">
-      {items.map(({ company, price, soldOut }) => (
-        <CompanyCard
-          key={company.id}
-          company={company}
-          price={price}
-          layout="list"
-          soldOut={soldOut === true}
-          onSelect={() => onSelect(company, price, soldOut === true)}
-          reviewSnapshot={reviewSnapshots[company.id]}
-          valetFee={terminal ? companyValetFee(company, terminal) : null}
-        />
-      ))}
-    </div>
-  );
-
-  if (collapsible) {
-    return (
-      <section className="space-y-3">
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="w-full rounded-xl bg-neutral-50 px-2 py-2.5 text-left ring-1 ring-[#0f1a2e]/10"
-          aria-expanded={open}
-        >
-          {header}
-        </button>
-        {open ? list : null}
-      </section>
-    );
-  }
 
   return (
     <section className="space-y-3">
-      {header}
-      {list}
+      <div className="px-1">
+        <h3 className="text-sm font-bold text-ink">{title}</h3>
+        <p className="text-xs font-medium text-muted">{subtitle}</p>
+      </div>
+      <div className="space-y-3">
+        {items.map(({ company, price, soldOut }) => (
+          <CompanyCard
+            key={company.id}
+            company={company}
+            price={price}
+            layout="list"
+            soldOut={soldOut === true}
+            onSelect={() => onSelect(company, price, soldOut === true)}
+            reviewSnapshot={reviewSnapshots[company.id]}
+          />
+        ))}
+      </div>
     </section>
   );
 }
@@ -157,24 +102,23 @@ export default function ComparePage({
   );
   const { offer: affiliateOffer } = useAffiliateOffer();
   const affiliateDiscountWon = affiliateOffer?.customerDiscountWon ?? 0;
-  const merged = mergeParkingCompareCompanies(companies);
+  const partners = useMemo(() => listParkingCompareCompanies(companies), [companies]);
   const compareSearch = useMemo(() => ({ ...search, faceToFace: false as const }), [search]);
-  const { partners, externals } = useMemo(
-    () =>
-      buildParkingCompareSections(merged, compareSearch, reviewSnapshots, affiliateDiscountWon),
-    [merged, compareSearch, reviewSnapshots, affiliateDiscountWon]
+
+  const priceList = useMemo(
+    () => buildPartnerPriceList(partners, compareSearch, reviewSnapshots, affiliateDiscountWon),
+    [partners, compareSearch, reviewSnapshots, affiliateDiscountWon]
   );
-  const totalCount = partners.length + externals.length;
+  const ratingList = useMemo(
+    () => buildPartnerRatingList(partners, compareSearch, reviewSnapshots, affiliateDiscountWon),
+    [partners, compareSearch, reviewSnapshots, affiliateDiscountWon]
+  );
+  const list = sortMode === 'price' ? priceList : ratingList;
+  const totalCount = list.length;
 
   const partnerIds = useMemo(
-    () => [...new Set(partners.map(({ company }) => company.id))],
+    () => [...new Set(partners.map((company) => company.id))],
     [partners]
-  );
-
-  const ratingPartners = useMemo(
-    () =>
-      buildPartnerRatingList(merged, compareSearch, reviewSnapshots, affiliateDiscountWon),
-    [merged, compareSearch, reviewSnapshots, affiliateDiscountWon]
   );
 
   useEffect(() => {
@@ -193,11 +137,7 @@ export default function ComparePage({
 
   const handleSelect = (company: Company, price: number, soldOut: boolean) => {
     if (soldOut) return;
-    if (isAirpickPartner(company)) {
-      onBookOnAirpick(company, price);
-    } else {
-      openExternalBooking(company);
-    }
+    onBookOnAirpick(company, price);
   };
 
   return (
@@ -206,7 +146,7 @@ export default function ComparePage({
 
       {affiliateOffer && affiliateDiscountWon > 0 ? (
         <p className="rounded-xl bg-[#0f1a2e] px-3.5 py-2.5 text-[12px] font-semibold leading-relaxed text-white">
-          제휴 할인 적용 중 · 입점 예약{' '}
+          제휴 할인 적용 중 ·{' '}
           <span className="text-[#c9a962]">
             −{affiliateDiscountWon.toLocaleString('ko-KR')}원
           </span>
@@ -224,51 +164,14 @@ export default function ComparePage({
           </p>
           <p className="text-xs">실내/야외를 바꿔 보거나, 일정을 조정해 주세요.</p>
         </div>
-      ) : sortMode === 'price' ? (
-        <>
-          <CompareSection
-            title={parkingPartnerSectionTitle(partners.length)}
-            subtitle={PARKING_PARTNER_SECTION.subtitleNote}
-            items={partners}
-            onSelect={handleSelect}
-            reviewSnapshots={reviewSnapshots}
-            terminal={search.terminal}
-          />
-
-          <CompareSection
-            title={PARKING_EXTERNAL_SECTION.title}
-            subtitle={`${PARKING_EXTERNAL_SECTION.subtitleNote} · ${externals.length}곳`}
-            items={externals}
-            onSelect={handleSelect}
-            reviewSnapshots={reviewSnapshots}
-            terminal={search.terminal}
-            collapsible
-            defaultOpen={false}
-            muted
-          />
-        </>
       ) : (
-        <>
-          {ratingPartners.length === 0 ? (
-            <p className="rounded-2xl bg-neutral-50 p-8 text-center text-sm text-muted shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
-              추천순은 {AIRPICK_VERIFIED.label} 파트너만 제공합니다.
-            </p>
-          ) : (
-            <CompareSection
-              title={parkingPartnerSectionTitle(ratingPartners.length)}
-              subtitle={PARKING_PARTNER_SECTION.subtitleNote}
-              items={ratingPartners}
-              onSelect={handleSelect}
-              reviewSnapshots={reviewSnapshots}
-              terminal={search.terminal}
-            />
-          )}
-          {externals.length > 0 ? (
-            <p className="px-1 text-center text-[11px] font-medium text-muted">
-              에어픽 미입점 · 시장 참고 가격은 가격순 탭에서 확인할 수 있어요.
-            </p>
-          ) : null}
-        </>
+        <PartnerList
+          title={parkingPartnerSectionTitle(list.length)}
+          subtitle={PARKING_PARTNER_SECTION.subtitleNote}
+          items={list}
+          onSelect={handleSelect}
+          reviewSnapshots={reviewSnapshots}
+        />
       )}
     </div>
   );

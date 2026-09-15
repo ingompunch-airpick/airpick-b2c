@@ -25,11 +25,11 @@ export default function EsimGuidePage({ onBack }: { onBack: () => void }) {
             </div>
             <div>
               <p className="text-xs font-bold text-brand">초보자 안내</p>
-              <p className="text-sm font-bold text-ink">비교 → 제휴사 구매 → 개통</p>
+              <p className="text-sm font-bold text-ink">제휴 링크 → 구매 → 개통</p>
             </div>
           </div>
           <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
-            에어픽은 여행 데이터 요금을 비교해 드립니다. 구매와 개통은 각 제휴사에서 진행합니다.
+            에어픽은 제휴 할인 링크만 안내합니다. 구매와 개통은 각 제휴사에서 진행합니다.
           </p>
         </section>
 

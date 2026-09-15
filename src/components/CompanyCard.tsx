@@ -1,9 +1,8 @@
-import { ChevronRight, ExternalLink, Star } from 'lucide-react';
-import { PARKING_EXTERNAL_SECTION } from '../constants/marketing';
+import { Star } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { Company } from '../types';
 import { cn } from '../utils/cn';
-import { isAirpickPartner } from '../utils/compareSort';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import TrustBadges from './TrustBadges';
@@ -14,7 +13,6 @@ export default function CompanyCard({
   onSelect,
   layout = 'grid',
   reviewSnapshot,
-  valetFee = null,
   soldOut = false,
 }: {
   company: Company;
@@ -23,13 +21,10 @@ export default function CompanyCard({
   layout?: 'grid' | 'list';
   /** reviews 컬렉션 기준 — 없으면 후기 미표시 */
   reviewSnapshot?: CompanyReviewSnapshot;
-  /** 선택 터미널 발렛비 — null이면 발렛 미제공 (미입점 안내용) */
-  valetFee?: number | null;
   /** 검색 일정 기준 만차·마감 — 흐리게 표시, 선택 불가 */
   soldOut?: boolean;
 }) {
   const name = displayCompanyName(company.name);
-  const partner = isAirpickPartner(company);
   const thumbSrc = companyThumbnailUrl(company.image_url, 128);
 
   if (layout === 'grid') {
@@ -99,19 +94,8 @@ export default function CompanyCard({
           decoding="async"
         />
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <p className="truncate text-base font-bold text-ink">{name}</p>
-            {partner ? (
-              <span className="shrink-0 text-[10px] font-bold tracking-[0.06em] text-[#9a7b3c]">
-                VERIFIED
-              </span>
-            ) : (
-              <span className="shrink-0 rounded-md bg-[#0f1a2e]/[0.06] px-1.5 py-0.5 text-[10px] font-bold text-muted">
-                미입점 · 참고
-              </span>
-            )}
-          </div>
-          {partner && reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null ? (
+          <p className="truncate text-base font-bold text-ink">{name}</p>
+          {reviewSnapshot && reviewSnapshot.count > 0 && reviewSnapshot.averageRating != null ? (
             <div className="mt-2 flex items-end justify-between gap-3">
               <div className="flex min-w-0 items-baseline gap-1.5">
                 <Star size={16} className="shrink-0 fill-amber-400 text-amber-400" />
@@ -126,36 +110,16 @@ export default function CompanyCard({
                 {price.toLocaleString()}원
               </p>
             </div>
-          ) : partner ? (
+          ) : (
             <p className="mt-2 text-lg font-bold tabular-nums text-[#0f1a2e]">
               {price.toLocaleString()}원
             </p>
-          ) : (
-            <>
-              <p className="mt-1 text-[11px] font-medium leading-snug text-muted">
-                {PARKING_EXTERNAL_SECTION.cardNote}
-              </p>
-              <p className="mt-2 text-lg font-bold text-[#0f1a2e] tabular-nums">
-                {price.toLocaleString()}원
-              </p>
-            </>
           )}
-          {partner && (
-            <div className="mt-2">
-              <TrustBadges company={company} />
-            </div>
-          )}
-          {!partner && valetFee != null && valetFee > 0 && (
-            <p className="mt-0.5 text-[11px] font-medium text-muted">
-              발렛비 +{valetFee.toLocaleString()}원 포함
-            </p>
-          )}
+          <div className="mt-2">
+            <TrustBadges company={company} />
+          </div>
         </div>
-        {partner ? (
-          <ChevronRight size={20} className={cn('shrink-0 text-muted-light')} />
-        ) : (
-          <ExternalLink size={18} className={cn('shrink-0 text-muted-light')} />
-        )}
+        <ChevronRight size={20} className="shrink-0 text-muted-light" />
       </div>
 
       {soldOut ? (

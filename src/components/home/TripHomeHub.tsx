@@ -28,7 +28,7 @@ import {
   HOME_TRIP_CONTINUE_CTA,
   HOME_VALET_MODE_NOTE,
 } from '../../constants/marketing';
-import type { AppTab, BookingSearch, EsimSearch, Terminal } from '../../types';
+import type { AppTab, BookingSearch, Terminal } from '../../types';
 import { cn } from '../../utils/cn';
 
 const TRAVEL_FALLBACK_PRESETS = [40, 60, 90, 120] as const;
@@ -51,12 +51,10 @@ export default function TripHomeHub({
   onResultChange,
   onGoTab,
   onPrefillParkingSearch,
-  onPrefillEsimSearch,
 }: {
   onResultChange?: (hasResult: boolean) => void;
   onGoTab?: (tab: AppTab) => void;
   onPrefillParkingSearch?: (patch: Partial<BookingSearch>) => void;
-  onPrefillEsimSearch?: (patch: Partial<EsimSearch>) => void;
 }) {
   const [step, setStep] = useState<'input' | 'result'>('input');
 
@@ -196,11 +194,7 @@ export default function TripHomeHub({
     onGoTab?.('compare');
   };
 
-  const goEsimCompare = () => {
-    onPrefillEsimSearch?.({
-      days: Math.max(1, days),
-      simType: 'esim',
-    });
+  const goEsim = () => {
     onGoTab?.('esim');
   };
 
@@ -263,7 +257,7 @@ export default function TripHomeHub({
               <p className="mt-0.5 text-[11px] font-medium text-[#0f1a2e]/50">{HOME_NEXT_PREP.esim.body}</p>
               <button
                 type="button"
-                onClick={goEsimCompare}
+                onClick={goEsim}
                 className="mt-3 w-full rounded-xl bg-neutral-50 py-2.5 text-[14px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/10"
               >
                 {HOME_NEXT_PREP.esim.cta}

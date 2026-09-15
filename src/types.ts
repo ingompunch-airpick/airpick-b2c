@@ -105,7 +105,7 @@ export interface Company {
   parkingLots?: CompanyParkingLot[];
   /** true(기본): 에어픽 앱에서 바로 예약 · false: 홈페이지 링크만 */
   isAirpickPartner?: boolean;
-  /** 미입점 업체 예약 페이지 */
+  /** 레거시: 외부 예약 URL (미사용) */
   externalBookingUrl?: string;
   /** 업체별 요금 산식 (단일) */
   pricingProfile?: string;
@@ -215,7 +215,7 @@ export interface BookingSearch {
   /** 귀국 터미널 — 없으면 terminal과 동일 */
   arrivalTerminal?: Terminal;
   isIndoor: boolean;
-  /** 신용카드 결제 시 미입점 업체 요금 +10% 반영 */
+  /** 신용카드 결제 시 요금 +10% 반영 (현장 카드) */
   isCardPayment?: boolean;
   /** 입점 업체 대면(출국장 앞 직접 인계) 입고 희망 — 대면 가능 업체 우선·발렛비 합산 */
   faceToFace?: boolean;
@@ -236,33 +236,3 @@ export interface CompanyReview {
   createdAt: string;
 }
 
-export type EsimDataPlan = '500mb' | '1gb' | '2gb' | '3gb' | '4gb' | '5gb' | 'unlimited';
-export type EsimSpeed = 'lte' | '5g';
-export type EsimSimType = 'esim' | 'usim';
-
-/** 유심 탭 필터 — 유형 · 나라 · 용량 · 일수 */
-export interface EsimSearch {
-  simType: EsimSimType;
-  countryCode: string;
-  dataPlan: EsimDataPlan;
-  days: number;
-}
-
-export interface EsimProduct {
-  id: string;
-  /** 제휴사 표시명 */
-  partnerName: string;
-  /** 제휴사 구매·상세 랜딩 URL */
-  partnerUrl: string;
-  name: string;
-  region: string;
-  countryCode: string;
-  dataPlan: EsimDataPlan;
-  speed: EsimSpeed;
-  days: number;
-  /** 비교용 참고가 (제휴사 실결제가와 다를 수 있음) */
-  price: number;
-  type: EsimSimType;
-  description?: string;
-  isActive?: boolean;
-}
