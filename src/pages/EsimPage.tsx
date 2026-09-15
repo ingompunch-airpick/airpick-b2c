@@ -1,4 +1,12 @@
-import { ExternalLink, Headset, Percent, Plane, ShieldCheck, Smartphone } from 'lucide-react';
+import {
+  ExternalLink,
+  Gift,
+  Headset,
+  ShieldCheck,
+  Signal,
+  Smartphone,
+  type LucideIcon,
+} from 'lucide-react';
 import {
   esimAffiliateCtaLabel,
   isEsimPromoActive,
@@ -8,11 +16,12 @@ import {
 import { ESIM_HUB } from '../constants/marketing';
 import { openEsimAffiliatePartner } from '../lib/esim';
 
-const WHY_ICONS = {
-  discount: Percent,
-  ready: Plane,
-  partner: ShieldCheck,
-} as const;
+const WHY_ICONS: Record<(typeof ESIM_HUB.whyItems)[number]['id'], LucideIcon> = {
+  support: Headset,
+  refund: ShieldCheck,
+  stability: Signal,
+  gift: Gift,
+};
 
 function PartnerPromoCard({ partner }: { partner: EsimAffiliatePartner }) {
   const promoOn = isEsimPromoActive(partner);
@@ -109,33 +118,42 @@ export default function EsimPage() {
         </div>
       )}
 
-      <section className="space-y-3">
-        <h2 className="px-0.5 text-center text-[15px] font-bold text-[#0f1a2e]">
-          {ESIM_HUB.whyTitle}
+      <section className="space-y-4 rounded-[1.75rem] bg-[#f3f5f8] px-3 py-6 ring-1 ring-[#0f1a2e]/6">
+        <h2 className="px-1 text-center text-[17px] font-bold leading-snug tracking-tight text-[#0f1a2e]">
+          {ESIM_HUB.whyTitleBefore}
+          <span className="text-[#c9a244]">{ESIM_HUB.whyTitleAccentEsim}</span>
+          {ESIM_HUB.whyTitleMid}
+          <span className="text-[#c9a244]">{ESIM_HUB.whyTitleAccentBrand}</span>
+          {ESIM_HUB.whyTitleAfter}
         </h2>
-        <ul className="overflow-hidden rounded-[1.5rem] bg-white ring-1 ring-[#0f1a2e]/10">
+
+        <ul className="overflow-hidden rounded-[1.5rem] bg-white shadow-[0_8px_28px_rgba(15,26,46,0.06)] ring-1 ring-[#0f1a2e]/8">
           {ESIM_HUB.whyItems.map((item, index) => {
-            const Icon = WHY_ICONS[item.id as keyof typeof WHY_ICONS] ?? Headset;
+            const Icon = WHY_ICONS[item.id];
             return (
               <li
                 key={item.id}
                 className={
                   index === 0
-                    ? 'flex gap-3.5 px-4 py-4'
-                    : 'flex gap-3.5 border-t border-[#0f1a2e]/8 px-4 py-4'
+                    ? 'flex items-center gap-3.5 px-4 py-4'
+                    : 'flex items-center gap-3.5 border-t border-[#0f1a2e]/8 px-4 py-4'
                 }
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0f1a2e]/[0.06] text-[#0f1a2e]">
-                  <Icon size={18} strokeWidth={2.25} />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0f1a2e]/[0.05] text-[#0f1a2e]">
+                  <Icon size={22} strokeWidth={2} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-[#0f1a2e]">{item.title}</p>
-                  <p className="mt-0.5 text-[12px] font-medium leading-relaxed text-muted">{item.body}</p>
+                  <p className="text-[12px] font-medium text-muted">{item.eyebrow}</p>
+                  <p className="mt-0.5 text-[15px] font-bold text-[#0f1a2e]">{item.title}</p>
                 </div>
               </li>
             );
           })}
         </ul>
+
+        <p className="px-2 text-center text-[11px] font-medium leading-relaxed text-muted">
+          {ESIM_HUB.whyFootnote}
+        </p>
       </section>
 
       <section className="space-y-3">
