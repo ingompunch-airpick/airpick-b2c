@@ -5,6 +5,7 @@ import ParkingMapPinPreview from './ParkingMapPinPreview';
 import { trackOutboundClick } from '../lib/analytics';
 import {
   fetchCompanyReviewSnapshot,
+  SHOW_PUBLIC_REVIEW_DATES,
   formatReviewDate,
   type CompanyReviewSnapshot,
 } from '../lib/reviews';
@@ -46,9 +47,11 @@ function ReviewItem({ review }: { review: CompanyReview }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <StarRating rating={review.rating} size={12} />
-            <span className="text-[10px] font-semibold text-muted-light">
-              {formatReviewDate(review.createdAt)}
-            </span>
+            {SHOW_PUBLIC_REVIEW_DATES ? (
+              <span className="text-[10px] font-semibold text-muted-light">
+                {formatReviewDate(review.createdAt)}
+              </span>
+            ) : null}
           </div>
           <p className="mt-1.5 text-[11px] font-semibold text-muted">{identity || '익명'}</p>
           {review.body?.trim() ? (
@@ -208,7 +211,9 @@ export default function CompanyDetailSheet({
         '@type': 'Person',
         name: review.authorMask || '익명',
       },
-      datePublished: review.createdAt.slice(0, 10) || undefined,
+      ...(SHOW_PUBLIC_REVIEW_DATES && review.createdAt.slice(0, 10)
+        ? { datePublished: review.createdAt.slice(0, 10) }
+        : {}),
       reviewRating: {
         '@type': 'Rating',
         ratingValue: review.rating,

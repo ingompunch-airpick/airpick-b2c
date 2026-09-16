@@ -123,6 +123,9 @@ export function formatReviewDate(iso: string): string {
   return d.replace(/-/g, '.');
 }
 
+/** 당분간 공개 UI·JSON-LD에서 후기 날짜 숨김 (작업 티 방지). 관리자 화면은 유지. */
+export const SHOW_PUBLIC_REVIEW_DATES = false;
+
 const REVIEW_API_PATH = '/api/reservation-review';
 
 /** 출고 완료 예약 → 입점 업체 후기 작성 (Cloud Function) */

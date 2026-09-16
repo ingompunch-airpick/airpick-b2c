@@ -70,6 +70,9 @@ function seoBackScript() {
   return `<script src="/seo-back.js" defer></script>`;
 }
 
+/** 당분간 공개 HTML·JSON-LD에서 후기 날짜 숨김 */
+const SHOW_PUBLIC_REVIEW_DATES = false;
+
 function formatReviewDate(iso) {
   const d = String(iso || '').slice(0, 10);
   if (d.length < 10) return d;
@@ -150,8 +153,11 @@ function reviewListHtml(recent) {
             .join('')
         : '';
       const photoBlock = photos ? `<p>${photos}</p>` : '';
+      const meta = SHOW_PUBLIC_REVIEW_DATES
+        ? `<strong>${esc(starsLabel(rating))}</strong> · ${esc(date)} · ${esc(author)}${car}`
+        : `<strong>${esc(starsLabel(rating))}</strong> · ${esc(author)}${car}`;
       return `<li>
-          <p><strong>${esc(starsLabel(rating))}</strong> · ${esc(date)} · ${esc(author)}${car}</p>
+          <p>${meta}</p>
           ${body}
           ${photoBlock}
         </li>`;
@@ -263,7 +269,7 @@ function renderPartner(p, reviewsByCompany) {
           },
         };
         const date = String(r.createdAt || '').slice(0, 10);
-        if (date.length === 10) item.datePublished = date;
+        if (SHOW_PUBLIC_REVIEW_DATES && date.length === 10) item.datePublished = date;
         if (r.body?.trim()) item.reviewBody = String(r.body).trim().slice(0, 200);
         return item;
       })
