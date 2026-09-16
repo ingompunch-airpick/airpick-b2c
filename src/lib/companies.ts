@@ -53,7 +53,11 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
       'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80',
     image_urls,
     terminals: Array.isArray(data.terminals) ? (data.terminals as string[]) : ['T1', 'T2'],
-    phone: data.phone ? String(data.phone) : undefined,
+    phone: (() => {
+      const raw = data.phone ?? data.contactPhone ?? data.inquiryPhone;
+      const s = raw != null ? String(raw).trim() : '';
+      return s || undefined;
+    })(),
     representative: data.representative ? String(data.representative) : undefined,
     isOpen: data.isOpen !== false,
     blockedDates: Array.isArray(data.blockedDates) ? (data.blockedDates as string[]) : [],

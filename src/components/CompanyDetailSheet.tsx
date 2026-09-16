@@ -1,7 +1,8 @@
-import { MapPin, Star, X } from 'lucide-react';
+import { MapPin, Phone, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import CompanyVerificationDocuments from './CompanyVerificationDocuments';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
+import { trackOutboundClick } from '../lib/analytics';
 import {
   fetchCompanyReviewSnapshot,
   formatReviewDate,
@@ -319,13 +320,30 @@ export default function CompanyDetailSheet({
             <p className="text-xs font-bold text-brand">업체 정보</p>
             <InfoRow label="터미널" value={terminals} />
             {parkingTypes && <InfoRow label="주차" value={parkingTypes} />}
-            {telHref && (
-              <div className="flex gap-3 text-sm">
+            {telHref ? (
+              <div className="flex items-center gap-3 text-sm">
                 <span className="w-16 shrink-0 font-semibold text-muted">문의</span>
-                <a href={telHref} className="font-bold text-brand">
+                <a
+                  href={telHref}
+                  className="inline-flex min-w-0 items-center gap-1.5 font-bold text-brand underline-offset-2 hover:underline"
+                  onClick={() =>
+                    trackOutboundClick({
+                      category: 'phone',
+                      destination: company.phone || '',
+                      itemId: company.id,
+                      itemName: name,
+                    })
+                  }
+                >
+                  <Phone size={14} strokeWidth={2.25} aria-hidden />
                   {formatPhoneDisplay(company.phone!)}
                 </a>
               </div>
+            ) : (
+              <p className="text-xs font-medium leading-relaxed text-muted">
+                업체 연락처가 아직 등록되지 않았습니다. 예약 후 안내되거나, 에어픽 고객센터로 문의해
+                주세요.
+              </p>
             )}
           </section>
 
@@ -370,7 +388,24 @@ export default function CompanyDetailSheet({
           </section>
         </div>
 
-        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="shrink-0 space-y-2 border-t border-sky-border/50 bg-white px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          {telHref ? (
+            <a
+              href={telHref}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3.5 text-sm font-bold text-brand ring-1 ring-brand/25 transition-colors hover:bg-sky-bg active:scale-[0.99]"
+              onClick={() =>
+                trackOutboundClick({
+                  category: 'phone',
+                  destination: company.phone || '',
+                  itemId: company.id,
+                  itemName: name,
+                })
+              }
+            >
+              <Phone size={18} strokeWidth={2.25} aria-hidden />
+              전화 문의 · {formatPhoneDisplay(company.phone!)}
+            </a>
+          ) : null}
           <button
             type="button"
             onClick={onBook}
