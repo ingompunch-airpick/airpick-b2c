@@ -5,6 +5,7 @@ import type { Company } from '../types';
 import { cn } from '../utils/cn';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
+import AffiliatePrice from './AffiliatePrice';
 import TrustBadges from './TrustBadges';
 
 export default function CompanyCard({
@@ -14,6 +15,7 @@ export default function CompanyCard({
   layout = 'grid',
   reviewSnapshot,
   soldOut = false,
+  affiliateDiscountWon = 0,
 }: {
   company: Company;
   price: number;
@@ -23,6 +25,8 @@ export default function CompanyCard({
   reviewSnapshot?: CompanyReviewSnapshot;
   /** 검색 일정 기준 만차·마감 — 흐리게 표시, 선택 불가 */
   soldOut?: boolean;
+  /** 제휴 링크 손님 할인(원) — 있으면 정상가 취소선 + 할인가 */
+  affiliateDiscountWon?: number;
 }) {
   const name = displayCompanyName(company.name);
   const thumbSrc = companyThumbnailUrl(company.image_url, 128);
@@ -52,9 +56,12 @@ export default function CompanyCard({
             />
           </div>
           <span className="line-clamp-1 text-xs font-bold text-ink">{name}</span>
-          <span className="text-sm font-bold text-[#0f1a2e] tabular-nums">
-            {price.toLocaleString()}원
-          </span>
+          <AffiliatePrice
+            price={price}
+            affiliateDiscountWon={affiliateDiscountWon}
+            size="sm"
+            align="center"
+          />
         </div>
         {soldOut ? (
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-white/70">
@@ -106,14 +113,22 @@ export default function CompanyCard({
                   실후기 {reviewSnapshot.count}
                 </span>
               </div>
-              <p className="shrink-0 text-lg font-bold tabular-nums text-[#0f1a2e]">
-                {price.toLocaleString()}원
-              </p>
+              <AffiliatePrice
+                price={price}
+                affiliateDiscountWon={affiliateDiscountWon}
+                size="lg"
+                align="end"
+              />
             </div>
           ) : (
-            <p className="mt-2 text-lg font-bold tabular-nums text-[#0f1a2e]">
-              {price.toLocaleString()}원
-            </p>
+            <div className="mt-2">
+              <AffiliatePrice
+                price={price}
+                affiliateDiscountWon={affiliateDiscountWon}
+                size="lg"
+                align="start"
+              />
+            </div>
           )}
           <div className="mt-2">
             <TrustBadges company={company} />

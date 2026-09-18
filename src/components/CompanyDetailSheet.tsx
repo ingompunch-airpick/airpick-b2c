@@ -1,5 +1,6 @@
 import { MapPin, Phone, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import AffiliatePrice from './AffiliatePrice';
 import CompanyVerificationDocuments from './CompanyVerificationDocuments';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
 import { trackOutboundClick } from '../lib/analytics';
@@ -174,12 +175,15 @@ export default function CompanyDetailSheet({
   company,
   price,
   search,
+  affiliateDiscountWon = 0,
   onClose,
   onBook,
 }: {
   company: Company;
   price: number;
   search: BookingSearch;
+  /** 제휴 손님 할인(원) — 있으면 정상가 취소선 + 할인가 */
+  affiliateDiscountWon?: number;
   onClose: () => void;
   onBook: () => void;
 }) {
@@ -312,9 +316,14 @@ export default function CompanyDetailSheet({
           <div className="flex items-end justify-between gap-3">
             <div>
               <p className="text-xs font-semibold text-muted">선택 일정 견적</p>
-              <p className="mt-0.5 text-2xl font-bold tabular-nums text-brand">
-                {price.toLocaleString()}원
-              </p>
+              <AffiliatePrice
+                price={price}
+                affiliateDiscountWon={affiliateDiscountWon}
+                size="lg"
+                align="start"
+                className="mt-0.5"
+                priceClassName="text-2xl font-bold text-brand"
+              />
             </div>
             <p className="text-right text-[11px] font-semibold text-muted">
               {search.terminal} · {parkingTypeLabel(search.isIndoor)}

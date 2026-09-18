@@ -53,12 +53,14 @@ function PartnerList({
   items,
   onSelect,
   reviewSnapshots,
+  affiliateDiscountWon = 0,
 }: {
   title: string;
   subtitle: string;
   items: PricedCompany[];
   onSelect: (company: Company, price: number, soldOut: boolean) => void;
   reviewSnapshots: Record<string, CompanyReviewSnapshot>;
+  affiliateDiscountWon?: number;
 }) {
   if (items.length === 0) return null;
 
@@ -76,6 +78,7 @@ function PartnerList({
             price={price}
             layout="list"
             soldOut={soldOut === true}
+            affiliateDiscountWon={affiliateDiscountWon}
             onSelect={() => onSelect(company, price, soldOut === true)}
             reviewSnapshot={reviewSnapshots[company.id]}
           />
@@ -100,8 +103,8 @@ export default function ComparePage({
   const [reviewSnapshots, setReviewSnapshots] = useState<Record<string, CompanyReviewSnapshot>>(
     {}
   );
-  const { offer: affiliateOffer } = useAffiliateOffer();
-  const affiliateDiscountWon = affiliateOffer?.customerDiscountWon ?? 0;
+  const { offer } = useAffiliateOffer();
+  const affiliateDiscountWon = offer?.customerDiscountWon ?? 0;
   const partners = useMemo(() => listParkingCompareCompanies(companies), [companies]);
   const compareSearch = useMemo(() => ({ ...search, faceToFace: false as const }), [search]);
 
@@ -144,15 +147,6 @@ export default function ComparePage({
     <div className="space-y-5">
       <SearchPanel search={search} onChange={onSearchChange} />
 
-      {affiliateOffer && affiliateDiscountWon > 0 ? (
-        <p className="rounded-xl bg-[#0f1a2e] px-3.5 py-2.5 text-[12px] font-semibold leading-relaxed text-white">
-          제휴 할인 적용 중 ·{' '}
-          <span className="text-[#c9a962]">
-            −{affiliateDiscountWon.toLocaleString('ko-KR')}원
-          </span>
-        </p>
-      ) : null}
-
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
 
       {totalCount === 0 ? (
@@ -171,6 +165,7 @@ export default function ComparePage({
           items={list}
           onSelect={handleSelect}
           reviewSnapshots={reviewSnapshots}
+          affiliateDiscountWon={affiliateDiscountWon}
         />
       )}
     </div>

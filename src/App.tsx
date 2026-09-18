@@ -307,6 +307,7 @@ export default function App() {
             company={partnerDetail.company}
             price={partnerDetail.price}
             search={search}
+            affiliateDiscountWon={affiliateDiscountWon}
             onClose={() => setPartnerDetail(null)}
             onBook={() => {
               trackParkingBookStart(partnerDetail.company.id, partnerDetail.company.name);
