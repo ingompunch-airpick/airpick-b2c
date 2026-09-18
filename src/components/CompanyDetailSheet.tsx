@@ -322,7 +322,11 @@ export default function CompanyDetailSheet({
                 size="lg"
                 align="start"
                 className="mt-0.5"
-                priceClassName="text-2xl font-bold text-brand"
+                priceClassName={
+                  affiliateDiscountWon > 0
+                    ? 'text-2xl font-bold text-muted-light'
+                    : 'text-2xl font-bold text-brand'
+                }
               />
             </div>
             <p className="text-right text-[11px] font-semibold text-muted">

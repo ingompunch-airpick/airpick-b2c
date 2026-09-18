@@ -121,12 +121,12 @@ export default function CompanyCard({
               />
             </div>
           ) : (
-            <div className="mt-2">
+            <div className="mt-2 flex justify-end">
               <AffiliatePrice
                 price={price}
                 affiliateDiscountWon={affiliateDiscountWon}
                 size="lg"
-                align="start"
+                align="end"
               />
             </div>
           )}
