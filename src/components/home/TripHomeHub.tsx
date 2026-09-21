@@ -61,7 +61,7 @@ export default function TripHomeHub({
   const [departureDate, setDepartureDate] = useState(defaultDepartureDate);
   const [departureTime, setDepartureTime] = useState('09:20');
   const [terminal, setTerminal] = useState<Terminal>('T1');
-  const [arrivalDate, setArrivalDate] = useState(() => addDaysInput(defaultDepartureDate(), 5));
+  const [arrivalDate, setArrivalDate] = useState(() => addDaysInput(defaultDepartureDate(), 1));
   const [arrivalTime, setArrivalTime] = useState('18:30');
   const [arrivalTerminal, setArrivalTerminal] = useState<Terminal>('T1');
 
@@ -190,6 +190,7 @@ export default function TripHomeHub({
       arrivalTime,
       terminal,
       arrivalTerminal,
+      isIndoor: true,
     });
     onGoTab?.('compare');
   };
@@ -396,7 +397,7 @@ export default function TripHomeHub({
             value={departureDate}
             onChange={(next) => {
               setDepartureDate(next);
-              if (arrivalDate < next) setArrivalDate(addDaysInput(next, 5));
+              if (arrivalDate < next) setArrivalDate(addDaysInput(next, 1));
             }}
           />
           <TimeField

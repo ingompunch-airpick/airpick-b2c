@@ -4,6 +4,7 @@ import HomeTravelServices from '../components/home/HomeTravelServices';
 import HomeTrustCriteria from '../components/home/HomeTrustCriteria';
 import HomeTrustStats from '../components/home/HomeTrustStats';
 import HomeWhyAirpick from '../components/home/HomeWhyAirpick';
+import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import SiteFooter from '../components/SiteFooter';
 import {
   HOME_CAMPAIGN,
@@ -61,6 +62,8 @@ export default function HomePage({
       <div className="relative z-[1] -mt-6 rounded-t-[1.75rem] bg-white px-5 pb-28 pt-8 shadow-[0_-12px_40px_rgba(15,26,46,0.12)] sm:px-8 md:-mt-8 md:rounded-t-[2rem] md:px-10 md:pb-28 md:pt-10 lg:px-12">
         <div className="mx-auto max-w-5xl space-y-10 md:space-y-14">
           <HomeTrustStats partnerCount={partnerCount} />
+
+          <HomeYoutubeLive />
 
           <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
             <HomeTrustCriteria />

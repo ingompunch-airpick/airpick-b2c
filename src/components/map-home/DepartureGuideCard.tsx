@@ -645,9 +645,10 @@ export default function DepartureGuideCard({
                   : 'T1';
               onPrefillParkingSearch?.({
                 departureDate: depYmd,
-                arrivalDate: addDaysYmd(depYmd, 6),
+                arrivalDate: addDaysYmd(depYmd, 1),
                 terminal,
                 arrivalTerminal: terminal,
+                isIndoor: true,
               });
               onGoTab?.('compare');
             }}

@@ -18,9 +18,8 @@ export function todayYmd(): string {
 
 export function defaultBookingSearch() {
   const start = new Date();
-  start.setDate(start.getDate() + 1);
   const end = new Date(start);
-  end.setDate(end.getDate() + 6);
+  end.setDate(end.getDate() + 1);
   return {
     departureDate: formatYmd(start),
     arrivalDate: formatYmd(end),
@@ -28,7 +27,7 @@ export function defaultBookingSearch() {
     arrivalTime: '10:00',
     terminal: 'T1' as const,
     arrivalTerminal: 'T1' as const,
-    isIndoor: false,
+    isIndoor: true,
     isCardPayment: false,
   };
 }
