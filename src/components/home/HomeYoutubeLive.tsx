@@ -28,9 +28,15 @@ export default function HomeYoutubeLive() {
 
   return (
     <section className="border-t border-[#0f1a2e]/10 pt-8 md:pt-10">
-      <p className="text-[10px] font-bold tracking-[0.14em] text-[#c9a962]">
-        {YOUTUBE_LIVE.eyebrow}
-      </p>
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+        </span>
+        <p className="text-[10px] font-bold tracking-[0.14em] text-[#c9a962]">
+          {YOUTUBE_LIVE.eyebrow}
+        </p>
+      </div>
       <h2 className="mt-1 text-[1.2rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.35rem]">
         {YOUTUBE_LIVE.title}
       </h2>

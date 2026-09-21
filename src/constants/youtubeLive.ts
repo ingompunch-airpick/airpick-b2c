@@ -4,8 +4,8 @@
  * 일부공개 VOD — env 로도 덮어쓸 수 있음 (VITE_YOUTUBE_LIVE_VIDEO_ID)
  */
 export const YOUTUBE_LIVE = {
-  eyebrow: '공식 파트너',
-  title: '실내 주차장',
+  eyebrow: 'REC',
+  title: '입점 업체 주차장',
   lead: '주차장까지 확인한 업체만 입점합니다.',
   handle: '@에어픽주차',
   channelId: 'UCvTBtg25mBplPe6rWdJ0eEQ',
