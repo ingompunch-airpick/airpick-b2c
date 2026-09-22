@@ -244,8 +244,8 @@ export default function ReservationCard({
             {reservation.carNumber} · {reservation.carModel}
           </p>
         </div>
-        <p className="shrink-0 font-mono text-[10px] font-semibold text-muted-light">
-          {reservation.id.replace('res_', '').slice(-8)}
+        <p className="max-w-[9.5rem] shrink-0 break-all text-right font-mono text-[10px] font-semibold text-muted-light">
+          {reservation.id}
         </p>
       </div>
 

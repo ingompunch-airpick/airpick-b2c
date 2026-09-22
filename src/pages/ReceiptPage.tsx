@@ -70,7 +70,7 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
     );
   }
 
-  const receiptNo = receipt.id.replace(/^res_/, '');
+  const receiptNo = receipt.id;
 
   return (
     <div className="min-h-dvh bg-neutral-100 px-4 py-6 print:bg-white print:p-0">

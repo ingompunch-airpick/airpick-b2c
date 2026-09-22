@@ -254,8 +254,8 @@ export default function BookingModal({
           <dl className="mt-5 space-y-2.5 rounded-2xl bg-sky-bg p-4 text-left ring-1 ring-sky-border/70">
             <div className="flex items-center justify-between gap-4">
               <dt className="text-xs font-semibold text-muted">예약번호</dt>
-              <dd className="font-mono text-sm font-bold text-ink">
-                {completedId.replace('res_', '')}
+              <dd className="font-mono text-sm font-bold text-ink break-all text-right">
+                {completedId}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
