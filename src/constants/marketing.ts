@@ -289,7 +289,7 @@ export const BRAND_INTRO = {
   eyebrow: '인천공항 주차대행',
   line: '검증한 업체만 비교하고 예약하세요.',
   hint: '',
-  enterCta: '주차대행 비교하기',
+  enterCta: '시작하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',
   videoMobile: '/brand/intro-mobile.mp4',

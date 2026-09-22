@@ -115,7 +115,7 @@ export default function App() {
 
   const dismissBrandIntro = () => {
     setShowBrandIntro(false);
-    setTab('compare', 'replace');
+    setTab('home', 'replace');
     trackCtaClick('brand_intro_enter', 'brand_intro');
   };
 
