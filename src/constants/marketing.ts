@@ -286,10 +286,10 @@ export const BRAND_INTRO = {
   storageKey: 'airpick_intro_seen',
   /** 홈(/) 접속·새로고침마다 표시. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
-  eyebrow: '인천공항 검증된 서비스',
-  line: '믿을 수 있는 곳에 맡기면, 여행이 편해집니다.',
-  hint: '주차대행 · 여행 준비',
-  enterCta: '시작하기',
+  eyebrow: '인천공항 주차대행',
+  line: '검증한 업체만 비교하고 예약하세요.',
+  hint: '',
+  enterCta: '주차대행 비교하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',
   videoMobile: '/brand/intro-mobile.mp4',

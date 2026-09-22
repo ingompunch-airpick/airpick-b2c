@@ -137,18 +137,18 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
               : 'relative z-10 mx-auto flex h-full w-full max-w-lg flex-col justify-end px-6 pb-14 pt-[max(2.5rem,env(safe-area-inset-top))]'
           }
         >
-          <p className="text-[10px] font-bold tracking-[0.18em] text-[#c9a962]">
+          <p className="text-[15px] font-bold tracking-[0.12em] text-[#c9a962] sm:text-[16px]">
             {BRAND_INTRO.eyebrow}
           </p>
-          <h1 className="mt-3 text-[2.35rem] font-bold tracking-[0.08em] text-white sm:text-[2.75rem]">
+          <h1 className="mt-3 text-[2.6rem] font-bold tracking-[0.08em] text-white sm:text-[3rem]">
             {BRAND_INTRO.brand}
           </h1>
           <div className="mt-3.5 h-px w-8 bg-[#c9a962]/80" aria-hidden={true} />
-          <p className="mt-5 max-w-[16rem] text-[15px] font-medium leading-relaxed text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
+          <p className="mt-5 max-w-[18rem] text-[17px] font-medium leading-relaxed text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)] sm:text-[18px]">
             {BRAND_INTRO.line}
           </p>
           {BRAND_INTRO.hint ? (
-            <p className="mt-2.5 text-[11px] font-semibold tracking-wide text-white/55">
+            <p className="mt-2.5 text-[13px] font-semibold tracking-wide text-white/55 sm:text-[14px]">
               {BRAND_INTRO.hint}
             </p>
           ) : null}
@@ -156,7 +156,7 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
           <button
             type="button"
             onClick={onEnter}
-            className="mt-10 w-full max-w-[16rem] rounded-full bg-[#c9a962] py-3.5 text-[15px] font-bold tracking-wide text-[#0a1628] shadow-[0_0_28px_rgba(201,169,98,0.35)] transition active:scale-[0.98]"
+            className="mt-10 w-full max-w-[18rem] rounded-full bg-[#c9a962] py-4 text-[17px] font-bold tracking-wide text-[#0a1628] shadow-[0_0_28px_rgba(201,169,98,0.35)] transition active:scale-[0.98] sm:text-[18px]"
           >
             {BRAND_INTRO.enterCta}
           </button>
