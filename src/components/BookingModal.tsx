@@ -1,12 +1,12 @@
 import { Check, ChevronDown, ClipboardList, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import BookingConsent from './BookingConsent';
+import BookingPartnerSummary from './BookingPartnerSummary';
 import DateField from './DateField';
 import PriceBreakdownCard from './PriceBreakdownCard';
 import TerminalFields from './TerminalFields';
 import TimeField from './TimeField';
 import AirlineSelect from './AirlineSelect';
-import { PARKING_TAB_LABEL } from '../constants/marketing';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { ensureAnonymousAuth, submitReservation, type BookingForm } from '../lib/reservations';
@@ -26,6 +26,7 @@ import { formatPhoneInput, isValidMobilePhone } from '../utils/contact';
 import { isLikelyCarNumber } from '../utils/carNumber';
 import { saveRecentReservation } from '../utils/recentReservation';
 import { formatTerminalSummary } from '../utils/terminalLabels';
+import { getCancelCutoffHours } from '../utils/reservationCancel';
 
 const emptyForm = (): BookingForm => ({
   userName: '',
@@ -68,6 +69,7 @@ export default function BookingModal({
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const [agreedThirdParty, setAgreedThirdParty] = useState(false);
   const [editSchedule, setEditSchedule] = useState(false);
+  const [showOptionalNotes, setShowOptionalNotes] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [completedId, setCompletedId] = useState<string | null>(null);
@@ -122,6 +124,8 @@ export default function BookingModal({
     form.arrivalAirline.trim() &&
     form.arrivalFlight.trim() &&
     /^\d{4}$/.test(form.reservationPassword.trim());
+
+  const cancelCutoffHours = getCancelCutoffHours(company);
 
   const setTerminal = (terminal: Terminal) => {
     setSearch((prev) => ({
@@ -332,9 +336,6 @@ export default function BookingModal({
           <div className="min-w-0">
             <p className="text-xs font-bold text-brand">에어픽 예약</p>
             <h2 className="text-lg font-bold text-ink">{displayCompanyName(company.name)}</h2>
-            <p className="mt-1 text-xl font-bold text-brand tabular-nums">
-              {breakdown.total.toLocaleString()}원
-            </p>
           </div>
           <button type="button" onClick={onClose} className="shrink-0 rounded-full p-2 hover:bg-sky-tint">
             <X size={20} className="text-muted" />
@@ -342,12 +343,16 @@ export default function BookingModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <BookingPartnerSummary company={company} />
+
           <section className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/70">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs font-bold text-brand">{PARKING_TAB_LABEL} 탭에서 선택한 일정</p>
+                <p className="text-xs font-bold text-brand">선택한 일정</p>
                 <p className="mt-1 text-sm font-bold text-ink tabular-nums">
-                  {formatDateDisplay(search.departureDate)} → {formatDateDisplay(search.arrivalDate)}
+                  {formatDateDisplay(search.departureDate)} {search.departureTime}
+                  {' → '}
+                  {formatDateDisplay(search.arrivalDate)} {search.arrivalTime}
                 </p>
                 <p className="mt-0.5 text-xs font-semibold text-muted">
                   {terminalSummary} · {parkingTypeLabel(search.isIndoor)} · {breakdown.days}일
@@ -364,31 +369,6 @@ export default function BookingModal({
                   className={cn('transition-transform', editSchedule && 'rotate-180')}
                 />
               </button>
-            </div>
-
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <TimeField
-                label="맡기는 시간"
-                value={search.departureTime}
-                onChange={(departureTime) => setSearch((prev) => ({ ...prev, departureTime }))}
-              />
-              <TimeField
-                label="찾는 시간"
-                value={search.arrivalTime}
-                onChange={(arrivalTime) => setSearch((prev) => ({ ...prev, arrivalTime }))}
-              />
-            </div>
-
-            <div className="mt-3 border-t border-sky-border/60 pt-3">
-              <TerminalFields
-                departure={search.terminal}
-                arrival={arrivalTerminal}
-                differentArrival={differentArrivalTerminal}
-                onDepartureChange={setTerminal}
-                onDifferentArrivalChange={handleDifferentArrival}
-                onArrivalChange={(t) => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
-                inactiveClassName="bg-sky-soft text-muted"
-              />
             </div>
 
             {editSchedule && (
@@ -415,6 +395,29 @@ export default function BookingModal({
                     onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}
                   />
                 </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <TimeField
+                    label="맡기는 시간"
+                    value={search.departureTime}
+                    onChange={(departureTime) => setSearch((prev) => ({ ...prev, departureTime }))}
+                  />
+                  <TimeField
+                    label="찾는 시간"
+                    value={search.arrivalTime}
+                    onChange={(arrivalTime) => setSearch((prev) => ({ ...prev, arrivalTime }))}
+                  />
+                </div>
+
+                <TerminalFields
+                  departure={search.terminal}
+                  arrival={arrivalTerminal}
+                  differentArrival={differentArrivalTerminal}
+                  onDepartureChange={setTerminal}
+                  onDifferentArrivalChange={handleDifferentArrival}
+                  onArrivalChange={(t) => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
+                  inactiveClassName="bg-sky-soft text-muted"
+                />
 
                 <p className="text-[11px] font-bold text-muted">주차 공간</p>
                 <div className="grid grid-cols-2 gap-2">
@@ -498,9 +501,29 @@ export default function BookingModal({
               </label>
             </div>
 
+            <label className="block">
+              <span className="mb-1 block text-xs font-bold text-muted">예약 비밀번호 (4자리) *</span>
+              <input
+                type="password"
+                inputMode="numeric"
+                autoComplete="off"
+                maxLength={4}
+                value={form.reservationPassword}
+                onChange={(e) =>
+                  setFormField('reservationPassword', e.target.value.replace(/\D/g, '').slice(0, 4))
+                }
+                placeholder="조회·취소 본인 확인"
+                className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
+              />
+              <span className="mt-1 block text-[10px] font-medium text-muted">
+                예약 조회·변경·취소 시 차량번호와 함께 사용합니다.
+              </span>
+            </label>
+
             <div className="space-y-3 border-t border-sky-border/60 pt-3">
+              <p className="text-[11px] font-bold text-brand">항공편 *</p>
               <div>
-                <p className="mb-2 text-[11px] font-bold text-brand">출국</p>
+                <p className="mb-2 text-[11px] font-bold text-muted">출국</p>
                 <div className="grid grid-cols-2 gap-2">
                   <AirlineSelect
                     label="항공사"
@@ -520,7 +543,7 @@ export default function BookingModal({
                 </div>
               </div>
               <div>
-                <p className="mb-2 text-[11px] font-bold text-brand">입국</p>
+                <p className="mb-2 text-[11px] font-bold text-muted">입국</p>
                 <div className="grid grid-cols-2 gap-2">
                   <AirlineSelect
                     label="항공사"
@@ -539,42 +562,45 @@ export default function BookingModal({
                   </label>
                 </div>
               </div>
+              <p className="text-[10px] font-medium leading-relaxed text-muted">
+                입국 편명은 공항에서 차량을 가져다 드리는 데 필요합니다.
+              </p>
             </div>
 
-            <div className="space-y-2 border-t border-sky-border/60 pt-3">
-              <label className="block">
-                <span className="mb-1 block text-xs font-bold text-muted">여행지</span>
-                <input
-                  value={form.destination}
-                  onChange={(e) => setFormField('destination', e.target.value)}
-                  placeholder="오사카, 싱가포르"
-                  className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-xs font-bold text-muted">예약 비밀번호 (4자리) *</span>
-                <input
-                  type="password"
-                  inputMode="numeric"
-                  autoComplete="off"
-                  maxLength={4}
-                  value={form.reservationPassword}
-                  onChange={(e) =>
-                    setFormField('reservationPassword', e.target.value.replace(/\D/g, '').slice(0, 4))
-                  }
-                  className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-xs font-bold text-muted">기사님께 전달할 메시지 (선택)</span>
-                <textarea
-                  value={form.customerNotes}
-                  onChange={(e) => setFormField('customerNotes', e.target.value)}
-                  rows={2}
-                  className="w-full resize-none rounded-xl border border-sky-border bg-sky-soft px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
-                />
-              </label>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowOptionalNotes((v) => !v)}
+              className="inline-flex items-center gap-0.5 text-xs font-bold text-brand"
+            >
+              {showOptionalNotes ? '메모 접기' : '여행지·메모 (선택)'}
+              <ChevronDown
+                size={14}
+                className={cn('transition-transform', showOptionalNotes && 'rotate-180')}
+              />
+            </button>
+
+            {showOptionalNotes ? (
+              <div className="space-y-2 border-t border-sky-border/60 pt-3">
+                <label className="block">
+                  <span className="mb-1 block text-xs font-bold text-muted">여행지</span>
+                  <input
+                    value={form.destination}
+                    onChange={(e) => setFormField('destination', e.target.value)}
+                    placeholder="오사카, 싱가포르"
+                    className="w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-xs font-bold text-muted">기사님께 전달할 메시지</span>
+                  <textarea
+                    value={form.customerNotes}
+                    onChange={(e) => setFormField('customerNotes', e.target.value)}
+                    rows={2}
+                    className="w-full resize-none rounded-xl border border-sky-border bg-sky-soft px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
+                  />
+                </label>
+              </div>
+            ) : null}
           </section>
 
           <PriceBreakdownCard breakdown={breakdown} />
@@ -593,18 +619,29 @@ export default function BookingModal({
 
           {error && <p className="text-xs font-semibold text-rose-500">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={loading || !canSubmit}
-            className="w-full rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-60"
-          >
-            {loading
-              ? '접수 중…'
-              : `${breakdown.total.toLocaleString()}원 · 예약 접수하기`}
-          </button>
-          <p className="text-center text-[10px] text-muted-light">
-            접수 후 업체 기사에게 바로 전달됩니다 · 현장 결제
-          </p>
+          <div className="sticky bottom-0 -mx-5 border-t border-sky-border/70 bg-white px-5 pb-1 pt-3">
+            <div className="mb-2 flex items-end justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-semibold text-muted">이용요금</p>
+                <p className="text-xl font-bold tabular-nums text-ink">
+                  {breakdown.total.toLocaleString()}원
+                </p>
+              </div>
+              <p className="pb-0.5 text-sm font-bold text-brand">현장 결제</p>
+            </div>
+            <button
+              type="submit"
+              disabled={loading || !canSubmit}
+              className="w-full rounded-xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark disabled:opacity-60"
+            >
+              {loading ? '접수 중…' : '예약 접수하기'}
+            </button>
+            <p className="mt-2 text-center text-[10px] font-medium leading-relaxed text-muted-light">
+              접수 후 제휴업체에 예약정보가 전달됩니다 · 현장 결제
+              <br />
+              입고 {cancelCutoffHours}시간 전까지 앱에서 무료 취소 가능
+            </p>
+          </div>
         </form>
       </div>
     </div>
