@@ -107,6 +107,13 @@ export interface Company {
   isAirpickPartner?: boolean;
   /** 레거시: 외부 예약 URL (미사용) */
   externalBookingUrl?: string;
+  /** B2B 픽업지 안내 (고객 만남 장소) */
+  pickupLocation?: string;
+  /**
+   * 파트너 홈 이용방법 steps
+   * companies/{id}.partnerHomepage.config.steps
+   */
+  usageSteps?: { title: string; body: string; mediaSrc?: string }[];
   /** 업체별 요금 산식 (단일) */
   pricingProfile?: string;
   /** 실내·야외 요금이 다른 업체 — 검색 조건에 따라 선택 */

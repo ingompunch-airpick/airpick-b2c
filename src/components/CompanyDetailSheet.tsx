@@ -20,6 +20,7 @@ import {
   companySupportsOutdoor,
   parkingTypeLabel,
 } from '../utils/parkingType';
+import { resolveCompanyUsageSteps } from '../utils/companyUsageGuide';
 import { cn } from '../utils/cn';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
@@ -265,6 +266,7 @@ export default function CompanyDetailSheet({
 
   const telHref = buildTelHref(company.phone);
   const parkingLots = listCompanyParkingLotsForDisplay(company, search.isIndoor);
+  const usageSteps = resolveCompanyUsageSteps(company);
 
   const reviewsLoading = reviewSnapshot == null;
   const reviews = reviewSnapshot?.recent ?? [];
@@ -333,6 +335,42 @@ export default function CompanyDetailSheet({
               {search.terminal} · {parkingTypeLabel(search.isIndoor)}
             </p>
           </div>
+
+          <section className="mt-4 space-y-3 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
+            <p className="text-xs font-bold text-brand">이용 방법</p>
+            <ol className="space-y-3">
+              {usageSteps.map((step, index) => (
+                <li key={`${step.title}_${index}`} className="flex gap-3">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-white">
+                    {index + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-ink">{step.title}</p>
+                    <p className="mt-0.5 text-[13px] font-medium leading-relaxed text-muted">
+                      {step.body}
+                    </p>
+                    {step.mediaSrc ? (
+                      <img
+                        src={companyPhotoUrl(step.mediaSrc, 640)}
+                        alt=""
+                        width={320}
+                        height={180}
+                        className="mt-2 max-h-36 w-full rounded-xl object-cover ring-1 ring-sky-border/50"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+            {company.pickupLocation?.trim() &&
+            !(company.usageSteps && company.usageSteps.length > 0) ? (
+              <p className="text-[11px] font-medium leading-relaxed text-muted">
+                기본 픽업지 · {company.pickupLocation.trim()}
+              </p>
+            ) : null}
+          </section>
 
           <section className="mt-4 space-y-2 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">업체 정보</p>

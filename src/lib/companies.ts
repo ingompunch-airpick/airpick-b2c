@@ -6,6 +6,10 @@ import { parseAllParkingDistancesFromFirestore } from '../utils/parkingDistances
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { mergePartnerPricing } from '../utils/pricing';
 import { parseVerificationDocuments } from '../utils/verificationDocuments';
+import {
+  parseCompanyPickupLocation,
+  parsePartnerHomepageUsageSteps,
+} from '../utils/companyUsageGuide';
 
 export interface CompanyBookingPolicy {
   isOpen: boolean;
@@ -90,6 +94,11 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     sharesInsurance: data.sharesInsurance !== false,
     isAirpickPartner: data.isAirpickPartner !== false,
     externalBookingUrl: data.externalBookingUrl ? String(data.externalBookingUrl) : undefined,
+    pickupLocation: parseCompanyPickupLocation(data),
+    usageSteps: (() => {
+      const steps = parsePartnerHomepageUsageSteps(data);
+      return steps.length > 0 ? steps : undefined;
+    })(),
     pricingProfile: data.pricingProfile ? String(data.pricingProfile) : undefined,
     indoorPricingProfile: data.indoorPricingProfile
       ? String(data.indoorPricingProfile)
