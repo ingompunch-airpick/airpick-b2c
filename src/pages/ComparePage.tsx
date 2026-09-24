@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import CompanyCard from '../components/CompanyCard';
 import SearchPanel from '../components/SearchPanel';
+import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import { PARKING_PARTNER_SECTION, parkingPartnerSectionTitle } from '../constants/marketing';
 import { listParkingCompareCompanies } from '../lib/parkingCompare';
 import {
@@ -145,6 +146,7 @@ export default function ComparePage({
 
   return (
     <div className="space-y-5">
+      <SiteNoticeBanner />
       <SearchPanel search={search} onChange={onSearchChange} />
 
       {totalCount > 0 && <SortTabs mode={sortMode} onChange={setSortMode} />}
