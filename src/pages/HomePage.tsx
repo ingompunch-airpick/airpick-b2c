@@ -53,7 +53,8 @@ export default function HomePage({
             <HomeHeroTrustChips />
           </div>
 
-          <div className="pt-2 md:pb-1 md:pt-6">
+          <div className="flex flex-col gap-3 pt-2 md:pb-1 md:pt-6">
+            <SiteNoticeBanner />
             <HomeHookCtas onGoTab={onGoTab} tone="dark" showEsim={false} />
           </div>
         </div>
@@ -62,8 +63,6 @@ export default function HomePage({
       {/* 흰 시트 — 둥근 상단이 네이비를 살짝 덮어 끊김·맞닿음 모두 완화 */}
       <div className="relative z-[1] -mt-6 rounded-t-[1.75rem] bg-white px-5 pb-28 pt-8 shadow-[0_-12px_40px_rgba(15,26,46,0.12)] sm:px-8 md:-mt-8 md:rounded-t-[2rem] md:px-10 md:pb-28 md:pt-10 lg:px-12">
         <div className="mx-auto max-w-5xl space-y-10 md:space-y-14">
-          <SiteNoticeBanner />
-
           <HomeTrustStats partnerCount={partnerCount} />
 
           <HomeYoutubeLive />
