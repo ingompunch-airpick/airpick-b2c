@@ -314,11 +314,11 @@ export const HOME_CAMPAIGN = {
  * hideAfterIso: 이 시각(로컬)부터 숨김
  */
 export const SITE_NOTICE = {
-  title: '9.23~9.25(금) 전 업체 예약 마감',
-  body: '성원에 감사드리며, 주차장을 빠르게 확보하겠습니다. 9.26부터 예약이 가능합니다.',
-  /** 9.26 00:00 KST ≈ 9.25 15:00 UTC */
-  hideAfterIso: '2026-09-25T15:00:00.000Z',
-  storageKey: 'airpick_notice_soldout_0923_0925_v2',
+  title: '9.23~9.26(토) 전 업체 예약 마감',
+  body: '성원에 감사드리며, 주차장을 빠르게 확보하겠습니다. 9.27부터 예약이 가능합니다.',
+  /** 9.27 00:00 KST ≈ 9.26 15:00 UTC */
+  hideAfterIso: '2026-09-26T15:00:00.000Z',
+  storageKey: 'airpick_notice_soldout_0923_0926_v1',
 } as const;
 
 /** @deprecated 결과 CTA로 이동 — 계산 전 노출 안 함 */
