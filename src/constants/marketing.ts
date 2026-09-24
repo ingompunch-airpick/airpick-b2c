@@ -146,11 +146,11 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /**
- * 홈 히어로 — 경험 훅 (인트로 무드 연결). 선별 권위는 서브·VERIFIED에서
+ * 홈 히어로 — 인트로와 같은 검증·비교 메시지
  */
-export const HOME_HEADLINE = '여유로운 출국,\n검증한 주차부터.';
+export const HOME_HEADLINE = '검증한 업체만\n비교하고 예약하세요.';
 
-export const HOME_SUBHEAD = '에어픽이 확인한 공식 파트너만 모았습니다.';
+export const HOME_SUBHEAD = '인천공항 주차대행 · 에어픽이 확인한 공식 파트너만';
 
 /** 홈 히어로 · 신뢰 칩 (WHY 02 증거와 동일 문구) */
 export const HOME_HERO_TRUST_CHIPS = ['보험 확인', '주차 위치', '입고 사진'] as const;
