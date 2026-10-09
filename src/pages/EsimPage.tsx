@@ -71,7 +71,7 @@ function PartnerPromoCard({ partner }: { partner: EsimAffiliatePartner }) {
             )}
           </h2>
           <p className="mt-2 max-w-[18rem] text-[12px] font-medium leading-relaxed text-white/65">
-            {partner.note ?? '에어픽 × 유심사 프로모션'}
+            {partner.note ?? '에어픽 × 로밍도깨비 프로모션'}
           </p>
 
           <button

@@ -2,12 +2,12 @@
  * 이심(eSIM) 제휴사 — 에어픽 내 비교·예약 없음.
  * 각 제휴사 할인 링크로 이동해 구매·개통.
  *
- * 로밍도깨비는 유심사 컨펌 뒤 추가.
+ * 제휴 할인 링크만 안내한다. 구매·개통은 제휴사 사이트에서 한다.
  */
 export type EsimAffiliatePartner = {
   id: string;
   name: string;
-  /** 고객 할인율 (%). 예: 30 → 「유심사30% 할인링크 바로가기」 */
+  /** 고객 할인율 (%). 예: 5 → 「로밍도깨비5% 할인링크 바로가기」 */
   discountPercent?: number;
   /** 제휴·트래킹 할인 랜딩 URL */
   affiliateUrl: string;
@@ -23,15 +23,12 @@ export type EsimAffiliatePartner = {
 
 export const ESIM_AFFILIATE_PARTNERS: readonly EsimAffiliatePartner[] = [
   {
-    id: 'usimsa',
-    name: '유심사',
-    discountPercent: 30,
-    affiliateUrl: 'https://www.usimsa.com/partners/airpick',
+    id: 'rokebi',
+    name: '로밍도깨비',
+    discountPercent: 5,
+    affiliateUrl: 'https://store.rokebi.com/?pt=airpick',
     active: true,
-    note: '에어픽 × 유심사 전용 할인 · 구매·개통은 유심사에서',
-    promoPeriodLabel: '9.15 ~ 10.15',
-    promoStart: '2026-09-15',
-    promoEnd: '2026-10-15',
+    note: '에어픽 × 로밍도깨비 5% 할인 · 구매·개통은 로밍도깨비에서',
   },
 ] as const;
 
@@ -39,7 +36,7 @@ export function listActiveEsimAffiliatePartners(): EsimAffiliatePartner[] {
   return ESIM_AFFILIATE_PARTNERS.filter((p) => p.active && !!p.affiliateUrl.trim());
 }
 
-/** 「유심사30% 할인링크 바로가기」 */
+/** 「로밍도깨비5% 할인링크 바로가기」 */
 export function esimAffiliateCtaLabel(partner: EsimAffiliatePartner): string {
   const pct =
     partner.discountPercent != null && partner.discountPercent > 0

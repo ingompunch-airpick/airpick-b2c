@@ -45,7 +45,7 @@ export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 
 export const ESIM_COMPARE_H1 = '이심';
 
 export const ESIM_COMPARE_DESC =
-  '에어픽 × 유심사 프로모션. 제휴 할인 링크로 이동해 구매·개통하세요.';
+  '에어픽 × 로밍도깨비 프로모션. 제휴 할인 링크로 이동해 구매·개통하세요.';
 
 export const ESIM_COMPARE_DOCUMENT_TITLE = '이심(eSIM) 제휴 할인 | 에어픽';
 
@@ -53,20 +53,20 @@ export const ESIM_COMPARE_SUB = '제휴사 할인 링크로 바로가기';
 
 /** 이심 탭 본문 */
 export const ESIM_HUB_LEAD = '출국 전 데이터, 제휴 할인으로 준비하세요';
-export const ESIM_HUB_DESC = '에어픽 × 유심사 프로모션';
+export const ESIM_HUB_DESC = '에어픽 × 로밍도깨비 프로모션';
 
 /** 이심 탭 · 제휴 할인 허브 */
 export const ESIM_HUB = {
   title: '이심',
-  cobrand: 'AIRPICK × USIMSA',
-  cobrandKo: '에어픽 × 유심사',
-  promoLabel: '프로모션',
-  heroSub: '에어픽 제휴 할인으로 유심사에서 바로 구매하세요',
+  cobrand: 'AIRPICK × ROKEBI',
+  cobrandKo: '에어픽 × 로밍도깨비',
+  promoLabel: '5% 할인',
+  heroSub: '에어픽 제휴 할인으로 로밍도깨비에서 바로 구매하세요',
   /** 「왜 eSIM은 …일까요?」 — 강조 구간은 UI에서 accent */
   whyTitleBefore: '왜 ',
   whyTitleAccentEsim: 'eSIM',
   whyTitleMid: '은 ',
-  whyTitleAccentBrand: '에어픽 × 유심사',
+  whyTitleAccentBrand: '에어픽 × 로밍도깨비',
   whyTitleAfter: '일까요?',
   whyItems: [
     {
@@ -90,12 +90,12 @@ export const ESIM_HUB = {
       title: '간편한 선물하기 기능',
     },
   ],
-  whyFootnote: '이심은 유심사가 운영·판매하는 서비스입니다. 에어픽은 제휴 할인 링크를 안내합니다.',
+  whyFootnote: '이심은 로밍도깨비가 운영·판매하는 서비스입니다. 에어픽은 제휴 할인 링크를 안내합니다.',
   stepsTitle: '이용 방법',
   steps: [
-    { id: '1', title: '할인 링크 열기', body: '유심사30% 할인링크 바로가기를 눌러 이동합니다.' },
-    { id: '2', title: '요금제 고르기', body: '나라·일수·용량을 유심사에서 선택하고 결제합니다.' },
-    { id: '3', title: '개통·설치', body: 'eSIM 설치·문의는 유심사 안내를 따르면 됩니다.' },
+    { id: '1', title: '할인 링크 열기', body: '로밍도깨비5% 할인링크 바로가기를 눌러 이동합니다.' },
+    { id: '2', title: '요금제 고르기', body: '나라·일수·용량을 로밍도깨비에서 선택하고 결제합니다.' },
+    { id: '3', title: '개통·설치', body: 'eSIM 설치·문의는 로밍도깨비 안내를 따르면 됩니다.' },
   ],
   footerNote:
     '요금·결제·개통·환불은 제휴사 정책을 따릅니다. 표시 할인은 제휴 기간·조건에 따라 달라질 수 있습니다.',

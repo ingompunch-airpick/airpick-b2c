@@ -35,7 +35,7 @@ export const ESIM_FAQ_CATEGORY: FaqCategory = {
       question: '에어픽에서 이심(eSIM)을 바로 구매할 수 있나요?',
       shortAnswer: SHORT_ANSWERS.esimBuy,
       answer:
-        '아니요. 에어픽은 제휴 할인 링크만 안내합니다. 구매·개통은 제휴사(예: 유심사) 사이트에서 진행해 주세요.',
+        '아니요. 에어픽은 제휴 할인 링크만 안내합니다. 구매·개통은 제휴사(로밍도깨비) 사이트에서 진행해 주세요.',
     },
     {
       id: 'esim-diff',
