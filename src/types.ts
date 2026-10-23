@@ -65,7 +65,7 @@ export interface Company {
   peakEndTime?: string;
   peakSurcharge?: number;
   status?: string;
-  /** 손님 셀프 취소 마감 — 입고 O시간 전 (미지정 시 기본값) */
+  /** B2B에 남은 값. 손님 앱 직접 취소는 입고 24시간 전으로 고정한다. */
   cancelCutoffHours?: number;
   /** true면 입고일이 오늘인 예약 차단 (B2B 설정) */
   sameDayBookingBlocked?: boolean;
@@ -129,6 +129,8 @@ export interface Company {
 
 export interface Reservation {
   id: string;
+  /** 예약한 로그인 계정. 비회원은 guest */
+  userId?: string;
   companyId: string;
   companyName: string;
   userName: string;
@@ -142,6 +144,10 @@ export interface Reservation {
   departureTerminal: string;
   arrivalTerminal?: string;
   totalPrice: number;
+  /** 접수 때 사용한 포인트. totalPrice 는 이미 빠진 현장 결제 금액 */
+  pointSpentWon?: number;
+  /** 서버가 포인트 사용을 확인했는지 */
+  pointSpendSettled?: boolean;
   status: string;
   isIndoor: boolean;
   createdAt: string;
@@ -226,6 +232,8 @@ export interface BookingSearch {
   isCardPayment?: boolean;
   /** 입점 업체 대면(출국장 앞 직접 인계) 입고 희망 — 대면 가능 업체 우선·발렛비 합산 */
   faceToFace?: boolean;
+  /** 터미널 픽업 핀. 출국장이면 faceToFace */
+  pickupPointId?: 'short' | 'depart';
 }
 
 export type AppTab = 'home' | 'compare' | 'esim' | 'my';

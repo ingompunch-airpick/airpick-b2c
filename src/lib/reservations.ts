@@ -53,6 +53,7 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
 
   return {
     id,
+    userId: data.userId ? String(data.userId) : undefined,
     companyId: String(data.companyId || ''),
     companyName: String(data.companyName || ''),
     userName: String(data.userName || ''),
@@ -66,6 +67,8 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     departureTerminal: String(data.departureTerminal || 'T1'),
     arrivalTerminal: data.arrivalTerminal ? String(data.arrivalTerminal) : undefined,
     totalPrice: Number(data.totalPrice) || 0,
+    pointSpentWon: Math.max(0, Math.floor(Number(data.pointSpentWon) || 0)) || undefined,
+    pointSpendSettled: data.pointSpendSettled === true ? true : undefined,
     status: String(data.status || 'pending'),
     isIndoor: data.isIndoor !== false,
     createdAt: String(data.createdAt || ''),
@@ -230,6 +233,8 @@ export async function cancelReservation(id: string, password: string): Promise<v
       throw new Error('이미 취소된 예약입니다.');
     case 'not_found':
       throw new Error('예약을 찾을 수 없습니다.');
+    case 'too_late':
+      throw new Error('입고 24시간 전까지만 앱에서 취소할 수 있습니다. 업체로 문의해 주세요.');
     default:
       throw new Error('예약 취소에 실패했습니다. 잠시 후 다시 시도해 주세요.');
   }
@@ -241,14 +246,18 @@ export async function submitReservation(
   search: BookingSearch,
   form: BookingForm,
   totalPrice: number,
-  /** 대면 입고가 실제 적용된 경우에만 전달 (업체 미지원 시 undefined) */
+  /** 손님이 대면을 고른 경우. 발렛비가 0이어도 픽업지 표시를 위해 전달한다. */
   faceToFace?: { valetFee: number },
   /** 제휴 링크 스냅샷 — B2B affiliates 기준 */
   affiliate?: {
     code: string;
     customerDiscountWon: number;
     referrerCreditWon: number;
-  }
+  },
+  /** 행사·혜택 안내 선택 동의 */
+  marketingOptIn?: boolean,
+  /** 포인트 적용 전 금액에서 뺄 포인트. 서버가 잔액을 확인한 뒤 totalPrice 에서 뺀다. */
+  pointSpendWon?: number
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
@@ -263,6 +272,7 @@ export async function submitReservation(
 
   const payload: Record<string, unknown> = {
     userId: auth.currentUser?.uid || 'guest',
+    ...(auth.currentUser && !auth.currentUser.isAnonymous ? { memberProvider: 'kakao' } : {}),
     companyId,
     companyName,
     userName: form.userName.trim(),
@@ -277,6 +287,7 @@ export async function submitReservation(
     arrivalTime: search.arrivalTime,
     arrivalTerminal: search.arrivalTerminal ?? search.terminal,
     totalPrice,
+    ...(pointSpendWon && pointSpendWon >= 5000 ? { pointSpendWon } : {}),
     status: 'pending',
     createdAt: now,
     createdBy: RESERVATION_CREATED_BY.AIRPICK_B2C,
@@ -302,7 +313,7 @@ export async function submitReservation(
   /** 대면 입고 요청 — B2B 기사 앱에서 대면 인계 여부·발렛비 표시 */
   if (faceToFace) {
     payload.faceToFace = true;
-    payload.valetFee = faceToFace.valetFee;
+    if (faceToFace.valetFee > 0) payload.valetFee = faceToFace.valetFee;
   }
 
   if (affiliate?.code) {
@@ -316,6 +327,8 @@ export async function submitReservation(
       Math.round(affiliate.referrerCreditWon || 0)
     );
   }
+
+  if (marketingOptIn) payload.marketingOptIn = true;
 
   await setDoc(doc(db, 'reservations', id), payload);
 

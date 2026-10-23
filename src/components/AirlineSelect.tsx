@@ -3,7 +3,7 @@ import { AIRLINE_OTHER_NAME, AIRLINE_OPTIONS, isKnownAirlineName } from '../cons
 import { cn } from '../utils/cn';
 
 const SELECT_CLASS =
-  'w-full rounded-xl border border-sky-border bg-sky-soft px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-brand';
+  'w-full rounded-xl border border-[#e4e7ec] bg-white px-3 py-2.5 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
 
 const INPUT_CLASS = SELECT_CLASS;
 

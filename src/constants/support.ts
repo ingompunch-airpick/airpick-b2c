@@ -1,6 +1,5 @@
 /** FAQ — 예약 탭·메뉴 (public/faq 와 동기). shortAnswer = PAA/스니펫용 40~60자. */
 
-import { PARKING_TAB_LABEL } from './marketing';
 import { SHORT_ANSWERS } from './officialAnswers';
 
 export interface FaqItem {
@@ -19,33 +18,6 @@ export interface FaqCategory {
 
 export const FAQ_CATEGORIES: FaqCategory[] = [
   {
-    id: 'leave-by',
-    label: '출국시간 · 혼잡',
-    items: [
-      {
-        id: 'leave-by-how',
-        question: '인천공항 출국시간·나설 시각은 어떻게 계산하나요?',
-        shortAnswer: SHORT_ANSWERS.leaveBy,
-        answer:
-          '홈에서 맡기는·찾는 일정을 넣은 뒤, 결과 화면에서 집 주소를 넣으면 차 맡기기(공항 도착) 시각과 이동 시간을 반영해 추천 출발 시각을 안내합니다. 여유 있는 도착을 위한 계획용이며, 실시간 혼잡도 API를 그대로 보여주는 서비스는 아닙니다.',
-      },
-      {
-        id: 'leave-by-buffer',
-        question: '공항 도착 여유·혼잡도는 어떻게 반영되나요?',
-        shortAnswer: SHORT_ANSWERS.leaveByBuffer,
-        answer:
-          '차 맡기기 시각과 집→공항 이동 시간을 기준으로 여유를 잡는 계획용입니다. 성수기에는 추가로 여유를 권장할 수 있으며, 현장 대기 시간은 날·시간대에 따라 달라질 수 있습니다.',
-      },
-      {
-        id: 'long-lot-vs-valet',
-        question: '직접 장기주차와 주차대행, 공항 이동 시간은 어떻게 다른가요?',
-        shortAnswer: SHORT_ANSWERS.longLotVsValet,
-        answer:
-          '장기주차는 자리 찾기·셔틀 등 공항 이동(약 48분)을 계산에 반영합니다. 주차대행은 업체마다 인수 위치·운영 방식이 달라 하나의 시간으로 계산하지 않으며, 업체 상세에서 이용 방법을 확인하면 됩니다.',
-      },
-    ],
-  },
-  {
     id: 'my',
     label: '예약 · 조회',
     items: [
@@ -54,7 +26,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         question: '에어픽은 어떤 서비스인가요?',
         shortAnswer: SHORT_ANSWERS.whatIs,
         answer:
-          '에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다. 에어픽이 확인한 공식 파트너만 비교·예약하며, 예약 후 위치·사진·보험을 앱에서 확인할 수 있습니다.',
+          '에어픽은 인천공항 주차대행을 비교·예약하고, 이심(eSIM)은 제휴 할인으로 안내합니다. 확인한 공식 파트너만 비교·예약하며, 예약 후 위치·사진·보험을 내 예약에서 확인할 수 있습니다.',
       },
       {
         id: 'my-how',
@@ -80,14 +52,29 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         id: 'book-how',
         question: '에어픽에서 주차대행은 어떻게 예약하나요?',
         shortAnswer: SHORT_ANSWERS.bookHow,
-        answer: `${PARKING_TAB_LABEL} 탭에서 입·출국 일정과 터미널·실내/야외를 선택한 뒤 업체 가격을 비교하고 예약 접수를 완료하면 됩니다. 예약 시 조회·취소에 사용할 비밀번호 4자리를 설정하며, 결제는 현장 결제입니다.`,
+        answer:
+          '홈에서 터미널, 실내·야외, 픽업지, 날짜를 고른 뒤 업체를 비교하고 접수합니다. 비회원은 조회·취소에 쓸 비밀번호 4자리를 정하고, 결제는 현장 결제입니다.',
+      },
+      {
+        id: 'pickup',
+        question: '픽업지는 어디서 확인하나요?',
+        shortAnswer: SHORT_ANSWERS.pickup,
+        answer:
+          '픽업지는 업체와 터미널마다 다릅니다. 접수 후 내 예약 카드와 접수증에 그 업체의 픽업지가 나옵니다.',
+      },
+      {
+        id: 'signup-coupon',
+        question: '5,000원 할인은 언제 적용되나요?',
+        shortAnswer: SHORT_ANSWERS.signupCoupon,
+        answer:
+          '카카오 가입 후 첫 예약 한 번만 5,000원이 빠집니다. 이미 예약한 계정과 그다음 예약은 정가입니다.',
       },
       {
         id: 'book-change',
         question: '에어픽 주차대행 예약 변경·취소는 어떻게 하나요?',
         shortAnswer: SHORT_ANSWERS.cancel,
         answer:
-          '입고 예정 24시간 전이라면 예약 탭에서 예약을 조회한 뒤 「예약 취소」로 직접 취소할 수 있습니다(비밀번호 필요, 업체별 마감이 다를 수 있음). 그 이후·입고 후 또는 일정 변경은 예약 카드의 「업체 문의」로 주차장에 직접 연락해 주세요.',
+          '입고 예정 24시간 전까지는 예약 탭에서 예약을 조회한 뒤 「예약 취소」로 직접 취소할 수 있습니다(비밀번호 필요). 그 이후·입고 후 또는 일정 변경은 예약 카드의 「업체 문의」로 주차장에 직접 연락해 주세요.',
       },
       {
         id: 'book-pay',
@@ -127,7 +114,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         question: '에어픽 고객센터와 주차장 문의는 어디에 하나요?',
         shortAnswer: SHORT_ANSWERS.contact,
         answer:
-          '차량 입·출고, 현장 일정, 차량 상태, 입고 후 변경·취소 → 예약 카드 「업체 문의」로 주차장에 전화해 주세요. 입고 전 취소·앱·예약 조회 방법은 이 FAQ를 참고해 주세요. 에어픽 고객센터는 010-2556-5746, 카카오톡 상담, 운영 09:00~18:00입니다.',
+          '차량 입·출고, 현장 일정, 차량 상태, 입고 24시간 이내 변경·취소 → 예약 카드 「업체 문의」로 주차장에 전화해 주세요. 입고 24시간 전까지의 취소·앱·예약 조회 방법은 이 FAQ를 참고해 주세요. 에어픽 고객센터는 010-2556-5746, 카카오톡 상담, 운영 09:00~18:00입니다.',
       },
     ],
   },

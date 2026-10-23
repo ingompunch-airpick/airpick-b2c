@@ -1,18 +1,14 @@
 # Firestore 규칙 정본
 
 **프로젝트:** `airpick-reservation` (B2B · B2C · 홈페이지 예약 공유)  
-**목적:** B2B/B2C 저장소에 각각 다른 `firestore.rules`가 있어, 나중에 배포한 쪽이 다른 쪽 보호를 지우는 문제를 막기 위함입니다.
-
-**적용 상태:** B2B `firestore.rules` · B2C `Documents/GitHub/airpick-b2c/firestore.rules` 동기화됨.  
-프로덕션 반영: B2B에서 `firebase deploy --only firestore:rules --project airpick-reservation`  
-**(B2C에서는 rules 배포하지 말 것)**
+**정본:** B2B 저장소 `airpick2-b-to-b/firestore.rules` · `firestore.indexes.json` 하나뿐입니다.  
+B2C 저장소에는 규칙 파일이 없고, `firebase.json`도 규칙·색인을 배포하지 않습니다.  
+프로덕션 반영: B2B에서 `firebase deploy --only firestore --project airpick-reservation`
 
 ## 배포 원칙 (중요)
 
-1. **정본은 이 문서의 규칙 블록 하나**입니다.
-2. 반영 시 **B2B `firestore.rules`와 B2C `firestore.rules`를 동일 내용으로 맞춘 뒤**, 한곳에서만 배포하세요.
-   - 예: B2B에서만 `firebase deploy --only firestore:rules`
-   - B2C에서는 rules 배포 스크립트를 끄거나, 같은 파일을 복사해 두고 “B2B가 정본”이라고 README에 적기
+1. B2C에 필요한 규칙(회원, 포인트, 후기 등)도 B2B `firestore.rules`에 넣고 B2B에서 배포합니다.
+2. B2C에 규칙 파일을 다시 만들지 않습니다. 나중에 배포한 쪽이 다른 쪽 보호를 지웁니다.
 3. Functions·Storage rules도 **B2B에서만** 배포합니다.  
    → 소유권·라이브 함수 목록: [`docs/FIREBASE_DEPLOY_OWNERSHIP.md`](./FIREBASE_DEPLOY_OWNERSHIP.md)  
    → 통합 전까지 Functions **전체** 배포 금지 (`docs/LAUNCH_CHECKLIST.md`)
@@ -29,197 +25,16 @@
 | `reviews` write | **불가** | Functions만 |
 | `reservations` | 로그인 + 필드 검증 | 보안 필드·삭제는 본사/Functions |
 
+## 카카오 회원 `members/{uid}`
+
+B2C 가입은 카카오만 받는다. 문서 ID는 Firebase Auth uid다. 손님은 자기 문서만 읽고 쓴다. 로그인 공급자는 `oidc.kakao`여야 한다. 규칙은 B2B `firestore.rules`의 `members` 블록이다.
+
 ## 아직 안 넣은 것 (다음 단계)
 
 - `.env` 본사 비밀번호 로그인 제거 → **완료** (Gate Firebase 이메일 로그인)
 - Firebase Custom Claims `companyId` 로 가맹점 update 범위 제한
 
 ---
-
-## 정본 규칙 (복사해 `firestore.rules`에 사용)
-
-```
-rules_version = '2';
-
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // ── Helpers ─────────────────────────────────────────────────────────────
-    // 정본: docs/FIRESTORE_RULES_CANONICAL.md — B2B·B2C 동일 유지, rules 배포는 한곳에서만
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /** B2B 본사 Firebase Auth 계정 (Anonymous 아님). 예약 삭제 등 Rules 경로용 */
-    function isPlatformAdmin() {
-      return isSignedIn()
-        && request.auth.token.email != null
-        && request.auth.token.email in [
-          'drive5746@gmail.com',
-          'ingompunch@gmail.com'
-        ];
-    }
-
-    function isValidCompanyId(companyId) {
-      return companyId.matches('^[a-z0-9_]{1,64}$');
-    }
-
-    /**
-     * 가맹점(클라이언트)이 바꿀 수 있는 운영 필드만.
-     * 생성·삭제·프로필(핀·보험·비밀번호·status 등)은 Cloud Functions Admin SDK만.
-     */
-    function onlyPartnerOperationalFieldsChanged() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-        'id',
-        'base_price',
-        'extra_day_price',
-        'base_days',
-        'outdoorBasePrice',
-        'outdoorBaseDays',
-        'outdoorExtraPrice',
-        'indoorBasePrice',
-        'indoorBaseDays',
-        'indoorExtraPrice',
-        'surchargeStartTime',
-        'surchargeEndTime',
-        'surchargePrice',
-        't2Surcharge',
-        'peakStartTime',
-        'peakEndTime',
-        'peakSurcharge',
-        'valetFeeT1',
-        'valetFeeT2',
-        'employees',
-        'isOpen',
-        'blockedDates',
-        'cancelCutoffHours',
-        'sameDayBookingBlocked',
-        'hourlyCapEnabled',
-        'maxCarsPerHour',
-        'parkingCapEnabled',
-        'maxParkedCars',
-        'phone',
-        'updatedAt'
-      ]);
-    }
-
-    function isValidReservationId(reservationId) {
-      return reservationId.matches('^[a-zA-Z0-9_-]{1,128}$');
-    }
-
-    function reservationCoreFieldsValid(data) {
-      return data.keys().hasAll(['status', 'createdAt'])
-        && data.status is string
-        && data.status.size() > 0
-        && data.status.size() <= 64
-        && data.createdAt is string
-        && data.createdAt.size() > 0
-        && data.createdAt.size() <= 40;
-    }
-
-    function reservationCompanyIdValid(data) {
-      return !('companyId' in data)
-        || (data.companyId is string
-            && data.companyId.size() > 0
-            && data.companyId.size() <= 64);
-    }
-
-    function reservationTotalPriceValid(data) {
-      return !('totalPrice' in data)
-        || (data.totalPrice is number && data.totalPrice >= 0);
-    }
-
-    function validReservationWrite() {
-      return reservationCoreFieldsValid(request.resource.data)
-        && reservationCompanyIdValid(request.resource.data)
-        && reservationTotalPriceValid(request.resource.data);
-    }
-
-    /**
-     * 보안·생성 필드는 최초 생성 후 클라이언트가 변경할 수 없다.
-     * 취소·비번 검증 등 정당한 변경은 Cloud Functions(admin)가 규칙을 우회해 처리.
-     */
-    function reservationProtectedFieldsUnchanged() {
-      return !request.resource.data.diff(resource.data).affectedKeys()
-        .hasAny(['reservationPassword', 'receiptToken', 'createdBy', 'createdAt', 'userId']);
-    }
-
-    // ── reservations ───────────────────────────────────────────────────────
-
-    match /reservations/{reservationId} {
-      allow read: if isSignedIn();
-
-      allow create: if isSignedIn()
-        && isValidReservationId(reservationId)
-        && validReservationWrite();
-
-      allow update: if isSignedIn()
-        && isValidReservationId(reservationId)
-        && validReservationWrite()
-        && reservationProtectedFieldsUnchanged();
-
-      // 고객·파트너는 상태 변경으로 취소. 문서 삭제는 본사만.
-      allow delete: if isPlatformAdmin() && isValidReservationId(reservationId);
-
-      // 예약 조회·취소·후기 인증용 4자리 비밀번호 — Admin SDK(Functions)만
-      match /secrets/{secretId} {
-        allow read, write: if false;
-      }
-    }
-
-    match /storage_retention/{reservationId} {
-      allow read, write: if false;
-    }
-
-    // capacity/{companyId}__{날짜} — 시간당 입고 대수만. 갱신은 onReservationSync만.
-    match /capacity/{capacityId} {
-      allow read: if true;
-      allow write: if false;
-    }
-
-    // customers/{phoneKey} — visitCount (Functions만 쓰기)
-    match /customers/{phoneKey} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if false;
-    }
-
-    // ── companies ──────────────────────────────────────────────────────────
-
-    match /companies/{companyId} {
-      allow read: if true;
-
-      // 생성·삭제는 Cloud Functions(adminUpsertCompany / adminDeleteCompany)만
-      allow create, delete: if false;
-
-      // 가맹점: 요금·발레·직원·마감·영업여부 등 운영 필드만
-      // 핀·보험·사진·password·status·정산메모 등 → Functions만
-      allow update: if isSignedIn()
-        && isValidCompanyId(companyId)
-        && onlyPartnerOperationalFieldsChanged();
-    }
-
-    // ── system_settings / parking_lots ─────────────────────────────────────
-
-    match /system_settings/{settingId} {
-      allow read: if isSignedIn();
-      allow write: if false;
-    }
-
-    match /parking_lots/{lotId} {
-      allow read: if true;
-      allow write: if false;
-    }
-
-    // ── reviews (후기 — 쓰기는 Cloud Functions만) ─────────────────────────
-
-    match /reviews/{reviewId} {
-      allow read: if isSignedIn() && resource.data.status == 'published';
-      allow create, update, delete: if false;
-    }
-  }
-}
-```
 
 ## 반영 후 스모크 테스트
 

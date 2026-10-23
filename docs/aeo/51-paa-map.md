@@ -3,11 +3,11 @@
 질문형 검색·PAA 후보를 FAQ `shortAnswer`·상세 답·가이드 H2에 연결한다.  
 직접답은 `src/constants/officialAnswers.ts` / `support.ts` / `esimSupport.ts`와 동기.
 
-## 출국시간 · 혼잡·대기
+## 나설 시각 · 혼잡·대기 (홈 계산기 없음)
 
 | 질문형 키워드 (예) | 공식 답 위치 | shortAnswer 키 | 비고 |
 | --- | --- | --- | --- |
-| 인천공항 출국시간 / 집에서 몇 시 나가야 | [/](https://www.에어픽.kr/) · [/faq/](https://www.에어픽.kr/faq/) | `leaveBy` | 홈 계산기 |
+| 집에서 몇 시 나가야 | [/faq/](https://www.에어픽.kr/faq/) | `leaveBy` | 홈에 계산기 없음 · FAQ 안내 |
 | 공항 혼잡도 / 대기시간 여유 | FAQ 「공항 도착 여유·혼잡도」 | `leaveByBuffer` | **실시간 혼잡 API 아님** · 여유 계획용 |
 | 직접 장기주차 vs 주차대행 시간 | FAQ · 홈 계산 결과 | `longLotVsValet` | 자리 찾기·셔틀 vs 탑승장 인계 |
 | 인천공항 몇 시간 전 도착 | FAQ leaveByBuffer | `leaveByBuffer` | 기본 출발 3시간 전 |

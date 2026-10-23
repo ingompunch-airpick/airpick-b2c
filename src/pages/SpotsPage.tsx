@@ -114,7 +114,7 @@ export default function SpotsPage() {
 
         <p className="mt-6 border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
           {AIRPICK_DEFINITION}{' '}
-          <a href="/parking" className="font-bold text-brand underline-offset-2 hover:underline">
+          <a href="/" className="font-bold text-brand underline-offset-2 hover:underline">
             {PARKING_TAB_LABEL}
           </a>
           {' · '}

@@ -1,18 +1,17 @@
-import { ClipboardList, Home, LayoutGrid, Smartphone } from 'lucide-react';
+import { useLayoutEffect, useRef } from 'react';
+import { ClipboardList, Home, Smartphone } from 'lucide-react';
 import type { AppTab } from '../types';
 import {
   APP_TAB_SOON,
   ESIM_TAB_LABEL,
   HOME_TAB_LABEL,
   MY_TAB_LABEL,
-  PARKING_TAB_LABEL,
 } from '../constants/marketing';
 import { pathFromTab } from '../utils/appPath';
 import { cn } from '../utils/cn';
 
 const tabs: { id: AppTab; label: string; icon: typeof Home }[] = [
   { id: 'home', label: HOME_TAB_LABEL, icon: Home },
-  { id: 'compare', label: PARKING_TAB_LABEL, icon: LayoutGrid },
   { id: 'esim', label: ESIM_TAB_LABEL, icon: Smartphone },
   { id: 'my', label: MY_TAB_LABEL, icon: ClipboardList },
 ];
@@ -33,8 +32,24 @@ export default function BottomNav({
   tone?: 'default' | 'premium';
   wide?: boolean;
 }) {
+  const navRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const apply = () => {
+      document.documentElement.style.setProperty('--app-tab-h', `${el.getBoundingClientRect().height}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200/90 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
+    <nav
+      ref={navRef}
+      className="fixed bottom-0 left-0 right-0 z-[90] border-t border-neutral-200/90 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]"
+    >
       <div
         className={cn(
           'mx-auto flex items-stretch justify-around',

@@ -1,15 +1,13 @@
 import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
-import type { Company, Reservation } from '../types';
+import type { Reservation } from '../types';
 
-/** 업체 미지정 시 기본 취소 마감 — 입고 O시간 전 */
+/** 손님 직접 취소 마감 — 입고 24시간 전. 업체 문서의 시간은 쓰지 않는다. */
 export const DEFAULT_CANCEL_CUTOFF_HOURS = 24;
 
 /** 셀프 취소 가능한 상태 (입고 전) */
 const CANCELLABLE_STATUSES = new Set(['pending', 'scheduled', 'pending_in']);
 
-export function getCancelCutoffHours(company?: Company): number {
-  const raw = company?.cancelCutoffHours;
-  if (typeof raw === 'number' && Number.isFinite(raw) && raw >= 0) return raw;
+export function getCancelCutoffHours(): number {
   return DEFAULT_CANCEL_CUTOFF_HOURS;
 }
 
@@ -31,7 +29,6 @@ export interface CancelEligibility {
 /** 에어픽 직접 예약 · 입고 마감 전만 셀프 취소 허용 */
 export function getCancelEligibility(
   reservation: Reservation,
-  company: Company | undefined,
   now: Date = new Date()
 ): CancelEligibility {
   if (reservation.status === 'cancelled') {
@@ -53,7 +50,7 @@ export function getCancelEligibility(
   const checkIn = parseCheckInDate(reservation);
   if (!checkIn) return { cancellable: true };
 
-  const cutoffHours = getCancelCutoffHours(company);
+  const cutoffHours = getCancelCutoffHours();
   const deadline = new Date(checkIn.getTime() - cutoffHours * 60 * 60 * 1000);
   if (now > deadline) {
     return {

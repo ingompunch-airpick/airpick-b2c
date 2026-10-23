@@ -4,6 +4,21 @@ import { logger } from 'firebase-functions';
 
 import { reservationPasswordMatches } from '../reservations/publicReservation';
 
+const SELF_CANCEL_CUTOFF_HOURS = 24;
+const CANCELLABLE_STATUSES = new Set(['pending', 'scheduled', 'pending_in']);
+
+function pastSelfCancelDeadline(data: Record<string, unknown>, now = Date.now()): boolean {
+  const status = String(data.status ?? '');
+  if (!CANCELLABLE_STATUSES.has(status)) return true;
+  const departureDate = String(data.departureDate ?? '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(departureDate)) return false;
+  const rawTime = String(data.departureTime ?? '');
+  const time = /^\d{2}:\d{2}$/.test(rawTime) ? rawTime : '00:00';
+  const checkIn = new Date(`${departureDate}T${time}:00+09:00`);
+  if (Number.isNaN(checkIn.getTime())) return false;
+  return now > checkIn.getTime() - SELF_CANCEL_CUTOFF_HOURS * 60 * 60 * 1000;
+}
+
 /**
  * 고객 셀프 취소 — 서버에서 비밀번호를 검증하고 status: cancelled 로 변경.
  */
@@ -47,6 +62,10 @@ export const cancelReservation = onRequest(
       }
       if (String(data.status ?? '') === 'cancelled') {
         res.status(409).json({ error: 'already_cancelled' });
+        return;
+      }
+      if (pastSelfCancelDeadline(data)) {
+        res.status(409).json({ error: 'too_late' });
         return;
       }
 

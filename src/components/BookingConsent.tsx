@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, X } from 'lucide-react';
 import {
   AIRPICK_PLATFORM_TERMS,
   buildParkingServiceTerms,
@@ -76,7 +76,7 @@ function ConsentSheet({
             <X size={18} className="text-muted" />
           </button>
         </div>
-        <div className="overflow-y-auto px-5 py-4 text-[12px] leading-relaxed text-muted">
+        <div className="overflow-y-auto px-5 py-4 text-[13px] leading-relaxed text-muted">
           {children}
         </div>
         <div className="border-t border-sky-border/60 p-4">
@@ -100,23 +100,28 @@ export default function BookingConsent({
   agreedServiceTerms,
   agreedPrivacy,
   agreedThirdParty,
+  marketingOptIn,
   onAgreedPlatformTermsChange,
   onAgreedServiceTermsChange,
   onAgreedPrivacyChange,
   onAgreedThirdPartyChange,
+  onMarketingOptInChange,
   providerName,
 }: {
   agreedPlatformTerms: boolean;
   agreedServiceTerms: boolean;
   agreedPrivacy: boolean;
   agreedThirdParty: boolean;
+  marketingOptIn: boolean;
   onAgreedPlatformTermsChange: (v: boolean) => void;
   onAgreedServiceTermsChange: (v: boolean) => void;
   onAgreedPrivacyChange: (v: boolean) => void;
   onAgreedThirdPartyChange: (v: boolean) => void;
+  onMarketingOptInChange: (v: boolean) => void;
   providerName?: string;
 }) {
   const [sheet, setSheet] = useState<SheetKey | null>(null);
+  const [termsOpen, setTermsOpen] = useState(false);
   const parkingServiceTerms = buildParkingServiceTerms(providerName);
   const thirdPartyPrivacy = buildThirdPartyPrivacyConsent(providerName);
   const allAgreed =
@@ -138,56 +143,79 @@ export default function BookingConsent({
 
   return (
     <section className="space-y-3">
-      <p className="text-xs font-bold text-brand">약관 및 개인정보 동의</p>
+      <p className="text-[13px] font-bold text-brand">약관 및 개인정보 동의</p>
 
-      <div className="space-y-1 rounded-xl bg-amber-50 px-3 py-2.5 ring-1 ring-amber-100">
-        {INTERMEDIARY_DISCLAIMER.map((line) => (
-          <p key={line} className="text-[10px] font-semibold leading-relaxed text-amber-800">
-            {line}
-          </p>
-        ))}
-      </div>
+      <div className="rounded-2xl bg-[#f4f5f7]">
+        <div className="flex items-center gap-2 px-3.5 py-3.5">
+          <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-2.5">
+            <input
+              type="checkbox"
+              checked={allAgreed}
+              onChange={(e) => setAllAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
+            />
+            <span className="text-[13px] font-bold text-ink">전체 동의합니다. (필수)</span>
+          </label>
+          <button
+            type="button"
+            onClick={() => setTermsOpen((open) => !open)}
+            className="inline-flex shrink-0 items-center gap-0.5 text-[13px] font-bold text-brand"
+          >
+            {termsOpen ? '접기' : '펼치기'}
+            <ChevronDown
+              size={14}
+              className={cn('transition-transform', termsOpen && 'rotate-180')}
+            />
+          </button>
+        </div>
 
-      <div className="rounded-2xl bg-sky-bg ring-1 ring-sky-border/70">
-        <label className="flex cursor-pointer items-start gap-2.5 px-3.5 py-3.5">
+        <label className="flex cursor-pointer items-start gap-2.5 border-t border-sky-border/60 px-3.5 py-3.5">
           <input
             type="checkbox"
-            checked={allAgreed}
-            onChange={(e) => setAllAgreed(e.target.checked)}
+            checked={marketingOptIn}
+            onChange={(e) => onMarketingOptInChange(e.target.checked)}
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
           />
-          <span className="text-[13px] font-bold text-ink">전체 동의합니다. (필수)</span>
+          <span className="text-[13px] font-bold text-ink">
+            행사·혜택 안내 받기
+            <span className="ml-1.5 text-[13px] font-bold text-ink/55">선택</span>
+          </span>
         </label>
 
-        <ul className="border-t border-sky-border/60">
-          {rows.map((row) => (
-            <li key={row.key} className="border-b border-sky-border/50 last:border-b-0">
-              <button
-                type="button"
-                onClick={() => setSheet(row.key)}
-                className="flex w-full items-center justify-between gap-3 px-3.5 py-3 text-left"
-              >
-                <span className="text-[12px] font-semibold text-ink">
-                  {row.label}
-                  <span className="ml-1.5 text-[10px] font-bold text-brand">필수</span>
-                </span>
-                <ChevronRight size={16} className="shrink-0 text-muted-light" />
-              </button>
-            </li>
-          ))}
-        </ul>
+        {termsOpen ? (
+          <>
+          <div className="border-t border-sky-border/60 bg-amber-50 px-3.5 py-3">
+            <p className="text-[13px] font-semibold leading-relaxed text-amber-900">
+              실제 서비스 책임은 제휴업체에 있습니다.
+            </p>
+            <div className="mt-1.5 space-y-1">
+              {INTERMEDIARY_DISCLAIMER.map((line) => (
+                <p key={line} className="text-[13px] font-medium leading-relaxed text-amber-800">
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
+          <ul className="border-t border-sky-border/60">
+            {rows.map((row) => (
+              <li key={row.key} className="border-b border-sky-border/50 last:border-b-0">
+                <button
+                  type="button"
+                  onClick={() => setSheet(row.key)}
+                  className="flex w-full items-center justify-between gap-3 px-3.5 py-3 text-left"
+                >
+                  <span className="text-[13px] font-semibold text-ink">
+                    {row.label}
+                    <span className="ml-1.5 text-[13px] font-bold text-brand">필수</span>
+                  </span>
+                  <ChevronRight size={16} className="shrink-0 text-muted-light" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          </>
+        ) : null}
       </div>
-
-      <p className="text-[10px] font-medium leading-relaxed text-muted">
-        각 항목을 눌러 상세 내용을 확인할 수 있습니다. 예약에 필요한 필수 약관 및 개인정보
-        처리에 모두 동의합니다.
-      </p>
-
-      {!allAgreed ? (
-        <p className={cn('text-[10px] font-semibold text-muted')}>
-          전체 동의 후 예약을 접수할 수 있습니다.
-        </p>
-      ) : null}
 
       {sheet === 'platform' ? (
         <ConsentSheet title={AIRPICK_PLATFORM_TERMS.title} onClose={() => setSheet(null)}>

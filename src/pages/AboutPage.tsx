@@ -13,15 +13,16 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
   const telHref = buildTelHref(COMPANY_LEGAL.phone);
 
   return (
-    <div className="fixed inset-0 z-[70] flex flex-col bg-sky-bg">
-      <header className="flex shrink-0 items-center gap-2 border-b border-sky-border/80 bg-sky-bg/95 px-2 py-3 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-sky-bg">
+      <header className="flex shrink-0 items-center gap-2 border-b border-sky-border/80 bg-sky-bg/95 px-2 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md">
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full p-2 text-muted transition-colors hover:bg-sky-soft"
-          aria-label="닫기"
+          className="inline-flex items-center gap-0.5 rounded-full py-2 pl-1 pr-3 text-[15px] font-semibold text-[#0f1a2e]"
+          aria-label="뒤로"
         >
-          <ChevronLeft size={22} />
+          <ChevronLeft size={22} strokeWidth={2.25} />
+          뒤로
         </button>
         <h1 className="text-base font-bold text-ink">{COMPANY_LEGAL.serviceName} 소개</h1>
       </header>
@@ -51,16 +52,10 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           </a>
           <div className="mt-3 flex flex-wrap gap-2">
             <a
-              href="/parking"
+              href="/"
               className="rounded-full bg-brand px-3 py-1.5 text-[11px] font-bold text-white"
             >
               주차대행 비교·예약
-            </a>
-            <a
-              href="/"
-              className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-brand ring-1 ring-brand/25"
-            >
-              출국시간 계산
             </a>
             <a
               href="/faq/"

@@ -95,8 +95,11 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
             />
             <Row label="여행 · 항공" value={travelLine(receipt)} />
             <Row label="주차 구분" value={parkingTypeLabel(receipt.isIndoor)} />
+            {(receipt.pointSpentWon ?? 0) > 0 ? (
+              <Row label="포인트 사용" value={`−${receipt.pointSpentWon?.toLocaleString('ko-KR')}원`} />
+            ) : null}
             <Row
-              label="총주차금액"
+              label={(receipt.pointSpentWon ?? 0) > 0 ? '현장 받을 금액' : '총주차금액'}
               value={
                 receipt.totalPrice > 0
                   ? `${receipt.totalPrice.toLocaleString('ko-KR')}원`

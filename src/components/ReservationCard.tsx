@@ -1,4 +1,4 @@
-import { Camera, ChevronRight, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
+import { Camera, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
@@ -16,18 +16,14 @@ import { getStatusLabel, getStatusStep, formatCheckInStaffLine, formatCheckOutSt
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import { getCancelEligibility } from '../utils/reservationCancel';
 import { isReservationReviewable } from '../lib/reviews';
+import { handoffPlaceLine } from '../data/pickupPins';
+import { itchaHandoffPlace } from '../data/itchaPickup';
 
 function formatSchedule(reservation: Reservation): string {
   const dep = reservation.departureDate.replace(/-/g, '.').slice(5);
   const arr = reservation.arrivalDate.replace(/-/g, '.').slice(5);
   const indoor = parkingTypeLabel(reservation.isIndoor);
   return `${dep} ${reservation.departureTime} → ${arr} ${reservation.arrivalTime} · ${reservation.departureTerminal} ${indoor}`;
-}
-
-function maskPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length < 8) return phone;
-  return `${digits.slice(0, 3)}-****-${digits.slice(-4)}`;
 }
 
 function StatusTimeline({ status }: { status: string }) {
@@ -164,6 +160,8 @@ export default function ReservationCard({
   lookupPassword = '',
   autoOpenReview = false,
   onAutoOpenReviewHandled,
+  showVehicle = true,
+  memberReview = false,
 }: {
   reservation: Reservation;
   company?: Company;
@@ -179,6 +177,10 @@ export default function ReservationCard({
   /** 출고 알림톡 딥링크 — 후기 모달 자동 오픈 */
   autoOpenReview?: boolean;
   onAutoOpenReviewHandled?: () => void;
+  /** 로그인 화면은 차량을 회원 정보에만 둔다 */
+  showVehicle?: boolean;
+  /** 이 예약을 예약한 카카오 계정으로 보고 있을 때 */
+  memberReview?: boolean;
 }) {
   const statusLabel = getStatusLabel(reservation.status);
   const checkInStaffLine = formatCheckInStaffLine(reservation.checkedInBy);
@@ -189,7 +191,7 @@ export default function ReservationCard({
   const checkInPhotos = reservation.checkInPhotos;
   const parkingDisplay = resolveParkingLocationDisplay(reservation, company);
 
-  const cancelEligibility = getCancelEligibility(reservation, company);
+  const cancelEligibility = getCancelEligibility(reservation);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelPw, setCancelPw] = useState('');
   const [cancelLoading, setCancelLoading] = useState(false);
@@ -226,9 +228,128 @@ export default function ReservationCard({
     }
   };
 
-  const locationPending =
-    !parkingDisplay &&
-    getStatusStep(reservation.status) < 1;
+  const statusStep = getStatusStep(reservation.status);
+  const showParkedDetail = statusStep >= 2;
+  const locationPending = !parkingDisplay && statusStep < 1;
+  const paymentLabel =
+    !reservation.paymentMethod || reservation.paymentMethod === 'unpaid'
+      ? '현장 결제'
+      : reservation.paymentMethod;
+
+  if (reservation.status === 'cancelled') {
+    const dep = reservation.departureDate.slice(5).replace('-', '.');
+    const arr = reservation.arrivalDate.slice(5).replace('-', '.');
+    return (
+      <article className="rounded-2xl bg-[#f4f5f7] px-4 py-3">
+        <p className="text-[14px] font-semibold leading-snug text-[#0f1a2e]/70">
+          취소됨 · {displayCompanyName(reservation.companyName)} · {dep}–{arr} ·{' '}
+          {reservation.totalPrice.toLocaleString()}원
+        </p>
+      </article>
+    );
+  }
+
+  const completedTrip =
+    reservation.status === 'completed_out' || reservation.status === 'checked_out';
+
+  if (completedTrip) {
+    return (
+      <article className="rounded-3xl bg-neutral-50 p-5 shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <span className="inline-flex rounded-full bg-[#0f1a2e]/[0.06] px-2.5 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
+              {statusLabel}
+            </span>
+            <h3 className="mt-2 text-base font-bold text-ink">
+              {displayCompanyName(reservation.companyName)}
+            </h3>
+            {showVehicle ? (
+              <p className="mt-0.5 text-xs font-medium text-muted">
+                {reservation.carNumber} · {reservation.carModel}
+              </p>
+            ) : null}
+          </div>
+        </div>
+        <p className="mt-2 text-xs font-medium text-muted">{formatSchedule(reservation)}</p>
+        <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
+          {reservation.totalPrice.toLocaleString()}원
+          <span className="ml-2 text-[13px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
+        </p>
+
+        {trackingAccess ? (
+          <div className="mt-4 space-y-2.5">
+            <TrustBlock icon={MapPin} title="주차 위치" highlight>
+              {parkingDisplay ? (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
+                    {parkingDisplay.detail ? (
+                      <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
+                    ) : null}
+                  </div>
+                  <ParkingMapPinPreview
+                    address={parkingDisplay.title}
+                    mapUrl={parkingDisplay.mapUrl}
+                    lat={parkingDisplay.lat}
+                    lng={parkingDisplay.lng}
+                    distanceLabel={undefined}
+                  />
+                  <div>
+                    <p className="mb-1.5 text-[11px] font-bold text-muted">위치 · 주차장 사진</p>
+                    <PhotoStrip
+                      photos={parkingDisplay.lotPhotos}
+                      size="md"
+                      emptyLabel="등록된 주차장 사진이 없습니다."
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs font-medium leading-relaxed text-muted">
+                  주차 위치 정보가 없습니다.
+                </p>
+              )}
+            </TrustBlock>
+            <TrustBlock icon={Camera} title="입고 사진">
+              <PhotoStrip photos={checkInPhotos} emptyLabel="등록된 입고 사진이 없습니다." />
+            </TrustBlock>
+          </div>
+        ) : null}
+
+        {reservation.hasReview === true && isReservationReviewable(reservation.status) ? (
+          <p className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-xs font-bold text-amber-700 ring-1 ring-amber-100">
+            <Star size={14} className="fill-amber-400 text-amber-400" strokeWidth={2} />
+            후기 작성 완료
+          </p>
+        ) : null}
+
+        {canWriteReview ? (
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={() => setReviewOpen(true)}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-2.5 text-xs font-bold text-white"
+            >
+              <Star size={14} strokeWidth={2.25} />
+              후기 작성
+            </button>
+          </div>
+        ) : null}
+
+        {reviewOpen && onSubmitReview ? (
+          <ReviewWriteModal
+            companyName={displayCompanyName(reservation.companyName)}
+            initialPassword={lookupPassword}
+            requirePassword={!memberReview}
+            onClose={() => setReviewOpen(false)}
+            onSubmit={async (password, rating, body, photoDataUrls) => {
+              await onSubmitReview(password, rating, body, photoDataUrls);
+              setReviewOpen(false);
+            }}
+          />
+        ) : null}
+      </article>
+    );
+  }
 
   return (
     <article className="rounded-3xl bg-neutral-50 p-5 shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
@@ -240,9 +361,11 @@ export default function ReservationCard({
           <h3 className="mt-2 text-base font-bold text-ink">
             {displayCompanyName(reservation.companyName)}
           </h3>
-          <p className="mt-0.5 text-xs font-medium text-muted">
-            {reservation.carNumber} · {reservation.carModel}
-          </p>
+          {showVehicle ? (
+            <p className="mt-0.5 text-xs font-medium text-muted">
+              {reservation.carNumber} · {reservation.carModel}
+            </p>
+          ) : null}
         </div>
         <p className="max-w-[9.5rem] shrink-0 break-all text-right font-mono text-[10px] font-semibold text-muted-light">
           {reservation.id}
@@ -250,9 +373,26 @@ export default function ReservationCard({
       </div>
 
       <p className="mt-2 text-xs font-medium text-muted">{formatSchedule(reservation)}</p>
+      <p className="mt-1 text-sm font-semibold leading-snug text-ink">
+        픽업지{' '}
+        {handoffPlaceLine(
+          reservation.faceToFace === true,
+          itchaHandoffPlace(
+            reservation.companyId,
+            company?.name || reservation.companyName,
+            reservation.departureTerminal
+          ) || company?.pickupLocation
+        )}
+      </p>
       <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
         {reservation.totalPrice.toLocaleString()}원
+        <span className="ml-2 text-[13px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
       </p>
+      {(reservation.pointSpentWon ?? 0) > 0 ? (
+        <p className="mt-0.5 text-right text-[12px] font-semibold text-gold">
+          포인트 {reservation.pointSpentWon?.toLocaleString()}원 사용
+        </p>
+      ) : null}
 
       <StatusTimeline status={reservation.status} />
 
@@ -269,6 +409,7 @@ export default function ReservationCard({
 
       <div className="mt-4 space-y-2.5">
         {trackingAccess ? (
+          showParkedDetail ? (
           <>
             <TrustBlock icon={MapPin} title="주차 위치" highlight>
               {parkingDisplay ? (
@@ -312,8 +453,16 @@ export default function ReservationCard({
                 emptyLabel="입고 후 기사가 촬영한 사진이 등록됩니다."
               />
             </TrustBlock>
+          </>
+          ) : (
+            <p className="rounded-2xl bg-white px-4 py-3 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10">
+              입고 후 주차장 위치와 사진이 여기에 올라옵니다.
+            </p>
+          )
+        ) : null}
 
-            {insuranceDisplay.status === 'enrolled' && insuranceDisplay.summary ? (
+        {trackingAccess ? (
+          insuranceDisplay.status === 'enrolled' && insuranceDisplay.summary ? (
               <InsuranceCoverageCard
                 summary={insuranceDisplay.summary}
                 detail={insuranceDisplay.detail}
@@ -329,8 +478,7 @@ export default function ReservationCard({
                   <p className="text-sm font-semibold text-muted">{insuranceDisplay.summary}</p>
                 )}
               </TrustBlock>
-            )}
-          </>
+            )
         ) : (
           <div className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10">
             <p className="text-sm font-bold text-ink">{AIRPICK_TRACKING_UPSELL.title}</p>
@@ -388,6 +536,17 @@ export default function ReservationCard({
             후기 작성
           </button>
         </div>
+      )}
+
+      {onCancel &&
+      !cancelEligibility.cancellable &&
+      cancelEligibility.reason &&
+      (reservation.status === 'pending' ||
+        reservation.status === 'scheduled' ||
+        reservation.status === 'pending_in') && (
+        <p className="mt-3 text-center text-[12px] font-semibold leading-relaxed text-muted">
+          {cancelEligibility.reason}
+        </p>
       )}
 
       {reservation.status !== 'cancelled' && onCancel && cancelEligibility.cancellable && (
@@ -448,33 +607,11 @@ export default function ReservationCard({
         </div>
       )}
 
-      <details className="mt-4 rounded-2xl bg-white px-4 py-3 ring-1 ring-[#0f1a2e]/10">
-        <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-bold text-muted">
-          예약 상세
-          <ChevronRight size={16} className="text-muted-light" />
-        </summary>
-        <dl className="mt-3 space-y-2 text-xs">
-          <div className="flex justify-between gap-4">
-            <dt className="font-semibold text-muted">예약자</dt>
-            <dd className="font-semibold text-ink">{reservation.userName}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="font-semibold text-muted">연락처</dt>
-            <dd className="font-semibold text-ink">{maskPhone(reservation.phone)}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="font-semibold text-muted">결제</dt>
-            <dd className="font-semibold text-ink">
-              {reservation.paymentMethod === 'unpaid' ? '현장 결제' : reservation.paymentMethod}
-            </dd>
-          </div>
-        </dl>
-      </details>
-
       {reviewOpen && onSubmitReview && (
         <ReviewWriteModal
           companyName={displayCompanyName(reservation.companyName)}
           initialPassword={lookupPassword}
+          requirePassword={!memberReview}
           onClose={() => setReviewOpen(false)}
           onSubmit={async (password, rating, body, photoDataUrls) => {
             await onSubmitReview(password, rating, body, photoDataUrls);

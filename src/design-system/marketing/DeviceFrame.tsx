@@ -17,7 +17,7 @@ export function DeviceFrame({
   variant = 'macbook',
   className,
   label,
-  urlBar = 'www.에어픽.kr/parking',
+  urlBar = 'www.에어픽.kr/',
   contentClassName,
 }: DeviceFrameProps) {
   if (variant === 'phone' || variant === 'phoneNatural') {

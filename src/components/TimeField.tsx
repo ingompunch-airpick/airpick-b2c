@@ -34,16 +34,19 @@ export default function TimeField({
   onChange,
   placeholder = '시:분 선택',
   tone = 'default',
+  size = 'default',
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   tone?: 'default' | 'premium';
+  size?: 'default' | 'large';
 }) {
   const inputId = useId();
   const [open, setOpen] = useState(false);
   const premium = tone === 'premium';
+  const large = size === 'large';
   const containerRef = useRef<HTMLDivElement>(null);
   const hourColRef = useRef<HTMLDivElement>(null);
   const minuteColRef = useRef<HTMLDivElement>(null);
@@ -105,8 +108,9 @@ export default function TimeField({
       <span
         id={inputId}
         className={cn(
-          'mb-1 block text-[11px] font-bold',
-          premium ? 'text-[#0f1a2e]/50' : 'text-muted'
+          'block',
+          large ? 'mb-1.5 text-[13px] font-medium text-[#0f1a2e]/55 md:mb-1' : 'mb-1 text-[11px] font-bold',
+          !large && (premium ? 'text-[#0f1a2e]/50' : 'text-muted')
         )}
       >
         {label}
@@ -115,23 +119,29 @@ export default function TimeField({
         type="button"
         onClick={openPicker}
         className={cn(
-          'flex w-full items-center gap-2 rounded-xl border px-3 py-2.5 text-left transition-colors',
-          open
-            ? premium
-              ? 'border-[#0f1a2e]/30 bg-neutral-50 ring-2 ring-[#0f1a2e]/20'
-              : 'border-brand bg-sky-soft ring-2 ring-brand/25'
-            : premium
-              ? 'border-[#0f1a2e]/12 bg-neutral-50 hover:bg-[#0f1a2e]/[0.04] active:bg-[#0f1a2e]/[0.06]'
-              : 'border-sky-border bg-sky-bg hover:bg-sky-soft active:bg-sky-tint'
+          'flex w-full items-center gap-2 text-left transition-colors',
+          large
+            ? 'h-12 rounded-2xl bg-[#f4f5f7] px-3 md:h-auto md:py-3'
+            : cn(
+                'rounded-xl border px-3 py-2.5',
+                open
+                  ? premium
+                    ? 'border-[#0f1a2e]/30 bg-neutral-50 ring-2 ring-[#0f1a2e]/20'
+                    : 'border-brand bg-sky-soft ring-2 ring-brand/25'
+                  : premium
+                    ? 'border-[#0f1a2e]/12 bg-neutral-50 hover:bg-[#0f1a2e]/[0.04] active:bg-[#0f1a2e]/[0.06]'
+                    : 'border-sky-border bg-sky-bg hover:bg-sky-soft active:bg-sky-tint'
+              )
         )}
         aria-labelledby={inputId}
         aria-expanded={open}
       >
-        <Clock size={14} className="shrink-0 text-muted-light" />
+        <Clock size={large ? 16 : 14} className={cn('shrink-0', large ? 'text-[#0f1a2e]' : 'text-muted-light')} />
         <span
           className={cn(
-            'flex-1 text-sm font-semibold tabular-nums',
-            hasValue ? (premium ? 'text-[#0f1a2e]' : 'text-ink') : 'text-muted'
+            'flex-1 tabular-nums',
+            large ? 'text-[16px] font-semibold' : 'text-sm font-semibold',
+            hasValue ? (large || premium ? 'text-[#0f1a2e]' : 'text-ink') : large ? 'text-[#0f1a2e]' : 'text-muted'
           )}
         >
           {hasValue ? displayLabel(value) : placeholder}
@@ -154,7 +164,9 @@ export default function TimeField({
                 type="button"
                 onClick={() => set({ period: p })}
                 className={cn(
-                  'rounded-lg py-1.5 text-xs font-bold transition-colors',
+                  large
+                    ? 'rounded-lg py-2 text-[15px] font-bold transition-colors'
+                    : 'rounded-lg py-1.5 text-xs font-bold transition-colors',
                   period === p ? `${activeFill} shadow-sm` : 'text-muted hover:text-ink'
                 )}
               >
@@ -165,7 +177,7 @@ export default function TimeField({
 
           <div className="grid grid-cols-2 gap-1">
             <div className="flex flex-col">
-              <span className="pb-1 text-center text-[10px] font-bold text-muted-light">시</span>
+              <span className={cn('pb-1 text-center font-bold', large ? 'text-[13px] text-[#0f1a2e]' : 'text-[10px] text-muted-light')}>시</span>
               <div
                 ref={hourColRef}
                 className={cn(
@@ -182,7 +194,8 @@ export default function TimeField({
                       data-active={active}
                       onClick={() => set({ hour12: h })}
                       className={cn(
-                        'mb-0.5 w-full rounded-lg py-2 text-center text-sm font-semibold tabular-nums transition-colors',
+                        'mb-0.5 w-full rounded-lg text-center font-semibold tabular-nums transition-colors',
+                        large ? 'py-2.5 text-[17px]' : 'py-2 text-sm',
                         active ? activeFill : cn('text-ink', softHover)
                       )}
                     >
@@ -194,7 +207,7 @@ export default function TimeField({
             </div>
 
             <div className="flex flex-col">
-              <span className="pb-1 text-center text-[10px] font-bold text-muted-light">분</span>
+              <span className={cn('pb-1 text-center font-bold', large ? 'text-[13px] text-[#0f1a2e]' : 'text-[10px] text-muted-light')}>분</span>
               <div
                 ref={minuteColRef}
                 className={cn(
@@ -211,7 +224,8 @@ export default function TimeField({
                       data-active={active}
                       onClick={() => set({ minute: m })}
                       className={cn(
-                        'mb-0.5 w-full rounded-lg py-2 text-center text-sm font-semibold tabular-nums transition-colors',
+                        'mb-0.5 w-full rounded-lg text-center font-semibold tabular-nums transition-colors',
+                        large ? 'py-2.5 text-[17px]' : 'py-2 text-sm',
                         active ? activeFill : cn('text-ink', softHover)
                       )}
                     >
@@ -227,7 +241,8 @@ export default function TimeField({
             type="button"
             onClick={() => setOpen(false)}
             className={cn(
-              'mt-2 w-full rounded-xl py-2 text-sm font-bold text-white transition-colors',
+              'mt-2 w-full rounded-xl font-bold text-white transition-colors',
+              large ? 'py-2.5 text-[16px]' : 'py-2 text-sm',
               premium ? 'bg-[#0f1a2e] hover:bg-[#1a2740]' : 'bg-brand hover:bg-brand-dark'
             )}
           >

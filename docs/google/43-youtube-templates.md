@@ -6,14 +6,14 @@
 ## 공통 (모든 영상 맨 위)
 
 ```
-에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다.
+에어픽은 인천공항 주차대행을 비교·예약하고, 이심(eSIM)은 제휴 할인으로 안내합니다.
 공식 사이트: https://www.에어픽.kr
 ```
 
 ## 고정 댓글 (복붙)
 
 ```
-비교·예약 → https://www.에어픽.kr/parking
+비교·예약 → https://www.에어픽.kr/
 가이드 모음 → https://www.에어픽.kr/guides/
 입점 업체 → https://www.에어픽.kr/partners/
 FAQ → https://www.에어픽.kr/faq/
@@ -27,7 +27,7 @@ FAQ → https://www.에어픽.kr/faq/
 인천공항 주차대행, 업체 홈을 하나씩 열지 말고 일정 넣어 비교하는 방법.
 
 자세히: https://www.에어픽.kr/guides/parking-compare/
-바로 비교: https://www.에어픽.kr/parking
+바로 비교: https://www.에어픽.kr/
 
 표시 요금은 일정 기준 예상·참고가입니다. 현장 정책에 따라 달라질 수 있습니다.
 ```
@@ -39,7 +39,7 @@ FAQ → https://www.에어픽.kr/faq/
 입점 = 비교·예약 + 위치·사진·보험 안내.
 
 입점 목록: https://www.에어픽.kr/partners/
-바로 비교: https://www.에어픽.kr/parking
+바로 비교: https://www.에어픽.kr/
 ```
 
 ### C. 1터미널 · 2터미널 · 운서
@@ -48,7 +48,7 @@ FAQ → https://www.에어픽.kr/faq/
 항공권 터미널을 먼저 보고, 그다음 요금·실내/야외를 고르세요.
 
 자세히: https://www.에어픽.kr/guides/t1-t2-unseo/
-비교: https://www.에어픽.kr/parking
+비교: https://www.에어픽.kr/
 ```
 
 ### D. 이심(eSIM)
@@ -63,7 +63,7 @@ FAQ → https://www.에어픽.kr/faq/
 ### E. 브랜드 소개 (숏폼 15~30초)
 
 ```
-에어픽 — 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내.
+에어픽 — 인천공항 주차대행 비교·예약 · 이심(eSIM) 제휴 할인 안내.
 입점은 예약 후 위치·사진까지.
 
 https://www.에어픽.kr

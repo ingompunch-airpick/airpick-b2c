@@ -232,7 +232,7 @@ export default function CompanyDetailSheet({
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
       name,
-      url: 'https://www.에어픽.kr/parking',
+      url: 'https://www.에어픽.kr/',
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: reviewSnapshot.averageRating,

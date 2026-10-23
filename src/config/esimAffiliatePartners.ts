@@ -7,7 +7,7 @@
 export type EsimAffiliatePartner = {
   id: string;
   name: string;
-  /** 고객 할인율 (%). 예: 5 → 「로밍도깨비5% 할인링크 바로가기」 */
+  /** 고객 할인율 (%). 예: 5 → 「로밍도깨비 5% 할인 받으러 가기」 */
   discountPercent?: number;
   /** 제휴·트래킹 할인 랜딩 URL */
   affiliateUrl: string;
@@ -36,13 +36,13 @@ export function listActiveEsimAffiliatePartners(): EsimAffiliatePartner[] {
   return ESIM_AFFILIATE_PARTNERS.filter((p) => p.active && !!p.affiliateUrl.trim());
 }
 
-/** 「로밍도깨비5% 할인링크 바로가기」 */
+/** 「로밍도깨비 5% 할인 받으러 가기」 */
 export function esimAffiliateCtaLabel(partner: EsimAffiliatePartner): string {
   const pct =
     partner.discountPercent != null && partner.discountPercent > 0
       ? `${partner.discountPercent}%`
       : '';
-  return `${partner.name}${pct} 할인링크 바로가기`;
+  return pct ? `${partner.name} ${pct} 할인 받으러 가기` : `${partner.name} 바로가기`;
 }
 
 /** 오늘(로컬)이 프로모 기간이면 true. 기간 미설정이면 true */

@@ -58,7 +58,7 @@ function pageChrome(title) {
       </header>
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차대행 비교</a>
+        <a href="/">주차대행 비교</a>
         <a href="/esim">이심</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
@@ -181,7 +181,7 @@ function reviewsSectionHtml(bundle) {
         ${distributionHtml(bundle.ratingDistribution)}
         ${reviewListHtml(bundle.recent)}
         <p class="note">출고 완료 예약 고객만 작성합니다. 시드·가짜 별점은 사용하지 않습니다.</p>
-        <a class="cta" href="/parking">이 업체 기준으로 비교·예약</a>
+        <a class="cta" href="/">이 업체 기준으로 비교·예약</a>
       </section>`;
 }
 
@@ -340,7 +340,7 @@ ${JSON.stringify(graph, null, 2)}
           <strong>일정을 넣은 뒤</strong> 비교 화면에서 확인하고 예약해 주세요.
         </p>
         ${prototypeNote}
-        <a class="cta" href="/parking">일정 넣고 비교·예약</a>
+        <a class="cta" href="/">일정 넣고 비교·예약</a>
         <a class="cta secondary" href="/partners/">다른 입점 업체</a>
       </header>
 
@@ -377,7 +377,7 @@ ${reviewsSectionHtml(reviewBundle)}
           <li>맡긴 뒤 <strong>주차 위치·입고 사진·보험 안내</strong>를 예약 탭에서 볼 수 있어요</li>
           <li>결제는 <strong>현장 결제</strong>예요 (앱에서 카드 결제 없음)</li>
         </ul>
-        <a class="cta" href="/parking">주차대행 비교 열기</a>
+        <a class="cta" href="/">주차대행 비교 열기</a>
       </section>
 
       <section class="section">
@@ -386,7 +386,7 @@ ${reviewsSectionHtml(reviewBundle)}
           <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
           <li><a href="/guides/parking-insurance/">보험, 예약 전에 뭘 확인하나요?</a></li>
           <li><a href="/guides/official-vs-private/">공식 주차장 vs 사설 대행</a></li>
-          <li><a href="/parking">전체 업체 요금 비교</a></li>
+          <li><a href="/">전체 업체 요금 비교</a></li>
           <li><a href="/faq/">자주 묻는 질문</a></li>
         </ul>
       </section>
@@ -490,7 +490,7 @@ ${JSON.stringify(graph, null, 2)}
         <h1>에어픽에서 예약할 수 있는 업체</h1>
         <p class="answer"><strong>${esc(answer)}</strong></p>
         <p>지금 입점한 주차대행이에요. 아래에서 고른 뒤, 출국·귀국 일정을 넣고 바로 비교해 보세요.</p>
-        <a class="cta" href="/parking">일정 넣고 비교·예약</a>
+        <a class="cta" href="/">일정 넣고 비교·예약</a>
         <a class="cta secondary" href="/guides/parking-insurance/">보험은 어떻게 확인하나요?</a>
       </header>
 
@@ -513,7 +513,7 @@ ${JSON.stringify(graph, null, 2)}
       <section class="section">
         <h2>더 알아보기</h2>
         <ul>
-          <li><a href="/parking">주차대행 요금 비교</a></li>
+          <li><a href="/">주차대행 요금 비교</a></li>
           <li><a href="/guides/parking-compare/">주차대행, 어떻게 비교·예약하나요?</a></li>
           <li><a href="/faq/">자주 묻는 질문</a></li>
           <li><a href="/about/">에어픽 소개 · 고객센터</a></li>

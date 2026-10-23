@@ -9,12 +9,6 @@
       "note": "홈 · 비교 허브 진입"
     },
     {
-      "path": "/parking",
-      "changefreq": "daily",
-      "priority": 0.9,
-      "note": "주차대행 비교"
-    },
-    {
       "path": "/esim",
       "changefreq": "daily",
       "priority": 0.9,

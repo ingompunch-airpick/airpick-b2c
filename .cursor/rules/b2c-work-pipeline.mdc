@@ -1,0 +1,33 @@
+---
+description: B2C는 research/plan 승인 전 코드 금지. B2B 배포·main·지어내기 금지.
+alwaysApply: true
+---
+
+# Airpick B2C 작업 파이프라인
+
+## 문서 루프
+
+- 중간 이상 기능: `docs/work/`의 research → plan을 먼저 쓴다. 템플릿은 `docs/work/research.template.md`, `docs/work/plan.template.md`.
+- **승인된 plan 없이** 중간·큰 기능 코드를 쓰지 않는다. 「의견만 / 알려줘 / plan만」이면 구현하지 않는다.
+- plan 피드백: 메모 반영해 **plan만** 고친다. 구현 금지 지시가 있으면 파일을 수정하지 않는다.
+- 작은 UI(문구·한 줄·건수)는 문서 생략 가능. 그래도 합의된 금지 규칙은 지킨다.
+
+## 레포 경계
+
+- Firebase Functions·Firestore rules **배포는 이 레포에서 하지 않는다.** B2B(`airpick2-b-to-b`)만.
+- `airpick-partner-homepage` 등 다른 레포는 명시 요청 없으면 수정하지 않는다.
+
+## Git
+
+- **main만** 사용. `cursor/*` 등 새 브랜치를 만들지 않는다.
+- 커밋·푸시·호스팅 배포는 사용자가 요청할 때만.
+
+## 제품·데이터
+
+- 후기 수, 보험 보장 범위, 복귀 시간 등 **숫자를 지어내지 않는다.**
+- 비회원 예약을 카카오 계정에 **자동으로 붙이지 않는다** (별도 합의 전).
+- 구현 후 `tsc --noEmit`을 돌린다. plan에 검증이 있으면 그 항목을 맞춘다.
+
+## 방향이 틀렸을 때
+
+- 조금씩 덧대지 말고, 합의된 범위로 plan을 다시 잡거나 해당 변경을 되돌린 뒤 구현한다.

@@ -13,11 +13,11 @@
 | 49 | 틀린 답 교정용 사실 | https://www.에어픽.kr/facts/ |
 | 50 | 근거 블록 | 비교·입점·가이드·facts |
 
-정본 한 줄: 에어픽 주차대행 비교센터(에어픽)는 인천공항 출국시간 계산·주차대행 비교·이심(eSIM) 제휴 할인 안내 플랫폼입니다.
+정본 한 줄: 에어픽은 인천공항 주차대행을 비교·예약하고, 이심(eSIM)은 제휴 할인으로 안내합니다.
 
 핵심 URL
-- 출국시간: https://www.에어픽.kr/
-- 주차대행 비교: https://www.에어픽.kr/parking
+- 홈 · 주차대행 비교·예약: https://www.에어픽.kr/
+- 주차대행 비교: https://www.에어픽.kr/
 - 이심(eSIM) 비교: https://www.에어픽.kr/esim
 - FAQ: https://www.에어픽.kr/faq/
 - facts: https://www.에어픽.kr/facts/

@@ -39,10 +39,10 @@ export default function HomeTrustStats({ partnerCount }: { partnerCount: number 
               : 'px-1 text-center sm:px-2'
           }
         >
-          <p className="text-[1.25rem] font-bold tabular-nums tracking-tight text-[#0f1a2e] sm:text-[1.35rem] md:text-[1.75rem]">
+          <p className="text-[1.4rem] font-bold tabular-nums tracking-tight text-[#0f1a2e] sm:text-[1.5rem] md:text-[1.85rem]">
             {item.value}
           </p>
-          <p className="mt-1 text-[9px] font-semibold leading-snug text-[#0f1a2e]/45 sm:text-[10px] md:text-[11px]">
+          <p className="mt-1 text-[11px] font-semibold leading-snug text-[#0f1a2e]/45 sm:text-[12px] md:text-[13px]">
             {item.label}
           </p>
         </div>

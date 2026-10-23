@@ -1,19 +1,32 @@
 import { ChevronLeft, Car } from 'lucide-react';
-import { PARKING_GUIDE_STEPS } from '../constants/parkingSupport';
+import { PARKING_GUIDE_STEPS, type GuideStep } from '../constants/parkingSupport';
 
-export default function ParkingGuidePage({ onBack }: { onBack: () => void }) {
+export default function ParkingGuidePage({
+  onBack,
+  title = '이용 방법',
+  headline = '접수 → 입고 → 출국 → 귀국',
+  lede = '홈에서 접수한 뒤, 입고 사진·주차 위치·보험은 내 예약에서 확인합니다.',
+  steps = PARKING_GUIDE_STEPS,
+}: {
+  onBack: () => void;
+  title?: string;
+  headline?: string;
+  lede?: string;
+  steps?: readonly GuideStep[];
+}) {
   return (
-    <div className="fixed inset-0 z-[70] flex flex-col bg-sky-bg">
-      <header className="flex shrink-0 items-center gap-2 border-b border-sky-border/80 bg-sky-bg/95 px-2 py-3 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-sky-bg">
+      <header className="flex shrink-0 items-center gap-2 border-b border-sky-border/80 bg-sky-bg/95 px-2 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md">
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full p-2 text-muted transition-colors hover:bg-sky-soft"
-          aria-label="닫기"
+          className="inline-flex items-center gap-0.5 rounded-full py-2 pl-1 pr-3 text-[15px] font-semibold text-[#0f1a2e]"
+          aria-label="뒤로"
         >
-          <ChevronLeft size={22} />
+          <ChevronLeft size={22} strokeWidth={2.25} />
+          뒤로
         </button>
-        <h1 className="text-base font-bold text-ink">주차대행 이용 가이드</h1>
+        <h1 className="text-base font-bold text-ink">{title}</h1>
       </header>
 
       <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto px-4 py-5 pb-8">
@@ -24,16 +37,14 @@ export default function ParkingGuidePage({ onBack }: { onBack: () => void }) {
             </div>
             <div>
               <p className="text-xs font-bold text-brand">인천공항 주차대행</p>
-              <p className="text-sm font-bold text-ink">비교 → 예약 → 맡긴 차 확인</p>
+              <p className="text-sm font-bold text-ink">{headline}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
-            에어픽 입점 업체는 예약 후 사진·위치·보험을 이 탭에서 확인할 수 있습니다.
-          </p>
+          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{lede}</p>
         </section>
 
         <ol className="mt-5 space-y-3">
-          {PARKING_GUIDE_STEPS.map((step) => (
+          {steps.map((step) => (
             <li
               key={step.id}
               className="rounded-2xl bg-sky-soft px-4 py-4 ring-1 ring-sky-border/60"

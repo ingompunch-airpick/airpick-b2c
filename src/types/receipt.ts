@@ -18,6 +18,7 @@ export interface ReceiptPublic {
   arrivalAirline?: string;
   arrivalFlight?: string;
   totalPrice: number;
+  pointSpentWon?: number;
   isIndoor: boolean;
   createdAt: string;
   status: string;

@@ -27,7 +27,7 @@ export default function ReservationLookupForm({
   const canSubmit = value.trim() !== '' && /^\d{4}$/.test(password.trim());
 
   return (
-    <div className="rounded-2xl bg-neutral-50 p-4 shadow-[0_2px_12px_rgba(15,26,46,0.06)] ring-1 ring-[#0f1a2e]/10">
+    <div className="rounded-2xl bg-[#f4f5f7] p-4">
       <div className="mb-3 flex items-center gap-2 rounded-xl bg-[#0f1a2e]/[0.06] px-3 py-2.5">
         <Search size={18} className="shrink-0 text-[#0f1a2e]" />
         <span className="text-sm font-bold text-ink">예약 조회</span>

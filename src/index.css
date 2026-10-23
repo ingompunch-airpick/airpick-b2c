@@ -113,24 +113,60 @@
     transition-duration: 0.01ms !important;
   }
 
-  .brand-mark-motion {
+  .brand-mark-stage,
+  .brand-mark-stage * {
     animation: none !important;
   }
+
+  .brand-mark-silver {
+    opacity: 0 !important;
+  }
 }
 
-/** 헤더 골드 마크 — 아주 약한 float + tilt */
-@keyframes brand-mark-float {
+/** 헤더 캐리어. 자리는 고정이고, 은색과 금색만 오간다 */
+.brand-mark-stage {
+  position: relative;
+  display: inline-flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .brand-mark-stage {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+}
+
+.brand-mark {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.brand-mark-silver {
+  position: absolute;
+  inset: 0;
+  filter: grayscale(1) brightness(1.16) contrast(1.24) sepia(0.28) hue-rotate(188deg) saturate(0.42);
+  animation: brand-metal 7.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes brand-metal {
   0%,
+  28% {
+    opacity: 1;
+  }
+  50%,
+  72% {
+    opacity: 0;
+  }
   100% {
-    transform: translateY(0) rotate(-1.2deg);
+    opacity: 1;
   }
-  50% {
-    transform: translateY(-2px) rotate(1.2deg);
-  }
-}
-
-.brand-mark-motion {
-  animation: brand-mark-float 5.5s ease-in-out infinite;
 }
 
 @media print {

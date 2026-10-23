@@ -20,27 +20,27 @@ export default function HomeWhyAirpick() {
         </picture>
       </div>
 
-      <p className="mt-4 text-[15px] font-bold leading-snug tracking-tight text-[#0f1a2e] md:mt-5 md:text-[1.05rem]">
+      <p className="mt-4 text-[16px] font-bold leading-snug tracking-tight text-[#0f1a2e] md:mt-5 md:text-[1.15rem]">
         {HOME_WHY_AIRPICK.caption}
       </p>
 
       {/* 문제 — 불안 공감 */}
       <div className="mt-8 md:mt-10">
-        <h2 className="text-[1.2rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.4rem]">
+        <h2 className="text-[1.35rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.55rem]">
           {HOME_WHY_PROBLEM.title}
         </h2>
-        <p className="mt-2 max-w-xl text-[13px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[14px]">
+        <p className="mt-2 max-w-xl text-[15px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[16px]">
           {HOME_WHY_PROBLEM.lead}
         </p>
         <ul className="mt-5 space-y-3.5 border-t border-[#0f1a2e]/10 pt-5">
           {HOME_WHY_PROBLEM.items.map((item, index) => (
             <li key={item.id} className="grid grid-cols-[2rem_1fr] gap-3 md:gap-4">
-              <span className="text-[13px] font-bold tabular-nums text-[#0f1a2e]/35">
+              <span className="text-[14px] font-bold tabular-nums text-[#0f1a2e]/35">
                 {String(index + 1).padStart(2, '0')}
               </span>
               <div className="min-w-0">
-                <p className="text-[14px] font-bold text-[#0f1a2e]">{item.title}</p>
-                <p className="mt-1 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[13px]">
+                <p className="text-[16px] font-bold text-[#0f1a2e]">{item.title}</p>
+                <p className="mt-1 text-[14px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[15px]">
                   {item.body}
                 </p>
               </div>
@@ -51,13 +51,13 @@ export default function HomeWhyAirpick() {
 
       {/* 해결 — 왜 에어픽 */}
       <div className="mt-10 border-t border-[#c9a962]/35 pt-8 md:mt-12 md:pt-10">
-        <p className="text-[10px] font-bold tracking-[0.14em] text-[#c9a962]">
+        <p className="text-[12px] font-bold tracking-[0.14em] text-[#c9a962]">
           {HOME_WHY_AIRPICK.eyebrow}
         </p>
-        <h2 className="mt-1 text-[1.2rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.4rem]">
+        <h2 className="mt-1 text-[1.35rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.55rem]">
           {HOME_WHY_AIRPICK.title}
         </h2>
-        <p className="mt-2 max-w-xl text-[13px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[14px]">
+        <p className="mt-2 max-w-xl text-[15px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[16px]">
           {HOME_WHY_AIRPICK.lead}
         </p>
 
@@ -73,12 +73,12 @@ export default function HomeWhyAirpick() {
                     '-mx-1 rounded-xl border border-[#c9a962]/25 bg-[#c9a962]/[0.06] px-3 py-4'
                 )}
               >
-                <span className="text-[13px] font-bold tabular-nums text-[#c9a962]">
+                <span className="text-[14px] font-bold tabular-nums text-[#c9a962]">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-bold text-[#0f1a2e]">{item.title}</p>
-                  <p className="mt-1 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[13px]">
+                  <p className="text-[16px] font-bold text-[#0f1a2e]">{item.title}</p>
+                  <p className="mt-1 text-[14px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[15px]">
                     {item.body}
                   </p>
                   {isHandoff ? (
@@ -86,14 +86,14 @@ export default function HomeWhyAirpick() {
                       {HOME_HERO_TRUST_CHIPS.map((chip) => (
                         <li
                           key={chip}
-                          className="rounded-full border border-[#c9a962]/30 bg-white px-2 py-0.5 text-[9px] font-bold tracking-wide text-[#9a7b3c] md:text-[10px]"
+                          className="rounded-full border border-[#c9a962]/30 bg-white px-2.5 py-1 text-[11px] font-bold tracking-wide text-[#9a7b3c] md:text-[12px]"
                         >
                           {chip}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-2 text-[10px] font-bold tracking-[0.08em] text-[#9a7b3c]">
+                    <p className="mt-2 text-[12px] font-bold tracking-[0.08em] text-[#9a7b3c]">
                       {item.evidence}
                     </p>
                   )}

@@ -45,7 +45,7 @@ function pageChrome(title) {
       </header>
       <nav class="topnav" aria-label="사이트 메뉴">
         <a class="brand" href="/">에어픽</a>
-        <a href="/parking">주차대행 비교</a>
+        <a href="/">주차대행 비교</a>
         <a href="/esim">이심</a>
         <a href="/guides/">가이드</a>
         <a href="/partners/">입점 업체</a>
@@ -169,8 +169,8 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
 
   const secondaryCta =
     page.ctaHref === '/esim'
-      ? `<a class="cta secondary" href="/parking">주차대행도 비교하기</a>`
-      : `<a class="cta secondary" href="/">출국시간 계산하기</a>`;
+      ? `<a class="cta secondary" href="/">주차대행도 비교하기</a>`
+      : `<a class="cta secondary" href="/">주차대행 비교하기</a>`;
 
   return `<!doctype html>
 <html lang="ko">
@@ -224,7 +224,7 @@ ${faqHtml}
         <h2>더 알아보기</h2>
         <ul>
             ${otherGuides}
-            <li><a href="/parking">인천공항 주차대행 비교</a></li>
+            <li><a href="/">인천공항 주차대행 비교</a></li>
             <li><a href="/partners/">입점 업체</a></li>
             <li><a href="/esim">이심(eSIM) 제휴 할인</a></li>
             <li><a href="/faq/">자주 묻는 질문</a></li>
@@ -327,9 +327,9 @@ ${JSON.stringify(graph, null, 2)}
         <h1>출국 전에 궁금한 것부터</h1>
         <p>
           주차대행 비교, 터미널 고르기, 보험, 이심 준비까지 — 자주 물어보시는 내용을 짧게 모았어요.
-          읽은 뒤 <a href="/parking">비교·예약</a>이나 <a href="/esim">이심 할인</a>으로 이어 가시면 됩니다.
+          읽은 뒤 <a href="/">비교·예약</a>이나 <a href="/esim">이심 할인</a>으로 이어 가시면 됩니다.
         </p>
-        <a class="cta" href="/parking">주차대행 비교·예약</a>
+        <a class="cta" href="/">주차대행 비교·예약</a>
         <a class="cta secondary" href="/esim">이심 제휴 할인</a>
       </header>
       <section class="section">
@@ -340,8 +340,7 @@ ${items}
       </section>
       <section class="section">
         <h2>바로 비교하기</h2>
-        <a class="cta" href="/parking">주차대행 비교</a>
-        <a class="cta secondary" href="/">출국시간 계산하기</a>
+        <a class="cta" href="/">주차대행 비교하기</a>
       </section>
     </div>
     ${seoBackScript()}

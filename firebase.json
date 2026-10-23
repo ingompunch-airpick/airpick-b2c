@@ -1,8 +1,4 @@
 {
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
   "hosting": {
     "site": "airpick-b2c",
     "public": "dist",
@@ -14,17 +10,22 @@
     "redirects": [
       {
         "source": "/compare",
-        "destination": "/parking",
+        "destination": "/",
         "type": 301
       },
       {
         "source": "/compare/",
-        "destination": "/parking",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/parking",
+        "destination": "/",
         "type": 301
       },
       {
         "source": "/parking/",
-        "destination": "/parking",
+        "destination": "/",
         "type": 301
       },
       {
@@ -346,10 +347,6 @@
           "functionId": "submitPartnerApplication",
           "region": "asia-northeast3"
         }
-      },
-      {
-        "source": "/parking",
-        "destination": "/parking.html"
       },
       {
         "source": "/partner",

@@ -8,11 +8,14 @@ const MAX_PHOTOS = 3;
 export default function ReviewWriteModal({
   companyName,
   initialPassword = '',
+  requirePassword = true,
   onClose,
   onSubmit,
 }: {
   companyName: string;
   initialPassword?: string;
+  /** 로그인한 본인 예약은 비밀번호 없이 등록한다 */
+  requirePassword?: boolean;
   onClose: () => void;
   onSubmit: (
     password: string,
@@ -52,7 +55,7 @@ export default function ReviewWriteModal({
       setError('별점을 선택해 주세요.');
       return;
     }
-    if (!/^\d{4}$/.test(password)) {
+    if (requirePassword && !/^\d{4}$/.test(password)) {
       setError('예약 비밀번호 4자리를 입력해 주세요.');
       return;
     }
@@ -168,19 +171,21 @@ export default function ReviewWriteModal({
           />
         </div>
 
-        <label className="mt-3 block">
-          <span className="text-xs font-bold text-muted">예약 비밀번호 4자리</span>
-          <input
-            type="password"
-            inputMode="numeric"
-            autoComplete="off"
-            maxLength={4}
-            value={password}
-            onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
-            placeholder="••••"
-            className="mt-1.5 w-full rounded-2xl border border-sky-border bg-white px-3.5 py-3 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
-          />
-        </label>
+        {requirePassword ? (
+          <label className="mt-3 block">
+            <span className="text-xs font-bold text-muted">예약 비밀번호 4자리</span>
+            <input
+              type="password"
+              inputMode="numeric"
+              autoComplete="off"
+              maxLength={4}
+              value={password}
+              onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              placeholder="••••"
+              className="mt-1.5 w-full rounded-2xl border border-sky-border bg-white px-3.5 py-3 text-sm font-semibold tracking-widest text-ink outline-none focus:border-brand"
+            />
+          </label>
+        ) : null}
 
         {error && <p className="mt-3 text-xs font-semibold text-rose-600">{error}</p>}
 

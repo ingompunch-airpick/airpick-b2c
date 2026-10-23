@@ -16,6 +16,13 @@ export function todayYmd(): string {
   return formatYmd(new Date());
 }
 
+/** 맡기는 날~찾는 날. days는 달력일(당일 1, 다음날 2). */
+export function formatStayPhrase(days: number): string {
+  const nights = Math.max(0, Math.round(days) - 1);
+  if (nights === 0) return '당일';
+  return `${nights}박 ${days}일`;
+}
+
 export function defaultBookingSearch() {
   const start = new Date();
   const end = new Date(start);

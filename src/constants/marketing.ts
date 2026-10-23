@@ -93,7 +93,7 @@ export const ESIM_HUB = {
   whyFootnote: '이심은 로밍도깨비가 운영·판매하는 서비스입니다. 에어픽은 제휴 할인 링크를 안내합니다.',
   stepsTitle: '이용 방법',
   steps: [
-    { id: '1', title: '할인 링크 열기', body: '로밍도깨비5% 할인링크 바로가기를 눌러 이동합니다.' },
+    { id: '1', title: '할인 링크 열기', body: '버튼을 눌러 로밍도깨비로 이동합니다.' },
     { id: '2', title: '요금제 고르기', body: '나라·일수·용량을 로밍도깨비에서 선택하고 결제합니다.' },
     { id: '3', title: '개통·설치', body: 'eSIM 설치·문의는 로밍도깨비 안내를 따르면 됩니다.' },
   ],
@@ -146,11 +146,11 @@ export const AIRPICK_TRACKING_UPSELL = {
 } as const;
 
 /**
- * 홈 히어로 — 인트로와 같은 검증·비교 메시지
+ * 홈 히어로 — 기능 안내 (브랜드·검증 설득은 인트로)
  */
-export const HOME_HEADLINE = '검증한 업체만\n비교하고 예약하세요.';
+export const HOME_HEADLINE = '일정 넣고\n비교·예약하세요.';
 
-export const HOME_SUBHEAD = '인천공항 주차대행 · 에어픽이 확인한 공식 파트너만';
+export const HOME_SUBHEAD = '맡기는 날·찾는 날만 정하면 업체 비교와 예약으로 이어집니다.';
 
 /** 홈 히어로 · 신뢰 칩 (WHY 02 증거와 동일 문구) */
 export const HOME_HERO_TRUST_CHIPS = ['보험 확인', '주차 위치', '입고 사진'] as const;
@@ -274,20 +274,20 @@ export const HOME_TRAVEL_SERVICES = {
 
 /** 홈 · 후킹 CTA — 일정은 각 탭에서 */
 export const HOME_HOOK_CTA = {
-  parking: '검증 파트너 예약하기',
+  parking: '예약하기',
   esim: '이심 제휴 할인',
 } as const;
 
 /** @deprecated 홈 일정 게이트웨이 제거 후 미사용에 가깝음 */
 export const HOME_EYEBROW_PREMIUM = 'PREMIUM AIRPORT SERVICES';
 
-/** 브랜드 인트로 게이트 — 영상으로 격 올린 뒤 홈에서 후킹 */
+/** 브랜드 인트로 — 왜 에어픽(검증·브랜드). 기능 안내는 홈 */
 export const BRAND_INTRO = {
   storageKey: 'airpick_intro_seen',
-  /** 홈(/) 접속·새로고침마다 표시. 직링크는 스킵. 테스트: /?intro=1 */
+  /** 시작하기를 누른 브라우저는 다시 안 띄움. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
   eyebrow: '인천공항 주차대행',
-  line: '검증한 업체만 비교하고 예약하세요.',
+  line: '보험과 주차장을 확인한 업체만 들어옵니다.',
   hint: '',
   enterCta: '시작하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */

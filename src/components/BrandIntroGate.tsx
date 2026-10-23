@@ -2,11 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { BRAND_INTRO } from '../constants/marketing';
 
 export function hasSeenBrandIntro(): boolean {
-  return false;
+  try {
+    return localStorage.getItem(BRAND_INTRO.storageKey) === '1';
+  } catch {
+    return false;
+  }
 }
 
 export function markBrandIntroSeen(): void {
-  /* 인트로는 홈 진입마다 표시 — 영구 숨김 없음 */
+  try {
+    localStorage.setItem(BRAND_INTRO.storageKey, '1');
+  } catch {
+    /* ignore */
+  }
 }
 
 export function clearBrandIntroSeen(): void {

@@ -33,14 +33,14 @@ export default function HomeYoutubeLive() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/60" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
         </span>
-        <p className="text-[10px] font-bold tracking-[0.14em] text-[#c9a962]">
+        <p className="text-[12px] font-bold tracking-[0.14em] text-[#c9a962]">
           {YOUTUBE_LIVE.eyebrow}
         </p>
       </div>
-      <h2 className="mt-1 text-[1.2rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.35rem]">
+      <h2 className="mt-1 text-[1.35rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.5rem]">
         {YOUTUBE_LIVE.title}
       </h2>
-      <p className="mt-2 max-w-lg text-[13px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[14px]">
+      <p className="mt-2 max-w-lg text-[15px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[16px]">
         {YOUTUBE_LIVE.lead}
       </p>
 

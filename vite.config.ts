@@ -217,7 +217,7 @@ export default defineConfig({
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
-        description: '인천공항 출국시간 계산 · 주차대행 비교 · 이심(eSIM) 제휴 할인',
+        description: '인천공항 주차대행 비교·예약 · 이심(eSIM) 제휴 할인',
         theme_color: '#0f1a2e',
         background_color: '#EDF4FC',
         display: 'standalone',
@@ -298,6 +298,39 @@ export default defineConfig({
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/drive-eta/, '/getDriveEta'),
+      },
+      '/api/kakao-oidc-userinfo': {
+        target: 'https://kapi.kakao.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/kakao-oidc-userinfo/, '/v1/oidc/userinfo'),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            const authorization = req.headers.authorization;
+            if (authorization) proxyReq.setHeader('Authorization', authorization);
+          });
+        },
+      },
+      '/api/kakao-talk-profile': {
+        target: 'https://kapi.kakao.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/kakao-talk-profile/, '/v1/api/talk/profile'),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            const authorization = req.headers.authorization;
+            if (authorization) proxyReq.setHeader('Authorization', authorization);
+          });
+        },
+      },
+      '/api/kakao-user-me': {
+        target: 'https://kapi.kakao.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/kakao-user-me/, '/v2/user/me'),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            const authorization = req.headers.authorization;
+            if (authorization) proxyReq.setHeader('Authorization', authorization);
+          });
+        },
       },
       '/api/receipt': {
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',

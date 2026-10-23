@@ -43,6 +43,29 @@ export function isGayuCompany(companyId?: string, companyName?: string): boolean
   );
 }
 
+export function isHiCompany(companyId?: string, companyName?: string): boolean {
+  const id = (companyId || '').trim().toLowerCase();
+  return id === 'hi' || companyName?.includes('안녕') === true;
+}
+
+export function isSeasonCompany(companyId?: string, companyName?: string): boolean {
+  const id = (companyId || '').trim().toLowerCase();
+  return id === 'season' || companyName?.includes('시즌') === true;
+}
+
+/** 대면은 와와만, 비대면은 가유·안녕·시즌만 */
+export function companyMatchesHandoff(
+  company: { id: string; name: string },
+  faceToFace: boolean
+): boolean {
+  if (faceToFace) return isWawaCompany(company.id, company.name);
+  return (
+    isGayuCompany(company.id, company.name) ||
+    isHiCompany(company.id, company.name) ||
+    isSeasonCompany(company.id, company.name)
+  );
+}
+
 export function mergePartnerPricing(partner: Company): Company {
   if (isGayuCompany(partner.id, partner.name)) {
     return {

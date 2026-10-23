@@ -14,24 +14,24 @@ export default function HomeTrustCriteria() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-2 border-b border-[#0f1a2e]/10 pb-3 md:pb-4">
         <div>
-          <p className="text-[10px] font-bold tracking-[0.14em] text-[#c9a962]">
+          <p className="text-[12px] font-bold tracking-[0.14em] text-[#c9a962]">
             {HOME_TRUST_CRITERIA.eyebrow}
           </p>
-          <h2 className="mt-1 text-[1.2rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.4rem]">
+          <h2 className="mt-1 text-[1.35rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.55rem]">
             {HOME_TRUST_CRITERIA.title}
           </h2>
           {HOME_TRUST_CRITERIA.lead ? (
-            <p className="mt-2 max-w-md text-[13px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[14px]">
+            <p className="mt-2 max-w-md text-[15px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[16px]">
               {HOME_TRUST_CRITERIA.lead}
             </p>
           ) : null}
         </div>
         <a
           href={HOME_TRUST_CRITERIA.criteriaHref}
-          className="inline-flex items-center gap-0.5 text-[12px] font-bold text-[#0f1a2e]/50 transition-colors hover:text-[#0f1a2e]"
+          className="inline-flex items-center gap-0.5 text-[14px] font-bold text-[#0f1a2e]/50 transition-colors hover:text-[#0f1a2e]"
         >
           {HOME_TRUST_CRITERIA.criteriaCta}
-          <ChevronRight size={14} strokeWidth={2.25} aria-hidden />
+          <ChevronRight size={16} strokeWidth={2.25} aria-hidden />
         </a>
       </div>
 
@@ -44,8 +44,8 @@ export default function HomeTrustCriteria() {
                 <Icon size={17} strokeWidth={2.25} aria-hidden />
               </span>
               <div className="min-w-0">
-                <p className="text-[14px] font-bold text-[#0f1a2e]">{item.title}</p>
-                <p className="mt-1 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[13px]">
+                <p className="text-[16px] font-bold text-[#0f1a2e]">{item.title}</p>
+                <p className="mt-1 text-[14px] font-medium leading-relaxed text-[#0f1a2e]/50 md:text-[15px]">
                   {item.body}
                 </p>
               </div>

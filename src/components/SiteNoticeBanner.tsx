@@ -50,14 +50,14 @@ export default function SiteNoticeBanner({
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           {SITE_NOTICE.title.trim() ? (
-            <p className="text-[15px] font-bold leading-snug text-amber-950">
+            <p className="text-[16px] font-bold leading-snug text-amber-950">
               {SITE_NOTICE.title}
             </p>
           ) : null}
           {SITE_NOTICE.body.trim() ? (
             <p
               className={cn(
-                'text-[12px] font-semibold leading-relaxed text-amber-950/75',
+                'text-[13px] font-semibold leading-relaxed text-amber-950/75',
                 SITE_NOTICE.title.trim() && 'mt-1.5'
               )}
             >

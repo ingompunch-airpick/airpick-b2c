@@ -36,7 +36,7 @@ export function isSeoDocumentPath(pathname: string): boolean {
 export function tabFromPathname(pathname: string): AppTab | null {
   const path = normalizePathname(pathname);
   if (path === '/') return 'home';
-  if (path === '/parking') return 'compare';
+  if (path === '/parking') return 'home';
   if (path === '/esim') return 'esim';
   if (path === '/my') return 'my';
   return null;
@@ -61,8 +61,8 @@ export function syncUrlToTab(tab: AppTab, mode: 'push' | 'replace' = 'push'): vo
 export function readInitialTab(): AppTab {
   const path = normalizePathname(window.location.pathname);
   // 공항주변스팟 탭 비공개 — 구 URL은 홈으로
-  if (path === '/spots') {
-    window.history.replaceState({ tab: 'home' }, '', '/');
+  if (path === '/spots' || path === '/parking') {
+    window.history.replaceState({ tab: 'home' }, '', `/${window.location.search}`);
     return 'home';
   }
   return tabFromPathname(path) ?? 'home';
@@ -118,7 +118,9 @@ export function clearReviewQueryParam(): void {
 /** `/parking?company={id}` — 홈 지도 허브 → 비교 프리필 */
 export function readParkingCompanyId(): string | null {
   if (typeof window === 'undefined') return null;
-  if (normalizePathname(window.location.pathname) !== '/parking') return null;
+  if (normalizePathname(window.location.pathname) !== '/' && normalizePathname(window.location.pathname) !== '/parking') {
+    return null;
+  }
   const id = new URLSearchParams(window.location.search).get('company')?.trim();
   return id || null;
 }

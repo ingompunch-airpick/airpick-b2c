@@ -21,7 +21,7 @@ export default function HomeHookCtas({
         type="button"
         onClick={() => onGoTab('compare')}
         className={cn(
-          'w-full rounded-xl py-3.5 text-[15px] font-bold transition active:scale-[0.99]',
+          'w-full rounded-xl py-4 text-[17px] font-bold transition active:scale-[0.99]',
           !dark && 'md:flex-1',
           dark
             ? 'bg-[#c9a962] text-[#0a1628]'
@@ -35,7 +35,7 @@ export default function HomeHookCtas({
           type="button"
           onClick={() => onGoTab('esim')}
           className={cn(
-            'w-full rounded-xl py-3 text-[14px] font-bold transition active:scale-[0.99] md:py-3.5',
+            'w-full rounded-xl py-3.5 text-[16px] font-bold transition active:scale-[0.99] md:py-4',
             !dark && 'md:flex-1',
             dark
               ? 'bg-white/10 text-white ring-1 ring-white/25'

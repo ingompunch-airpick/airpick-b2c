@@ -57,7 +57,7 @@ export function PartnerHero() {
             <DeviceFrame
               variant="phone"
               className="relative mx-auto max-w-[320px] lg:max-w-[360px]"
-              label="www.에어픽.kr/parking"
+              label="www.에어픽.kr/"
               contentClassName="aspect-[9/19] min-h-[560px] h-[min(68vh,640px)]"
             >
               <iframe
