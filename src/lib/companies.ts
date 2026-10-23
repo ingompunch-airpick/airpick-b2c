@@ -144,12 +144,30 @@ export async function fetchCompanies(): Promise<Company[]> {
     .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }
 
+const companyListeners = new Set<(companies: Company[]) => void>();
+let companyListCache: Company[] | null = null;
+let stopCompanyListener: (() => void) | null = null;
+
+/** 화면 여러 곳이 불러도 Firestore 구독은 하나만 연다. */
 export function subscribeCompanies(onData: (companies: Company[]) => void): () => void {
-  return onSnapshot(collection(db, 'companies'), (snap) => {
-    const list = snap.docs
-      .map((d) => normalizeCompany(d.id, d.data() as Record<string, unknown>))
-      .filter((c): c is Company => c !== null)
-      .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-    onData(list);
-  });
+  companyListeners.add(onData);
+  if (companyListCache) onData(companyListCache);
+  if (!stopCompanyListener) {
+    stopCompanyListener = onSnapshot(collection(db, 'companies'), (snap) => {
+      const list = snap.docs
+        .map((d) => normalizeCompany(d.id, d.data() as Record<string, unknown>))
+        .filter((c): c is Company => c !== null)
+        .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+      companyListCache = list;
+      companyListeners.forEach((listener) => listener(list));
+    });
+  }
+  return () => {
+    companyListeners.delete(onData);
+    if (companyListeners.size === 0 && stopCompanyListener) {
+      stopCompanyListener();
+      stopCompanyListener = null;
+      companyListCache = null;
+    }
+  };
 }

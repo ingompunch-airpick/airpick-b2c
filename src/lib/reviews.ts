@@ -1,10 +1,12 @@
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 import type { CompanyReview } from '../types';
 import { ensureAnonymousAuth } from './reservations';
 
@@ -74,6 +76,37 @@ async function fetchPublishedReviewsForCompany(companyId: string): Promise<Compa
     .filter((r): r is CompanyReview => r != null);
 }
 
+/** 요약 문서에 담긴 최근 후기 수. 이보다 많이 보여줄 때만 후기 목록을 읽는다. */
+const SUMMARY_RECENT_MAX = 6;
+
+/** reviewSummaries/{업체} — 서버가 후기 등록·숨김 때 건수·평균·최근 6건을 맞춘다. */
+async function fetchReviewSummary(
+  companyId: string,
+  recentMax: number
+): Promise<CompanyReviewSnapshot | null> {
+  try {
+    const snap = await getDoc(doc(db, 'reviewSummaries', companyId));
+    if (!snap.exists()) return null;
+    const data = snap.data() as Record<string, unknown>;
+    if (typeof data.count !== 'number' || !Array.isArray(data.recent)) return null;
+    const recent = data.recent
+      .map((row) => {
+        if (!row || typeof row !== 'object') return null;
+        const fields = row as Record<string, unknown>;
+        return normalizeReview(String(fields.id || ''), { ...fields, companyId });
+      })
+      .filter((r): r is CompanyReview => r != null)
+      .slice(0, Math.max(0, recentMax));
+    return {
+      recent,
+      count: data.count,
+      averageRating: typeof data.averageRating === 'number' ? data.averageRating : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** 업체 후기 집계 + 최근 목록 — reviews 컬렉션 기준 (company.reviews_count 미사용)
  *  @param recentMax 표시할 최근 건수. 생략·undefined면 published 전체.
  */
@@ -82,6 +115,11 @@ export async function fetchCompanyReviewSnapshot(
   recentMax?: number
 ): Promise<CompanyReviewSnapshot> {
   await ensureAnonymousAuth();
+
+  if (recentMax !== undefined && recentMax <= SUMMARY_RECENT_MAX) {
+    const summary = await fetchReviewSummary(companyId, recentMax);
+    if (summary) return summary;
+  }
 
   try {
     const reviews = await fetchPublishedReviewsForCompany(companyId);
@@ -105,6 +143,11 @@ export async function fetchReviewSnapshotsByCompanyIds(
   try {
     await Promise.all(
       uniqueIds.map(async (companyId) => {
+        const summary = await fetchReviewSummary(companyId, 0);
+        if (summary) {
+          result[companyId] = summary;
+          return;
+        }
         const reviews = await fetchPublishedReviewsForCompany(companyId);
         result[companyId] = buildSnapshot(reviews, 0);
       })
@@ -134,10 +177,16 @@ export async function submitCompanyReview(
   password: string,
   rating: number,
   body?: string,
-  photoDataUrls?: string[]
+  photoDataUrls?: string[],
+  asMember = false
 ): Promise<void> {
   const pw = password.trim();
-  if (!/^\d{4}$/.test(pw)) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (asMember) {
+    const user = auth.currentUser;
+    if (!user || user.isAnonymous) throw new Error('카카오 로그인 후 후기를 남겨 주세요.');
+    headers.Authorization = `Bearer ${await user.getIdToken()}`;
+  } else if (!/^\d{4}$/.test(pw)) {
     throw new Error('예약 비밀번호 4자리를 확인해 주세요.');
   }
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
@@ -148,10 +197,10 @@ export async function submitCompanyReview(
 
   const res = await fetch(REVIEW_API_PATH, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       id: reservationId,
-      password: pw,
+      ...(asMember ? {} : { password: pw }),
       rating,
       body: body?.trim() ? body.trim().slice(0, 200) : undefined,
       ...(photos.length ? { photos } : {}),
