@@ -10,6 +10,7 @@ import AirlineSelect from './AirlineSelect';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { ensureAnonymousAuth, submitReservation, subscribeReservation, type BookingForm } from '../lib/reservations';
+import { reportError } from '../lib/errorReport';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
 import { formatDateDisplay, formatStayPhrase, todayYmd } from '../utils/dates';
@@ -547,6 +548,7 @@ export default function BookingModal({
       setCompletedId(id);
     } catch (err) {
       console.error(err);
+      reportError('error', err, '예약 저장');
       const raw = err instanceof Error ? err.message : '';
       setError(
         raw.includes('Missing or insufficient permissions') || raw.includes('permission-denied')

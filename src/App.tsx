@@ -62,6 +62,7 @@ import { calculatePrice, applyAffiliateCustomerDiscount } from './utils/pricing'
 import { isAirpickPartner } from './utils/compareSort';
 import { useAffiliateOffer } from './context/AffiliateContext';
 import { prefetchAppTab } from './utils/prefetchTabs';
+import { setErrorReportContext } from './lib/errorReport';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
 const EsimPage = lazy(() => import('./pages/EsimPage'));
@@ -126,6 +127,14 @@ export default function App() {
   const [cancelGuideOpen, setCancelGuideOpen] = useState(false);
   const { offer: affiliateOffer } = useAffiliateOffer();
   const affiliateDiscountWon = affiliateOffer?.customerDiscountWon ?? 0;
+
+  useEffect(() => {
+    const screen = bookingTarget ? 'booking' : supportOpen ? 'support' : tab;
+    setErrorReportContext({
+      screen,
+      companyId: bookingTarget?.company.id || partnerDetail?.company.id || '',
+    });
+  }, [tab, bookingTarget, partnerDetail, supportOpen]);
 
   const setTab = (next: AppTab, mode: 'push' | 'replace' = 'push') => {
     setTabState(next);
