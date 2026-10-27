@@ -76,8 +76,8 @@ export const ESIM_HUB = {
     },
     {
       id: 'refund',
-      eyebrow: '제품 결함시',
-      title: '100% 환불 보장',
+      eyebrow: '이용 중 문제 발생 시',
+      title: '신속한 상담 및 환불 안내',
     },
     {
       id: 'stability',
