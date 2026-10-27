@@ -56,6 +56,17 @@ export function trackParkingBookStart(companyId: string, companyName: string): v
   });
 }
 
+/** OpenAI 광고 — 예약 저장이 끝난 뒤에만 호출 */
+export function trackAppointmentScheduled(): void {
+  const oaiq = (window as Window & { oaiq?: (...args: unknown[]) => void }).oaiq;
+  if (typeof oaiq !== 'function') return;
+  try {
+    oaiq('measure', 'appointment_scheduled', { type: 'customer_action' });
+  } catch {
+    // 픽셀이 막혀 있으면 예약 자체는 그대로 둔다
+  }
+}
+
 /** 입점 주차대행 — 예약 접수 완료 */
 export function trackParkingBookComplete(companyId: string, companyName: string): void {
   track('parking_book_complete', {

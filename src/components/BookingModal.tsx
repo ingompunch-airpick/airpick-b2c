@@ -10,6 +10,7 @@ import AirlineSelect from './AirlineSelect';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { displayCompanyName } from '../utils/display';
 import { ensureAnonymousAuth, submitReservation, subscribeReservation, type BookingForm } from '../lib/reservations';
+import { trackAppointmentScheduled } from '../lib/analytics';
 import { reportError } from '../lib/errorReport';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
@@ -529,6 +530,7 @@ export default function BookingModal({
         marketingOptIn,
         spend
       );
+      trackAppointmentScheduled();
       saveRecentReservation({
         id,
         carNumber: form.carNumber.trim(),
