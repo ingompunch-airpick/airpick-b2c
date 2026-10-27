@@ -2,6 +2,22 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      !function (w, d, s, u) {
+        if (w.oaiq) return;
+        var q = function () {
+          q.q.push(arguments);
+        };
+        q.q = [];
+        w.oaiq = q;
+        var j = d.createElement(s);
+        j.async = 1;
+        j.src = u;
+        var f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(j, f);
+      }(window, document, "script", "https://bzrcdn.openai.com/sdk/oaiq.min.js");
+      oaiq("init", { pixelId: "FC1agP5yKM6rFCyKTaE5kC", debug: true });
+    </script>
     <script src="/canonical-host.js"></script>
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=8" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=8" />
