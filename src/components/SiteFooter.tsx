@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { AIRPICK_DEFINITION, COMPANY_LEGAL } from '../constants/companyLegal';
+import { AIRPICK_AVAILABILITY_NOTE, AIRPICK_DEFINITION, COMPANY_LEGAL } from '../constants/companyLegal';
 
 /** 홈·앱 하단 — 메뉴 링크는 ≡ 시트로. 여기는 사업자 정보만 */
 export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'premium' }) {
@@ -23,7 +23,7 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         </summary>
 
         <p className="mt-2.5 text-[10px] font-medium leading-relaxed text-muted">
-          {AIRPICK_DEFINITION}
+          {AIRPICK_DEFINITION} {AIRPICK_AVAILABILITY_NOTE}
         </p>
 
         <dl className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1 text-[10px] font-medium leading-relaxed text-muted-light">

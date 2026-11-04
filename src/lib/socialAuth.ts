@@ -1,7 +1,10 @@
+import { FirebaseError } from 'firebase/app';
 import {
   OAuthProvider,
   getAdditionalUserInfo,
   getRedirectResult,
+  linkWithPopup,
+  signInWithCredential,
   signInWithPopup,
   updateProfile,
   type User,
@@ -238,8 +241,11 @@ export function socialLoginErrorMessage(err: unknown): string | null {
   if (code === 'auth/popup-blocked') {
     return '팝업이 막혀 있습니다. 브라우저에서 팝업을 허용한 뒤 다시 눌러 주세요.';
   }
-  if (code === 'auth/operation-not-allowed' || code === 'auth/unauthorized-domain') {
-    return '카카오 로그인은 아직 Firebase에 연결되지 않았습니다. 비회원으로 접수할 수 있습니다.';
+  if (code === 'auth/unauthorized-domain') {
+    return '이 주소는 Firebase에 등록되지 않았습니다. localhost 또는 www.에어픽.kr에서 다시 눌러 주세요.';
+  }
+  if (code === 'auth/operation-not-allowed') {
+    return '카카오 로그인이 Firebase에서 꺼져 있습니다. 비회원으로 접수할 수 있습니다.';
   }
   if (code === 'auth/account-exists-with-different-credential') {
     return '이 메일은 다른 로그인으로 이미 쓰이고 있습니다. 그때 쓴 버튼으로 다시 들어와 주세요.';
@@ -352,11 +358,29 @@ function keyPaths(value: unknown, prefix = '', depth = 0): string[] {
   });
 }
 
+/** 익명으로 들어온 뒤 카카오를 누르면 그 계정을 카카오로 바꾼다. 이미 있는 카카오면 그 계정으로 들어간다. */
+async function kakaoCredential(): Promise<UserCredential> {
+  const provider = kakaoProvider();
+  const current = auth.currentUser;
+  if (!current?.isAnonymous) return signInWithPopup(auth, provider);
+  try {
+    return await linkWithPopup(current, provider);
+  } catch (err) {
+    const existing = err instanceof FirebaseError ? OAuthProvider.credentialFromError(err) : null;
+    if (existing) return signInWithCredential(auth, existing);
+    const code = codeOf(err);
+    if (code === 'auth/credential-already-in-use' || code === 'auth/email-already-in-use') {
+      return signInWithPopup(auth, provider);
+    }
+    throw err;
+  }
+}
+
 /** 같은 창 이동은 돌아온 뒤 결과가 사라져 버튼이 그대로인 것처럼 보인다. 팝업만 쓴다. */
 export async function signInWithKakao(): Promise<SocialProfile> {
   clearKakaoRedirectPending();
   clearKakaoLoggedOut();
-  const cred = await signInWithPopup(auth, kakaoProvider());
+  const cred = await kakaoCredential();
   const tokenResponse = tokenResponseOf(cred);
   const accessToken =
     stringField(tokenResponse, 'oauthAccessToken') ||

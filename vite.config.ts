@@ -117,6 +117,8 @@ export default defineConfig({
     VitePWA({
       // 새 SW가 오면 바로 활성화 → 다음 로드부터 최신 셸
       registerType: 'autoUpdate',
+      // 등록은 main.tsx에서 한다. 자동 스크립트는 실패를 잡기 않아 오류 메일로 올라간다.
+      injectRegister: null,
       devOptions: {
         enabled: false,
       },
@@ -228,7 +230,7 @@ export default defineConfig({
       manifest: {
         name: '에어픽',
         short_name: '에어픽',
-        description: '인천공항 주차대행 비교·예약 · 이심(eSIM) 제휴 할인',
+        description: '에어픽 공항주차 · 인천공항 주차대행·사설주차장 비교·예약 · 이심(eSIM) 제휴 할인',
         theme_color: '#0f1a2e',
         background_color: '#EDF4FC',
         display: 'standalone',

@@ -16,7 +16,7 @@ import { getStatusLabel, getStatusStep, formatCheckInStaffLine, formatCheckOutSt
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import { getCancelEligibility } from '../utils/reservationCancel';
 import { isReservationReviewable } from '../lib/reviews';
-import { handoffPlaceLine } from '../data/pickupPins';
+import { handoffPlaceLine, pickupNaverMapUrl } from '../data/pickupPins';
 import { itchaHandoffPlace } from '../data/itchaPickup';
 
 function formatSchedule(reservation: Reservation): string {
@@ -24,6 +24,36 @@ function formatSchedule(reservation: Reservation): string {
   const arr = reservation.arrivalDate.replace(/-/g, '.').slice(5);
   const indoor = parkingTypeLabel(reservation.isIndoor);
   return `${dep} ${reservation.departureTime} → ${arr} ${reservation.arrivalTime} · ${reservation.departureTerminal} ${indoor}`;
+}
+
+function PickupPlaceLink({
+  faceToFace,
+  terminal,
+  place,
+}: {
+  faceToFace: boolean;
+  terminal?: string;
+  place?: string;
+}) {
+  const line = handoffPlaceLine(faceToFace, place);
+  const href = pickupNaverMapUrl({ faceToFace, terminal, place });
+  return (
+    <p className="mt-1 text-sm font-semibold leading-snug text-ink">
+      픽업지{' '}
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-[#0f1a2e]/30 underline-offset-2"
+        >
+          {line}
+        </a>
+      ) : (
+        line
+      )}
+    </p>
+  );
 }
 
 function StatusTimeline({ status }: { status: string }) {
@@ -373,17 +403,17 @@ export default function ReservationCard({
       </div>
 
       <p className="mt-2 text-xs font-medium text-muted">{formatSchedule(reservation)}</p>
-      <p className="mt-1 text-sm font-semibold leading-snug text-ink">
-        픽업지{' '}
-        {handoffPlaceLine(
-          reservation.faceToFace === true,
+      <PickupPlaceLink
+        faceToFace={reservation.faceToFace === true}
+        terminal={reservation.departureTerminal}
+        place={
           itchaHandoffPlace(
             reservation.companyId,
             company?.name || reservation.companyName,
             reservation.departureTerminal
           ) || company?.pickupLocation
-        )}
-      </p>
+        }
+      />
       <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
         {reservation.totalPrice.toLocaleString()}원
         <span className="ml-2 text-[13px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>

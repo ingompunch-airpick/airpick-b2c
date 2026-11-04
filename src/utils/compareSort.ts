@@ -2,6 +2,7 @@ import type { CompanyReviewSnapshot } from '../lib/reviews';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { isCompanySoldOutForSearch } from './bookingPolicy';
 import { companyMatchesSearch, companyValetFee } from './parkingType';
+import { companyDropFee, findParkingProduct } from './parkingProducts';
 import { calculatePrice, checkIsNightSurcharge, getParkingDayCount, isGayuCompany, applyAffiliateCustomerDiscount } from './pricing';
 import { calculateGayuParkingPrice, type PricingTerminal } from './pricingProfiles';
 import {
@@ -64,10 +65,12 @@ export function calculateComparePrice(
     );
   }
 
-  /** 발렛비 — 대면(faceToFace) 선택 시에만 포함 */
+  /** 대면이면 대면 추가요금, 비대면 상품이 있으면 비대면 추가요금 */
   const valet = companyValetFee(company, search.terminal);
   if (valet != null && search.faceToFace) {
     base += valet;
+  } else if (!search.faceToFace && findParkingProduct(company, search, false)) {
+    base += companyDropFee(company, search.terminal);
   }
 
   if (affiliateDiscountWon > 0) {
@@ -131,29 +134,12 @@ function sortByPrice(
   );
 }
 
-/** 대면 희망 시: 대면 가능 업체를 상단으로(그 안에서 최저가순) */
-function sortPartnersForSearch(
-  items: PricedCompany[],
-  search: BookingSearch,
-  reviewSnapshots: Record<string, CompanyReviewSnapshot> = {}
-): PricedCompany[] {
-  const byPrice = sortByPrice(items, reviewSnapshots);
-  if (!search.faceToFace) return byPrice;
-  const capable = byPrice.filter(
-    (it) => !it.soldOut && companyValetFee(it.company, search.terminal) != null
-  );
-  const rest = byPrice.filter(
-    (it) => it.soldOut || companyValetFee(it.company, search.terminal) == null
-  );
-  return sortSoldOutLast([...capable, ...rest]);
-}
-
 /** 섹션에 해당 터미널 대면 가능 업체가 하나라도 있는지 */
 export function sectionHasFaceToFace(items: PricedCompany[], terminal: Terminal): boolean {
   return items.some((item) => companyValetFee(item.company, terminal) != null);
 }
 
-/** 공식 파트너만 · 가격순 (대면 희망 시 대면 가능 우선) */
+/** 공식 파트너만 · 가격순. 대면·비대면 구분은 홈 목록에서 한다 */
 export function buildPartnerPriceList(
   companies: Company[],
   search: BookingSearch,
@@ -163,7 +149,7 @@ export function buildPartnerPriceList(
   const priced = priceCompaniesForSearch(companies, search, affiliateDiscountWon).filter((item) =>
     isAirpickPartner(item.company)
   );
-  return sortPartnersForSearch(priced, search, reviewSnapshots);
+  return sortByPrice(priced, reviewSnapshots);
 }
 
 /** 입점 업체만 · 실후기 평점 높은 순 (후기 없으면 하단) */

@@ -21,6 +21,12 @@
       "note": "가이드 허브"
     },
     {
+      "path": "/guides/airport-parking-types/",
+      "changefreq": "weekly",
+      "priority": 0.85,
+      "note": "공항주차 방식 비교 (주차대행·사설주차장·셔틀)"
+    },
+    {
       "path": "/guides/parking-compare/",
       "changefreq": "weekly",
       "priority": 0.85,

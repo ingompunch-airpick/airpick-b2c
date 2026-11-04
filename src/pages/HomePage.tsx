@@ -1,33 +1,64 @@
-import { Check, ChevronRight } from 'lucide-react';
+import {
+  BusFront,
+  Check,
+  ChevronRight,
+  Clock,
+  EvCharger,
+  Footprints,
+  KeyRound,
+  PlaneTakeoff,
+  SquareParking,
+  Star,
+  Sun,
+  Wallet,
+  Warehouse,
+  type LucideIcon,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import DateField from '../components/DateField';
 import SiteFooter from '../components/SiteFooter';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
-import { pickupPin, pickupPinsFor, type PickupPinId } from '../data/pickupPins';
+import { pickupPin } from '../data/pickupPins';
 import { applyKakaoLogin } from '../lib/members';
 import { hasSignupCoupon, MEMBER_DISCOUNT_WON, readMember, subscribeMember } from '../lib/memberSession';
 import { socialLoginErrorMessage } from '../lib/socialAuth';
 import { listParkingCompareCompanies } from '../lib/parkingCompare';
-import type { BookingSearch, Company, Reservation, Terminal } from '../types';
+import type { BookingSearch, Company, ParkingProductType, Reservation, Terminal } from '../types';
 import { cn } from '../utils/cn';
 import { buildPartnerPriceList, type PricedCompany } from '../utils/compareSort';
 import { formatStayPhrase, todayYmd } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
+import { companyThumbnailUrl } from '../utils/imageUrl';
+import { getCompanyParkingLot } from '../utils/parkingLocation';
 import { PARKING_LABEL_INDOOR, PARKING_LABEL_OUTDOOR } from '../utils/parkingType';
-import { companyMatchesHandoff, getParkingDayCount } from '../utils/pricing';
-import { resolveParkingDistanceEntry } from '../utils/parkingDistances';
+import { findParkingProduct, parkingProductFacts } from '../utils/parkingProducts';
+import { getParkingDayCount } from '../utils/pricing';
 import { fetchReservationById } from '../lib/reservations';
 import {
   fetchReviewSnapshotsByCompanyIds,
   type CompanyReviewSnapshot,
 } from '../lib/reviews';
-import { displayInsuranceBadgeLabel } from '../utils/insurance';
+import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
 import { useAffiliateOffer } from '../context/AffiliateContext';
 
-/** 카드에 평점을 보여 주는 최소 후기 수. 이보다 적으면 한 줄에서 뺀다. */
-const MIN_CARD_REVIEW_COUNT = 5;
+type HomeListSort = 'reviews' | 'price';
+
+type LotSearch = { isIndoor: boolean; terminal: Terminal };
+
+/** 대면 상품이 있으면 대면, 없으면 비대면 상품으로 보여 준다 */
+function companyIsFaceHandoff(company: Company, search: LotSearch): boolean {
+  return findParkingProduct(company, search, true) != null;
+}
+
+function handoffSearchPatch(
+  company: Company,
+  search: LotSearch
+): Pick<BookingSearch, 'faceToFace' | 'pickupPointId'> {
+  const face = companyIsFaceHandoff(company, search);
+  return { faceToFace: face, pickupPointId: face ? 'depart' : 'short' };
+}
 
 const ACTIVE_STATUSES = new Set([
   'pending',
@@ -49,15 +80,10 @@ function reservationRecency(reservation: Reservation): string {
   return reservation.checkedInAt || reservation.createdAt || reservation.departureDate;
 }
 
-function reservationMatchesSearch(
-  reservation: Reservation,
-  search: BookingSearch,
-  meetHandoff: boolean
-): boolean {
+function reservationMatchesSearch(reservation: Reservation, search: BookingSearch): boolean {
   const terminal = reservation.departureTerminal === 'T2' ? 'T2' : 'T1';
   if (terminal !== search.terminal) return false;
-  if (Boolean(reservation.isIndoor) !== search.isIndoor) return false;
-  return Boolean(reservation.faceToFace) === meetHandoff;
+  return Boolean(reservation.isIndoor) === search.isIndoor;
 }
 
 export default function HomePage({
@@ -65,12 +91,16 @@ export default function HomePage({
   onSearchChange,
   companies,
   loading,
+  onDetail,
   onBook,
 }: {
   search: BookingSearch;
   onSearchChange: (next: BookingSearch) => void;
   companies: Company[];
   loading: boolean;
+  /** 자세히 — 업체 상세 시트 */
+  onDetail: (company: Company, price: number) => void;
+  /** 예약하기 — 바로 예약 모달 */
   onBook: (company: Company, price: number) => void;
 }) {
   const { offer } = useAffiliateOffer();
@@ -84,11 +114,14 @@ export default function HomePage({
   const [signupCoupon, setSignupCoupon] = useState(() => hasSignupCoupon(readMember()));
   const [authBusy, setAuthBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [listSort, setListSort] = useState<HomeListSort>('reviews');
   const today = todayYmd();
-  const pickupId: PickupPinId = search.pickupPointId ?? 'short';
-  const pins = pickupPinsFor(search.terminal);
-  const selected = pickupPin(search.terminal, pickupId);
-  const visiblePins = search.isIndoor ? pins.filter((pin) => pin.meetHandoff) : pins;
+
+  useEffect(() => {
+    if (!search.isIndoor) return;
+    if (search.pickupPointId === 'depart' && search.faceToFace) return;
+    onSearchChange({ ...search, pickupPointId: 'depart', faceToFace: true });
+  }, [onSearchChange, search]);
 
   useEffect(
     () =>
@@ -136,49 +169,17 @@ export default function HomePage({
     const rows: Reservation[] = [];
     for (const row of usedReservations) {
       if (seen.has(row.companyId)) continue;
-      if (!reservationMatchesSearch(row, search, selected.meetHandoff)) continue;
+      if (!reservationMatchesSearch(row, search)) continue;
       seen.add(row.companyId);
       rows.push(row);
     }
     return rows;
-  }, [search, selected.meetHandoff, usedReservations]);
-
-  useEffect(() => {
-    if ((search.pickupPointId ?? 'short') !== 'short' || !search.isIndoor) return;
-    onSearchChange({ ...search, isIndoor: false, faceToFace: false, pickupPointId: 'short' });
-    // 비대면 업체는 야외만 있어서, 첫 화면은 야외로 연다.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [search, usedReservations]);
 
   const priced = useMemo(
-    () =>
-      priceCompanies(companies, search, selected.meetHandoff, pickupId, affiliateDiscountWon, signupCoupon),
-    [affiliateDiscountWon, companies, pickupId, search, selected.meetHandoff, signupCoupon]
+    () => priceCompanies(companies, search, affiliateDiscountWon, signupCoupon),
+    [affiliateDiscountWon, companies, search, signupCoupon]
   );
-
-  const lotPriceLine = useMemo(() => {
-    const cheapest = (indoor: boolean) => {
-      const face = indoor ? true : selected.meetHandoff;
-      const pin = indoor ? 'depart' : pickupId;
-      const open = priceCompanies(
-        companies,
-        { ...search, isIndoor: indoor },
-        face,
-        pin,
-        affiliateDiscountWon,
-        signupCoupon
-      ).filter((item) => !item.soldOut);
-      return open.length > 0 ? Math.min(...open.map((item) => item.price)) : null;
-    };
-    const parts: string[] = [];
-    const indoor = cheapest(true);
-    const outdoor = cheapest(false);
-    if (indoor != null) parts.push(`${PARKING_LABEL_INDOOR} ${indoor.toLocaleString()}원부터`);
-    if (outdoor != null) parts.push(`${PARKING_LABEL_OUTDOOR} ${outdoor.toLocaleString()}원부터`);
-    if (parts.length === 0) return '';
-    parts.push(`${PARKING_LABEL_INDOOR}는 대면만`);
-    return parts.join(' · ');
-  }, [affiliateDiscountWon, companies, pickupId, search, selected.meetHandoff, signupCoupon]);
 
   const companySectionRef = useRef<HTMLElement>(null);
 
@@ -207,17 +208,17 @@ export default function HomePage({
     const marks: Record<string, string> = {};
     if (pinnedItems.length === 1) marks[pinnedItems[0].company.id] = '지난번 이용';
     if (pinnedItems.length > 1) marks[pinnedItems[0].company.id] = '지난번';
+    const ordered = [...priced].sort((a, b) => compareHomeCompanies(a, b, reviewById, listSort));
     return {
-      pinnedItems,
-      rest: priced.filter((item) => !pinnedIds.has(item.company.id)),
+      ordered,
+      pinnedItems: ordered.filter((item) => pinnedIds.has(item.company.id)),
+      rest: ordered.filter((item) => !pinnedIds.has(item.company.id)),
       marks,
       split: pinnedItems.length > 1,
     };
-  }, [pastMatches, priced]);
+  }, [listSort, pastMatches, priced, reviewById]);
 
-  const showPastLine = Boolean(
-    latestUsed && !reservationMatchesSearch(latestUsed, search, selected.meetHandoff)
-  );
+  const showPastLine = Boolean(latestUsed && !reservationMatchesSearch(latestUsed, search));
 
   const applyPastStay = (reservation: Reservation) => {
     const terminal: Terminal = reservation.departureTerminal === 'T2' ? 'T2' : 'T1';
@@ -234,45 +235,39 @@ export default function HomePage({
   };
 
   const setTerminal = (terminal: Terminal) => {
-    const pin = pickupPin(terminal, pickupId);
     onSearchChange({
       ...search,
       terminal,
-      arrivalTerminal: search.arrivalTerminal && search.arrivalTerminal !== search.terminal
-        ? search.arrivalTerminal
-        : terminal,
-      pickupPointId: pickupId,
-      faceToFace: pin.meetHandoff,
-    });
-  };
-
-  const setPickup = (id: PickupPinId) => {
-    const pin = pickupPin(search.terminal, id);
-    onSearchChange({
-      ...search,
-      pickupPointId: id,
-      faceToFace: pin.meetHandoff,
-      isIndoor: pin.meetHandoff ? search.isIndoor : false,
+      arrivalTerminal:
+        search.arrivalTerminal && search.arrivalTerminal !== search.terminal
+          ? search.arrivalTerminal
+          : terminal,
     });
   };
 
   const setLot = (indoor: boolean) => {
-    if (!indoor || selected.meetHandoff) {
-      onSearchChange({ ...search, isIndoor: indoor });
+    if (indoor) {
+      onSearchChange({
+        ...search,
+        isIndoor: true,
+        pickupPointId: 'depart',
+        faceToFace: true,
+      });
       return;
     }
-    onSearchChange({
-      ...search,
-      isIndoor: true,
-      pickupPointId: 'depart',
-      faceToFace: true,
-    });
+    onSearchChange({ ...search, isIndoor: false });
+  };
+
+  const selectCompany = (company: Company, price: number, mode: 'detail' | 'book') => {
+    onSearchChange({ ...search, ...handoffSearchPatch(company, search) });
+    if (mode === 'detail') onDetail(company, price);
+    else onBook(company, price);
   };
 
   return (
     <div className="bg-white pb-[calc(8rem+env(safe-area-inset-bottom))]">
-      <div className="mx-auto max-w-lg space-y-5 px-4 pt-2 md:pt-8">
-        <section className="space-y-2 md:space-y-8">
+      <div className="mx-auto max-w-lg space-y-5 px-4 pt-2 md:max-w-3xl md:pt-8">
+        <section className="space-y-2">
           <SiteNoticeBanner />
           {upcoming ? (
             <p className="text-[14px] font-semibold text-[#0f1a2e]">
@@ -317,14 +312,6 @@ export default function HomePage({
                 />
               ))}
             </div>
-            {lotPriceLine ? (
-              <p className="mt-1.5 text-[14px] font-medium text-[#0f1a2e]/55">{lotPriceLine}</p>
-            ) : null}
-          </div>
-
-          <div>
-            <ChoiceLabel>픽업지</ChoiceLabel>
-            <ValetCards pins={visiblePins} selected={selected} onSelect={setPickup} />
           </div>
 
           <div>
@@ -389,7 +376,7 @@ export default function HomePage({
 
       <section
         ref={companySectionRef}
-        className="mx-auto mt-8 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4"
+        className="mx-auto mt-8 max-w-lg md:max-w-3xl scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4"
       >
         {memberOn ? null : (
           <div className="mb-5">
@@ -428,6 +415,36 @@ export default function HomePage({
         ) : (
           <>
             <ChoiceLabel>{`이용 가능 업체 ${priced.length}곳`}</ChoiceLabel>
+            <p className="mb-3 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-[13px] font-semibold leading-snug text-emerald-900">
+              입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
+            </p>
+            {priced.length > 1 ? (
+              <div className="mb-3 flex gap-2">
+                {(
+                  [
+                    { id: 'reviews' as const, label: '후기 많은 순' },
+                    { id: 'price' as const, label: '최저가' },
+                  ] as const
+                ).map((option) => {
+                  const on = listSort === option.id;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setListSort(option.id)}
+                      className={cn(
+                        'rounded-full px-3.5 py-1.5 text-[13px] font-bold transition',
+                        on
+                          ? 'bg-[#0f1a2e] text-white'
+                          : 'bg-[#f4f5f7] text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/8'
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
             {showPastLine && latestUsed ? (
               <button
                 type="button"
@@ -448,9 +465,10 @@ export default function HomePage({
                     marks={companyGroups.marks}
                     reviews={reviewById}
                     stay={stayLabel(search.departureDate, search.arrivalDate)}
-                    terminal={search.terminal}
                     isIndoor={search.isIndoor}
-                    onBook={onBook}
+                    terminal={search.terminal}
+                    onDetail={(company, price) => selectCompany(company, price, 'detail')}
+                    onBook={(company, price) => selectCompany(company, price, 'book')}
                   />
                 </div>
                 {companyGroups.rest.length > 0 ? (
@@ -460,28 +478,30 @@ export default function HomePage({
                       items={companyGroups.rest}
                       reviews={reviewById}
                       stay={stayLabel(search.departureDate, search.arrivalDate)}
-                      terminal={search.terminal}
                       isIndoor={search.isIndoor}
-                      onBook={onBook}
+                      terminal={search.terminal}
+                      onDetail={(company, price) => selectCompany(company, price, 'detail')}
+                      onBook={(company, price) => selectCompany(company, price, 'book')}
                     />
                   </div>
                 ) : null}
               </div>
             ) : (
               <PriceList
-                items={companyGroups.pinnedItems.length > 0 ? [...companyGroups.pinnedItems, ...companyGroups.rest] : priced}
+                items={companyGroups.ordered}
                 marks={companyGroups.marks}
                 reviews={reviewById}
                 stay={stayLabel(search.departureDate, search.arrivalDate)}
-                terminal={search.terminal}
                 isIndoor={search.isIndoor}
-                onBook={onBook}
+                terminal={search.terminal}
+                onDetail={(company, price) => selectCompany(company, price, 'detail')}
+                onBook={(company, price) => selectCompany(company, price, 'book')}
               />
             )}
           </>
         )}
       </section>
-      <div className="mx-auto mt-10 max-w-lg px-4">
+      <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
         <HomeYoutubeLive />
       </div>
       <div className="mx-auto mt-10 max-w-6xl px-4 md:px-8">
@@ -494,30 +514,58 @@ export default function HomePage({
 function priceCompanies(
   companies: Company[],
   search: BookingSearch,
-  face: boolean,
-  pickupId: PickupPinId,
   affiliateDiscountWon: number,
   signupCoupon: boolean
 ) {
-  const list = buildPartnerPriceList(
-    listParkingCompareCompanies(companies),
-    { ...search, faceToFace: face, pickupPointId: pickupId },
-    {},
-    affiliateDiscountWon
-  ).filter((item) => companyMatchesHandoff(item.company, face));
+  const partners = listParkingCompareCompanies(companies).filter((company) => {
+    const face = companyIsFaceHandoff(company, search);
+    /** 실내는 대면 상품만 */
+    if (search.isIndoor && !face) return false;
+    return face || findParkingProduct(company, search, false) != null;
+  });
+
+  const list = partners
+    .map((company) => {
+      const face = companyIsFaceHandoff(company, search);
+      const priced = buildPartnerPriceList(
+        [company],
+        {
+          ...search,
+          faceToFace: face,
+          pickupPointId: face ? 'depart' : 'short',
+        },
+        {},
+        affiliateDiscountWon
+      )[0];
+      return priced ?? null;
+    })
+    .filter((item): item is PricedCompany => item != null);
+
   return list
     .map((item) => ({
       ...item,
       listPrice: item.price,
       price: signupCoupon ? Math.max(0, item.price - MEMBER_DISCOUNT_WON) : item.price,
     }))
-    .sort((a, b) => {
-      if (a.soldOut !== b.soldOut) return a.soldOut ? 1 : -1;
-      if (a.price !== b.price) return a.price - b.price;
-      const reviews = (b.company.reviews_count || 0) - (a.company.reviews_count || 0);
-      if (reviews !== 0) return reviews;
-      return displayCompanyName(a.company.name).localeCompare(displayCompanyName(b.company.name), 'ko');
-    });
+    .sort((a, b) => compareHomeCompanies(a, b, {}));
+}
+
+function compareHomeCompanies(
+  a: { soldOut?: boolean; price: number; company: Company },
+  b: { soldOut?: boolean; price: number; company: Company },
+  reviews: Record<string, CompanyReviewSnapshot>,
+  sort: HomeListSort = 'reviews'
+): number {
+  if (Boolean(a.soldOut) !== Boolean(b.soldOut)) return a.soldOut ? 1 : -1;
+  const reviewDiff = (reviews[b.company.id]?.count ?? 0) - (reviews[a.company.id]?.count ?? 0);
+  if (sort === 'price') {
+    if (a.price !== b.price) return a.price - b.price;
+    if (reviewDiff !== 0) return reviewDiff;
+  } else {
+    if (reviewDiff !== 0) return reviewDiff;
+    if (a.price !== b.price) return a.price - b.price;
+  }
+  return displayCompanyName(a.company.name).localeCompare(displayCompanyName(b.company.name), 'ko');
 }
 
 function stayLabel(start: string, end: string): string {
@@ -525,12 +573,12 @@ function stayLabel(start: string, end: string): string {
 }
 
 function ChoiceLabel({ children }: { children: string }) {
-  return <p className="mb-1.5 text-[16px] font-bold text-[#0f1a2e] md:mb-3">{children}</p>;
+  return <p className="mb-1.5 text-[16px] font-bold text-[#0f1a2e]">{children}</p>;
 }
 
 function choiceCard(selected: boolean) {
   return cn(
-    'relative flex h-[58px] w-full min-w-0 items-center gap-2 rounded-2xl pl-3 pr-8 text-left transition-colors duration-200 md:h-full md:px-3 md:pb-3 md:pt-8',
+    'relative flex h-[58px] w-full min-w-0 items-center gap-2 rounded-2xl pl-3 pr-8 text-left transition-colors duration-200',
     selected ? 'bg-[#F3E6C4]' : 'bg-[#f4f5f7]'
   );
 }
@@ -545,7 +593,7 @@ function ChoiceCheck() {
 
 function ClayIcon({ src }: { src: string }) {
   return (
-    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1.5 md:h-14 md:w-14 md:p-2">
+    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1.5">
       <img src={src} alt="" className="h-full w-full object-contain" />
     </span>
   );
@@ -578,75 +626,8 @@ function ChoiceRow({
   );
 }
 
-function ValetCards({
-  pins,
-  selected,
-  onSelect,
-}: {
-  pins: ReturnType<typeof pickupPinsFor>;
-  selected: ReturnType<typeof pickupPin>;
-  onSelect: (id: PickupPinId) => void;
-}) {
-  return (
-    <div className="space-y-2 md:space-y-3">
-      {pins.map((pin) => {
-        const on = selected.id === pin.id;
-        const remote = pin.id === 'short';
-        const art = remote ? '/pickup/smart-valet.jpg?v=7' : '/pickup/comfort-valet.jpg?v=8';
-        return (
-          <button
-            key={pin.id}
-            type="button"
-            onClick={() => onSelect(pin.id)}
-            className={cn(choiceCard(on), 'h-[66px] pl-4 md:h-full md:px-4')}
-          >
-            <span className="min-w-0 flex-1">
-              <span className="block text-[16px] font-semibold text-[#0f1a2e]">{pin.action}</span>
-              <span className="mt-0.5 block text-[14px] font-medium leading-snug text-[#0f1a2e]/55">{pin.detail}</span>
-            </span>
-            <ClayIcon src={art} />
-            {on ? <ChoiceCheck /> : null}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 function formatCardRating(rating: number): string {
   return (Math.round(rating * 10) / 10).toFixed(1);
-}
-
-function reviewSignature(snapshot?: CompanyReviewSnapshot): string | null {
-  const reviews = snapshot?.count ?? 0;
-  if (reviews < MIN_CARD_REVIEW_COUNT) return null;
-  const rating =
-    snapshot?.averageRating != null && snapshot.averageRating > 0
-      ? formatCardRating(snapshot.averageRating)
-      : '';
-  return `${reviews}:${rating}`;
-}
-
-function companyCardFact(
-  company: Company,
-  terminal: Terminal,
-  isIndoor: boolean,
-  hideReview: boolean,
-  snapshot?: CompanyReviewSnapshot
-): string | null {
-  const parts: string[] = [];
-  const minutes = resolveParkingDistanceEntry(company, terminal, isIndoor)?.driveMinutes;
-  if (minutes != null && minutes > 0) parts.push(`약 ${minutes}분`);
-  if (displayInsuranceBadgeLabel(company)) parts.push('보험 가입');
-  const reviews = snapshot?.count ?? 0;
-  if (!hideReview && reviews >= MIN_CARD_REVIEW_COUNT) {
-    const rating =
-      snapshot?.averageRating != null && snapshot.averageRating > 0
-        ? ` · ${formatCardRating(snapshot.averageRating)}`
-        : '';
-    parts.push(`후기 ${reviews}개${rating}`);
-  }
-  return parts.length > 0 ? parts.join(' · ') : null;
 }
 
 function lowestPriceId(items: Array<PricedCompany & { listPrice: number }>): string | null {
@@ -657,19 +638,88 @@ function lowestPriceId(items: Array<PricedCompany & { listPrice: number }>): str
   return winners.length === 1 ? winners[0].company.id : null;
 }
 
+function mostReviewedId(
+  items: Array<PricedCompany & { listPrice: number }>,
+  reviews: Record<string, CompanyReviewSnapshot>
+): string | null {
+  const open = items.filter((item) => !item.soldOut);
+  if (open.length < 2) return null;
+  let bestId: string | null = null;
+  let bestCount = 0;
+  let tie = false;
+  for (const item of open) {
+    const count = reviews[item.company.id]?.count ?? 0;
+    if (count < 1) continue;
+    if (count > bestCount) {
+      bestCount = count;
+      bestId = item.company.id;
+      tie = false;
+    } else if (count === bestCount && count > 0) {
+      tie = true;
+    }
+  }
+  if (tie || bestCount < 1) return null;
+  return bestId;
+}
+
+const FACT_ICON = 'mt-0.5 h-[18px] w-[18px] shrink-0 text-[#0f1a2e]';
+
+function transferRow(type: ParkingProductType, meet: boolean): { Icon: LucideIcon; title: string } {
+  if (type === 'shuttle') return { Icon: BusFront, title: '셔틀로 이동' };
+  if (type === 'walk') return { Icon: Footprints, title: '터미널까지 도보' };
+  return meet
+    ? { Icon: PlaneTakeoff, title: '출국장에서 인계' }
+    : { Icon: SquareParking, title: '단기주차장에서 인계' };
+}
+
+/** 손바닥 위 키 — lucide hand-coins 손 모양 + 키 */
+function HandKeyIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" />
+      <path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
+      <path d="m2 16 6 6" />
+      <circle cx="7" cy="5" r="3" />
+      <path d="M10 5h10M17 5v2.5M20 5v3" />
+    </svg>
+  );
+}
+
+/** 상품 배지 하나 — 후기 많은 순 우선, 없으면 최저가. 지난번 마크와는 별개 */
+function productBadge(
+  companyId: string,
+  lowestId: string | null,
+  reviewedId: string | null
+): string | null {
+  if (reviewedId && companyId === reviewedId) return '후기 많은';
+  if (lowestId && companyId === lowestId) return '최저가';
+  return null;
+}
+
 function PriceList({
   items,
   stay,
-  terminal,
   isIndoor,
+  terminal,
+  onDetail,
   onBook,
   marks = {},
   reviews = {},
 }: {
   items: Array<PricedCompany & { listPrice: number }>;
   stay: string;
-  terminal: Terminal;
   isIndoor: boolean;
+  terminal: Terminal;
+  onDetail: (company: Company, price: number) => void;
   onBook: (company: Company, price: number) => void;
   marks?: Record<string, string>;
   reviews?: Record<string, CompanyReviewSnapshot>;
@@ -682,61 +732,163 @@ function PriceList({
     );
   }
   const lowestId = lowestPriceId(items);
-  const reviewCounts = new Map<string, number>();
-  for (const item of items) {
-    const key = reviewSignature(reviews[item.company.id]);
-    if (!key) continue;
-    reviewCounts.set(key, (reviewCounts.get(key) ?? 0) + 1);
-  }
+  const reviewedId = mostReviewedId(items, reviews);
+  const lotLabel = isIndoor ? PARKING_LABEL_INDOOR : PARKING_LABEL_OUTDOOR;
+
   return (
-    <div className="space-y-2">
+    <div className="grid gap-3 md:grid-cols-2">
       {items.map(({ company, price, listPrice, soldOut }) => {
-        const lowest = company.id === lowestId;
+        const badge = productBadge(company.id, lowestId, reviewedId);
         const snapshot = reviews[company.id];
-        const signature = reviewSignature(snapshot);
-        const hideReview = signature != null && (reviewCounts.get(signature) ?? 0) > 1;
+        const rating =
+          snapshot && snapshot.count > 0 && snapshot.averageRating != null && snapshot.averageRating > 0
+            ? snapshot.averageRating
+            : null;
+        const thumb = companyThumbnailUrl(
+          company.image_url || getCompanyParkingLot(company, isIndoor).photos?.[0],
+          128
+        );
+        const meetHandoff = companyIsFaceHandoff(company, { isIndoor, terminal });
+        const pin = pickupPin(terminal, meetHandoff ? 'depart' : 'short');
+        const product = findParkingProduct(company, { isIndoor, terminal }, meetHandoff);
+        const facts = parkingProductFacts(product);
+        const transfer = transferRow(product?.type ?? 'valet', meetHandoff);
+        const keyLeave = product?.keyHandover !== 'keep';
+        const keyText =
+          facts.key ??
+          (product?.type === 'valet' || !product
+            ? meetHandoff
+              ? '키를 맡깁니다'
+              : '단기주차장에서 키를 맡깁니다'
+            : null);
         return (
-          <button
+          <article
             key={company.id}
-            type="button"
-            disabled={soldOut}
-            onClick={() => onBook(company, price)}
-            className="flex min-h-[76px] w-full items-center justify-between gap-3 rounded-2xl bg-[#f4f5f7] px-4 py-4 text-left transition duration-150 active:scale-[0.98] disabled:opacity-40"
+            className={cn(
+              'flex w-full flex-col rounded-2xl bg-white px-4 py-4 text-left ring-1 ring-[#0f1a2e]/10',
+              soldOut && 'opacity-40'
+            )}
           >
-            <span className="min-w-0">
-              <span className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[16px] font-bold text-[#0f1a2e]">{displayCompanyName(company.name)}</span>
-                {marks[company.id] ? (
-                  <span className="rounded-full bg-[#F3E6C4] px-2 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
-                    {marks[company.id]}
-                  </span>
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[16px] font-bold leading-snug text-[#0f1a2e]">
+                  {displayCompanyName(company.name)}
+                </p>
+                {rating != null ? (
+                  <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[13px] font-semibold text-[#0f1a2e]/70">
+                    <Star size={14} className="fill-amber-400 text-amber-400" aria-hidden />
+                    <span className="tabular-nums text-[#0f1a2e]">{formatCardRating(rating)}</span>
+                    <span className="font-medium text-[#0f1a2e]/45">후기 {snapshot!.count}</span>
+                  </p>
                 ) : null}
-                {lowest ? (
-                  <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold">최저가</span>
-                ) : null}
-              </span>
-              <span className="mt-1 block min-h-[1.15rem] text-[13px] font-medium text-[#0f1a2e]/55">
-                {companyCardFact(company, terminal, isIndoor, hideReview, snapshot) ?? ''}
-              </span>
-            </span>
-            {soldOut ? (
-              <span className="shrink-0 text-[16px] font-bold text-[#0f1a2e]">마감</span>
-            ) : (
-              <span className="flex shrink-0 items-center gap-1 text-right tabular-nums">
-                <span>
-                  {listPrice > price ? (
-                    <span className="block text-[13px] font-semibold text-[#0f1a2e]/55 line-through">
-                      {listPrice.toLocaleString()}원
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {marks[company.id] ? (
+                    <span className="rounded-full bg-[#F3E6C4] px-2 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
+                      {marks[company.id]}
                     </span>
                   ) : null}
-                  <span className="block text-[18px] font-bold text-[#0f1a2e]">{price.toLocaleString()}원</span>
-                  <span className="block text-[13px] font-medium text-[#0f1a2e]/45">현장 결제</span>
-                  <span className="block text-[13px] font-medium text-[#0f1a2e]/45">총 {stay} 기준</span>
+                  {badge ? (
+                    <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold">
+                      {badge}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              {thumb ? (
+                <img
+                  src={thumb}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 shrink-0 rounded-xl object-cover ring-1 ring-[#0f1a2e]/10"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : null}
+            </div>
+
+            <ul className="mb-3 mt-3 space-y-2.5">
+              <li className="flex gap-2.5">
+                <transfer.Icon size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                <span className="min-w-0">
+                  <span className="block text-[14px] font-semibold text-[#0f1a2e]">{transfer.title}</span>
+                  <span className="mt-0.5 block text-[12px] font-medium leading-snug text-[#0f1a2e]/55">
+                    {facts.transfer ?? pin.detail}
+                  </span>
                 </span>
-                <ChevronRight size={18} className="text-[#0f1a2e]/45" />
-              </span>
-            )}
-          </button>
+              </li>
+              {keyText ? (
+                <li className="flex gap-2.5">
+                  {keyLeave ? (
+                    <HandKeyIcon className={FACT_ICON} />
+                  ) : (
+                    <KeyRound size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  )}
+                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{keyText}</span>
+                </li>
+              ) : null}
+              {facts.meetHours ? (
+                <li className="flex gap-2.5">
+                  <Clock size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{facts.meetHours}</span>
+                </li>
+              ) : null}
+              {facts.ev ? (
+                <li className="flex gap-2.5">
+                  <EvCharger size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{facts.ev}</span>
+                </li>
+              ) : null}
+              <li className="flex gap-2.5">
+                {isIndoor ? (
+                  <Warehouse size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                ) : (
+                  <Sun size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                )}
+                <span className="text-[14px] font-semibold text-[#0f1a2e]">{lotLabel} 주차장 보관</span>
+              </li>
+              <li className="flex gap-2.5">
+                <Wallet size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                <span className="text-[14px] font-semibold text-[#0f1a2e]">현장 결제</span>
+              </li>
+            </ul>
+
+            <div className="mt-auto border-t border-[#0f1a2e]/8 pt-3">
+              {soldOut ? (
+                <p className="text-[16px] font-bold text-[#0f1a2e]">마감</p>
+              ) : (
+                <>
+                  <div className="mb-3 text-right">
+                    {listPrice > price ? (
+                      <p className="text-[13px] font-semibold text-[#0f1a2e]/45 line-through">
+                        {listPrice.toLocaleString()}원
+                      </p>
+                    ) : null}
+                    <p className="text-[20px] font-bold tabular-nums text-[#0f1a2e]">
+                      {price.toLocaleString()}원
+                    </p>
+                    <p className="text-[12px] font-medium text-[#0f1a2e]/45">총 {stay} 기준</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onDetail(company, price)}
+                      className="rounded-xl bg-[#f4f5f7] py-3 text-[14px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/10 transition active:scale-[0.99]"
+                    >
+                      자세히
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onBook(company, price)}
+                      className="rounded-xl bg-[#0f1a2e] py-3 text-[14px] font-bold text-white transition active:scale-[0.99]"
+                    >
+                      예약하기
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </article>
         );
       })}
     </div>

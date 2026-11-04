@@ -1,3 +1,4 @@
+import { ArrowRight, FileCheck, ShieldCheck, Warehouse } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { BRAND_INTRO } from '../constants/marketing';
 
@@ -111,12 +112,13 @@ function IntroVideo({
   );
 }
 
-/** 브랜드 게이트 — 풀스크린 영상 + 시작하기(홈)만 */
+/** 브랜드 게이트 — 영상 위 히어로. 확인 배지와 비교 버튼 */
 export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
   const reducedMotion = usePrefersReducedMotion();
   const mdUp = useIsMdUp();
   const videoSrc = mdUp ? BRAND_INTRO.videoDesktop : BRAND_INTRO.videoMobile;
   const posterSrc = mdUp ? BRAND_INTRO.posterDesktop : BRAND_INTRO.posterMobile;
+  const checkIcons = [FileCheck, ShieldCheck, Warehouse] as const;
 
   return (
     <div className="fixed inset-0 z-[80] bg-[#0a1628] text-white">
@@ -128,46 +130,64 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
           className="h-full w-full object-cover"
         />
         <div
-          className={
-            mdUp
-              ? 'absolute inset-0 bg-gradient-to-r from-black/20 via-black/40 to-[#0a1628]/90'
-              : 'absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/60 to-[#0a1628]/35'
-          }
+          className="absolute inset-0 bg-gradient-to-t from-[#0f1a2e]/45 via-transparent to-transparent"
           aria-hidden
         />
       </div>
 
-      <div className="relative mx-auto flex h-full w-full max-w-7xl">
+      <div className="relative flex h-full w-full items-center justify-center">
         <div
           className={
             mdUp
-              ? 'relative z-10 ml-auto flex h-full w-full max-w-md flex-col justify-center px-10 pb-12 pt-[max(2.5rem,env(safe-area-inset-top))]'
-              : 'relative z-10 mx-auto flex h-full w-full max-w-lg flex-col justify-end px-6 pb-14 pt-[max(2.5rem,env(safe-area-inset-top))]'
+              ? 'relative z-10 flex h-full w-full max-w-xl flex-col justify-end px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]'
+              : 'relative z-10 flex h-full w-full max-w-lg flex-col justify-end px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]'
           }
         >
-          <p className="text-[15px] font-bold tracking-[0.12em] text-[#c9a962] sm:text-[16px]">
-            {BRAND_INTRO.eyebrow}
-          </p>
-          <h1 className="mt-3 text-[2.6rem] font-bold tracking-[0.08em] text-white sm:text-[3rem]">
-            {BRAND_INTRO.brand}
-          </h1>
-          <div className="mt-3.5 h-px w-8 bg-[#c9a962]/80" aria-hidden={true} />
-          <p className="mt-5 max-w-[18rem] text-[17px] font-medium leading-relaxed text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)] sm:text-[18px]">
-            {BRAND_INTRO.line}
-          </p>
-          {BRAND_INTRO.hint ? (
-            <p className="mt-2.5 text-[13px] font-semibold tracking-wide text-white/55 sm:text-[14px]">
-              {BRAND_INTRO.hint}
+          <div className="max-w-xl rounded-[28px] bg-[#0f1a2e]/72 px-6 py-7 backdrop-blur-[2px] md:px-8 md:py-8">
+            <div className="flex items-center gap-2">
+              <img
+                src="/brand-mark-gold.png?v=9"
+                alt=""
+                width={40}
+                height={40}
+                className="h-9 w-9 shrink-0 object-contain md:h-10 md:w-10"
+                draggable={false}
+              />
+              <p className="text-[18px] font-bold leading-none text-white md:text-[20px]">{BRAND_INTRO.wordmark}</p>
+            </div>
+            <p className="mt-3 text-[16px] font-semibold leading-snug tracking-[-0.005em] text-[#c9a962] md:text-[18px]">
+              {BRAND_INTRO.kicker}
             </p>
-          ) : null}
+            <h1 className="mt-4 text-[28px] font-extrabold leading-[1.25] tracking-[-0.015em] text-white md:text-[38px]">
+              {BRAND_INTRO.titleLead}
+              <br />
+              {BRAND_INTRO.titleRest}
+            </h1>
 
-          <button
-            type="button"
-            onClick={onEnter}
-            className="mt-10 w-full max-w-[18rem] rounded-full bg-[#c9a962] py-4 text-[17px] font-bold tracking-wide text-[#0a1628] shadow-[0_0_28px_rgba(201,169,98,0.35)] transition active:scale-[0.98] sm:text-[18px]"
-          >
-            {BRAND_INTRO.enterCta}
-          </button>
+            <ul className="mt-6 grid w-full grid-cols-3 gap-1.5">
+              {BRAND_INTRO.checks.map((label, index) => {
+                const Icon = checkIcons[index] ?? FileCheck;
+                return (
+                  <li
+                    key={label}
+                    className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-white/25 bg-white/10 px-1.5 py-1.5 text-[12px] font-semibold tracking-[-0.005em] text-white md:gap-1.5 md:text-[13px]"
+                  >
+                    <Icon size={14} strokeWidth={2.25} className="shrink-0" aria-hidden />
+                    {label}
+                  </li>
+                );
+              })}
+            </ul>
+
+            <button
+              type="button"
+              onClick={onEnter}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#c9a962] px-6 py-3.5 text-[16px] font-bold tracking-[-0.005em] text-[#0a1628] transition active:scale-[0.98]"
+            >
+              {BRAND_INTRO.enterCta}
+              <ArrowRight size={18} strokeWidth={2.5} aria-hidden />
+            </button>
+          </div>
         </div>
       </div>
     </div>

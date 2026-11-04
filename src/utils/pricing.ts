@@ -43,29 +43,6 @@ export function isGayuCompany(companyId?: string, companyName?: string): boolean
   );
 }
 
-export function isHiCompany(companyId?: string, companyName?: string): boolean {
-  const id = (companyId || '').trim().toLowerCase();
-  return id === 'hi' || companyName?.includes('안녕') === true;
-}
-
-export function isSeasonCompany(companyId?: string, companyName?: string): boolean {
-  const id = (companyId || '').trim().toLowerCase();
-  return id === 'season' || companyName?.includes('시즌') === true;
-}
-
-/** 대면은 와와만, 비대면은 가유·안녕·시즌만 */
-export function companyMatchesHandoff(
-  company: { id: string; name: string },
-  faceToFace: boolean
-): boolean {
-  if (faceToFace) return isWawaCompany(company.id, company.name);
-  return (
-    isGayuCompany(company.id, company.name) ||
-    isHiCompany(company.id, company.name) ||
-    isSeasonCompany(company.id, company.name)
-  );
-}
-
 export function mergePartnerPricing(partner: Company): Company {
   if (isGayuCompany(partner.id, partner.name)) {
     return {
@@ -168,6 +145,8 @@ export interface PriceBreakdown {
   peakSurcharge: number;
   /** 발렛(직접 인계) 추가요금 — 없으면 0 */
   valetFee: number;
+  /** 비대면 입고 추가요금 — 없으면 0 */
+  dropFee: number;
   total: number;
   /** 제휴 링크 손님 할인(원) — 적용 후 total 에 반영됨 */
   affiliateDiscountWon?: number;
@@ -208,7 +187,9 @@ export function getPriceBreakdown(
   arrivalTime = '10:00',
   isCardPayment = false,
   /** 발렛(직접 인계) 추가요금 — 카드 할증과 무관하게 합계에 그대로 더함 */
-  valetFee = 0
+  valetFee = 0,
+  /** 비대면 입고 추가요금 — 발렛비와 같이 할증 없이 더함 */
+  dropFee = 0
 ): PriceBreakdown {
   const priced = mergePartnerPricing(company);
   const days = getParkingDayCount(start, end);
@@ -235,7 +216,7 @@ export function getPriceBreakdown(
     if (isCardPayment) {
       total = Math.floor(total * 1.1);
     }
-    total += valetFee;
+    total += valetFee + dropFee;
 
     /** 기본 구간과 초과분을 나눠야 명세 합이 합계와 맞는다 */
     const gayuBaseDays = terminal === '2T' ? 4 : 3;
@@ -253,6 +234,7 @@ export function getPriceBreakdown(
       t2Surcharge: 0,
       peakSurcharge: 0,
       valetFee,
+      dropFee,
       total,
     };
   }
@@ -319,7 +301,8 @@ export function getPriceBreakdown(
     nightSurcharge +
     t2Surcharge +
     peakSurcharge +
-    valetFee;
+    valetFee +
+    dropFee;
 
   return {
     days,
@@ -333,6 +316,7 @@ export function getPriceBreakdown(
     t2Surcharge,
     peakSurcharge,
     valetFee,
+    dropFee,
     total,
   };
 }

@@ -1,4 +1,6 @@
 import type { Terminal } from '../types';
+import { buildNaverMapCoordUrl } from '../utils/airportDistance';
+import { buildNaverMapSearchUrl } from '../utils/naverMap';
 
 export type PickupPinId = 'short' | 'depart';
 
@@ -88,6 +90,20 @@ export function pickupPin(terminal: Terminal, id: PickupPinId): PickupPin {
   const pin = PICKUP_PINS.find((item) => item.terminal === terminal && item.id === id);
   if (!pin) throw new Error(`pickup pin missing ${terminal} ${id}`);
   return pin;
+}
+
+/** 내 예약 픽업지 → 네이버 지도. 업체 만남 장소가 있으면 그 검색, 없으면 터미널 핀 좌표. */
+export function pickupNaverMapUrl(input: {
+  faceToFace: boolean;
+  terminal?: string;
+  place?: string;
+}): string | undefined {
+  const place = input.place?.trim();
+  if (place) return buildNaverMapSearchUrl(`인천공항 ${place}`);
+  const terminal = input.terminal === 'T2' ? 'T2' : input.terminal === 'T1' ? 'T1' : null;
+  if (!terminal) return undefined;
+  const pin = pickupPin(terminal, input.faceToFace ? 'depart' : 'short');
+  return buildNaverMapCoordUrl(pin.lat, pin.lng);
 }
 
 /** 접수 완료·내 예약에 보여주는 차 맡기는 곳. 장소가 있으면 그 문장, 없으면 방식만. */

@@ -376,6 +376,9 @@ export default function MyPage({
     try {
       const session = await applyKakaoLogin();
       setMember(session);
+      setGuestReservations([]);
+      setSearched(false);
+      setError('');
     } catch (err) {
       console.error('kakao login failed', err);
       setLoginError(socialLoginErrorMessage(err) || '로그인에 실패했습니다.');
@@ -387,17 +390,14 @@ export default function MyPage({
   const memberRows = reservations.filter((item) =>
     (member?.reservationIds ?? []).includes(item.id)
   );
+  const sortReservations = (rows: Reservation[]) =>
+    [...rows].sort((a, b) => {
+      const rank = (status: string) => (status === 'cancelled' ? 1 : 0);
+      return rank(a.status) - rank(b.status);
+    });
   const visibleReservations = (() => {
-    const merged: Reservation[] = member
-      ? [...memberRows]
-      : searched
-        ? [...guestReservations]
-        : [];
-    if (member && searched) {
-      for (const row of guestReservations) {
-        if (!merged.some((item) => item.id === row.id)) merged.push(row);
-      }
-    }
+    if (member) return memberRows;
+    const merged: Reservation[] = searched ? [...guestReservations] : [];
     if (!searched && lastReservationId) {
       const justBooked = reservations.find((item) => item.id === lastReservationId);
       if (justBooked && !merged.some((item) => item.id === justBooked.id)) merged.unshift(justBooked);
@@ -408,13 +408,9 @@ export default function MyPage({
     }
     return merged;
   })();
-
   const displayName = member ? usableKakaoNickname(member.nickname) : '';
   const greetingName = isSavedBookerName(profileName) ? profileName.trim() : displayName;
-  const listedReservations = [...visibleReservations].sort((a, b) => {
-    const rank = (status: string) => (status === 'cancelled' ? 1 : 0);
-    return rank(a.status) - rank(b.status);
-  });
+  const listedReservations = sortReservations(visibleReservations);
   const openReservationCount = memberRows.filter((item) => item.status !== 'cancelled').length;
   const bookerReady =
     isSavedBookerName(profileName) &&
@@ -515,20 +511,6 @@ export default function MyPage({
                 </p>
               </button>
             </div>
-            <section className="mt-4 rounded-2xl bg-[#f4f5f7] p-4">
-              <p className="text-[14px] font-semibold text-[#0f1a2e]">비회원으로 접수한 예약</p>
-              <p className="mt-1 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/55">
-                차량번호와 비밀번호 4자리로 찾습니다. 카카오 계정에는 붙지 않습니다.
-              </p>
-              <div className="mt-3">
-                <ReservationLookupForm
-                  onLookup={handleLookup}
-                  loading={loading}
-                  initialMode={recentCarNumber ? 'carNumber' : undefined}
-                  initialValue={recentCarNumber || undefined}
-                />
-              </div>
-            </section>
           </div>
         </>
       ) : (
@@ -562,15 +544,11 @@ export default function MyPage({
           </div>
           {lookupMode === 'member' ? (
             <section className="rounded-2xl bg-[#f4f5f7] p-4">
-              <p className="text-[15px] font-semibold text-ink">로그인하면 내 예약이 여기에 모입니다.</p>
-              <p className="mt-1 text-[13px] font-medium leading-relaxed text-muted">
-                가입 후 첫 예약은 {MEMBER_DISCOUNT_WON.toLocaleString()}원이 빠집니다.
-              </p>
               <button
                 type="button"
                 disabled={authBusy}
                 onClick={() => void startKakaoLogin()}
-                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#FEE500] py-3.5 text-[16px] font-bold text-[#191919] disabled:opacity-60"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#FEE500] py-3.5 text-[16px] font-bold text-[#191919] disabled:opacity-60"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] shrink-0">
                   <path
@@ -578,7 +556,7 @@ export default function MyPage({
                     d="M12 3C6.5 3 2 6.6 2 11.1c0 2.9 1.9 5.4 4.8 6.8-.2.7-1.1 4-1.1 4.1 0 .2.2.3.3.2.2 0 3.5-2.3 4.1-2.7.6.1 1.3.2 1.9.2 5.5 0 10-3.6 10-8.1S17.5 3 12 3z"
                   />
                 </svg>
-                {authBusy ? '로그인 중…' : '카카오로 로그인하고 첫 예약 할인받기'}
+                {authBusy ? '로그인 중…' : `카카오 로그인 하고 첫 예약 ${MEMBER_DISCOUNT_WON.toLocaleString()}원 할인받기`}
               </button>
               {loginError ? (
                 <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{loginError}</p>
@@ -595,11 +573,14 @@ export default function MyPage({
         </>
       )}
 
-      {lastReservationId && !searched && reservations.length > 0 && (
+      {lastReservationId &&
+      !searched &&
+      !member &&
+      reservations.some((item) => item.id === lastReservationId) ? (
         <p className="px-1 text-xs font-semibold text-[#0f1a2e]">
           방금 접수한 예약을 먼저 보여드립니다
         </p>
-      )}
+      ) : null}
 
       {reviewLinkHint && (
         <p className="rounded-2xl bg-[#f4f5f7] px-4 py-3 text-xs font-semibold text-[#0f1a2e]/70">
@@ -658,7 +639,7 @@ export default function MyPage({
             <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-6 text-center">
               <p className="text-[16px] font-semibold text-[#0f1a2e]">아직 예약이 없어요</p>
               <p className="mt-2 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/55">
-                카카오로 접수한 예약만 위에 모입니다. 비회원 접수는 위「비회원으로 접수한 예약」에서 찾습니다.
+                카카오로 접수한 예약만 여기에 모입니다.
               </p>
               <button
                 type="button"

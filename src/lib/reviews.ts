@@ -8,7 +8,6 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import type { CompanyReview } from '../types';
-import { ensureAnonymousAuth } from './reservations';
 
 export interface CompanyReviewSnapshot {
   recent: CompanyReview[];
@@ -114,8 +113,6 @@ export async function fetchCompanyReviewSnapshot(
   companyId: string,
   recentMax?: number
 ): Promise<CompanyReviewSnapshot> {
-  await ensureAnonymousAuth();
-
   if (recentMax !== undefined && recentMax <= SUMMARY_RECENT_MAX) {
     const summary = await fetchReviewSummary(companyId, recentMax);
     if (summary) return summary;
@@ -134,8 +131,6 @@ export async function fetchCompanyReviewSnapshot(
 export async function fetchReviewSnapshotsByCompanyIds(
   companyIds: string[]
 ): Promise<Record<string, CompanyReviewSnapshot>> {
-  await ensureAnonymousAuth();
-
   const uniqueIds = [...new Set(companyIds.filter(Boolean))];
   const result = Object.fromEntries(uniqueIds.map((id) => [id, emptySnapshot()]));
   if (uniqueIds.length === 0) return result;

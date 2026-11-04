@@ -257,7 +257,9 @@ export async function submitReservation(
   /** 행사·혜택 안내 선택 동의 */
   marketingOptIn?: boolean,
   /** 포인트 적용 전 금액에서 뺄 포인트. 서버가 잔액을 확인한 뒤 totalPrice 에서 뺀다. */
-  pointSpendWon?: number
+  pointSpendWon?: number,
+  /** 손님이 고른 주차 상품. 비대면 추가요금이 있으면 같이 남긴다 */
+  parkingProduct?: { id: string; dropFee: number }
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
@@ -314,6 +316,10 @@ export async function submitReservation(
   if (faceToFace) {
     payload.faceToFace = true;
     if (faceToFace.valetFee > 0) payload.valetFee = faceToFace.valetFee;
+  }
+  if (parkingProduct) {
+    payload.parkingProductId = parkingProduct.id;
+    if (parkingProduct.dropFee > 0) payload.dropFee = parkingProduct.dropFee;
   }
 
   if (affiliate?.code) {

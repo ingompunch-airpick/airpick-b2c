@@ -1,14 +1,12 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
-import { ChevronDown, ChevronRight, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import {
   AIRPICK_PLATFORM_TERMS,
   buildParkingServiceTerms,
   buildThirdPartyPrivacyConsent,
-  INTERMEDIARY_DISCLAIMER,
   PRIVACY_CONSENT,
   type TermsArticle,
 } from '../constants/consent';
-import { cn } from '../utils/cn';
 
 function TermsArticleBlock({ article }: { article: TermsArticle }) {
   return (
@@ -95,127 +93,83 @@ function ConsentSheet({
 
 type SheetKey = 'platform' | 'partner' | 'privacy' | 'thirdParty';
 
+/**
+ * Parkos형 — 필수 약관 체크 없음. 예약 완료로 동의.
+ * 마케팅만 수신 거부 체크(옵트아웃).
+ */
 export default function BookingConsent({
-  agreedPlatformTerms,
-  agreedServiceTerms,
-  agreedPrivacy,
-  agreedThirdParty,
   marketingOptIn,
-  onAgreedPlatformTermsChange,
-  onAgreedServiceTermsChange,
-  onAgreedPrivacyChange,
-  onAgreedThirdPartyChange,
   onMarketingOptInChange,
   providerName,
 }: {
-  agreedPlatformTerms: boolean;
-  agreedServiceTerms: boolean;
-  agreedPrivacy: boolean;
-  agreedThirdParty: boolean;
   marketingOptIn: boolean;
-  onAgreedPlatformTermsChange: (v: boolean) => void;
-  onAgreedServiceTermsChange: (v: boolean) => void;
-  onAgreedPrivacyChange: (v: boolean) => void;
-  onAgreedThirdPartyChange: (v: boolean) => void;
   onMarketingOptInChange: (v: boolean) => void;
   providerName?: string;
 }) {
   const [sheet, setSheet] = useState<SheetKey | null>(null);
-  const [termsOpen, setTermsOpen] = useState(false);
   const parkingServiceTerms = buildParkingServiceTerms(providerName);
   const thirdPartyPrivacy = buildThirdPartyPrivacyConsent(providerName);
-  const allAgreed =
-    agreedPlatformTerms && agreedServiceTerms && agreedPrivacy && agreedThirdParty;
-
-  const setAllAgreed = (v: boolean) => {
-    onAgreedPlatformTermsChange(v);
-    onAgreedServiceTermsChange(v);
-    onAgreedPrivacyChange(v);
-    onAgreedThirdPartyChange(v);
-  };
-
-  const rows: { key: SheetKey; label: string }[] = [
-    { key: 'platform', label: AIRPICK_PLATFORM_TERMS.title.replace(/^[①②③④]\s*/, '') },
-    { key: 'partner', label: parkingServiceTerms.title.replace(/^[①②③④]\s*/, '') },
-    { key: 'privacy', label: PRIVACY_CONSENT.title.replace(/^[①②③④]\s*/, '') },
-    { key: 'thirdParty', label: thirdPartyPrivacy.title.replace(/^[①②③④]\s*/, '') },
-  ];
+  const partnerLabel = providerName?.trim() || '제휴업체';
 
   return (
-    <section className="space-y-3">
-      <p className="text-[13px] font-bold text-brand">약관 및 개인정보 동의</p>
-
-      <div className="rounded-2xl bg-[#f4f5f7]">
-        <div className="flex items-center gap-2 px-3.5 py-3.5">
-          <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-2.5">
-            <input
-              type="checkbox"
-              checked={allAgreed}
-              onChange={(e) => setAllAgreed(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
-            />
-            <span className="text-[13px] font-bold text-ink">전체 동의합니다. (필수)</span>
-          </label>
+    <section className="space-y-3 px-3 py-3">
+      <label className="flex cursor-pointer items-start gap-2.5">
+        <input
+          type="checkbox"
+          checked={!marketingOptIn}
+          onChange={(e) => onMarketingOptInChange(!e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
+        />
+        <span className="text-[13px] font-medium leading-relaxed text-ink">
+          에어픽의 소식·할인 안내를 받지 않겠습니다.{' '}
           <button
             type="button"
-            onClick={() => setTermsOpen((open) => !open)}
-            className="inline-flex shrink-0 items-center gap-0.5 text-[13px] font-bold text-brand"
+            onClick={(e) => {
+              e.preventDefault();
+              setSheet('privacy');
+            }}
+            className="font-bold text-brand underline-offset-2 hover:underline"
           >
-            {termsOpen ? '접기' : '펼치기'}
-            <ChevronDown
-              size={14}
-              className={cn('transition-transform', termsOpen && 'rotate-180')}
-            />
+            개인정보처리방침
           </button>
-        </div>
+        </span>
+      </label>
 
-        <label className="flex cursor-pointer items-start gap-2.5 border-t border-sky-border/60 px-3.5 py-3.5">
-          <input
-            type="checkbox"
-            checked={marketingOptIn}
-            onChange={(e) => onMarketingOptInChange(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
-          />
-          <span className="text-[13px] font-bold text-ink">
-            행사·혜택 안내 받기
-            <span className="ml-1.5 text-[13px] font-bold text-ink/55">선택</span>
-          </span>
-        </label>
-
-        {termsOpen ? (
-          <>
-          <div className="border-t border-sky-border/60 bg-amber-50 px-3.5 py-3">
-            <p className="text-[13px] font-semibold leading-relaxed text-amber-900">
-              실제 서비스 책임은 제휴업체에 있습니다.
-            </p>
-            <div className="mt-1.5 space-y-1">
-              {INTERMEDIARY_DISCLAIMER.map((line) => (
-                <p key={line} className="text-[13px] font-medium leading-relaxed text-amber-800">
-                  {line}
-                </p>
-              ))}
-            </div>
-          </div>
-          <ul className="border-t border-sky-border/60">
-            {rows.map((row) => (
-              <li key={row.key} className="border-b border-sky-border/50 last:border-b-0">
-                <button
-                  type="button"
-                  onClick={() => setSheet(row.key)}
-                  className="flex w-full items-center justify-between gap-3 px-3.5 py-3 text-left"
-                >
-                  <span className="text-[13px] font-semibold text-ink">
-                    {row.label}
-                    <span className="ml-1.5 text-[13px] font-bold text-brand">필수</span>
-                  </span>
-                  <ChevronRight size={16} className="shrink-0 text-muted-light" />
-                </button>
-              </li>
-            ))}
-          </ul>
-          </>
-        ) : null}
-      </div>
+      <p className="text-[12px] font-medium italic leading-relaxed text-muted">
+        예약을 완료하면{' '}
+        <button
+          type="button"
+          onClick={() => setSheet('platform')}
+          className="font-bold not-italic text-brand underline-offset-2 hover:underline"
+        >
+          에어픽 이용약관
+        </button>
+        ,{' '}
+        <button
+          type="button"
+          onClick={() => setSheet('partner')}
+          className="font-bold not-italic text-brand underline-offset-2 hover:underline"
+        >
+          {partnerLabel} 서비스 약관
+        </button>
+        ,{' '}
+        <button
+          type="button"
+          onClick={() => setSheet('privacy')}
+          className="font-bold not-italic text-brand underline-offset-2 hover:underline"
+        >
+          개인정보 수집·이용
+        </button>
+        ,{' '}
+        <button
+          type="button"
+          onClick={() => setSheet('thirdParty')}
+          className="font-bold not-italic text-brand underline-offset-2 hover:underline"
+        >
+          제3자 제공
+        </button>
+        에 동의한 것으로 봅니다.
+      </p>
 
       {sheet === 'platform' ? (
         <ConsentSheet title={AIRPICK_PLATFORM_TERMS.title} onClose={() => setSheet(null)}>

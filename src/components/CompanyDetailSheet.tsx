@@ -1,8 +1,9 @@
-import { MapPin, Phone, Star, X } from 'lucide-react';
+import { Car, Clock, KeyRound, MapPin, Phone, Shield, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AffiliatePrice from './AffiliatePrice';
 import CompanyVerificationDocuments from './CompanyVerificationDocuments';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
+import { pickupPin } from '../data/pickupPins';
 import { trackOutboundClick } from '../lib/analytics';
 import {
   fetchCompanyReviewSnapshot,
@@ -13,6 +14,7 @@ import {
 import type { BookingSearch, Company, CompanyParkingLot, CompanyReview } from '../types';
 import { listCompanyParkingLotsForDisplay } from '../utils/companyParking';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
+import { formatStayPhrase } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
 import { companyPhotoUrl, companyThumbnailUrl } from '../utils/imageUrl';
 import {
@@ -20,7 +22,11 @@ import {
   companySupportsOutdoor,
   parkingTypeLabel,
 } from '../utils/parkingType';
+import { getParkingDayCount } from '../utils/pricing';
 import { resolveCompanyUsageSteps } from '../utils/companyUsageGuide';
+import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
+import { displayInsuranceLabel } from '../utils/trust';
+import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { cn } from '../utils/cn';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
@@ -44,21 +50,30 @@ function ReviewItem({ review }: { review: CompanyReview }) {
   const identity = [review.authorMask, review.carMask].filter(Boolean).join(' · ');
   const photos = (review.photoUrls ?? []).filter(Boolean).slice(0, 3);
   return (
-    <div className="rounded-xl bg-sky-bg px-3.5 py-3 ring-1 ring-sky-border/50">
+    <div className="rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/50">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-2">
-            <StarRating rating={review.rating} size={12} />
-            {SHOW_PUBLIC_REVIEW_DATES ? (
-              <span className="text-[10px] font-semibold text-muted-light">
-                {formatReviewDate(review.createdAt)}
-              </span>
-            ) : null}
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-[12px] font-semibold text-ink">{identity || '익명'}</p>
+              {SHOW_PUBLIC_REVIEW_DATES ? (
+                <p className="mt-0.5 text-[10px] font-medium text-muted-light">
+                  {formatReviewDate(review.createdAt)}
+                </p>
+              ) : null}
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+              <Star size={10} className="fill-white text-white" aria-hidden />
+              {review.rating}
+            </span>
           </div>
-          <p className="mt-1.5 text-[11px] font-semibold text-muted">{identity || '익명'}</p>
+          <div className="mt-1.5">
+            <StarRating rating={review.rating} size={11} />
+          </div>
           {review.body?.trim() ? (
-            <p className="mt-1 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
           ) : null}
+          <p className="mt-2 text-[10px] font-semibold text-muted">주차대행</p>
         </div>
         {photos.length > 0 ? (
           <div
@@ -91,6 +106,36 @@ function ReviewItem({ review }: { review: CompanyReview }) {
       </div>
     </div>
   );
+}
+
+function FactIconRow({
+  icon: Icon,
+  title,
+  detail,
+}: {
+  icon: typeof Car;
+  title: string;
+  detail?: string;
+}) {
+  return (
+    <li className="flex gap-2.5">
+      <Icon size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-ink" aria-hidden />
+      <span className="min-w-0">
+        <span className="block text-[14px] font-semibold text-ink">{title}</span>
+        {detail ? (
+          <span className="mt-0.5 block text-[12px] font-medium leading-snug text-muted">{detail}</span>
+        ) : null}
+      </span>
+    </li>
+  );
+}
+
+function nightSurchargeLine(company: Company): string | null {
+  const fee = company.surchargePrice;
+  const start = company.surchargeStartTime?.trim();
+  const end = company.surchargeEndTime?.trim();
+  if (typeof fee !== 'number' || fee <= 0 || !start || !end) return null;
+  return `${start}–${end} 입고·출고 시 ${fee.toLocaleString()}원`;
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -268,10 +313,27 @@ export default function CompanyDetailSheet({
   const parkingLots = listCompanyParkingLotsForDisplay(company, search.isIndoor);
   const usageSteps = resolveCompanyUsageSteps(company);
 
+  const pickupId =
+    search.isIndoor || search.pickupPointId === 'depart' || search.faceToFace
+      ? 'depart'
+      : 'short';
+  const pin = pickupPin(search.terminal, pickupId);
+  const meetHandoff = pin.meetHandoff;
+  const transferTitle = meetHandoff ? '출국장에서 인계' : '단기주차장 입고';
+  const keyTitle = meetHandoff ? '키를 맡깁니다' : '단기주차장에서 키를 맡깁니다';
+  const lotLabel = parkingTypeLabel(search.isIndoor);
+  const stay = formatStayPhrase(
+    getParkingDayCount(search.departureDate, search.arrivalDate)
+  );
+  const nightLine = nightSurchargeLine(company);
+  const insuranceLabel =
+    shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : undefined;
+
   const reviewsLoading = reviewSnapshot == null;
   const reviews = reviewSnapshot?.recent ?? [];
   const reviewCount = reviewSnapshot?.count ?? 0;
   const reviewAverage = reviewSnapshot?.averageRating;
+
   return (
     <div className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center sm:p-4">
       <button
@@ -292,16 +354,16 @@ export default function CompanyDetailSheet({
               decoding="async"
             />
             <div className="min-w-0">
-              <p className="text-xs font-bold text-brand">에어픽 입점</p>
+              <p className="text-xs font-bold text-brand">에어픽 입점 · 주차대행</p>
               <h2 className="text-lg font-bold text-ink">{name}</h2>
-              {!reviewsLoading && reviewCount > 0 && reviewAverage != null && (
-                <div className="mt-1 flex items-center gap-1.5 text-[11px] font-semibold text-muted">
-                  <Star size={12} className="fill-amber-400 text-amber-400" />
-                  <span>{reviewAverage.toFixed(1)}</span>
+              {!reviewsLoading && reviewCount > 0 && reviewAverage != null ? (
+                <div className="mt-1 flex items-center gap-1.5 text-[12px] font-semibold text-muted">
+                  <Star size={13} className="fill-amber-400 text-amber-400" aria-hidden />
+                  <span className="tabular-nums text-ink">{reviewAverage.toFixed(1)}</span>
                   <span>·</span>
                   <span>후기 {reviewCount}</span>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
           <button
@@ -315,26 +377,28 @@ export default function CompanyDetailSheet({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold text-muted">선택 일정 견적</p>
-              <AffiliatePrice
-                price={price}
-                affiliateDiscountWon={affiliateDiscountWon}
-                size="lg"
-                align="start"
-                className="mt-0.5"
-                priceClassName={
-                  affiliateDiscountWon > 0
-                    ? 'text-2xl font-bold text-muted-light'
-                    : 'text-2xl font-bold text-brand'
-                }
+          <section className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
+            <p className="text-xs font-bold text-brand">이 상품</p>
+            <ul className="mt-3 space-y-2.5">
+              <FactIconRow icon={Car} title={transferTitle} detail={pin.detail} />
+              <FactIconRow icon={KeyRound} title={keyTitle} />
+              <FactIconRow
+                icon={MapPin}
+                title={`${lotLabel} · ${search.terminal}`}
+                detail="현장 결제"
               />
-            </div>
-            <p className="text-right text-[11px] font-semibold text-muted">
-              {search.terminal} · {parkingTypeLabel(search.isIndoor)}
-            </p>
-          </div>
+              <FactIconRow
+                icon={Clock}
+                title={`입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소`}
+              />
+              {nightLine ? (
+                <FactIconRow icon={Clock} title="야간·새벽 할증" detail={nightLine} />
+              ) : null}
+              {insuranceLabel ? (
+                <FactIconRow icon={Shield} title={insuranceLabel} detail="입점 확인 보험" />
+              ) : null}
+            </ul>
+          </section>
 
           <section className="mt-4 space-y-3 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">이용 방법</p>
@@ -375,7 +439,7 @@ export default function CompanyDetailSheet({
           <section className="mt-4 space-y-2 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">업체 정보</p>
             <InfoRow label="터미널" value={terminals} />
-            {parkingTypes && <InfoRow label="주차" value={parkingTypes} />}
+            {parkingTypes ? <InfoRow label="주차" value={parkingTypes} /> : null}
             {telHref ? (
               <div className="flex items-center gap-3 text-sm">
                 <span className="w-16 shrink-0 font-semibold text-muted">문의</span>
@@ -419,7 +483,7 @@ export default function CompanyDetailSheet({
           <section className="mt-4">
             <p className="text-xs font-bold text-brand">
               {reviewSnapshot && reviewSnapshot.count > 0
-                ? `실후기 ${reviewSnapshot.count}건`
+                ? `평점과 실후기 ${reviewSnapshot.count}건`
                 : '실후기'}
             </p>
             <div className="mt-2 space-y-2">
@@ -444,30 +508,58 @@ export default function CompanyDetailSheet({
           </section>
         </div>
 
-        <div className="shrink-0 space-y-2 border-t border-sky-border/50 bg-white px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          {telHref ? (
-            <a
-              href={telHref}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3.5 text-sm font-bold text-brand ring-1 ring-brand/25 transition-colors hover:bg-sky-bg active:scale-[0.99]"
-              onClick={() =>
-                trackOutboundClick({
-                  category: 'phone',
-                  destination: company.phone || '',
-                  itemId: company.id,
-                  itemName: name,
-                })
-              }
-            >
-              <Phone size={18} strokeWidth={2.25} aria-hidden />
-              전화 문의 · {formatPhoneDisplay(company.phone!)}
-            </a>
-          ) : null}
+        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[11px] font-bold text-ink ring-1 ring-sky-border/60">
+              {transferTitle}
+            </span>
+            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[11px] font-bold text-ink ring-1 ring-sky-border/60">
+              {lotLabel}
+            </span>
+            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[11px] font-bold text-ink ring-1 ring-sky-border/60">
+              키 맡김
+            </span>
+          </div>
+          <div className="mb-3 flex items-end justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold text-muted">총 {stay} · 현장 결제</p>
+              <AffiliatePrice
+                price={price}
+                affiliateDiscountWon={affiliateDiscountWon}
+                size="lg"
+                align="start"
+                className="mt-0.5"
+                priceClassName={
+                  affiliateDiscountWon > 0
+                    ? 'text-2xl font-bold text-muted-light'
+                    : 'text-2xl font-bold text-ink'
+                }
+              />
+            </div>
+            {telHref ? (
+              <a
+                href={telHref}
+                className="inline-flex shrink-0 items-center gap-1 rounded-xl px-2 py-2 text-[12px] font-bold text-brand"
+                onClick={() =>
+                  trackOutboundClick({
+                    category: 'phone',
+                    destination: company.phone || '',
+                    itemId: company.id,
+                    itemName: name,
+                  })
+                }
+              >
+                <Phone size={14} strokeWidth={2.25} aria-hidden />
+                전화
+              </a>
+            ) : null}
+          </div>
           <button
             type="button"
             onClick={onBook}
-            className="w-full rounded-2xl bg-brand py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.99]"
+            className="w-full rounded-2xl bg-[#0f1a2e] py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand active:scale-[0.99]"
           >
-            {price.toLocaleString()}원 · 예약하기
+            예약하기
           </button>
         </div>
       </div>

@@ -2,11 +2,12 @@
  * AEO·카카오·음성·FAQ 공통 짧은 답 (40~60자 전후).
  * public/faq · Support FAQ · docs/aeo · /facts 와 동기. 알림톡 문구도 여기 기준으로 맞춘다.
  */
-import { AIRPICK_DEFINITION, COMPANY_LEGAL } from './companyLegal';
+import { AIRPICK_AVAILABILITY_NOTE, AIRPICK_DEFINITION, COMPANY_LEGAL } from './companyLegal';
 import { formatPhoneDisplay } from '../utils/contact';
 
 export const SHORT_ANSWERS = {
   whatIs: AIRPICK_DEFINITION,
+  privateLot: `아직은 아닙니다. ${AIRPICK_AVAILABILITY_NOTE}`,
   lookup: '예약 탭에서 차량번호(또는 연락처)와 비밀번호 4자리로 조회합니다.',
   lookupFail: '차량번호·연락처와 비밀번호 4자리가 같은지 확인한 뒤 다시 시도해 주세요.',
   bookHow: '홈에서 터미널, 실내·야외, 픽업지, 날짜를 고른 뒤 업체를 비교하고 접수합니다.',
@@ -32,6 +33,7 @@ export const SHORT_ANSWERS = {
 /** 카카오 자동응답·상담 첫 멘트 */
 export const KAKAO_BRAND_REPLY = [
   AIRPICK_DEFINITION,
+  AIRPICK_AVAILABILITY_NOTE,
   `고객센터 ${formatPhoneDisplay(COMPANY_LEGAL.phone)} · ${COMPANY_LEGAL.supportHours}`,
   '예약 조회는 앱 하단 「예약」 탭 · FAQ https://www.에어픽.kr/faq/',
   '현장·차량 문의는 예약 카드 「업체 문의」로 주차장에 연락해 주세요.',
@@ -39,7 +41,7 @@ export const KAKAO_BRAND_REPLY = [
 
 /** 음성·짧은 브랜드 답변 (한 호흡) */
 export const VOICE_BRAND_BLURB =
-  '에어픽은 인천공항 주차대행을 비교하고 예약합니다. 이심은 제휴 할인으로 안내합니다. 고객센터는 공일공 이오오육 오칠사육, 아홉시부터 열여덟시까지입니다.';
+  '에어픽은 인천공항 주차대행과 사설주차장을 비교하고 예약하는 공항주차 서비스입니다. 지금은 주차대행부터 예약할 수 있습니다. 이심은 제휴 할인으로 안내합니다. 고객센터는 공일공 이오오육 오칠사육, 아홉시부터 열여덟시까지입니다.';
 
 /** 음성·고객센터만 */
 export const VOICE_SUPPORT_BLURB = `에어픽 고객센터 번호는 ${formatPhoneDisplay(COMPANY_LEGAL.phone)}이고, 운영 시간은 ${COMPANY_LEGAL.supportHours}입니다. 카카오톡 상담도 됩니다.`;

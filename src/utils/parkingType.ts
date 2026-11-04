@@ -1,5 +1,6 @@
 import type { BookingSearch, Company, Terminal } from '../types';
 import { isGayuCompany } from './pricing';
+import { findParkingProduct } from './parkingProducts';
 
 /** UI·문구 통일 — 실외/야외 혼용 금지 */
 export const PARKING_LABEL_INDOOR = '실내';
@@ -9,6 +10,18 @@ export const PARKING_LABEL_OUTDOOR = '야외';
 export function companyValetFee(company: Company, terminal: Terminal): number | null {
   const fee = terminal === 'T2' ? company.valetFeeT2 : company.valetFeeT1;
   return typeof fee === 'number' ? fee : null;
+}
+
+/** 주차 상품 중 이 터미널에서 대면/비대면을 받는 것이 있는지 (실내·야외 무관) */
+export function companyMatchesHandoff(
+  company: Company,
+  terminal: Terminal,
+  faceToFace: boolean
+): boolean {
+  return (
+    findParkingProduct(company, { isIndoor: true, terminal }, faceToFace) != null ||
+    findParkingProduct(company, { isIndoor: false, terminal }, faceToFace) != null
+  );
 }
 
 export function parkingTypeLabel(isIndoor: boolean): string {
@@ -75,16 +88,10 @@ export function companySupportsOutdoor(company: Company): boolean {
   return company.supports_outdoor !== false;
 }
 
+/** 실내/야외·터미널이 맞는 노출 상품이 있는 업체. 대면/비대면 구분은 홈 목록에서 한다 */
 export function companyMatchesSearch(company: Company, search: BookingSearch): boolean {
-  if (search.isIndoor) {
-    if (!companySupportsIndoor(company)) return false;
-  } else if (!companySupportsOutdoor(company)) {
-    return false;
-  }
-
   if (company.terminals?.length && !company.terminals.includes(search.terminal)) {
     return false;
   }
-
-  return true;
+  return findParkingProduct(company, search) != null;
 }

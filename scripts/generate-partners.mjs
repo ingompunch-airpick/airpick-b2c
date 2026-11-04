@@ -489,7 +489,7 @@ ${JSON.stringify(graph, null, 2)}
         <p class="eyebrow">공식 파트너</p>
         <h1>에어픽에서 예약할 수 있는 업체</h1>
         <p class="answer"><strong>${esc(answer)}</strong></p>
-        <p>지금 입점한 주차대행이에요. 아래에서 고른 뒤, 출국·귀국 일정을 넣고 바로 비교해 보세요.</p>
+        <p>지금 입점한 주차대행이에요. 사설주차장(키 맡김·셔틀)은 준비 중이에요. 아래에서 고른 뒤, 출국·귀국 일정을 넣고 바로 비교해 보세요.</p>
         <a class="cta" href="/">일정 넣고 비교·예약</a>
         <a class="cta secondary" href="/guides/parking-insurance/">보험은 어떻게 확인하나요?</a>
       </header>

@@ -43,6 +43,7 @@ import {
   ESIM_COMPARE_DOCUMENT_TITLE,
   PARKING_COMPARE_DOCUMENT_TITLE,
 } from './constants/marketing';
+import { AIRPICK_HOME_DOCUMENT_TITLE } from './constants/companyLegal';
 import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
@@ -74,7 +75,7 @@ const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
-  home: `인천공항 주차대행, 한눈에 비교하세요. · 에어픽`,
+  home: AIRPICK_HOME_DOCUMENT_TITLE,
   compare: PARKING_COMPARE_DOCUMENT_TITLE,
   esim: ESIM_COMPARE_DOCUMENT_TITLE,
   my: '내 예약 · 에어픽',
@@ -194,7 +195,7 @@ export default function App() {
 
   useEffect(() => {
     const unsub = subscribeCompanies((list) => {
-      setCompanies(list.filter((c) => c.id !== 'airpick' && c.id !== 'air25'));
+      setCompanies(list.filter((c) => c.id !== 'airpick' && c.id !== 'air25' && c.id !== 'demo'));
       setLoading(false);
     });
     return unsub;
@@ -357,6 +358,9 @@ export default function App() {
           onSearchChange={setSearch}
           companies={companies}
           loading={loading}
+          onDetail={(company, price) => {
+            setPartnerDetail({ company, price });
+          }}
           onBook={(company, price) => {
             trackParkingBookStart(company.id, company.name);
             setBookingTarget({ company, price });

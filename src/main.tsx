@@ -10,9 +10,18 @@ import ReceiptPage from './pages/ReceiptPage.tsx';
 import { AffiliateProvider } from './context/AffiliateContext.tsx';
 import { parseReceiptIdFromPath } from './lib/receipt';
 import { recoverStolenSeoDocument } from './utils/appPath';
+import { registerSW } from 'virtual:pwa-register';
 
 installGlobalErrorReporting();
 setErrorReportContext({ screen: window.location.pathname || '/' });
+
+if (import.meta.env.PROD) {
+  registerSW({
+    onRegisterError() {
+      // 사파리·인앱 브라우저는 서비스 워커를 거절한다. 예약 화면에는 영향이 없다.
+    },
+  });
+}
 
 async function boot() {
   if (await recoverStolenSeoDocument()) return;

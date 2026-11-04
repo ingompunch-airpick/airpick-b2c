@@ -1,7 +1,7 @@
 {
   "name": "에어픽",
   "short_name": "에어픽",
-  "description": "인천공항 주차대행·eSIM 제휴 할인 — 업체 요금, 위치, 보험 한 번에",
+  "description": "에어픽 공항주차 — 인천공항 주차대행·사설주차장 비교·예약, eSIM 제휴 할인",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

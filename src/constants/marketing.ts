@@ -281,15 +281,17 @@ export const HOME_HOOK_CTA = {
 /** @deprecated 홈 일정 게이트웨이 제거 후 미사용에 가깝음 */
 export const HOME_EYEBROW_PREMIUM = 'PREMIUM AIRPORT SERVICES';
 
-/** 브랜드 인트로 — 왜 에어픽(검증·브랜드). 기능 안내는 홈 */
+/** 브랜드 인트로 — 영상 위 히어로. 테스트: /?intro=1 */
 export const BRAND_INTRO = {
   storageKey: 'airpick_intro_seen',
-  /** 시작하기를 누른 브라우저는 다시 안 띄움. 직링크는 스킵. 테스트: /?intro=1 */
+  /** 업체와 요금 비교하기를 누른 브라우저는 다시 안 띄움. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
-  eyebrow: '인천공항 주차대행',
-  line: '보험과 주차장을 확인한 업체만 들어옵니다.',
-  hint: '',
-  enterCta: '시작하기',
+  wordmark: '에어픽',
+  kicker: '인천공항 공항주차 비교·예약',
+  titleLead: '여행의 시작부터,',
+  titleRest: '주차는 믿을 수 있게.',
+  checks: ['사업자 확인', '보험 확인', '주차장 확인'],
+  enterCta: '업체와 요금 비교하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',
   videoMobile: '/brand/intro-mobile.mp4',

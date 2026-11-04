@@ -70,6 +70,14 @@ export default function PriceBreakdownCard({
             </span>
           </div>
         )}
+        {breakdown.dropFee > 0 && (
+          <div className="flex justify-between gap-3 font-semibold text-ink">
+            <span>비대면 입고</span>
+            <span className="shrink-0 tabular-nums text-brand">
+              +{breakdown.dropFee.toLocaleString()}원
+            </span>
+          </div>
+        )}
         {(breakdown.affiliateDiscountWon ?? 0) > 0 && (
           <div className="flex justify-between gap-3 font-semibold text-ink">
             <span>제휴 할인</span>

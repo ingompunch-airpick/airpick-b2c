@@ -28,6 +28,26 @@ export interface CompanyParkingLot {
   photos?: string[];
 }
 
+export type ParkingProductType = 'valet' | 'walk' | 'shuttle' | 'official';
+
+/** 손님 비교 단위. 값이 없는 항목은 모름 → 화면에 안 나간다 */
+export interface ParkingProduct {
+  id: string;
+  type: ParkingProductType;
+  lot: 'indoor' | 'outdoor';
+  terminal: 'T1' | 'T2' | 'both';
+  meet: boolean;
+  drop: boolean;
+  hidden?: true;
+  transferNote?: string;
+  transferMinutes?: number;
+  keyHandover?: 'leave' | 'keep';
+  evCharging?: 'yes' | 'no';
+  hours?: { allDay: true } | { open: string; close: string };
+  /** 대면 인계를 받는 시간. meet 상품에만 의미 있음 */
+  meetHours?: { allDay: true } | { open: string; close: string };
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -61,6 +81,13 @@ export interface Company {
   /** 발렛(직접 인계) 추가요금 — 터미널별. 있으면 가격에 포함 */
   valetFeeT1?: number;
   valetFeeT2?: number;
+  /** 없음·true = 손님 앱 노출. false = 본사가 숨김 */
+  listingApproved?: boolean;
+  /** 비대면 입고 추가요금 — 터미널별. 없으면 0원 */
+  dropFeeT1?: number;
+  dropFeeT2?: number;
+  /** B2B 「주차 상품」. 없으면 요금·시설 필드로 valet 상품을 만든다 */
+  parkingProducts?: ParkingProduct[];
   peakStartTime?: string;
   peakEndTime?: string;
   peakSurcharge?: number;

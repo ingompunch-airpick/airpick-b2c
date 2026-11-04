@@ -15,7 +15,7 @@ import ComingSoonPanel from '../components/map-home/ComingSoonPanel';
 import DraggableSheet from '../components/map-home/DraggableSheet';
 import HomeSearchBar from '../components/map-home/HomeSearchBar';
 import ParkingLotList from '../components/map-home/ParkingLotList';
-import { AIRPICK_DEFINITION } from '../constants/companyLegal';
+import { AIRPICK_AVAILABILITY_NOTE, AIRPICK_DEFINITION } from '../constants/companyLegal';
 import { ESIM_TAB_LABEL, PARKING_TAB_LABEL, SPOTS_TAB_LABEL } from '../constants/marketing';
 
 function readCatFromUrl(): HomeCategoryId {
@@ -113,7 +113,7 @@ export default function SpotsPage() {
         )}
 
         <p className="mt-6 border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
-          {AIRPICK_DEFINITION}{' '}
+          {AIRPICK_DEFINITION} {AIRPICK_AVAILABILITY_NOTE}{' '}
           <a href="/" className="font-bold text-brand underline-offset-2 hover:underline">
             {PARKING_TAB_LABEL}
           </a>

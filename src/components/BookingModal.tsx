@@ -1,9 +1,17 @@
-import { Check, ChevronDown, ClipboardList, Minus, Plus, X } from 'lucide-react';
+import {
+  Calendar,
+  Car,
+  Check,
+  ChevronDown,
+  ClipboardList,
+  KeyRound,
+  Minus,
+  Plus,
+  X,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import BookingConsent from './BookingConsent';
-import BookingPartnerSummary from './BookingPartnerSummary';
 import DateField from './DateField';
-import PriceBreakdownCard from './PriceBreakdownCard';
 import TerminalFields from './TerminalFields';
 import TimeField from './TimeField';
 import AirlineSelect from './AirlineSelect';
@@ -30,8 +38,9 @@ import { saveRecentReservation } from '../utils/recentReservation';
 import { formatTerminalSummary } from '../utils/terminalLabels';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
 import { companyValetFee } from '../utils/parkingType';
+import { companyDropFee, findParkingProduct } from '../utils/parkingProducts';
 import { maxPointSpend, POINT_STEP_WON, subscribePointBalance } from '../lib/points';
-import { handoffPlaceLine } from '../data/pickupPins';
+import { handoffPlaceLine, pickupPin } from '../data/pickupPins';
 import { itchaHandoffPlace } from '../data/itchaPickup';
 import {
   hasSignupCoupon,
@@ -57,7 +66,7 @@ import {
 } from '../lib/socialAuth';
 
 const FIELD_CLASS =
-  'w-full rounded-xl border border-[#e4e7ec] bg-white px-3 py-2.5 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
+  'w-full rounded-lg border border-[#d8dee8] bg-white px-3 py-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
 
 function draftFor(companyId: string) {
   const draft = readBookingDraft();
@@ -65,7 +74,16 @@ function draftFor(companyId: string) {
 }
 
 const bookingShell =
-  'fixed inset-x-0 top-[var(--app-header-h,60px)] bottom-[var(--app-tab-h,56px)] z-[80] flex justify-center bg-white';
+  'fixed inset-x-0 top-[var(--app-header-h,60px)] bottom-[var(--app-tab-h,56px)] z-[80] flex justify-center bg-[#f2f3f5]';
+
+function SectionHead({ children }: { children: string }) {
+  return (
+    <h3 className="mb-3 text-[17px] font-bold text-ink">
+      {children}
+      <span className="mt-1.5 block h-[3px] w-9 rounded-full bg-brand" aria-hidden />
+    </h3>
+  );
+}
 
 function KakaoBubble() {
   return (
@@ -147,9 +165,6 @@ export default function BookingModal({
     return { ...emptyForm(), ...saved };
   });
   const formRef = useRef<HTMLFormElement>(null);
-  const consentRef = useRef<HTMLDivElement>(null);
-  const consentPulseTimer = useRef<number | null>(null);
-  const [consentPulse, setConsentPulse] = useState(false);
   const asMemberRef = useRef(Boolean(readMember()));
   const [memberPreview, setMemberPreview] = useState(() => Boolean(readMember()));
   const [signupCoupon, setSignupCoupon] = useState(() => hasSignupCoupon(readMember()));
@@ -158,21 +173,12 @@ export default function BookingModal({
   const [pendingProvider, setPendingProvider] = useState<SocialProviderId | null>(null);
   const [pendingUid, setPendingUid] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
-  const [agreedPlatformTerms, setAgreedPlatformTerms] = useState(
-    () => draftFor(company.id)?.agreedPlatformTerms === true
-  );
-  const [agreedServiceTerms, setAgreedServiceTerms] = useState(
-    () => draftFor(company.id)?.agreedServiceTerms === true
-  );
-  const [agreedPrivacy, setAgreedPrivacy] = useState(
-    () => draftFor(company.id)?.agreedPrivacy === true
-  );
-  const [agreedThirdParty, setAgreedThirdParty] = useState(
-    () => draftFor(company.id)?.agreedThirdParty === true
-  );
-  const [marketingOptIn, setMarketingOptIn] = useState(
-    () => draftFor(company.id)?.marketingOptIn === true
-  );
+  /** Parkos형: 예약 완료로 약관 동의. 마케팅만 수신거부 체크 */
+  const [marketingOptIn, setMarketingOptIn] = useState(() => {
+    const draft = draftFor(company.id);
+    if (draft && typeof draft.marketingOptIn === 'boolean') return draft.marketingOptIn;
+    return false;
+  });
   const [confirming, setConfirming] = useState(() => draftFor(company.id)?.confirmed === true);
   const [guestMode, setGuestMode] = useState(false);
   const [editSchedule, setEditSchedule] = useState(false);
@@ -195,6 +201,10 @@ export default function BookingModal({
   /** 출국장 핀이면 업체 발렛비를 금액에 포함한다 */
   const valetFee = search.faceToFace ? (companyValetFee(company, search.terminal) ?? 0) : 0;
   const faceToFaceApplied = search.faceToFace === true && valetFee > 0;
+  const parkingProduct = findParkingProduct(company, search, search.faceToFace === true);
+  /** 비대면 상품일 때만 비대면 추가요금 */
+  const dropFee =
+    search.faceToFace !== true && parkingProduct ? companyDropFee(company, search.terminal) : 0;
   const { offer: affiliateOffer } = useAffiliateOffer();
   const affiliateDiscountWon =
     isAirpickPartner(company) && affiliateOffer
@@ -211,10 +221,11 @@ export default function BookingModal({
       search.departureTime,
       search.arrivalTime,
       search.isCardPayment === true,
-      valetFee
+      valetFee,
+      dropFee
     );
     return withAffiliateDiscount(base, affiliateDiscountWon);
-  }, [company, search, isT2, valetFee, affiliateDiscountWon]);
+  }, [company, search, isT2, valetFee, dropFee, affiliateDiscountWon]);
 
   const couponWon = memberPreview && signupCoupon ? MEMBER_DISCOUNT_WON : 0;
   const payableBeforePoints = Math.max(0, breakdown.total - couponWon);
@@ -227,25 +238,7 @@ export default function BookingModal({
   const phoneValid = isValidMobilePhone(form.phone);
   const carNumberValid = isLikelyCarNumber(form.carNumber);
 
-  const consentsOk =
-    agreedPlatformTerms && agreedServiceTerms && agreedPrivacy && agreedThirdParty;
-
-  const focusConsents = () => {
-    consentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setError('필수 약관에 동의해 주세요.');
-    setConsentPulse(true);
-    if (consentPulseTimer.current != null) window.clearTimeout(consentPulseTimer.current);
-    consentPulseTimer.current = window.setTimeout(() => {
-      setConsentPulse(false);
-      consentPulseTimer.current = null;
-    }, 1600);
-  };
-
   const canSubmit =
-    agreedPlatformTerms &&
-    agreedServiceTerms &&
-    agreedPrivacy &&
-    agreedThirdParty &&
     form.userName.trim() &&
     phoneValid &&
     form.carModel.trim() &&
@@ -430,21 +423,18 @@ export default function BookingModal({
       form,
       marketingOptIn,
       confirmed,
-      agreedPlatformTerms,
-      agreedServiceTerms,
-      agreedPrivacy,
-      agreedThirdParty,
+      /** 예약 진행 = 약관 동의로 기록 */
+      agreedPlatformTerms: true,
+      agreedServiceTerms: true,
+      agreedPrivacy: true,
+      agreedThirdParty: true,
     });
   };
 
   const openConfirm = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!consentsOk) {
-      focusConsents();
-      return;
-    }
     if (!canSubmit) {
-      setError('필수 항목과 약관 동의를 확인해 주세요.');
+      setError('필수 항목을 확인해 주세요.');
       return;
     }
     persistDraft(true);
@@ -460,11 +450,6 @@ export default function BookingModal({
 
   const placeReservation = async (asMember: boolean) => {
     if (submittingRef.current) return;
-    if (!consentsOk) {
-      focusConsents();
-      setConfirming(false);
-      return;
-    }
 
     let password = form.reservationPassword.trim();
     if (asMember && !/^\d{4}$/.test(password)) {
@@ -528,7 +513,8 @@ export default function BookingModal({
             }
           : undefined,
         marketingOptIn,
-        spend
+        spend,
+        parkingProduct ? { id: parkingProduct.id, dropFee } : undefined
       );
       trackAppointmentScheduled();
       saveRecentReservation({
@@ -873,322 +859,383 @@ export default function BookingModal({
     );
   }
 
+  const pickupId =
+    search.isIndoor || search.pickupPointId === 'depart' || search.faceToFace
+      ? 'depart'
+      : 'short';
+  const pin = pickupPin(search.terminal, pickupId);
+  const transferTitle = pin.meetHandoff ? '출국장에서 인계' : '단기주차장 입고';
+  const companyName = displayCompanyName(company.name);
+  const scheduleLine = `${formatDateDisplay(search.departureDate)} ${search.departureTime} — ${formatDateDisplay(search.arrivalDate)} ${search.arrivalTime}`;
+  const lotLabel = parkingTypeLabel(search.isIndoor);
+
+  const summaryCard = (
+    <div className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10">
+      <p className="text-[12px] font-semibold text-muted">인천공항 · {terminalSummary}</p>
+      <p className="mt-0.5 text-[17px] font-bold text-ink">{companyName}</p>
+      <ul className="mt-3 space-y-2.5">
+        <li className="flex items-start gap-2.5">
+          <Calendar size={18} className="mt-0.5 shrink-0 text-ink" aria-hidden />
+          <span className="min-w-0 flex-1">
+            <span className="flex items-start justify-between gap-2">
+              <span className="text-[13px] font-semibold leading-snug text-ink tabular-nums">
+                {scheduleLine}
+              </span>
+              <button
+                type="button"
+                onClick={() => setEditSchedule((v) => !v)}
+                className="shrink-0 text-[13px] font-bold text-brand"
+              >
+                {editSchedule ? '접기' : '수정'}
+              </button>
+            </span>
+            <span className="mt-0.5 block text-[12px] font-medium text-muted">
+              {lotLabel} · {formatStayPhrase(breakdown.days)}
+            </span>
+          </span>
+        </li>
+        <li className="flex items-start gap-2.5">
+          <Car size={18} className="mt-0.5 shrink-0 text-ink" aria-hidden />
+          <span className="min-w-0 flex-1 text-[13px] font-semibold text-ink">
+            {transferTitle}
+            <span className="mt-0.5 block text-[12px] font-medium text-muted">{pin.detail}</span>
+          </span>
+          <span className="shrink-0 text-[13px] font-bold tabular-nums text-ink">
+            {payableTotal.toLocaleString()}원
+          </span>
+        </li>
+        <li className="flex items-center gap-2.5 text-[13px] font-semibold text-ink">
+          <KeyRound size={18} className="shrink-0" aria-hidden />
+          {pin.meetHandoff ? '키를 맡깁니다' : '단기주차장에서 키를 맡깁니다'}
+        </li>
+      </ul>
+      {editSchedule ? (
+        <div className="mt-3 space-y-3 border-t border-[#0f1a2e]/8 pt-3">
+          <div className="grid grid-cols-2 gap-2">
+            <DateField
+              label="맡기는 날"
+              value={search.departureDate}
+              min={today}
+              onChange={(departureDate) => {
+                setSearch((prev) => {
+                  const next = { ...prev, departureDate };
+                  if (next.arrivalDate < departureDate) {
+                    next.arrivalDate = departureDate;
+                  }
+                  return next;
+                });
+              }}
+            />
+            <DateField
+              label="찾는 날"
+              value={search.arrivalDate}
+              min={search.departureDate}
+              onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <TimeField
+              label="맡기는 시간"
+              value={search.departureTime}
+              onChange={(departureTime) => setSearch((prev) => ({ ...prev, departureTime }))}
+            />
+            <TimeField
+              label="찾는 시간"
+              value={search.arrivalTime}
+              onChange={(arrivalTime) => setSearch((prev) => ({ ...prev, arrivalTime }))}
+            />
+          </div>
+          <TerminalFields
+            departure={search.terminal}
+            arrival={arrivalTerminal}
+            differentArrival={differentArrivalTerminal}
+            onDepartureChange={setTerminal}
+            onDifferentArrivalChange={handleDifferentArrival}
+            onArrivalChange={(t) => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
+            inactiveClassName="bg-sky-soft text-muted"
+          />
+          <p className="text-[13px] font-bold text-muted">주차 공간</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              disabled={!companySupportsOutdoor(company)}
+              onClick={() => setSearch((prev) => ({ ...prev, isIndoor: false }))}
+              className={cn(
+                'rounded-xl py-2 text-[13px] font-bold transition-colors disabled:opacity-40',
+                !search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
+              )}
+            >
+              야외
+            </button>
+            <button
+              type="button"
+              disabled={!companySupportsIndoor(company)}
+              onClick={() => setSearch((prev) => ({ ...prev, isIndoor: true }))}
+              className={cn(
+                'rounded-xl py-2 text-[13px] font-bold transition-colors disabled:opacity-40',
+                search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
+              )}
+            >
+              실내
+            </button>
+          </div>
+        </div>
+      ) : null}
+      <div className="mt-3 border-t border-[#0f1a2e]/8 pt-3">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-[13px] font-semibold text-muted">현장 결제</span>
+          <span className="text-[15px] font-bold tabular-nums text-ink">
+            {payableTotal.toLocaleString()}원
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
+  const submitBar = (compact: boolean) => (
+    <div
+      className={cn(
+        'flex items-center gap-3 bg-white',
+        compact
+          ? 'border-t border-[#0f1a2e]/10 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_16px_rgba(15,26,46,0.08)]'
+          : 'rounded-b-2xl bg-[#0f1a2e] px-4 py-3'
+      )}
+    >
+      <div className="min-w-0 flex-1">
+        <p
+          className={cn(
+            'text-[20px] font-bold tabular-nums leading-none',
+            compact ? 'text-ink' : 'text-white'
+          )}
+        >
+          {payableTotal.toLocaleString()}원
+        </p>
+        <p
+          className={cn(
+            'mt-1 truncate text-[11px] font-medium tabular-nums',
+            compact ? 'text-muted' : 'text-white/75'
+          )}
+        >
+          {scheduleLine}
+        </p>
+      </div>
+      <button
+        type="submit"
+        form="booking-form"
+        className={cn(
+          'shrink-0 rounded-lg px-5 py-3.5 text-[15px] font-bold transition active:scale-[0.99]',
+          compact ? 'bg-[#0f1a2e] text-white' : 'bg-white text-[#0f1a2e]'
+        )}
+      >
+        예약하기
+      </button>
+    </div>
+  );
+
   return (
     <div className={bookingShell}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label="예약"
-        className="flex h-full w-full max-w-lg flex-col bg-white"
+        className="flex h-full w-full max-w-lg flex-col md:max-w-5xl md:flex-row md:gap-5 md:px-5 md:py-4"
       >
-        <div className="flex shrink-0 justify-end px-3 pt-1">
-          <button type="button" onClick={onClose} aria-label="닫기" className="shrink-0 rounded-full p-2 hover:bg-sky-tint">
-            <X size={20} className="text-muted" />
-          </button>
-        </div>
-
-        <form
-          id="booking-form"
-          ref={formRef}
-          onSubmit={openConfirm}
-          className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 pb-6"
-        >
-          <BookingPartnerSummary company={company} isIndoor={search.isIndoor} />
-
-          <section className="rounded-2xl bg-[#f4f5f7] p-4">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-[13px] font-bold text-brand">선택한 일정</p>
-                <p className="mt-1 text-sm font-bold text-ink tabular-nums">
-                  {formatDateDisplay(search.departureDate)} {search.departureTime}
-                  {' → '}
-                  {formatDateDisplay(search.arrivalDate)} {search.arrivalTime}
-                </p>
-                <p className="mt-0.5 text-[13px] font-semibold text-muted">
-                  {terminalSummary} · {parkingTypeLabel(search.isIndoor)} · {formatStayPhrase(breakdown.days)}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setEditSchedule((v) => !v)}
-                className="inline-flex shrink-0 items-center gap-0.5 text-[13px] font-bold text-brand"
-              >
-                {editSchedule ? '접기' : '일정 수정'}
-                <ChevronDown
-                  size={14}
-                  className={cn('transition-transform', editSchedule && 'rotate-180')}
-                />
-              </button>
-            </div>
-
-            {editSchedule && (
-              <div className="mt-3 space-y-3 border-t border-sky-border/60 pt-3">
-                <div className="grid grid-cols-2 gap-2">
-                  <DateField
-                    label="맡기는 날"
-                    value={search.departureDate}
-                    min={today}
-                    onChange={(departureDate) => {
-                      setSearch((prev) => {
-                        const next = { ...prev, departureDate };
-                        if (next.arrivalDate < departureDate) {
-                          next.arrivalDate = departureDate;
-                        }
-                        return next;
-                      });
-                    }}
-                  />
-                  <DateField
-                    label="찾는 날"
-                    value={search.arrivalDate}
-                    min={search.departureDate}
-                    onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <TimeField
-                    label="맡기는 시간"
-                    value={search.departureTime}
-                    onChange={(departureTime) => setSearch((prev) => ({ ...prev, departureTime }))}
-                  />
-                  <TimeField
-                    label="찾는 시간"
-                    value={search.arrivalTime}
-                    onChange={(arrivalTime) => setSearch((prev) => ({ ...prev, arrivalTime }))}
-                  />
-                </div>
-
-                <TerminalFields
-                  departure={search.terminal}
-                  arrival={arrivalTerminal}
-                  differentArrival={differentArrivalTerminal}
-                  onDepartureChange={setTerminal}
-                  onDifferentArrivalChange={handleDifferentArrival}
-                  onArrivalChange={(t) => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
-                  inactiveClassName="bg-sky-soft text-muted"
-                />
-
-                <p className="text-[13px] font-bold text-muted">주차 공간</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    disabled={!companySupportsOutdoor(company)}
-                    onClick={() => setSearch((prev) => ({ ...prev, isIndoor: false }))}
-                    className={cn(
-                      'rounded-xl py-2 text-[13px] font-bold transition-colors disabled:opacity-40',
-                      !search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-                    )}
-                  >
-                    야외
-                  </button>
-                  <button
-                    type="button"
-                    disabled={!companySupportsIndoor(company)}
-                    onClick={() => setSearch((prev) => ({ ...prev, isIndoor: true }))}
-                    className={cn(
-                      'rounded-xl py-2 text-[13px] font-bold transition-colors disabled:opacity-40',
-                      search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-                    )}
-                  >
-                    실내
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
-
-          <section className="space-y-3 rounded-2xl bg-[#f4f5f7] p-4">
-            <div className="grid grid-cols-2 gap-2">
-              <label className="block">
-                <span className="mb-1 block text-[13px] font-bold text-muted">이름 *</span>
-                <input
-                  value={form.userName}
-                  onChange={(e) => setFormField('userName', e.target.value)}
-                  placeholder="홍길동"
-                  className={FIELD_CLASS}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-[13px] font-bold text-muted">연락처 *</span>
-                <input
-                  type="tel"
-                  inputMode="tel"
-                  value={form.phone}
-                  onChange={(e) => setFormField('phone', formatPhoneInput(e.target.value))}
-                  placeholder="010-1234-5678"
-                  className={FIELD_CLASS}
-                />
-                {form.phone.trim() && !phoneValid ? (
-                  <span className="mt-1 block text-[13px] font-semibold text-rose-500">
-                    휴대전화 번호를 확인해 주세요.
-                  </span>
-                ) : null}
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-[13px] font-bold text-muted">차량 모델 *</span>
-                <input
-                  value={form.carModel}
-                  onChange={(e) => setFormField('carModel', e.target.value)}
-                  placeholder="그랜저 / 티코"
-                  className={FIELD_CLASS}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-[13px] font-bold text-muted">차량번호 *</span>
-                <input
-                  value={form.carNumber}
-                  onChange={(e) => setFormField('carNumber', e.target.value)}
-                  placeholder="12가 3456"
-                  className={FIELD_CLASS}
-                />
-                {form.carNumber.trim() && !carNumberValid ? (
-                  <span className="mt-1 block text-[13px] font-semibold text-rose-500">
-                    차량번호를 확인해 주세요. 예: 12가3456
-                  </span>
-                ) : null}
-              </label>
-            </div>
-
-            <div className="space-y-3 border-t border-sky-border/60 pt-3">
-              <div>
-                <p className="mb-2 text-[13px] font-bold text-[#0f1a2e]/70">출국</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <AirlineSelect
-                    label="항공사"
-                    required
-                    value={form.departureAirline}
-                    onChange={(departureAirline) => setFormField('departureAirline', departureAirline)}
-                  />
-                  <label className="block">
-                    <span className="mb-1 block text-[13px] font-bold text-muted">가는 편명 *</span>
-                    <input
-                      value={form.departureFlight}
-                      onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase())}
-                      placeholder="KE701"
-                      className={FIELD_CLASS}
-                    />
-                  </label>
-                </div>
-                <p className="mt-1.5 text-[13px] font-medium text-muted">항공권에 적힌 영문과 숫자. 예: KE701</p>
-              </div>
-              <div>
-                <p className="mb-2 text-[13px] font-bold text-[#0f1a2e]/70">귀국</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <AirlineSelect
-                    label="항공사"
-                    required
-                    value={form.arrivalAirline}
-                    onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
-                  />
-                  <label className="block">
-                    <span className="mb-1 block text-[13px] font-bold text-muted">오는 편명 *</span>
-                    <input
-                      value={form.arrivalFlight}
-                      onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase())}
-                      placeholder="KE702"
-                      className={FIELD_CLASS}
-                    />
-                  </label>
-                </div>
-                <p className="mt-1.5 text-[13px] font-medium text-muted">늦으면 이 편명으로 맞춥니다.</p>
-              </div>
-            </div>
-
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div className="flex shrink-0 justify-end px-3 pt-1 md:px-0">
             <button
               type="button"
-              onClick={() => setShowOptionalNotes((v) => !v)}
-              className="inline-flex items-center gap-0.5 text-[13px] font-bold text-brand"
+              onClick={onClose}
+              aria-label="닫기"
+              className="shrink-0 rounded-full p-2 hover:bg-white/80"
             >
-              {showOptionalNotes ? '메모 접기' : '여행지·메모 (선택)'}
-              <ChevronDown
-                size={14}
-                className={cn('transition-transform', showOptionalNotes && 'rotate-180')}
-              />
+              <X size={20} className="text-muted" />
             </button>
+          </div>
 
-            {showOptionalNotes ? (
-              <div className="space-y-2 border-t border-sky-border/60 pt-3">
+          <form
+            id="booking-form"
+            ref={formRef}
+            onSubmit={openConfirm}
+            className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-4 md:px-0"
+          >
+            <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2.5 text-[13px] font-semibold leading-snug text-emerald-900">
+              입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소할 수 있습니다.
+            </p>
+
+            <div className="md:hidden">{summaryCard}</div>
+
+            <section className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/8">
+              <SectionHead>개인 정보</SectionHead>
+              <div className="space-y-3">
                 <label className="block">
-                  <span className="mb-1 block text-[13px] font-bold text-muted">여행지</span>
+                  <span className="mb-1.5 block text-[13px] font-bold text-ink">이름 *</span>
                   <input
-                    value={form.destination}
-                    onChange={(e) => setFormField('destination', e.target.value)}
-                    placeholder="오사카, 싱가포르"
+                    value={form.userName}
+                    onChange={(e) => setFormField('userName', e.target.value)}
+                    placeholder="홍길동"
                     className={FIELD_CLASS}
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[13px] font-bold text-muted">기사님께 전달할 메시지</span>
-                  <textarea
-                    value={form.customerNotes}
-                    onChange={(e) => setFormField('customerNotes', e.target.value)}
-                    rows={2}
-                    className="w-full resize-none rounded-xl border border-[#e4e7ec] bg-white px-3 py-2 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand"
+                  <span className="mb-1.5 block text-[13px] font-bold text-ink">휴대전화 *</span>
+                  <input
+                    type="tel"
+                    inputMode="tel"
+                    value={form.phone}
+                    onChange={(e) => setFormField('phone', formatPhoneInput(e.target.value))}
+                    placeholder="010-1234-5678"
+                    className={FIELD_CLASS}
                   />
+                  {form.phone.trim() && !phoneValid ? (
+                    <span className="mt-1 block text-[13px] font-semibold text-rose-500">
+                      휴대전화 번호를 확인해 주세요.
+                    </span>
+                  ) : null}
                 </label>
               </div>
-            ) : null}
-          </section>
+            </section>
 
-          <PriceBreakdownCard
-            breakdown={breakdown}
-            memberDiscountWon={couponWon}
-            pointSpendWon={pointSpendWon}
-          />
-          <p className="-mt-2 text-[13px] font-semibold text-muted">
-            현장 결제 · 입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 직접 취소, 이후는 업체 문의
-          </p>
+            <section className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/8">
+              <SectionHead>여행 정보</SectionHead>
+              <div className="space-y-3">
+                <div>
+                  <p className="mb-2 text-[13px] font-bold text-muted">출국</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <AirlineSelect
+                      label="항공사"
+                      required
+                      value={form.departureAirline}
+                      onChange={(departureAirline) => setFormField('departureAirline', departureAirline)}
+                    />
+                    <label className="block">
+                      <span className="mb-1.5 block text-[13px] font-bold text-ink">가는 편명 *</span>
+                      <input
+                        value={form.departureFlight}
+                        onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase())}
+                        placeholder="KE701"
+                        className={FIELD_CLASS}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-[13px] font-bold text-muted">귀국</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <AirlineSelect
+                      label="항공사"
+                      required
+                      value={form.arrivalAirline}
+                      onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
+                    />
+                    <label className="block">
+                      <span className="mb-1.5 block text-[13px] font-bold text-ink">오는 편명 *</span>
+                      <input
+                        value={form.arrivalFlight}
+                        onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase())}
+                        placeholder="KE702"
+                        className={FIELD_CLASS}
+                      />
+                    </label>
+                  </div>
+                  <p className="mt-1.5 text-[12px] font-medium text-muted">
+                    항공권 편명으로 맞춥니다. 예: KE701
+                  </p>
+                </div>
+              </div>
+            </section>
 
-          <div
-            ref={consentRef}
-            className={cn(
-              'rounded-2xl transition-shadow duration-300',
-              consentPulse && 'ring-2 ring-gold ring-offset-2'
-            )}
-          >
-          <BookingConsent
-            agreedPlatformTerms={agreedPlatformTerms}
-            agreedServiceTerms={agreedServiceTerms}
-            agreedPrivacy={agreedPrivacy}
-            agreedThirdParty={agreedThirdParty}
-            marketingOptIn={marketingOptIn}
-            onAgreedPlatformTermsChange={setAgreedPlatformTerms}
-            onAgreedServiceTermsChange={setAgreedServiceTerms}
-            onAgreedPrivacyChange={setAgreedPrivacy}
-            onAgreedThirdPartyChange={setAgreedThirdParty}
-            onMarketingOptInChange={setMarketingOptIn}
-            providerName={displayCompanyName(company.name)}
-          />
-          </div>
+            <section className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/8">
+              <SectionHead>차량 정보</SectionHead>
+              <div className="space-y-3">
+                <label className="block">
+                  <span className="mb-1.5 block text-[13px] font-bold text-ink">차량번호 *</span>
+                  <input
+                    value={form.carNumber}
+                    onChange={(e) => setFormField('carNumber', e.target.value)}
+                    placeholder="12가 3456"
+                    className={FIELD_CLASS}
+                  />
+                  {form.carNumber.trim() && !carNumberValid ? (
+                    <span className="mt-1 block text-[13px] font-semibold text-rose-500">
+                      차량번호를 확인해 주세요. 예: 12가3456
+                    </span>
+                  ) : null}
+                </label>
+                <label className="block">
+                  <span className="mb-1.5 block text-[13px] font-bold text-ink">제조사 · 모델 *</span>
+                  <input
+                    value={form.carModel}
+                    onChange={(e) => setFormField('carModel', e.target.value)}
+                    placeholder="현대 그랜저"
+                    className={FIELD_CLASS}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowOptionalNotes((v) => !v)}
+                  className="inline-flex items-center gap-0.5 text-[13px] font-bold text-brand"
+                >
+                  {showOptionalNotes ? '메모 접기' : '여행지·메모 (선택)'}
+                  <ChevronDown
+                    size={14}
+                    className={cn('transition-transform', showOptionalNotes && 'rotate-180')}
+                  />
+                </button>
+                {showOptionalNotes ? (
+                  <div className="space-y-2 border-t border-[#0f1a2e]/8 pt-3">
+                    <label className="block">
+                      <span className="mb-1.5 block text-[13px] font-bold text-ink">여행지</span>
+                      <input
+                        value={form.destination}
+                        onChange={(e) => setFormField('destination', e.target.value)}
+                        placeholder="오사카, 싱가포르"
+                        className={FIELD_CLASS}
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 block text-[13px] font-bold text-ink">
+                        기사님께 전달할 메시지
+                      </span>
+                      <textarea
+                        value={form.customerNotes}
+                        onChange={(e) => setFormField('customerNotes', e.target.value)}
+                        rows={2}
+                        className="w-full resize-none rounded-lg border border-[#d8dee8] bg-white px-3 py-2 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand"
+                      />
+                    </label>
+                  </div>
+                ) : null}
+              </div>
+            </section>
 
-        </form>
-          <div className="shrink-0 border-t border-sky-border/70 bg-white px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-            <div className="mb-2">
-              <p className="text-[13px] font-semibold text-muted">이용요금</p>
-              <p className="text-xl font-bold tabular-nums text-ink">
-                {payableTotal.toLocaleString()}원
-              </p>
+            <div className="rounded-2xl bg-white ring-1 ring-[#0f1a2e]/8">
+              <BookingConsent
+                marketingOptIn={marketingOptIn}
+                onMarketingOptInChange={setMarketingOptIn}
+                providerName={companyName}
+              />
             </div>
-            {!consentsOk ? (
-              <p className="mb-2 text-center text-[13px] font-semibold text-[#0f1a2e]/70">
-                약관에 동의하면 접수할 수 있어요
-              </p>
+            <p className="text-center text-[13px] font-semibold text-emerald-700">
+              입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
+            </p>
+            {error ? (
+              <p className="text-center text-[13px] font-semibold text-rose-500">{error}</p>
             ) : null}
-            <button
-              type="submit"
-              form="booking-form"
-              className={cn(
-                'w-full rounded-xl py-3.5 text-[16px] font-bold transition-colors',
-                consentsOk
-                  ? 'bg-brand text-white hover:bg-brand-dark'
-                  : 'border border-[#c5cedd] bg-[#d7e0ec] text-[#1c2b45]'
-              )}
-            >
-              접수
-            </button>
-            {error ? <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{error}</p> : null}
+
+            <div className="hidden md:block">{submitBar(false)}</div>
+          </form>
+
+          <div className="shrink-0 md:hidden">{submitBar(true)}</div>
+        </div>
+
+        <aside className="hidden w-[20rem] shrink-0 flex-col md:flex lg:w-[22rem]">
+          <div className="sticky top-0 space-y-3 pt-10">
+            {summaryCard}
+            <div className="overflow-hidden rounded-2xl ring-1 ring-[#0f1a2e]/10">
+              {submitBar(false)}
+            </div>
           </div>
+        </aside>
       </div>
     </div>
   );

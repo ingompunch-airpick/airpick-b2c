@@ -273,7 +273,7 @@ function renderIndex(pages) {
         name: '출국 전에 궁금한 것부터 · 에어픽',
         url,
         description:
-          '주차대행 비교, 터미널, 보험, 이심 준비까지 — 출국 전 자주 묻는 가이드',
+          '공항주차 방식, 주차대행 비교, 터미널, 보험, 이심 준비까지 — 출국 전 자주 묻는 가이드',
         isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
         breadcrumb: { '@id': `${url}#breadcrumb` },
         mainEntity: { '@id': `${url}#itemlist` },
@@ -304,12 +304,12 @@ function renderIndex(pages) {
     <title>출국 전에 궁금한 것부터 · 에어픽</title>
     <meta
       name="description"
-      content="주차대행 비교, 터미널, 보험, 이심 준비까지 — 출국 전 자주 묻는 가이드를 모았어요."
+      content="공항주차 방식(주차대행·사설주차장·셔틀), 주차대행 비교, 터미널, 보험, 이심 준비까지 — 출국 전 자주 묻는 가이드를 모았어요."
     />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="출국 전에 궁금한 것부터 · 에어픽" />
-    <meta property="og:description" content="주차대행·터미널·보험·이심, 출국 전 궁금한 것부터." />
+    <meta property="og:description" content="공항주차 방식·주차대행·터미널·보험·이심, 출국 전 궁금한 것부터." />
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
@@ -326,7 +326,7 @@ ${JSON.stringify(graph, null, 2)}
         <p class="eyebrow">에어픽 가이드</p>
         <h1>출국 전에 궁금한 것부터</h1>
         <p>
-          주차대행 비교, 터미널 고르기, 보험, 이심 준비까지 — 자주 물어보시는 내용을 짧게 모았어요.
+          공항주차 방식 고르기, 주차대행 비교, 터미널, 보험, 이심 준비까지 — 자주 물어보시는 내용을 짧게 모았어요.
           읽은 뒤 <a href="/">비교·예약</a>이나 <a href="/esim">이심 할인</a>으로 이어 가시면 됩니다.
         </p>
         <a class="cta" href="/">주차대행 비교·예약</a>

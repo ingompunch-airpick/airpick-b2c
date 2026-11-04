@@ -4,6 +4,7 @@ import type { Company } from '../types';
 import { deriveParkingAddressesFromCompanyData } from '../utils/companyParking';
 import { parseAllParkingDistancesFromFirestore } from '../utils/parkingDistances';
 import { parseInsuranceFromFirestore } from '../utils/insurance';
+import { parseParkingProducts } from '../utils/parkingProducts';
 import { mergePartnerPricing } from '../utils/pricing';
 import { parseVerificationDocuments } from '../utils/verificationDocuments';
 import {
@@ -85,6 +86,9 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     t2Surcharge: Number(data.t2Surcharge) || undefined,
     valetFeeT1: typeof data.valetFeeT1 === 'number' ? data.valetFeeT1 : undefined,
     valetFeeT2: typeof data.valetFeeT2 === 'number' ? data.valetFeeT2 : undefined,
+    dropFeeT1: typeof data.dropFeeT1 === 'number' ? data.dropFeeT1 : undefined,
+    dropFeeT2: typeof data.dropFeeT2 === 'number' ? data.dropFeeT2 : undefined,
+    parkingProducts: parseParkingProducts(data.parkingProducts),
     peakStartTime: data.peakStartTime ? String(data.peakStartTime) : undefined,
     peakEndTime: data.peakEndTime ? String(data.peakEndTime) : undefined,
     peakSurcharge: Number(data.peakSurcharge) || undefined,
@@ -93,6 +97,7 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     sharesPhotos: data.sharesPhotos !== false,
     sharesInsurance: data.sharesInsurance !== false,
     isAirpickPartner: data.isAirpickPartner !== false,
+    listingApproved: data.listingApproved !== false,
     externalBookingUrl: data.externalBookingUrl ? String(data.externalBookingUrl) : undefined,
     pickupLocation: parseCompanyPickupLocation(data),
     usageSteps: (() => {

@@ -13,6 +13,8 @@ const IGNORED = [
   /chrome-extension:\/\//i,
   /safari-extension:\/\//i,
   /^Script error\.?$/i,
+  /serviceWorker\.register/i,
+  /registerSW\.js/i,
 ];
 
 export function setErrorReportContext(next: { companyId?: string; screen?: string }): void {
