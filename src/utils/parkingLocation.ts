@@ -78,6 +78,19 @@ export function getCompanyParkingLot(
 const PLACEHOLDER_PARKING_IMAGE =
   'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80';
 
+export function isPlaceholderParkingImage(url?: string): boolean {
+  const src = url?.trim() ?? '';
+  return !src || src.includes('photo-1542282088-fe8426682b8f');
+}
+
+/** 목록·상세 썸네일: 선택한 실내/야외 롯 사진 → 갤러리. 플레이스홀더는 쓰지 않음 */
+export function companyCardPhotoUrl(
+  company: Company | undefined,
+  isIndoor: boolean
+): string | undefined {
+  return getCompanyParkingLot(company, isIndoor).photos?.[0];
+}
+
 /** B2B image_urls / image_url — 플레이스홀더 제외 */
 function resolveCompanyParkingGallery(company: Company | undefined): string[] | undefined {
   if (!company) return undefined;

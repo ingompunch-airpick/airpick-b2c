@@ -5,6 +5,7 @@ import type { Company } from '../types';
 import { cn } from '../utils/cn';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
+import { companyCardPhotoUrl } from '../utils/parkingLocation';
 import AffiliatePrice from './AffiliatePrice';
 import TrustBadges from './TrustBadges';
 
@@ -29,7 +30,10 @@ export default function CompanyCard({
   affiliateDiscountWon?: number;
 }) {
   const name = displayCompanyName(company.name);
-  const thumbSrc = companyThumbnailUrl(company.image_url, 128);
+  const thumbSrc = companyThumbnailUrl(
+    companyCardPhotoUrl(company, company.supports_indoor !== false),
+    128
+  );
 
   if (layout === 'grid') {
     return (

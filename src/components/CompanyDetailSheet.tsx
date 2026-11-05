@@ -17,6 +17,7 @@ import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 import { formatStayPhrase } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
 import { companyPhotoUrl, companyThumbnailUrl } from '../utils/imageUrl';
+import { companyCardPhotoUrl } from '../utils/parkingLocation';
 import {
   companySupportsIndoor,
   companySupportsOutdoor,
@@ -322,6 +323,7 @@ export default function CompanyDetailSheet({
   const transferTitle = meetHandoff ? '출국장에서 인계' : '단기주차장 입고';
   const keyTitle = meetHandoff ? '키를 맡깁니다' : '단기주차장에서 키를 맡깁니다';
   const lotLabel = parkingTypeLabel(search.isIndoor);
+  const thumbSrc = companyThumbnailUrl(companyCardPhotoUrl(company, search.isIndoor), 128);
   const stay = formatStayPhrase(
     getParkingDayCount(search.departureDate, search.arrivalDate)
   );
@@ -345,14 +347,16 @@ export default function CompanyDetailSheet({
       <div className="relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl">
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-sky-border/50 px-5 py-4">
           <div className="flex min-w-0 gap-3">
+            {thumbSrc ? (
             <img
-              src={companyThumbnailUrl(company.image_url, 128)}
+              src={thumbSrc}
               alt={name}
               width={64}
               height={64}
               className="h-16 w-16 shrink-0 rounded-2xl object-cover ring-2 ring-sky-tint"
               decoding="async"
             />
+            ) : null}
             <div className="min-w-0">
               <p className="text-xs font-bold text-brand">에어픽 입점 · 주차대행</p>
               <h2 className="text-lg font-bold text-ink">{name}</h2>

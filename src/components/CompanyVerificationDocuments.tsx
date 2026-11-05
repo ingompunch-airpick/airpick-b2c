@@ -1,6 +1,6 @@
 import { Building2, ExternalLink, FileText, ShieldCheck } from 'lucide-react';
 import type { Company } from '../types';
-import { CANONICAL_INSURANCE_PRODUCT_NAME, INSURANCE_DISCLAIMER } from '../utils/insurance';
+import { INSURANCE_DISCLAIMER } from '../utils/insurance';
 import { displayInsuranceLabel } from '../utils/trust';
 import {
   companyHasVerificationDocuments,
@@ -64,6 +64,7 @@ export default function CompanyVerificationDocuments({
   const businessUrl = company.verificationDocuments?.businessRegistrationUrl?.trim();
   const contractUrl = company.verificationDocuments?.parkingContractUrl?.trim();
   const insuranceLabel = displayInsuranceLabel(company);
+  const productName = company.insurance?.productName?.trim();
   const certificateUrl = company.insurance?.certificateUrl?.trim();
 
   return (
@@ -112,8 +113,10 @@ export default function CompanyVerificationDocuments({
       {hasInsuranceCertificate(company) ? (
         <p className="mt-2.5 rounded-lg bg-white/80 px-3 py-2 text-[10px] font-medium leading-relaxed text-muted ring-1 ring-sky-border/50">
           사고 발생 시{' '}
-          <span className="font-bold text-ink">{CANONICAL_INSURANCE_PRODUCT_NAME}</span> 보장 적용 ·{' '}
-          {INSURANCE_DISCLAIMER}
+          <span className="font-bold text-ink">
+            {productName || insuranceLabel || '가입 보험'}
+          </span>{' '}
+          보장 적용 · {INSURANCE_DISCLAIMER}
         </p>
       ) : null}
     </section>

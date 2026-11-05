@@ -8,6 +8,7 @@ import {
   KeyRound,
   PlaneTakeoff,
   SquareParking,
+  Shield,
   Star,
   Sun,
   Wallet,
@@ -31,8 +32,10 @@ import { buildPartnerPriceList, type PricedCompany } from '../utils/compareSort'
 import { formatStayPhrase, todayYmd } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
-import { getCompanyParkingLot } from '../utils/parkingLocation';
+import { companyCardPhotoUrl } from '../utils/parkingLocation';
 import { PARKING_LABEL_INDOOR, PARKING_LABEL_OUTDOOR } from '../utils/parkingType';
+import { displayInsuranceLabel } from '../utils/trust';
+import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { findParkingProduct, parkingProductFacts } from '../utils/parkingProducts';
 import { getParkingDayCount } from '../utils/pricing';
 import { fetchReservationById } from '../lib/reservations';
@@ -744,10 +747,7 @@ function PriceList({
           snapshot && snapshot.count > 0 && snapshot.averageRating != null && snapshot.averageRating > 0
             ? snapshot.averageRating
             : null;
-        const thumb = companyThumbnailUrl(
-          company.image_url || getCompanyParkingLot(company, isIndoor).photos?.[0],
-          128
-        );
+        const thumb = companyThumbnailUrl(companyCardPhotoUrl(company, isIndoor), 128);
         const meetHandoff = companyIsFaceHandoff(company, { isIndoor, terminal });
         const pin = pickupPin(terminal, meetHandoff ? 'depart' : 'short');
         const product = findParkingProduct(company, { isIndoor, terminal }, meetHandoff);
@@ -761,6 +761,8 @@ function PriceList({
               ? '키를 맡깁니다'
               : '단기주차장에서 키를 맡깁니다'
             : null);
+        const insuranceLabel =
+          shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : null;
         return (
           <article
             key={company.id}
@@ -837,6 +839,12 @@ function PriceList({
                 <li className="flex gap-2.5">
                   <EvCharger size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
                   <span className="text-[14px] font-semibold text-[#0f1a2e]">{facts.ev}</span>
+                </li>
+              ) : null}
+              {insuranceLabel ? (
+                <li className="flex gap-2.5">
+                  <Shield size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{insuranceLabel}</span>
                 </li>
               ) : null}
               <li className="flex gap-2.5">

@@ -53,9 +53,7 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
     rating: Number(data.rating) > 0 ? Number(data.rating) : 0,
     reviews_count: Number(data.reviews_count) > 0 ? Number(data.reviews_count) : 0,
     features: Array.isArray(data.features) ? (data.features as string[]) : [],
-    image_url:
-      primaryImage ||
-      'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80',
+    image_url: primaryImage,
     image_urls,
     terminals: Array.isArray(data.terminals) ? (data.terminals as string[]) : ['T1', 'T2'],
     phone: (() => {
