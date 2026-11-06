@@ -1,5 +1,7 @@
 import {
+  Building2,
   BusFront,
+  Car,
   Check,
   ChevronRight,
   Clock,
@@ -34,16 +36,20 @@ import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import { companyCardPhotoUrl } from '../utils/parkingLocation';
 import { PARKING_LABEL_INDOOR, PARKING_LABEL_OUTDOOR } from '../utils/parkingType';
-import { displayInsuranceLabel } from '../utils/trust';
+import { displayInsuranceLabel, getStatusLabel } from '../utils/trust';
 import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
-import { findParkingProduct, parkingProductFacts } from '../utils/parkingProducts';
+import {
+  findParkingProduct,
+  parkingProductFacts,
+  valetHandoffBadge,
+  valetHandoffTitle,
+} from '../utils/parkingProducts';
 import { getParkingDayCount } from '../utils/pricing';
 import { fetchReservationById } from '../lib/reservations';
 import {
   fetchReviewSnapshotsByCompanyIds,
   type CompanyReviewSnapshot,
 } from '../lib/reviews';
-import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
 import { useAffiliateOffer } from '../context/AffiliateContext';
 
 type HomeListSort = 'reviews' | 'price';
@@ -96,11 +102,16 @@ export default function HomePage({
   loading,
   onDetail,
   onBook,
+  lastReservationId,
+  onOpenReservations,
 }: {
   search: BookingSearch;
   onSearchChange: (next: BookingSearch) => void;
   companies: Company[];
   loading: boolean;
+  /** 이번 방문에서 막 접수한 예약. 비회원은 창을 닫기 전까지만 있다. */
+  lastReservationId: string | null;
+  onOpenReservations: () => void;
   /** 자세히 — 업체 상세 시트 */
   onDetail: (company: Company, price: number) => void;
   /** 예약하기 — 바로 예약 모달 */
@@ -118,6 +129,7 @@ export default function HomePage({
   const [authBusy, setAuthBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [listSort, setListSort] = useState<HomeListSort>('reviews');
+  const [justBooked, setJustBooked] = useState<Reservation | null | undefined>(null);
   const today = todayYmd();
 
   useEffect(() => {
@@ -165,6 +177,28 @@ export default function HomePage({
       .sort((a, b) => `${a.departureDate} ${a.departureTime}`.localeCompare(`${b.departureDate} ${b.departureTime}`));
     return rows[0] ?? null;
   }, [memberReservations]);
+
+  useEffect(() => {
+    if (!lastReservationId) {
+      setJustBooked(null);
+      return;
+    }
+    let cancelled = false;
+    setJustBooked(undefined);
+    void fetchReservationById(lastReservationId).then((row) => {
+      if (!cancelled) setJustBooked(row);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [lastReservationId]);
+
+  const noticeReservation =
+    justBooked && ACTIVE_STATUSES.has(justBooked.status)
+      ? justBooked
+      : justBooked === undefined
+        ? null
+        : upcoming;
 
   const latestUsed = usedReservations[0] ?? null;
   const pastMatches = useMemo(() => {
@@ -268,119 +302,139 @@ export default function HomePage({
   };
 
   return (
-    <div className="bg-white pb-[calc(8rem+env(safe-area-inset-bottom))]">
-      <div className="mx-auto max-w-lg space-y-5 px-4 pt-2 md:max-w-3xl md:pt-8">
-        <section className="space-y-2">
-          <SiteNoticeBanner />
-          {upcoming ? (
-            <p className="text-[14px] font-semibold text-[#0f1a2e]">
-              {upcoming.departureDate.slice(5).replace('-', '.')} {displayCompanyName(upcoming.companyName)} 예약이
-              있습니다.
-            </p>
-          ) : null}
-          <div>
-            <ChoiceLabel>터미널</ChoiceLabel>
-            <div className="grid grid-cols-2 gap-2">
-              {(['T1', 'T2'] as const).map((terminal) => {
-                const on = search.terminal === terminal;
-                const blue = terminal === 'T1';
-                return (
-                  <ChoiceRow
+    <div className="bg-[#f4f6f8] pb-[calc(8rem+env(safe-area-inset-bottom))]">
+      <section className="relative">
+        <div className="relative h-[200px] overflow-hidden md:h-[260px]">
+          <img
+            src="/brand/home-why-airport-handoff.jpg"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
+          />
+          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#0f1a2e] to-transparent" />
+        </div>
+
+        <div className="relative z-10 mx-auto -mt-14 max-w-lg px-4 md:max-w-3xl">
+          <div className="space-y-4 rounded-[28px] bg-white p-4 shadow-[0_12px_40px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/6 md:p-5">
+            <div>
+              <ChoiceLabel>터미널 선택</ChoiceLabel>
+              <div className="grid grid-cols-2 gap-2">
+                {(['T1', 'T2'] as const).map((terminal) => (
+                  <SelectPill
                     key={terminal}
-                    selected={on}
-                    label={blue ? '제1터미널' : '제2터미널'}
-                    art={blue ? '/pickup/terminal-t1.jpg?v=3' : '/pickup/terminal-t2.jpg?v=3'}
+                    selected={search.terminal === terminal}
+                    label={terminal === 'T1' ? '제1터미널' : '제2터미널'}
+                    icon={Building2}
                     onClick={() => setTerminal(terminal)}
                   />
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <ChoiceLabel>주차장</ChoiceLabel>
-            <div className="grid grid-cols-2 gap-2">
-              {(
-                [
-                  { indoor: true, label: PARKING_LABEL_INDOOR, art: '/pickup/indoor.jpg?v=1' },
-                  { indoor: false, label: PARKING_LABEL_OUTDOOR, art: '/pickup/outdoor.jpg?v=2' },
-                ] as const
-              ).map((lot) => (
-                <ChoiceRow
-                  key={lot.label}
-                  selected={search.isIndoor === lot.indoor}
-                  label={lot.label}
-                  art={lot.art}
-                  onClick={() => setLot(lot.indoor)}
+            <div>
+              <ChoiceLabel>주차장 선택</ChoiceLabel>
+              <div className="grid grid-cols-2 gap-2">
+                <SelectPill
+                  selected={search.isIndoor}
+                  label={PARKING_LABEL_INDOOR}
+                  icon={Warehouse}
+                  onClick={() => setLot(true)}
                 />
-              ))}
+                <SelectPill
+                  selected={!search.isIndoor}
+                  label={PARKING_LABEL_OUTDOOR}
+                  icon={Car}
+                  onClick={() => setLot(false)}
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <ChoiceLabel>날짜</ChoiceLabel>
-            <div className="grid grid-cols-2 gap-2">
-              <DateField
-                tone="premium"
-                size="large"
-                label="맡기는 날"
-                value={search.departureDate}
-                min={today}
-                onChange={(departureDate) => {
-                  const next = { ...search, departureDate };
-                  if (next.arrivalDate < departureDate) next.arrivalDate = departureDate;
-                  onSearchChange(next);
-                }}
-              />
-              <TimeField
-                tone="premium"
-                size="large"
-                label="맡기는 시간"
-                value={search.departureTime}
-                onChange={(departureTime) => onSearchChange({ ...search, departureTime })}
-              />
-              <DateField
-                tone="premium"
-                size="large"
-                label="찾는 날"
-                value={search.arrivalDate}
-                min={search.departureDate}
-                onChange={(arrivalDate) => onSearchChange({ ...search, arrivalDate })}
-              />
-              <TimeField
-                tone="premium"
-                size="large"
-                label="찾는 시간"
-                value={search.arrivalTime}
-                onChange={(arrivalTime) => onSearchChange({ ...search, arrivalTime })}
-              />
-              <p className="col-span-2 flex justify-start pt-0 md:pt-1">
-                {!loading && priced.length > 0 ? (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      companySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                    }
-                    className="inline-flex items-center gap-0.5 rounded-full bg-gold/10 py-1 pl-3 pr-2 text-[13px] font-bold text-gold"
-                  >
-                    총 {stayLabel(search.departureDate, search.arrivalDate)} · {priced.length}곳 보기
-                    <ChevronRight size={14} strokeWidth={2.5} aria-hidden />
-                  </button>
-                ) : (
-                  <span className="rounded-full bg-gold/10 px-3 py-1 text-[13px] font-bold text-gold">
-                    총 {stayLabel(search.departureDate, search.arrivalDate)}
-                  </span>
-                )}
-              </p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <ChoiceLabel>날짜</ChoiceLabel>
+                <div className="space-y-2">
+                  <DateField
+                    tone="premium"
+                    size="large"
+                    label="맡기는 날"
+                    value={search.departureDate}
+                    min={today}
+                    onChange={(departureDate) => {
+                      const next = { ...search, departureDate };
+                      if (next.arrivalDate < departureDate) next.arrivalDate = departureDate;
+                      onSearchChange(next);
+                    }}
+                  />
+                  <DateField
+                    tone="premium"
+                    size="large"
+                    label="찾는 날"
+                    value={search.arrivalDate}
+                    min={search.departureDate}
+                    onChange={(arrivalDate) => onSearchChange({ ...search, arrivalDate })}
+                  />
+                </div>
+              </div>
+              <div>
+                <ChoiceLabel>시간</ChoiceLabel>
+                <div className="space-y-2">
+                  <TimeField
+                    tone="premium"
+                    size="large"
+                    label="맡기는 시간"
+                    value={search.departureTime}
+                    onChange={(departureTime) => onSearchChange({ ...search, departureTime })}
+                  />
+                  <TimeField
+                    tone="premium"
+                    size="large"
+                    label="찾는 시간"
+                    value={search.arrivalTime}
+                    onChange={(arrivalTime) => onSearchChange({ ...search, arrivalTime })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              {!loading && priced.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    companySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }
+                  className="inline-flex items-center gap-0.5 rounded-full bg-gold/15 py-1.5 pl-3 pr-2 text-[13px] font-bold text-gold"
+                >
+                  총 {stayLabel(search.departureDate, search.arrivalDate)} · {priced.length}곳 보기
+                  <ChevronRight size={14} strokeWidth={2.5} aria-hidden />
+                </button>
+              ) : (
+                <span className="rounded-full bg-gold/15 px-3 py-1.5 text-[13px] font-bold text-gold">
+                  총 {stayLabel(search.departureDate, search.arrivalDate)}
+                </span>
+              )}
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       <section
         ref={companySectionRef}
-        className="mx-auto mt-8 max-w-lg md:max-w-3xl scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4"
+        className="mx-auto mt-8 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4 md:max-w-3xl"
       >
+        <SiteNoticeBanner />
+        {noticeReservation ? (
+          <button
+            type="button"
+            onClick={onOpenReservations}
+            className="mb-4 flex w-full items-center justify-between gap-3 text-left text-[14px] font-semibold text-[#0f1a2e]"
+          >
+            <span>
+              {noticeReservation.departureDate.slice(5).replace('-', '.')}{' '}
+              {displayCompanyName(noticeReservation.companyName)} · {getStatusLabel(noticeReservation.status)}
+            </span>
+            <ChevronRight size={16} className="shrink-0 text-[#0f1a2e]/45" />
+          </button>
+        ) : null}
         {memberOn ? null : (
           <div className="mb-5">
             <button
@@ -418,9 +472,6 @@ export default function HomePage({
         ) : (
           <>
             <ChoiceLabel>{`이용 가능 업체 ${priced.length}곳`}</ChoiceLabel>
-            <p className="mb-3 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-[13px] font-semibold leading-snug text-emerald-900">
-              입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
-            </p>
             {priced.length > 1 ? (
               <div className="mb-3 flex gap-2">
                 {(
@@ -575,56 +626,44 @@ function stayLabel(start: string, end: string): string {
   return formatStayPhrase(getParkingDayCount(start, end));
 }
 
-function ChoiceLabel({ children }: { children: string }) {
-  return <p className="mb-1.5 text-[16px] font-bold text-[#0f1a2e]">{children}</p>;
-}
-
-function choiceCard(selected: boolean) {
-  return cn(
-    'relative flex h-[58px] w-full min-w-0 items-center gap-2 rounded-2xl pl-3 pr-8 text-left transition-colors duration-200',
-    selected ? 'bg-[#F3E6C4]' : 'bg-[#f4f5f7]'
-  );
-}
-
-function ChoiceCheck() {
+function ChoiceLabel({ children, className }: { children: string; className?: string }) {
   return (
-    <span className="pointer-events-none absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[#0f1a2e]">
-      <Check size={12} strokeWidth={3} />
-    </span>
+    <p className={cn('mb-2 flex items-center gap-2 text-[15px] font-bold text-[#0f1a2e]', className)}>
+      <span className="h-4 w-1 shrink-0 rounded-full bg-gold" aria-hidden />
+      {children}
+    </p>
   );
 }
 
-function ClayIcon({ src }: { src: string }) {
-  return (
-    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1.5">
-      <img src={src} alt="" className="h-full w-full object-contain" />
-    </span>
-  );
-}
-
-function ChoiceRow({
+function SelectPill({
   selected,
-  disabled = false,
   label,
-  art,
+  icon: Icon,
   onClick,
 }: {
   selected: boolean;
-  disabled?: boolean;
   label: string;
-  art: string;
+  icon: LucideIcon;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
-      disabled={disabled}
       onClick={onClick}
-      className={cn(choiceCard(selected && !disabled), disabled && 'cursor-not-allowed opacity-40')}
+      className={cn(
+        'flex h-14 w-full items-center gap-2 rounded-2xl px-3.5 text-left transition-colors',
+        selected ? 'bg-[#0f1a2e] text-white' : 'bg-[#f4f5f7] text-[#0f1a2e]'
+      )}
     >
-      <span className="min-w-0 flex-1 whitespace-nowrap text-[15px] font-semibold text-[#0f1a2e]">{label}</span>
-      <ClayIcon src={art} />
-      {selected && !disabled ? <ChoiceCheck /> : null}
+      {selected ? <Icon size={18} strokeWidth={2} className="shrink-0" aria-hidden /> : null}
+      <span className="min-w-0 flex-1 truncate text-[15px] font-bold">{label}</span>
+      {selected ? (
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-[#0f1a2e]">
+          <Check size={14} strokeWidth={3} aria-hidden />
+        </span>
+      ) : (
+        <Icon size={18} strokeWidth={2} className="shrink-0 text-[#0f1a2e]/55" aria-hidden />
+      )}
     </button>
   );
 }
@@ -671,8 +710,8 @@ function transferRow(type: ParkingProductType, meet: boolean): { Icon: LucideIco
   if (type === 'shuttle') return { Icon: BusFront, title: '셔틀로 이동' };
   if (type === 'walk') return { Icon: Footprints, title: '터미널까지 도보' };
   return meet
-    ? { Icon: PlaneTakeoff, title: '출국장에서 인계' }
-    : { Icon: SquareParking, title: '단기주차장에서 인계' };
+    ? { Icon: PlaneTakeoff, title: valetHandoffTitle(true) }
+    : { Icon: SquareParking, title: valetHandoffTitle(false) };
 }
 
 /** 손바닥 위 키 — lucide hand-coins 손 모양 + 키 */
@@ -763,6 +802,7 @@ function PriceList({
             : null);
         const insuranceLabel =
           shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : null;
+        const handoffBadge = valetHandoffBadge(meetHandoff);
         return (
           <article
             key={company.id}
@@ -772,6 +812,17 @@ function PriceList({
             )}
           >
             <div className="flex items-start gap-3">
+              {thumb ? (
+                <img
+                  src={thumb}
+                  alt=""
+                  width={72}
+                  height={72}
+                  className="h-[72px] w-[72px] shrink-0 rounded-2xl object-cover ring-1 ring-[#0f1a2e]/10"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : null}
               <div className="min-w-0 flex-1">
                 <p className="text-[16px] font-bold leading-snug text-[#0f1a2e]">
                   {displayCompanyName(company.name)}
@@ -784,6 +835,16 @@ function PriceList({
                   </p>
                 ) : null}
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  <span
+                    className={cn(
+                      'rounded-full px-2.5 py-0.5 text-[11px] font-bold',
+                      meetHandoff
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-amber-100 text-amber-800'
+                    )}
+                  >
+                    {handoffBadge}
+                  </span>
                   {marks[company.id] ? (
                     <span className="rounded-full bg-[#F3E6C4] px-2 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
                       {marks[company.id]}
@@ -796,17 +857,6 @@ function PriceList({
                   ) : null}
                 </div>
               </div>
-              {thumb ? (
-                <img
-                  src={thumb}
-                  alt=""
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 shrink-0 rounded-xl object-cover ring-1 ring-[#0f1a2e]/10"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : null}
             </div>
 
             <ul className="mb-3 mt-3 space-y-2.5">

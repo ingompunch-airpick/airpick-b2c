@@ -38,7 +38,7 @@ import { saveRecentReservation } from '../utils/recentReservation';
 import { formatTerminalSummary } from '../utils/terminalLabels';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
 import { companyValetFee } from '../utils/parkingType';
-import { companyDropFee, findParkingProduct } from '../utils/parkingProducts';
+import { companyDropFee, findParkingProduct, valetHandoffTitle } from '../utils/parkingProducts';
 import { maxPointSpend, POINT_STEP_WON, subscribePointBalance } from '../lib/points';
 import { handoffPlaceLine, pickupPin } from '../data/pickupPins';
 import { itchaHandoffPlace } from '../data/itchaPickup';
@@ -129,6 +129,7 @@ export default function BookingModal({
   onClose,
   onDismiss,
   onSuccess,
+  onBooked,
 }: {
   company: Company;
   search: BookingSearch;
@@ -136,6 +137,8 @@ export default function BookingModal({
   onClose: () => void;
   onDismiss: () => void;
   onSuccess: (reservationId: string) => void;
+  /** 접수가 저장된 순간. 닫기를 눌러도 홈에서 이 예약을 보여 준다. */
+  onBooked?: (reservationId: string) => void;
 }) {
   const [search, setSearch] = useState<BookingSearch>(() => {
     const base = draftFor(company.id)?.search ?? initialSearch;
@@ -173,11 +176,11 @@ export default function BookingModal({
   const [pendingProvider, setPendingProvider] = useState<SocialProviderId | null>(null);
   const [pendingUid, setPendingUid] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
-  /** Parkos형: 예약 완료로 약관 동의. 마케팅만 수신거부 체크 */
+  /** 마케팅은 빈 칸이 기본. 체크하면 소식·할인 안내를 받는다. */
   const [marketingOptIn, setMarketingOptIn] = useState(() => {
     const draft = draftFor(company.id);
     if (draft && typeof draft.marketingOptIn === 'boolean') return draft.marketingOptIn;
-    return false;
+    return readMember()?.marketingOptIn === true;
   });
   const [confirming, setConfirming] = useState(() => draftFor(company.id)?.confirmed === true);
   const [guestMode, setGuestMode] = useState(false);
@@ -534,6 +537,7 @@ export default function BookingModal({
       setCompletedAsMember(asMember);
       setForm((prev) => ({ ...prev, reservationPassword: password }));
       setCompletedId(id);
+      onBooked?.(id);
     } catch (err) {
       console.error(err);
       reportError('error', err, '예약 저장');
@@ -597,7 +601,7 @@ export default function BookingModal({
               <dd className="text-sm font-bold text-ink">{terminalSummary}</dd>
             </div>
             <div className="flex items-start justify-between gap-4">
-              <dt className="shrink-0 text-[13px] font-semibold text-muted">픽업지</dt>
+              <dt className="shrink-0 text-[13px] font-semibold text-muted">인계</dt>
               <dd className="text-right text-sm font-bold text-ink">
                 {handoffPlaceLine(
                   search.faceToFace === true,
@@ -612,9 +616,9 @@ export default function BookingModal({
             </div>
             {faceToFaceApplied && (
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-[13px] font-semibold text-muted">대면 입고</dt>
+                <dt className="text-[13px] font-semibold text-muted">Meet & Greet</dt>
                 <dd className="text-sm font-bold text-brand">
-                  요청{valetFee > 0 ? ` · +${valetFee.toLocaleString()}원` : ' · 무료'}
+                  +{valetFee.toLocaleString()}원
                 </dd>
               </div>
             )}
@@ -864,7 +868,7 @@ export default function BookingModal({
       ? 'depart'
       : 'short';
   const pin = pickupPin(search.terminal, pickupId);
-  const transferTitle = pin.meetHandoff ? '출국장에서 인계' : '단기주차장 입고';
+  const transferTitle = valetHandoffTitle(pin.meetHandoff);
   const companyName = displayCompanyName(company.name);
   const scheduleLine = `${formatDateDisplay(search.departureDate)} ${search.departureTime} — ${formatDateDisplay(search.arrivalDate)} ${search.arrivalTime}`;
   const lotLabel = parkingTypeLabel(search.isIndoor);
@@ -992,6 +996,12 @@ export default function BookingModal({
     </div>
   );
 
+  const cancelNote = (
+    <p className="text-center text-[13px] font-semibold text-emerald-700">
+      입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
+    </p>
+  );
+
   const submitBar = (compact: boolean) => (
     <div
       className={cn(
@@ -1009,14 +1019,6 @@ export default function BookingModal({
           )}
         >
           {payableTotal.toLocaleString()}원
-        </p>
-        <p
-          className={cn(
-            'mt-1 truncate text-[11px] font-medium tabular-nums',
-            compact ? 'text-muted' : 'text-white/75'
-          )}
-        >
-          {scheduleLine}
         </p>
       </div>
       <button
@@ -1058,10 +1060,6 @@ export default function BookingModal({
             onSubmit={openConfirm}
             className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-4 md:px-0"
           >
-            <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2.5 text-[13px] font-semibold leading-snug text-emerald-900">
-              입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소할 수 있습니다.
-            </p>
-
             <div className="md:hidden">{summaryCard}</div>
 
             <section className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/8">
@@ -1215,22 +1213,21 @@ export default function BookingModal({
                 providerName={companyName}
               />
             </div>
-            <p className="text-center text-[13px] font-semibold text-emerald-700">
-              입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
-            </p>
             {error ? (
               <p className="text-center text-[13px] font-semibold text-rose-500">{error}</p>
             ) : null}
-
-            <div className="hidden md:block">{submitBar(false)}</div>
           </form>
 
-          <div className="shrink-0 md:hidden">{submitBar(true)}</div>
+          <div className="shrink-0 bg-white md:hidden">
+            <div className="px-4 pt-2">{cancelNote}</div>
+            {submitBar(true)}
+          </div>
         </div>
 
         <aside className="hidden w-[20rem] shrink-0 flex-col md:flex lg:w-[22rem]">
           <div className="sticky top-0 space-y-3 pt-10">
             {summaryCard}
+            {cancelNote}
             <div className="overflow-hidden rounded-2xl ring-1 ring-[#0f1a2e]/10">
               {submitBar(false)}
             </div>

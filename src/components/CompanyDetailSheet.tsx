@@ -23,6 +23,7 @@ import {
   companySupportsOutdoor,
   parkingTypeLabel,
 } from '../utils/parkingType';
+import { valetHandoffBadge, valetHandoffTitle } from '../utils/parkingProducts';
 import { getParkingDayCount } from '../utils/pricing';
 import { resolveCompanyUsageSteps } from '../utils/companyUsageGuide';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
@@ -320,7 +321,7 @@ export default function CompanyDetailSheet({
       : 'short';
   const pin = pickupPin(search.terminal, pickupId);
   const meetHandoff = pin.meetHandoff;
-  const transferTitle = meetHandoff ? '출국장에서 인계' : '단기주차장 입고';
+  const transferTitle = valetHandoffTitle(meetHandoff);
   const keyTitle = meetHandoff ? '키를 맡깁니다' : '단기주차장에서 키를 맡깁니다';
   const lotLabel = parkingTypeLabel(search.isIndoor);
   const thumbSrc = companyThumbnailUrl(companyCardPhotoUrl(company, search.isIndoor), 128);
@@ -382,7 +383,19 @@ export default function CompanyDetailSheet({
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
           <section className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
-            <p className="text-xs font-bold text-brand">이 상품</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-bold text-brand">이 상품</p>
+              <span
+                className={cn(
+                  'rounded-full px-2.5 py-0.5 text-[11px] font-bold',
+                  meetHandoff
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-amber-100 text-amber-800'
+                )}
+              >
+                {valetHandoffBadge(meetHandoff)}
+              </span>
+            </div>
             <ul className="mt-3 space-y-2.5">
               <FactIconRow icon={Car} title={transferTitle} detail={pin.detail} />
               <FactIconRow icon={KeyRound} title={keyTitle} />
@@ -435,7 +448,7 @@ export default function CompanyDetailSheet({
             {company.pickupLocation?.trim() &&
             !(company.usageSteps && company.usageSteps.length > 0) ? (
               <p className="text-[11px] font-medium leading-relaxed text-muted">
-                기본 픽업지 · {company.pickupLocation.trim()}
+                인계 · {company.pickupLocation.trim()}
               </p>
             ) : null}
           </section>

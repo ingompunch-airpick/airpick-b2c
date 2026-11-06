@@ -106,12 +106,14 @@ export function pickupNaverMapUrl(input: {
   return buildNaverMapCoordUrl(pin.lat, pin.lng);
 }
 
-/** 접수 완료·내 예약에 보여주는 차 맡기는 곳. 장소가 있으면 그 문장, 없으면 방식만. */
+/** 접수 완료·내 예약에 보여주는 차 맡기는 곳. 홈 카드와 같은 말. 장소가 있으면 뒤에 붙인다. */
 export function handoffPlaceLine(
   faceToFace: boolean,
   place?: string
 ): string {
   const specific = place?.trim();
-  if (!faceToFace) return specific ? `비대면 · ${specific}` : '비대면 · 단기주차장';
-  return specific ? `대면 · ${specific}` : '대면 · 출국장';
+  const method = faceToFace
+    ? 'Meet & Greet · 출국장에서 인계'
+    : 'Drop-off · 단기주차장 입고';
+  return specific ? `${method} · ${specific}` : method;
 }

@@ -358,6 +358,8 @@ export default function App() {
           onSearchChange={setSearch}
           companies={companies}
           loading={loading}
+          lastReservationId={lastReservationId}
+          onOpenReservations={() => setTab('my')}
           onDetail={(company, price) => {
             setPartnerDetail({ company, price });
           }}
@@ -474,6 +476,7 @@ export default function App() {
             search={search}
             price={bookingTarget.price}
             onClose={() => setBookingTarget(null)}
+            onBooked={(id) => setLastReservationId(id)}
             onDismiss={() => {
               setBookingTarget(null);
               setSearch(defaultBookingSearch());

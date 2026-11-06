@@ -27,6 +27,12 @@
       "note": "공항주차 방식 비교 (주차대행·사설주차장·셔틀)"
     },
     {
+      "path": "/guides/meet-and-greet/",
+      "changefreq": "weekly",
+      "priority": 0.85,
+      "note": "주차대행 Meet & Greet vs Drop-off"
+    },
+    {
       "path": "/guides/parking-compare/",
       "changefreq": "weekly",
       "priority": 0.85,

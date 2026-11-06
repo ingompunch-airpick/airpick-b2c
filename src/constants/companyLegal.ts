@@ -76,7 +76,7 @@ export const AIRPICK_SERVICES = [
   {
     id: 'parking',
     title: '주차대행 비교',
-    body: '터미널, 실내·야외, 픽업지, 날짜를 고르면 이용 가능 업체와 요금이 나옵니다.',
+    body: '터미널, 실내·야외, 날짜를 고르면 이용 가능 업체와 요금이 나옵니다.',
   },
   {
     id: 'esim',

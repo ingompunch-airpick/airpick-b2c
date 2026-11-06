@@ -94,8 +94,8 @@ function ConsentSheet({
 type SheetKey = 'platform' | 'partner' | 'privacy' | 'thirdParty';
 
 /**
- * Parkos형 — 필수 약관 체크 없음. 예약 완료로 동의.
- * 마케팅만 수신 거부 체크(옵트아웃).
+ * 필수 약관은 예약 완료로 동의.
+ * 마케팅은 빈 칸이며, 체크하면 소식·할인 안내를 받는다.
  */
 export default function BookingConsent({
   marketingOptIn,
@@ -116,12 +116,12 @@ export default function BookingConsent({
       <label className="flex cursor-pointer items-start gap-2.5">
         <input
           type="checkbox"
-          checked={!marketingOptIn}
-          onChange={(e) => onMarketingOptInChange(!e.target.checked)}
+          checked={marketingOptIn}
+          onChange={(e) => onMarketingOptInChange(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
         />
         <span className="text-[13px] font-medium leading-relaxed text-ink">
-          에어픽의 소식·할인 안내를 받지 않겠습니다.{' '}
+          에어픽의 소식·할인 안내를 받겠습니다.{' '}
           <button
             type="button"
             onClick={(e) => {

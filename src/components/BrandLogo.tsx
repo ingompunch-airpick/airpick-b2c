@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { BRAND_INTRO } from '../constants/marketing';
 import { cn } from '../utils/cn';
 
 /** 캐시 무효화 */
@@ -36,7 +35,7 @@ function BrandLogoLink({
     <a
       href="/"
       className={cn('flex items-center', className)}
-      aria-label="에어픽 홈"
+      aria-label="에어픽 공항주차"
       onClick={(e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
         e.preventDefault();
@@ -53,27 +52,21 @@ function BrandLogoLink({
 /**
  * light / color / white: 골드 마크 + 네이비 AIRPICK
  * premium / gold: 골드 마크 + 흰 AIRPICK (네이비 헤더)
- * 마크만 은색 → 금색 → 은색으로 바뀐다.
  */
 export default function BrandLogo({ variant = 'light' }: { variant?: BrandLogoVariant }) {
   const darkWordmark = variant === 'premium' || variant === 'gold';
   return (
     <BrandLogoLink className="gap-2.5 md:gap-3">
       <span className="brand-mark-stage">
-        <span className="brand-mark">
-          <BrandMark />
-        </span>
-        <span className="brand-mark brand-mark-silver" aria-hidden>
-          <BrandMark />
-        </span>
+        <BrandMark />
       </span>
       <span
         className={cn(
-          'select-none text-[1.15rem] font-bold tracking-[0.08em] md:text-[1.25rem]',
+          'select-none text-[1.02rem] font-bold tracking-normal md:text-[1.15rem]',
           darkWordmark ? 'text-white' : 'text-[#0f1a2e]'
         )}
       >
-        {BRAND_INTRO.brand}
+        AIRPICK 공항주차
       </span>
     </BrandLogoLink>
   );

@@ -60,7 +60,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         question: '에어픽에서 주차대행은 어떻게 예약하나요?',
         shortAnswer: SHORT_ANSWERS.bookHow,
         answer:
-          '홈에서 터미널, 실내·야외, 픽업지, 날짜를 고른 뒤 업체를 비교하고 접수합니다. 비회원은 조회·취소에 쓸 비밀번호 4자리를 정하고, 결제는 현장 결제입니다.',
+          '홈에서 터미널, 실내·야외, 날짜를 고른 뒤 업체를 비교하고 접수합니다. 비회원은 조회·취소에 쓸 비밀번호 4자리를 정하고, 결제는 현장 결제입니다.',
       },
       {
         id: 'pickup',

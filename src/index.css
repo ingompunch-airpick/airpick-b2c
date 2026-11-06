@@ -112,20 +112,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
-  .brand-mark-stage,
-  .brand-mark-stage * {
-    animation: none !important;
-  }
-
-  .brand-mark-silver {
-    opacity: 0 !important;
-  }
 }
 
-/** 헤더 캐리어. 자리는 고정이고, 은색과 금색만 오간다 */
+/** 헤더 황금 캐리어 */
 .brand-mark-stage {
-  position: relative;
   display: inline-flex;
   height: 2.25rem;
   width: 2.25rem;
@@ -141,32 +131,10 @@
   }
 }
 
-.brand-mark {
+.brand-mark-stage img {
   display: block;
   height: 100%;
   width: 100%;
-}
-
-.brand-mark-silver {
-  position: absolute;
-  inset: 0;
-  filter: grayscale(1) brightness(1.16) contrast(1.24) sepia(0.28) hue-rotate(188deg) saturate(0.42);
-  animation: brand-metal 7.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes brand-metal {
-  0%,
-  28% {
-    opacity: 1;
-  }
-  50%,
-  72% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 
 @media print {

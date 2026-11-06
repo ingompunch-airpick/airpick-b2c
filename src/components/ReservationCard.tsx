@@ -39,7 +39,7 @@ function PickupPlaceLink({
   const href = pickupNaverMapUrl({ faceToFace, terminal, place });
   return (
     <p className="mt-1 text-sm font-semibold leading-snug text-ink">
-      픽업지{' '}
+      인계{' '}
       {href ? (
         <a
           href={href}
@@ -73,13 +73,17 @@ function StatusTimeline({ status }: { status: string }) {
               <div
                 className={cn(
                   'h-2.5 w-2.5 rounded-full',
-                  i <= step ? 'bg-[#0f1a2e]' : 'bg-[#0f1a2e]/[0.06] ring-2 ring-[#0f1a2e]/10'
+                  i < step
+                    ? 'bg-[#0f1a2e]'
+                    : i === step
+                      ? 'bg-white ring-2 ring-[#0f1a2e]'
+                      : 'bg-[#0f1a2e]/[0.06] ring-2 ring-[#0f1a2e]/10'
                 )}
               />
               <span
                 className={cn(
                   'text-[9px] font-semibold',
-                  i <= step ? 'text-[#0f1a2e]' : 'text-muted-light'
+                  i < step ? 'text-[#0f1a2e]' : i === step ? 'font-bold text-[#0f1a2e]' : 'text-muted-light'
                 )}
               >
                 {label}

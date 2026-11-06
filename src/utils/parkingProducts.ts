@@ -90,6 +90,15 @@ export function findParkingProduct(
   );
 }
 
+/** 손님 화면 한국어. 영어는 뱃지(`valetHandoffBadge`)만 */
+export function valetHandoffTitle(meet: boolean): string {
+  return meet ? '출국장에서 인계' : '단기주차장 입고';
+}
+
+export function valetHandoffBadge(meet: boolean): 'Meet & Greet' | 'Drop-off' {
+  return meet ? 'Meet & Greet' : 'Drop-off';
+}
+
 /** 비대면 입고 추가요금 — 필드 없음=0원 */
 export function companyDropFee(company: Company, terminal: Terminal): number {
   const fee = terminal === 'T2' ? company.dropFeeT2 : company.dropFeeT1;
