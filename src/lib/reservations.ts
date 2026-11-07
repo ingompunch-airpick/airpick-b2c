@@ -67,6 +67,14 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     departureTerminal: String(data.departureTerminal || 'T1'),
     arrivalTerminal: data.arrivalTerminal ? String(data.arrivalTerminal) : undefined,
     totalPrice: Number(data.totalPrice) || 0,
+    listPrice:
+      typeof data.listPrice === 'number' && data.listPrice > 0
+        ? Math.round(data.listPrice)
+        : undefined,
+    signupCouponWon:
+      typeof data.signupCouponWon === 'number' && data.signupCouponWon > 0
+        ? Math.round(data.signupCouponWon)
+        : undefined,
     pointSpentWon: Math.max(0, Math.floor(Number(data.pointSpentWon) || 0)) || undefined,
     pointSpendSettled: data.pointSpendSettled === true ? true : undefined,
     status: String(data.status || 'pending'),
@@ -259,7 +267,9 @@ export async function submitReservation(
   /** 포인트 적용 전 금액에서 뺄 포인트. 서버가 잔액을 확인한 뒤 totalPrice 에서 뺀다. */
   pointSpendWon?: number,
   /** 손님이 고른 주차 상품. 비대면 추가요금이 있으면 같이 남긴다 */
-  parkingProduct?: { id: string; dropFee: number }
+  parkingProduct?: { id: string; dropFee: number },
+  /** 가입 첫 예약 할인·정산용. listPrice=할인 전, signupCouponWon=뺀 금액 */
+  pricingMeta?: { listPrice: number; signupCouponWon?: number }
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
@@ -289,6 +299,13 @@ export async function submitReservation(
     arrivalTime: search.arrivalTime,
     arrivalTerminal: search.arrivalTerminal ?? search.terminal,
     totalPrice,
+    listPrice: Math.max(
+      Math.round(Number(pricingMeta?.listPrice) || 0),
+      Math.round(Number(totalPrice) || 0)
+    ),
+    ...(pricingMeta?.signupCouponWon && pricingMeta.signupCouponWon > 0
+      ? { signupCouponWon: Math.round(pricingMeta.signupCouponWon) }
+      : {}),
     ...(pointSpendWon && pointSpendWon >= 5000 ? { pointSpendWon } : {}),
     status: 'pending',
     createdAt: now,

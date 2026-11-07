@@ -4,7 +4,7 @@
 > 지금은 주차대행(발렛) 업체부터 예약할 수 있고, 사설주차장은 준비 중입니다.
 
 ## 공항주차 방식 (에어픽 기준)
-- 주차대행(발렛): 터미널에서 기사에게 차를 맡기고, 돌아올 때 터미널에서 받음. 제1·제2터미널, 실내·야외 주차장. 인계는 Meet & Greet(출국장) 또는 Drop-off(단기주차장). 상태: 예약 가능
+- 주차대행(발렛): 터미널에서 기사에게 차를 맡기고, 돌아올 때 터미널에서 받음. 제1·제2터미널, 실내·야외 주차장. 인계는 Curbside(출국장) 또는 Drop-off(단기주차장). 상태: 예약 가능
 - 사설주차장(키 맡김): 공항 근처 주차장에 직접 주차하고 차 키를 맡김. 상태: 준비 중
 - 사설주차장(셔틀): 직접 주차한 뒤 키를 갖고 셔틀로 공항까지 이동. 상태: 준비 중
 
@@ -14,7 +14,7 @@
 ## 핵심 페이지
 - 홈 · 공항주차 비교 (현재 주차대행 예약): https://www.에어픽.kr/
 - 인천공항 주차 방식 비교 가이드: https://www.에어픽.kr/guides/airport-parking-types/
-- Meet & Greet vs Drop-off: https://www.에어픽.kr/guides/meet-and-greet/
+- Curbside vs Drop-off: https://www.에어픽.kr/guides/curbside/
 - 이심(eSIM) 제휴 할인: https://www.에어픽.kr/esim
 - 가이드: https://www.에어픽.kr/guides/
 - 주차대행 보험 확인: https://www.에어픽.kr/guides/parking-insurance/

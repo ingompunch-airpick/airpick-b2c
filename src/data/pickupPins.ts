@@ -113,7 +113,7 @@ export function handoffPlaceLine(
 ): string {
   const specific = place?.trim();
   const method = faceToFace
-    ? 'Meet & Greet · 출국장에서 인계'
+    ? 'Curbside · 출국장에서 인계'
     : 'Drop-off · 단기주차장 입고';
   return specific ? `${method} · ${specific}` : method;
 }

@@ -171,6 +171,10 @@ export interface Reservation {
   departureTerminal: string;
   arrivalTerminal?: string;
   totalPrice: number;
+  /** 가입 할인·포인트 전 정가. 없으면 totalPrice */
+  listPrice?: number;
+  /** 카카오 가입 첫 예약 할인(원). 있으면 미적용 */
+  signupCouponWon?: number;
   /** 접수 때 사용한 포인트. totalPrice 는 이미 빠진 현장 결제 금액 */
   pointSpentWon?: number;
   /** 서버가 포인트 사용을 확인했는지 */

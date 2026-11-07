@@ -833,6 +833,10 @@ function PriceList({
                     <span className="tabular-nums text-[#0f1a2e]">{formatCardRating(rating)}</span>
                     <span className="font-medium text-[#0f1a2e]/45">후기 {snapshot!.count}</span>
                   </p>
+                ) : snapshot && snapshot.count === 0 ? (
+                  <p className="mt-1 text-[13px] font-medium text-[#0f1a2e]/45">
+                    신규 입점 · 후기 모으는 중
+                  </p>
                 ) : null}
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   <span

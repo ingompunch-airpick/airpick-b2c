@@ -170,8 +170,17 @@ function reviewListHtml(recent) {
       </ol>`;
 }
 
+const NEW_PARTNER_REVIEW_NOTE = '신규 입점 · 후기 모으는 중';
+
 function reviewsSectionHtml(bundle) {
-  if (!bundle) return '';
+  if (!bundle) {
+    return `
+      <section class="section" id="reviews">
+        <h2>이용 고객 실후기</h2>
+        <p class="answer"><strong>${NEW_PARTNER_REVIEW_NOTE}</strong></p>
+        <p class="note">출고 완료 예약 고객만 작성합니다. 시드·가짜 별점은 사용하지 않습니다.</p>
+      </section>`;
+  }
   const avg = Number(bundle.averageRating);
   const count = Number(bundle.reviewCount);
   return `
@@ -186,7 +195,13 @@ function reviewsSectionHtml(bundle) {
 }
 
 function reviewTableRowHtml(bundle) {
-  if (!bundle) return '';
+  if (!bundle) {
+    return `
+            <tr>
+              <th scope="row">실후기</th>
+              <td>${NEW_PARTNER_REVIEW_NOTE}</td>
+            </tr>`;
+  }
   return `
             <tr>
               <th scope="row">실후기</th>
@@ -451,7 +466,7 @@ function renderHub(partners, reviewsByCompany) {
       const bundle = resolveReviewBundle(p, reviewsByCompany);
       const reviewBit = bundle
         ? ` · ${starsLabel(bundle.averageRating)}(${bundle.reviewCount})`
-        : '';
+        : ` · ${NEW_PARTNER_REVIEW_NOTE}`;
       return `<li>
           <a href="/partners/${esc(p.id)}/"><strong>${esc(p.name)}</strong></a>
           — ${esc(lot)} · ${esc(terminalsLabel(p))}${esc(reviewBit)}

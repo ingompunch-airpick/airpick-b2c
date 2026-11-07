@@ -95,8 +95,8 @@ export function valetHandoffTitle(meet: boolean): string {
   return meet ? '출국장에서 인계' : '단기주차장 입고';
 }
 
-export function valetHandoffBadge(meet: boolean): 'Meet & Greet' | 'Drop-off' {
-  return meet ? 'Meet & Greet' : 'Drop-off';
+export function valetHandoffBadge(meet: boolean): 'Curbside' | 'Drop-off' {
+  return meet ? 'Curbside' : 'Drop-off';
 }
 
 /** 비대면 입고 추가요금 — 필드 없음=0원 */

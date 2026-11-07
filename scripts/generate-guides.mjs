@@ -181,7 +181,6 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
     <meta name="theme-color" content="#0f1a2e" />
     <title>${esc(page.title)}</title>
     <meta name="description" content="${esc(page.description)}" />
-    <meta name="keywords" content="${esc(page.keywords)}" />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="${esc(page.h1)}" />

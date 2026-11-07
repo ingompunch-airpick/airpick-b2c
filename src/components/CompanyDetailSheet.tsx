@@ -512,7 +512,7 @@ export default function CompanyDetailSheet({
                 reviews.map((review) => <ReviewItem key={review.id} review={review} />)
               ) : (
                 <div className="rounded-xl bg-sky-bg px-4 py-6 text-center text-xs leading-relaxed text-muted ring-1 ring-sky-border/50">
-                  <p className="font-semibold text-ink">아직 등록된 후기가 없습니다</p>
+                  <p className="font-semibold text-ink">신규 입점 · 후기 모으는 중</p>
                   <p className="mt-2">
                     에어픽은 이용 고객의 실후기만 표시합니다.
                     <br />

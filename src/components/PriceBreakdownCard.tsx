@@ -64,7 +64,7 @@ export default function PriceBreakdownCard({
         )}
         {breakdown.valetFee > 0 && (
           <div className="flex justify-between gap-3 font-semibold text-ink">
-            <span>Meet & Greet</span>
+            <span>Curbside</span>
             <span className="shrink-0 tabular-nums text-brand">
               +{breakdown.valetFee.toLocaleString()}원
             </span>

@@ -9,6 +9,16 @@
     ],
     "redirects": [
       {
+        "source": "/guides/meet-and-greet",
+        "destination": "/guides/curbside/",
+        "type": 301
+      },
+      {
+        "source": "/guides/meet-and-greet/",
+        "destination": "/guides/curbside/",
+        "type": 301
+      },
+      {
         "source": "/compare",
         "destination": "/",
         "type": 301

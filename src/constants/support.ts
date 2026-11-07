@@ -113,6 +113,88 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
     ],
   },
   {
+    id: 'handoff',
+    label: '맡기는 방법',
+    items: [
+      {
+        id: 'pay-when',
+        question: '인천공항 주차대행 요금은 언제 내나요?',
+        shortAnswer: '입점 예약은 현장 결제이며, 앱에서 카드를 받지 않습니다.',
+        answer:
+          '예약 접수 후 현장에서 업체 안내에 따라 결제합니다. 에어픽 앱에서는 주차 요금을 카드로 받지 않습니다.',
+      },
+      {
+        id: 'cancel-free',
+        question: '주차대행을 무료로 취소할 수 있나요?',
+        shortAnswer: '입고 24시간 전이면 예약 탭에서 무료 취소할 수 있습니다.',
+        answer:
+          '그 이후이거나 이미 입고된 뒤에는 예약 카드의 「업체 문의」로 주차장에 연락합니다. 조회와 취소에는 예약 때 정한 비밀번호 4자리가 필요합니다.',
+      },
+      {
+        id: 'curbside',
+        question: 'Curbside는 무엇인가요?',
+        shortAnswer: '출국장에서 기사에게 차를 넘기는 주차대행입니다.',
+        answer: '홈에서 실내를 고르면 Curbside 업체만 나옵니다. 출국장에서 키를 맡깁니다.',
+      },
+      {
+        id: 'drop-off',
+        question: 'Drop-off는 무엇인가요?',
+        shortAnswer: '단기주차장에 차를 세우고 키를 맡기는 주차대행입니다.',
+        answer: '야외를 고르면 Curbside와 함께 비교됩니다. 실내를 고르면 Curbside만 나옵니다.',
+      },
+      {
+        id: 'indoor-outdoor',
+        question: '실내와 야외는 어떻게 다른가요?',
+        shortAnswer: '실내는 출국장에서 인계하는 Curbside만 나옵니다.',
+        answer: '야외는 출국장 인계(Curbside)와 단기주차장 입고(Drop-off)가 함께 나옵니다.',
+      },
+      {
+        id: 'terminal',
+        question: '제1터미널과 제2터미널은 어디서 고르나요?',
+        shortAnswer: '출국하는 터미널을 홈에서 고릅니다.',
+        answer:
+          '제1터미널 또는 제2터미널을 고른 뒤 실내·야외와 날짜를 정하면, 그 조건으로 이용 가능한 업체가 나옵니다. 귀국 터미널이 다르면 예약 화면에서 따로 지정합니다.',
+      },
+      {
+        id: 'keys',
+        question: '차 키는 맡기나요?',
+        shortAnswer: '네. Curbside와 Drop-off 모두 키를 맡깁니다.',
+        answer: 'Curbside는 출국장에서, Drop-off는 단기주차장에서 맡깁니다.',
+      },
+      {
+        id: 'guest-book',
+        question: '로그인 없이 예약하고 진행을 볼 수 있나요?',
+        shortAnswer: '네. 차량번호와 비밀번호 4자리로 내 예약에서 조회합니다.',
+        answer:
+          '예약할 때 비밀번호 4자리를 정합니다. 로그인 없이도 접수, 조회, 입고 24시간 전 취소가 됩니다.',
+      },
+      {
+        id: 'progress',
+        question: '차를 맡긴 뒤 진행은 어디서 보나요?',
+        shortAnswer: '내 예약에서 접수 완료, 입고 예정, 주차 중, 출고를 확인합니다.',
+        answer: '출고가 시작되면 출고 대기, 끝나면 출고 완료로 표시됩니다.',
+      },
+      {
+        id: 'photo-in',
+        question: '입고 사진은 언제 보나요?',
+        shortAnswer: '입고 처리 후 내 예약에 올라옵니다.',
+        answer: '접수 직후에는 아직 없습니다. 입고되면 내 예약에서 주차장 위치와 사진을 봅니다.',
+      },
+      {
+        id: 'photo-out',
+        question: '출고 사진도 볼 수 있나요?',
+        shortAnswer: '출고 처리 후 기사가 찍은 사진이 내 예약에 올라옵니다.',
+        answer: '입고 사진과 같이 내 예약에서 확인합니다. 접수 직후에는 사진이 없습니다.',
+      },
+      {
+        id: 'where-parked',
+        question: '주차장 위치는 언제 확인하나요?',
+        shortAnswer: '입고 후 내 예약에서 확인합니다.',
+        answer: '접수만 된 상태에서는 위치와 사진이 아직 없습니다.',
+      },
+    ],
+  },
+  {
     id: 'contact',
     label: '문의 · 연락',
     items: [

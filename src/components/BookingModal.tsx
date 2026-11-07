@@ -517,7 +517,11 @@ export default function BookingModal({
           : undefined,
         marketingOptIn,
         spend,
-        parkingProduct ? { id: parkingProduct.id, dropFee } : undefined
+        parkingProduct ? { id: parkingProduct.id, dropFee } : undefined,
+        {
+          listPrice: breakdown.total,
+          ...(usingCoupon ? { signupCouponWon: MEMBER_DISCOUNT_WON } : {}),
+        }
       );
       trackAppointmentScheduled();
       saveRecentReservation({
@@ -616,7 +620,7 @@ export default function BookingModal({
             </div>
             {faceToFaceApplied && (
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-[13px] font-semibold text-muted">Meet & Greet</dt>
+                <dt className="text-[13px] font-semibold text-muted">Curbside</dt>
                 <dd className="text-sm font-bold text-brand">
                   +{valetFee.toLocaleString()}원
                 </dd>
