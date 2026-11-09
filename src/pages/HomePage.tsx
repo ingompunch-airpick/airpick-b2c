@@ -518,7 +518,6 @@ export default function HomePage({
                     items={companyGroups.pinnedItems}
                     marks={companyGroups.marks}
                     reviews={reviewById}
-                    stay={stayLabel(search.departureDate, search.arrivalDate)}
                     isIndoor={search.isIndoor}
                     terminal={search.terminal}
                     onDetail={(company, price) => selectCompany(company, price, 'detail')}
@@ -531,7 +530,6 @@ export default function HomePage({
                     <PriceList
                       items={companyGroups.rest}
                       reviews={reviewById}
-                      stay={stayLabel(search.departureDate, search.arrivalDate)}
                       isIndoor={search.isIndoor}
                       terminal={search.terminal}
                       onDetail={(company, price) => selectCompany(company, price, 'detail')}
@@ -545,7 +543,6 @@ export default function HomePage({
                 items={companyGroups.ordered}
                 marks={companyGroups.marks}
                 reviews={reviewById}
-                stay={stayLabel(search.departureDate, search.arrivalDate)}
                 isIndoor={search.isIndoor}
                 terminal={search.terminal}
                 onDetail={(company, price) => selectCompany(company, price, 'detail')}
@@ -704,7 +701,7 @@ function mostReviewedId(
   return bestId;
 }
 
-const FACT_ICON = 'mt-0.5 h-[18px] w-[18px] shrink-0 text-[#0f1a2e]';
+const FACT_ICON = 'mt-0.5 h-5 w-5 shrink-0 text-[#0f1a2e]';
 
 function transferRow(type: ParkingProductType, meet: boolean): { Icon: LucideIcon; title: string } {
   if (type === 'shuttle') return { Icon: BusFront, title: '셔틀로 이동' };
@@ -749,7 +746,6 @@ function productBadge(
 
 function PriceList({
   items,
-  stay,
   isIndoor,
   terminal,
   onDetail,
@@ -758,7 +754,6 @@ function PriceList({
   reviews = {},
 }: {
   items: Array<PricedCompany & { listPrice: number }>;
-  stay: string;
   isIndoor: boolean;
   terminal: Terminal;
   onDetail: (company: Company, price: number) => void;
@@ -786,7 +781,7 @@ function PriceList({
           snapshot && snapshot.count > 0 && snapshot.averageRating != null && snapshot.averageRating > 0
             ? snapshot.averageRating
             : null;
-        const thumb = companyThumbnailUrl(companyCardPhotoUrl(company, isIndoor), 128);
+        const thumb = companyThumbnailUrl(companyCardPhotoUrl(company, isIndoor), 480);
         const meetHandoff = companyIsFaceHandoff(company, { isIndoor, terminal });
         const pin = pickupPin(terminal, meetHandoff ? 'depart' : 'short');
         const product = findParkingProduct(company, { isIndoor, terminal }, meetHandoff);
@@ -807,41 +802,45 @@ function PriceList({
           <article
             key={company.id}
             className={cn(
-              'flex w-full flex-col rounded-2xl bg-white px-4 py-4 text-left ring-1 ring-[#0f1a2e]/10',
+              'relative w-full overflow-hidden rounded-2xl bg-white text-left ring-1 ring-[#0f1a2e]/10',
               soldOut && 'opacity-40'
             )}
           >
-            <div className="flex items-start gap-3">
-              {thumb ? (
+            {thumb ? (
+              <div
+                className="pointer-events-none absolute inset-y-0 right-0 w-[46%] min-w-[8.5rem] max-w-[13.5rem]"
+                aria-hidden
+              >
                 <img
                   src={thumb}
                   alt=""
-                  width={72}
-                  height={72}
-                  className="h-[72px] w-[72px] shrink-0 rounded-2xl object-cover ring-1 ring-[#0f1a2e]/10"
+                  className="absolute inset-0 h-full w-full object-cover"
                   loading="lazy"
                   decoding="async"
                 />
-              ) : null}
-              <div className="min-w-0 flex-1">
-                <p className="text-[16px] font-bold leading-snug text-[#0f1a2e]">
-                  {displayCompanyName(company.name)}
-                </p>
-                {rating != null ? (
-                  <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[13px] font-semibold text-[#0f1a2e]/70">
-                    <Star size={14} className="fill-amber-400 text-amber-400" aria-hidden />
-                    <span className="tabular-nums text-[#0f1a2e]">{formatCardRating(rating)}</span>
-                    <span className="font-medium text-[#0f1a2e]/45">후기 {snapshot!.count}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white from-0% via-white/55 to-transparent" />
+              </div>
+            ) : null}
+            <div className="relative z-10 flex min-w-0 flex-col px-4 py-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[18px] font-bold leading-snug text-[#0f1a2e]">
+                    {displayCompanyName(company.name)}
                   </p>
-                ) : snapshot && snapshot.count === 0 ? (
-                  <p className="mt-1 text-[13px] font-medium text-[#0f1a2e]/45">
-                    신규 입점 · 후기 모으는 중
-                  </p>
-                ) : null}
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {rating != null ? (
+                    <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[14px] font-semibold text-[#0f1a2e]/70">
+                      <Star size={15} className="fill-amber-400 text-amber-400" aria-hidden />
+                      <span className="tabular-nums text-[#0f1a2e]">{formatCardRating(rating)}</span>
+                      <span className="font-medium text-[#0f1a2e]/45">후기 {snapshot!.count}</span>
+                    </p>
+                  ) : snapshot && snapshot.count === 0 ? (
+                    <p className="mt-1.5 text-[14px] font-medium text-[#0f1a2e]/45">신규 입점</p>
+                  ) : null}
+                </div>
+                <div className="relative z-20 flex shrink-0 items-center gap-1.5 pt-0.5">
                   <span
                     className={cn(
-                      'rounded-full px-2.5 py-0.5 text-[11px] font-bold',
+                      'rounded-full px-2.5 py-0.5 text-[12px] font-bold shadow-sm',
                       meetHandoff
                         ? 'bg-emerald-100 text-emerald-700'
                         : 'bg-amber-100 text-amber-800'
@@ -850,105 +849,123 @@ function PriceList({
                     {handoffBadge}
                   </span>
                   {marks[company.id] ? (
-                    <span className="rounded-full bg-[#F3E6C4] px-2 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
+                    <span className="rounded-full bg-[#F3E6C4] px-2.5 py-0.5 text-[12px] font-bold text-[#0f1a2e] shadow-sm">
                       {marks[company.id]}
                     </span>
                   ) : null}
                   {badge ? (
-                    <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold">
+                    <span className="rounded-full bg-[#F3E6C4] px-2.5 py-0.5 text-[12px] font-bold text-[#0f1a2e] shadow-sm">
                       {badge}
                     </span>
                   ) : null}
                 </div>
               </div>
-            </div>
 
-            <ul className="mb-3 mt-3 space-y-2.5">
-              <li className="flex gap-2.5">
-                <transfer.Icon size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                <span className="min-w-0">
-                  <span className="block text-[14px] font-semibold text-[#0f1a2e]">{transfer.title}</span>
-                  <span className="mt-0.5 block text-[12px] font-medium leading-snug text-[#0f1a2e]/55">
-                    {facts.transfer ?? pin.detail}
-                  </span>
-                </span>
-              </li>
-              {keyText ? (
-                <li className="flex gap-2.5">
-                  {keyLeave ? (
-                    <HandKeyIcon className={FACT_ICON} />
-                  ) : (
-                    <KeyRound size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                  )}
-                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{keyText}</span>
-                </li>
-              ) : null}
-              {facts.meetHours ? (
-                <li className="flex gap-2.5">
-                  <Clock size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{facts.meetHours}</span>
-                </li>
-              ) : null}
-              {facts.ev ? (
-                <li className="flex gap-2.5">
-                  <EvCharger size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{facts.ev}</span>
-                </li>
-              ) : null}
-              {insuranceLabel ? (
-                <li className="flex gap-2.5">
-                  <Shield size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                  <span className="text-[14px] font-semibold text-[#0f1a2e]">{insuranceLabel}</span>
-                </li>
-              ) : null}
-              <li className="flex gap-2.5">
-                {isIndoor ? (
-                  <Warehouse size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                ) : (
-                  <Sun size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
+              <ul
+                className={cn(
+                  'mb-3 mt-3.5 space-y-2.5',
+                  thumb && 'pr-[38%] sm:pr-[9.5rem]'
                 )}
-                <span className="text-[14px] font-semibold text-[#0f1a2e]">{lotLabel} 주차장 보관</span>
-              </li>
-              <li className="flex gap-2.5">
-                <Wallet size={18} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                <span className="text-[14px] font-semibold text-[#0f1a2e]">현장 결제</span>
-              </li>
-            </ul>
+              >
+                <li className="flex gap-2.5">
+                  <transfer.Icon size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  <span className="min-w-0">
+                    <span className="block text-[15px] font-semibold text-[#0f1a2e]">
+                      {transfer.title}
+                    </span>
+                    <span className="mt-0.5 block text-[13px] font-medium leading-snug text-[#0f1a2e]/55">
+                      {facts.transfer ?? pin.detail}
+                    </span>
+                  </span>
+                </li>
+                {keyText ? (
+                  <li className="flex gap-2.5">
+                    {keyLeave ? (
+                      <HandKeyIcon className={FACT_ICON} />
+                    ) : (
+                      <KeyRound size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                    )}
+                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{keyText}</span>
+                  </li>
+                ) : null}
+                {facts.meetHours ? (
+                  <li className="flex gap-2.5">
+                    <Clock size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{facts.meetHours}</span>
+                  </li>
+                ) : null}
+                {facts.ev ? (
+                  <li className="flex gap-2.5">
+                    <EvCharger size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{facts.ev}</span>
+                  </li>
+                ) : null}
+                {insuranceLabel ? (
+                  <li className="flex gap-2.5">
+                    <Shield size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{insuranceLabel}</span>
+                  </li>
+                ) : null}
+                <li className="flex gap-2.5">
+                  {isIndoor ? (
+                    <Warehouse size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  ) : (
+                    <Sun size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  )}
+                  <span className="text-[15px] font-semibold text-[#0f1a2e]">{lotLabel} 주차장 보관</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <Wallet size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                  <span className="text-[15px] font-semibold text-[#0f1a2e]">현장 결제</span>
+                </li>
+              </ul>
 
-            <div className="mt-auto border-t border-[#0f1a2e]/8 pt-3">
-              {soldOut ? (
-                <p className="text-[16px] font-bold text-[#0f1a2e]">마감</p>
-              ) : (
-                <>
-                  <div className="mb-3 text-right">
-                    {listPrice > price ? (
-                      <p className="text-[13px] font-semibold text-[#0f1a2e]/45 line-through">
-                        {listPrice.toLocaleString()}원
+              <div className="mt-auto border-t border-[#0f1a2e]/8 pt-3">
+                {soldOut ? (
+                  <p
+                    className={cn(
+                      'text-[17px] font-bold text-[#0f1a2e]',
+                      thumb && 'pr-[38%] sm:pr-[9.5rem]'
+                    )}
+                  >
+                    마감
+                  </p>
+                ) : (
+                  <>
+                    <div
+                      className={cn(
+                        'mb-3 text-left',
+                        thumb && 'pr-[38%] sm:pr-[9.5rem]'
+                      )}
+                    >
+                      {listPrice > price ? (
+                        <p className="text-[14px] font-semibold text-[#0f1a2e]/45 line-through">
+                          {listPrice.toLocaleString()}원
+                        </p>
+                      ) : null}
+                      <p className="text-[22px] font-bold tabular-nums text-[#0f1a2e]">
+                        {price.toLocaleString()}원
                       </p>
-                    ) : null}
-                    <p className="text-[20px] font-bold tabular-nums text-[#0f1a2e]">
-                      {price.toLocaleString()}원
-                    </p>
-                    <p className="text-[12px] font-medium text-[#0f1a2e]/45">총 {stay} 기준</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(company, price)}
-                      className="rounded-xl bg-[#f4f5f7] py-3 text-[14px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/10 transition active:scale-[0.99]"
-                    >
-                      자세히
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onBook(company, price)}
-                      className="rounded-xl bg-[#0f1a2e] py-3 text-[14px] font-bold text-white transition active:scale-[0.99]"
-                    >
-                      예약하기
-                    </button>
-                  </div>
-                </>
-              )}
+                    </div>
+                    <div className="relative z-20 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onDetail(company, price)}
+                        className="rounded-xl bg-[#f4f5f7] py-3 text-[15px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/10 transition active:scale-[0.99]"
+                      >
+                        자세히
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onBook(company, price)}
+                        className="rounded-xl bg-[#0f1a2e] py-3 text-[15px] font-bold text-white transition active:scale-[0.99]"
+                      >
+                        예약하기
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </article>
         );

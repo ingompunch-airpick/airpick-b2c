@@ -170,7 +170,7 @@ function reviewListHtml(recent) {
       </ol>`;
 }
 
-const NEW_PARTNER_REVIEW_NOTE = '신규 입점 · 후기 모으는 중';
+const NEW_PARTNER_REVIEW_NOTE = '신규 입점';
 
 function reviewsSectionHtml(bundle) {
   if (!bundle) {

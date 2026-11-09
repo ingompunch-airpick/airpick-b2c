@@ -45,8 +45,8 @@ export const PICKUP_PINS: PickupPin[] = [
     terminal: 'T1',
     name: '출국장',
     action: '대면',
-    detail: '시간 맞춘 뒤, 출국장에서 기사에게 직접 넘김',
-    hint: '시간 맞춘 뒤, 출국장에서 기사에게 직접 넘김',
+    detail: '출국장에서 기사에게 직접 넘김',
+    hint: '출국장에서 기사에게 직접 넘김',
     address: '인천 영종구 운서동 2840',
     // OSM «인천공항3층출국장(T1)»
     lat: 37.44916,
@@ -71,8 +71,8 @@ export const PICKUP_PINS: PickupPin[] = [
     terminal: 'T2',
     name: '출국장',
     action: '대면',
-    detail: '시간 맞춘 뒤, 출국장에서 기사에게 직접 넘김',
-    hint: '시간 맞춘 뒤, 출국장에서 기사에게 직접 넘김',
+    detail: '출국장에서 기사에게 직접 넘김',
+    hint: '출국장에서 기사에게 직접 넘김',
     // 공항로 272는 제1여객터미널 공식 주소라 T2에는 쓰지 않음
     address: '인천 영종구 제2터미널대로 446',
     // 제2여객터미널 건물 일대 (3층 출국 정차)
