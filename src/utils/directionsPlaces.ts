@@ -138,33 +138,83 @@ function normalizeTerminal(raw: string | null | undefined): DirectionsTerminal |
   return null;
 }
 
+export type DirectionsRoute =
+  | { kind: 'hub' }
+  | { kind: 'handoff'; handoff: DirectionsHandoff; terminal: DirectionsTerminal | null }
+  | { kind: 'token'; token: string };
+
 /**
  * `/directions` → 선택 화면
  * `/directions/drop` · `/directions/curb` → 해당 방식만
- * `/directions/drop/t1` · `?type=drop&terminal=T1`
+ * `/directions/drop/t1`
+ * `/directions/{토큰}` · `?t={토큰}` → 예약 기준 자동 안내
  */
+export function readDirectionsRoute(pathname: string, search: string): DirectionsRoute {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  const qs = new URLSearchParams(search);
+  const queryToken = String(qs.get('t') || '').trim();
+
+  const withTerminal = path.match(/^\/directions\/([^/]+)\/([^/]+)$/i);
+  if (withTerminal) {
+    const handoff = normalizeHandoff(withTerminal[1]);
+    if (handoff) {
+      return {
+        kind: 'handoff',
+        handoff,
+        terminal: normalizeTerminal(withTerminal[2]),
+      };
+    }
+  }
+
+  const oneSeg = path.match(/^\/directions\/([^/]+)$/i);
+  if (oneSeg) {
+    const seg = oneSeg[1];
+    const handoff = normalizeHandoff(seg);
+    if (handoff) {
+      return { kind: 'handoff', handoff, terminal: null };
+    }
+    const token = decodeSeg(seg);
+    if (token) return { kind: 'token', token };
+  }
+
+  if (path === '/directions' && queryToken) {
+    return { kind: 'token', token: queryToken };
+  }
+
+  const handoff = normalizeHandoff(qs.get('type') || qs.get('handoff'));
+  if (handoff) {
+    return {
+      kind: 'handoff',
+      handoff,
+      terminal: normalizeTerminal(qs.get('terminal')),
+    };
+  }
+
+  return { kind: 'hub' };
+}
+
+function decodeSeg(raw: string): string {
+  try {
+    return decodeURIComponent(raw).trim();
+  } catch {
+    return raw.trim();
+  }
+}
+
+/** @deprecated readDirectionsRoute 사용 */
 export function readDirectionsSelection(pathname: string, search: string): {
   handoff: DirectionsHandoff | null;
   terminal: DirectionsTerminal | null;
 } {
-  const path = pathname.replace(/\/+$/, '') || '/';
-  const withTerminal = path.match(/^\/directions\/([^/]+)\/([^/]+)$/i);
-  if (withTerminal) {
-    return {
-      handoff: normalizeHandoff(withTerminal[1]),
-      terminal: normalizeTerminal(withTerminal[2]),
-    };
+  const route = readDirectionsRoute(pathname, search);
+  if (route.kind === 'handoff') {
+    return { handoff: route.handoff, terminal: route.terminal };
   }
-  const handoffOnly = path.match(/^\/directions\/([^/]+)$/i);
-  if (handoffOnly) {
-    return {
-      handoff: normalizeHandoff(handoffOnly[1]),
-      terminal: null,
-    };
-  }
-  const qs = new URLSearchParams(search);
-  return {
-    handoff: normalizeHandoff(qs.get('type') || qs.get('handoff')),
-    terminal: normalizeTerminal(qs.get('terminal') || qs.get('t')),
-  };
+  return { handoff: null, terminal: null };
+}
+
+export function handoffPlainLabel(handoff: DirectionsHandoff): string {
+  return handoff === 'drop'
+    ? '단기주차장에 세우고 내리기'
+    : '출국장에서 기사에게 맡기기';
 }

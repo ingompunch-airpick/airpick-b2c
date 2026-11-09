@@ -147,6 +147,14 @@ export async function fetchCompanies(): Promise<Company[]> {
     .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }
 
+export async function fetchCompanyById(companyId: string): Promise<Company | null> {
+  const id = String(companyId || '').trim();
+  if (!id) return null;
+  const snap = await getDoc(doc(db, 'companies', id));
+  if (!snap.exists()) return null;
+  return normalizeCompany(snap.id, snap.data() as Record<string, unknown>);
+}
+
 const companyListeners = new Set<(companies: Company[]) => void>();
 let companyListCache: Company[] | null = null;
 let stopCompanyListener: (() => void) | null = null;

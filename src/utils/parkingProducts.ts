@@ -15,7 +15,17 @@ export function parseParkingProduct(raw: unknown): ParkingProduct | null {
   const terminal = r.terminal === 'T1' || r.terminal === 'T2' || r.terminal === 'both' ? r.terminal : null;
   if (!id || !TYPES.has(type) || !lot || !terminal) return null;
 
-  const product: ParkingProduct = { id, type, lot, terminal, meet: r.meet === true, drop: r.drop === true };
+  // curb(신규) 또는 레거시 meet → 출국장 대면
+  const curbOrMeet =
+    typeof r.curb === 'boolean' ? r.curb === true : r.meet === true;
+  const product: ParkingProduct = {
+    id,
+    type,
+    lot,
+    terminal,
+    meet: curbOrMeet,
+    drop: r.drop === true,
+  };
   if (r.hidden === true) product.hidden = true;
   const note = typeof r.transferNote === 'string' ? r.transferNote.trim() : '';
   if (note) product.transferNote = note.slice(0, 120);
