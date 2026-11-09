@@ -6,11 +6,17 @@ import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { installGlobalErrorReporting, setErrorReportContext } from './lib/errorReport.ts';
 import AdminReviewsPage from './pages/AdminReviewsPage.tsx';
+import DirectionsPage from './pages/DirectionsPage.tsx';
 import ReceiptPage from './pages/ReceiptPage.tsx';
 import { AffiliateProvider } from './context/AffiliateContext.tsx';
 import { parseReceiptIdFromPath } from './lib/receipt';
 import { recoverStolenSeoDocument } from './utils/appPath';
 import { registerSW } from 'virtual:pwa-register';
+
+function isDirectionsPath(pathname: string): boolean {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  return path === '/directions' || path.startsWith('/directions/');
+}
 
 installGlobalErrorReporting();
 setErrorReportContext({ screen: window.location.pathname || '/' });
@@ -29,12 +35,15 @@ async function boot() {
   const pathname = window.location.pathname;
   const receiptId = parseReceiptIdFromPath(pathname);
   const isAdminReviews = /^\/admin\/reviews\/?$/.test(pathname);
+  const showDirections = isDirectionsPath(pathname);
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <ErrorBoundary>
         {isAdminReviews ? (
           <AdminReviewsPage />
+        ) : showDirections ? (
+          <DirectionsPage />
         ) : receiptId ? (
           <ReceiptPage reservationId={receiptId} />
         ) : (

@@ -371,6 +371,14 @@
         "destination": "/index.html"
       },
       {
+        "source": "/directions",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/directions/**",
+        "destination": "/index.html"
+      },
+      {
         "source": "/r/**",
         "destination": "/index.html"
       },
