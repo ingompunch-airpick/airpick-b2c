@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   DIRECTIONS_PLACES,
   findDirectionsPlace,
+  HANDOFF_PAGE,
   kakaoDirectionsUrl,
   naverDirectionsUrl,
   readDirectionsSelection,
@@ -59,6 +60,7 @@ function PlaceCard({
       <button type="button" onClick={onToggle} className="w-full text-left">
         <p className="text-[11px] font-bold text-brand">{place.title}</p>
         <p className="mt-1 text-[15px] font-black leading-snug text-stone-900">{place.name}</p>
+        <p className="mt-1 text-[13px] font-bold leading-snug text-stone-700">{place.howTo}</p>
         <p className="mt-1 text-[12px] font-semibold leading-snug text-stone-500">{place.address}</p>
         <p className="mt-2 text-[11px] font-bold text-stone-400">
           {expanded ? '접기' : '지도 앱으로 길찾기'}
@@ -80,72 +82,84 @@ function PlaceCard({
   );
 }
 
-export default function DirectionsPage() {
-  const initial = useMemo(
-    () => readDirectionsSelection(window.location.pathname, window.location.search),
-    []
-  );
-  const [handoff, setHandoff] = useState<DirectionsHandoff | null>(initial.handoff);
-  const [terminal, setTerminal] = useState<DirectionsTerminal | null>(initial.terminal);
-  const [openKey, setOpenKey] = useState<string | null>(() => {
-    if (initial.handoff && initial.terminal) return `${initial.handoff}-${initial.terminal}`;
-    return null;
-  });
-
-  const focused =
-    handoff && terminal ? findDirectionsPlace(handoff, terminal) : undefined;
-
-  const list = focused
-    ? [focused]
-    : handoff
-      ? DIRECTIONS_PLACES.filter((p) => p.handoff === handoff)
-      : DIRECTIONS_PLACES;
-
+function HubPage() {
   return (
     <div className="min-h-dvh bg-[#f4efe6] px-4 py-6">
       <div className="mx-auto max-w-md space-y-4">
         <header>
           <p className="text-[11px] font-bold text-brand">에어픽</p>
           <h1 className="mt-1 text-xl font-black text-stone-900">찾아오는 길</h1>
-          <p className="mt-1 text-[12px] font-semibold text-stone-500">
-            예약하신 입고 방식·터미널을 고른 뒤 지도 앱으로 길을 찾으세요. 예약 번호는 필요
-            없습니다.
+          <p className="mt-1 text-[13px] font-semibold leading-relaxed text-stone-600">
+            예약하신 이용 방법을 골라 주세요. 예약 번호는 필요 없습니다.
+          </p>
+        </header>
+
+        <a
+          href={HANDOFF_PAGE.drop.path}
+          className="block rounded-2xl border border-stone-200 bg-white p-4 shadow-sm active:scale-[0.99]"
+        >
+          <p className="text-[11px] font-bold text-brand">방법 1</p>
+          <p className="mt-1 text-[16px] font-black text-stone-900">
+            {HANDOFF_PAGE.drop.choiceLabel}
+          </p>
+          <p className="mt-1 text-[12px] font-semibold leading-snug text-stone-500">
+            가유·시즌·안녕 등 · 단기주차장에 세운 뒤 내립니다.
+          </p>
+        </a>
+
+        <a
+          href={HANDOFF_PAGE.curb.path}
+          className="block rounded-2xl border border-stone-200 bg-white p-4 shadow-sm active:scale-[0.99]"
+        >
+          <p className="text-[11px] font-bold text-brand">방법 2</p>
+          <p className="mt-1 text-[16px] font-black text-stone-900">
+            {HANDOFF_PAGE.curb.choiceLabel}
+          </p>
+          <p className="mt-1 text-[12px] font-semibold leading-snug text-stone-500">
+            출국장 3층에서 기사님을 만납니다.
+          </p>
+        </a>
+
+        <p className="text-center text-[11px] font-semibold text-stone-400">
+          다른 장소에서 만나는 예약은 업체 안내에 따라 주세요.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function HandoffPage({ handoff }: { handoff: DirectionsHandoff }) {
+  const meta = HANDOFF_PAGE[handoff];
+  const [terminal, setTerminal] = useState<DirectionsTerminal | null>(() => {
+    const initial = readDirectionsSelection(window.location.pathname, window.location.search);
+    return initial.handoff === handoff ? initial.terminal : null;
+  });
+  const [openKey, setOpenKey] = useState<string | null>(null);
+
+  const focused = terminal ? findDirectionsPlace(handoff, terminal) : undefined;
+  const list = focused
+    ? [focused]
+    : DIRECTIONS_PLACES.filter((p) => p.handoff === handoff);
+
+  return (
+    <div className="min-h-dvh bg-[#f4efe6] px-4 py-6">
+      <div className="mx-auto max-w-md space-y-4">
+        <header>
+          <a href="/directions" className="text-[11px] font-bold text-brand">
+            ← 이용 방법 다시 고르기
+          </a>
+          <h1 className="mt-2 text-xl font-black text-stone-900">{meta.headline}</h1>
+          <p className="mt-1 text-[13px] font-semibold leading-relaxed text-stone-600">
+            {meta.lead}
           </p>
         </header>
 
         <div className="flex flex-wrap gap-2">
           {(
             [
-              { id: null, label: '전체' },
-              { id: 'drop' as const, label: '드랍오프' },
-              { id: 'curb' as const, label: '커브사이드' },
-            ] as const
-          ).map((opt) => (
-            <button
-              key={String(opt.id)}
-              type="button"
-              onClick={() => {
-                setHandoff(opt.id);
-                setTerminal(null);
-                setOpenKey(null);
-              }}
-              className={`rounded-full px-3 py-1.5 text-[12px] font-black border ${
-                handoff === opt.id
-                  ? 'border-brand bg-brand text-white'
-                  : 'border-stone-200 bg-white text-stone-700'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {(
-            [
-              { id: null, label: '터미널 전체' },
-              { id: 'T1' as const, label: 'T1' },
-              { id: 'T2' as const, label: 'T2' },
+              { id: null, label: '터미널 둘 다 보기' },
+              { id: 'T1' as const, label: '1터미널' },
+              { id: 'T2' as const, label: '2터미널' },
             ] as const
           ).map((opt) => (
             <button
@@ -179,11 +193,20 @@ export default function DirectionsPage() {
             );
           })}
         </div>
-
-        <p className="text-center text-[11px] font-semibold text-stone-400">
-          밋앤그릿(지정 픽업)은 업체별로 안내됩니다.
-        </p>
       </div>
     </div>
   );
+}
+
+export default function DirectionsPage() {
+  const initial = useMemo(
+    () => readDirectionsSelection(window.location.pathname, window.location.search),
+    []
+  );
+
+  if (!initial.handoff) {
+    return <HubPage />;
+  }
+
+  return <HandoffPage handoff={initial.handoff} />;
 }
