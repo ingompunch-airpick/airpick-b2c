@@ -68,12 +68,22 @@
 |---|------|
 | 38 GSC 월간 | 문서 · **대표 실행** |
 | 39 hreflang/EN | **보류** (`docs/google/39-…`) |
+| 40 Bing·IndexNow | 문서·키·스크립트 · **콘솔·실행은 대표** |
 | 43 YouTube | 템플릿만 · 선택 |
 | 백링크 | `for-partners`·배지 · 입점사 배포는 대표/영업 |
 
 ## P5 — GEO
 
-`/facts/` · evidence · llms · AI 모니터링 문서 · **완료** / 주간 체크는 대표
+`/facts/` · evidence · llms · AI 모니터링 문서 · **완료** / 주간 체크는 대표  
+Bing·IndexNow: `docs/google/40-bing-indexnow.md` · 콘솔 등록은 대표
+
+### 렌더 실태 (AI·크롤러)
+
+| URL | 렌더 | HTML 본문 |
+|-----|------|-----------|
+| `/guides/**` `/partners/**` `/faq/` `/facts/` `/about/` `/privacy/` `/llms.txt` | 정적 HTML | 있음 |
+| `/` `/esim` `/my` `/r/*` | SPA | 셸·메타 위주 (`/` SEO 셸에 소개·방식 요약 있음). 업체 카드·예약 UI는 JS |
+| 풀 SSR/Next | **후속** (합의 전 안 함) | — |
 
 ## P6 — AEO
 

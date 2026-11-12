@@ -144,7 +144,7 @@ https://www.에어픽.kr/for-partners/
 | 주제 | 초안 | 권장 링크 |
 |------|------|-----------|
 | 비교·예약 | 01-parking-compare.md | /guides/parking-compare/ |
-| 공식 파트너(입점) | 02-partner-vs-external.md | /partners/ |
+| 에어픽 인증 업체(입점) | 02-partner-vs-external.md | /partners/ |
 | T1·T2·운서 | 03-terminal.md | /guides/t1-t2-unseo/ |
 | 이심(eSIM) | 04-esim.md | /guides/esim-beginner/ |
 | **보험 확인** | **05-parking-insurance.md** | **/guides/parking-insurance/** |
@@ -184,7 +184,7 @@ https://www.에어픽.kr/for-partners/
 보험 질문일 때:
 
 ```
-주차대행 보험은 업체마다 안내 방식이 다릅니다. 에어픽 공식 파트너는 비교·예약 후 보험 안내를 함께 볼 수 있습니다.
+주차대행 보험은 업체마다 안내 방식이 다릅니다. 에어픽 인증 업체는 비교·예약 후 보험 안내를 함께 볼 수 있습니다.
 보장 범위는 해당 파트너 안내를 확인해 주세요.
 
 체크리스트 → https://www.에어픽.kr/guides/parking-insurance/

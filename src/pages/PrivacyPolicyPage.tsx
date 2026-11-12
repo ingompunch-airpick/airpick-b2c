@@ -65,16 +65,24 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
 
         <PolicySection title="3. 보유 및 이용 기간">
           원칙적으로 개인정보 처리 목적이 달성되면 지체 없이 파기합니다. 다만 관계 법령에 따라 보존할
-          필요가 있는 경우 해당 기간 동안 보관합니다.
+          필요가 있는 경우 해당 기간 동안 보관합니다. 예: 계약·청약철회 기록 5년, 대금 결제 및 재화
+          공급 기록 5년, 소비자 불만·분쟁 처리 기록 3년(전자상거래법), 접속 기록 3개월(통신비밀보호법).
         </PolicySection>
 
         <PolicySection title="4. 개인정보의 제3자 제공">
           주차대행 예약의 이행을 위해 이용자가 선택한 <strong className="font-bold text-ink">입점 제휴
-          업체</strong>에 예약에 필요한 정보가 제공될 수 있습니다. {ESIM_TAB_LABEL} 비교의 경우 제휴사
-          사이트로 이동하여 별도로 처리됩니다.
+          업체</strong>에 예약에 필요한 정보(이름, 휴대전화번호, 차량번호, 차종, 출국·귀국 일시,
+          항공편 정보 등)가 제공될 수 있습니다. {ESIM_TAB_LABEL} 비교의 경우 제휴사 사이트로 이동하여
+          별도로 처리됩니다.
         </PolicySection>
 
-        <PolicySection title="5. 개인정보 보호책임자">
+        <PolicySection title="5. 결제 정보 · 처리 위탁">
+          현재 주차대행은 <strong className="font-bold text-ink">현장 결제</strong>가 기본이며, 에어픽
+          앱은 주차 요금 카드번호를 저장하지 않습니다. 향후 앱 결제가 도입되면 결제대행사 위탁 내용을
+          이 방침에 추가합니다. 서버 호스팅·데이터 보관은 Google Firebase를 사용합니다.
+        </PolicySection>
+
+        <PolicySection title="6. 개인정보 보호책임자">
           <dl className="mt-2 space-y-1">
             <div className="flex gap-2">
               <dt className="shrink-0 text-muted">성명</dt>
@@ -91,7 +99,7 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
           </dl>
         </PolicySection>
 
-        <PolicySection title="6. 사업자 정보">
+        <PolicySection title="7. 사업자 정보">
           <dl className="mt-2 space-y-1">
             <div className="flex gap-2">
               <dt className="shrink-0 text-muted">상호</dt>
@@ -112,7 +120,22 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
           </dl>
         </PolicySection>
 
-        <p className="mt-6 text-[10px] font-medium text-muted-light">시행일: 2026년 6월 21일</p>
+        <p className="mt-6 text-[10px] font-medium text-muted-light">
+          시행일: 2026년 6월 21일 · 개정 안내: 2026년 11월 12일
+        </p>
+        <p className="mt-2 text-[10px] font-medium text-muted-light">
+          <a href="/terms/" className="text-brand underline-offset-2 hover:underline">
+            이용약관
+          </a>
+          {' · '}
+          <a href="/refund/" className="text-brand underline-offset-2 hover:underline">
+            취소·환불 정책
+          </a>
+          {' · '}
+          <a href="/pricing/" className="text-brand underline-offset-2 hover:underline">
+            요금 안내
+          </a>
+        </p>
       </div>
     </div>
   );

@@ -170,6 +170,20 @@ export default function BookingConsent({
         </button>
         에 동의한 것으로 봅니다.
       </p>
+      <p className="text-[11px] font-medium leading-relaxed text-muted">
+        전문:{' '}
+        <a href="/terms/" className="font-bold text-brand underline-offset-2 hover:underline">
+          이용약관
+        </a>
+        {' · '}
+        <a href="/privacy/" className="font-bold text-brand underline-offset-2 hover:underline">
+          개인정보처리방침
+        </a>
+        {' · '}
+        <a href="/refund/" className="font-bold text-brand underline-offset-2 hover:underline">
+          취소·환불 정책
+        </a>
+      </p>
 
       {sheet === 'platform' ? (
         <ConsentSheet title={AIRPICK_PLATFORM_TERMS.title} onClose={() => setSheet(null)}>

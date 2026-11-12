@@ -869,13 +869,14 @@ function PriceList({
               >
                 <li className="flex gap-2.5">
                   <transfer.Icon size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                  <span className="min-w-0">
-                    <span className="block text-[15px] font-semibold text-[#0f1a2e]">
-                      {transfer.title}
-                    </span>
-                    <span className="mt-0.5 block text-[13px] font-medium leading-snug text-[#0f1a2e]/55">
-                      {facts.transfer ?? pin.detail}
-                    </span>
+                  <span className="min-w-0 text-[15px] font-semibold leading-snug text-[#0f1a2e]">
+                    {transfer.title}
+                    {facts.transfer || pin.detail ? (
+                      <span className="font-medium text-[#0f1a2e]/55">
+                        {' '}
+                        · {facts.transfer ?? pin.detail}
+                      </span>
+                    ) : null}
                   </span>
                 </li>
                 {keyText ? (

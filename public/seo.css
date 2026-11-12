@@ -288,6 +288,26 @@ details.faq p.answer {
   color: var(--muted-light);
 }
 
+.card table {
+  width: 100%;
+  margin: 0.75rem 0;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.card th,
+.card td {
+  padding: 0.5rem 0.4rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--sky-border) 80%, transparent);
+  text-align: left;
+  vertical-align: top;
+}
+
+.card th {
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .cta {
   display: inline-flex;
   margin-top: 0.75rem;

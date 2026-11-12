@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04",
+  "updatedAt": "2026-11-10",
   "groups": [
     { "id": "domestic", "label": "국내 항공사" },
     { "id": "international", "label": "국제선 (인천 자주 이용)" },

@@ -40,6 +40,9 @@ export default function TerminalFields({
           </button>
         ))}
       </div>
+      <p className="text-[11px] font-medium leading-snug text-muted">
+        대한항공·아시아나(2026.1.14~)는 제2터미널. 항공권 터미널과 맞춰 주세요.
+      </p>
 
       <label className="flex items-center gap-2 pt-0.5">
         <input

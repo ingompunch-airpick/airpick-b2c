@@ -77,7 +77,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           </ul>
         </Section>
 
-        <Section title="공식 파트너">
+        <Section title="에어픽 인증 업체">
           <CompareBlock title={PARTNER_BENEFITS.title} accent points={PARTNER_BENEFITS.points} />
         </Section>
 

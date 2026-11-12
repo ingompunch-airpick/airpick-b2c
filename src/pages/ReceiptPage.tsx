@@ -27,6 +27,16 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => {
+      meta.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     // `/r/{id}?t={token}` 또는 `/r/{token}` (토큰만 path)
     const queryToken = getReceiptTokenFromLocation();
     const lookup = queryToken

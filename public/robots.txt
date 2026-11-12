@@ -1,4 +1,38 @@
+# www.에어픽.kr — 공개 페이지 허용, 개인·관리 경로만 차단
 User-agent: *
 Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: Googlebot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: Bingbot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
 
 Sitemap: https://www.에어픽.kr/sitemap.xml

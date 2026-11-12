@@ -37,7 +37,7 @@ export const PARKING_COMPARE_H1 = '주차대행, 아무 데나 예약하지 마�
 
 /** 주차 비교 탭 상단 */
 export const PARKING_COMPARE_DESC =
-  '에어픽이 확인한 공식 파트너만 비교합니다. 가격·보험·평점 보고 바로 예약하세요.';
+  '에어픽이 확인한 인증 업체만 비교합니다. 가격·보험·평점 보고 바로 예약하세요.';
 
 export const PARKING_COMPARE_DOCUMENT_TITLE = '인천공항 주차대행 비교 · 에어픽';
 
@@ -104,8 +104,8 @@ export const ESIM_HUB = {
 /** AIRPICK VERIFIED — 홈 띠·비교 섹션·선정 기준 공통 */
 export const AIRPICK_VERIFIED = {
   label: 'AIRPICK VERIFIED',
-  eyebrow: '공식 파트너',
-  homeLine: '에어픽이 직접 확인한 공식 파트너',
+  eyebrow: '에어픽 인증 업체',
+  homeLine: '에어픽이 직접 확인한 인증 업체',
   criteriaCta: '선정 기준 보기',
   criteriaHref: '/partners/',
   checklist: [
@@ -117,17 +117,17 @@ export const AIRPICK_VERIFIED = {
   ],
   dontListEveryone: 'WE DON\u2019T LIST EVERYONE.',
   dontListEveryoneKo:
-    '에어픽은 사업자·보험·주차장·운영 기준을 확인한 업체만 공식 파트너로 등록합니다.',
+    '에어픽은 사업자·보험·주차장·운영 기준을 확인한 업체만 에어픽 인증 업체로 등록합니다.',
 } as const;
 
 export const PARKING_PARTNER_SECTION = {
-  title: '공식 파트너',
-  titleRating: '공식 파트너',
-  subtitleNote: '에어픽이 직접 확인한 공식 파트너 · 실후기·보험·주차환경',
+  title: '에어픽 인증 업체',
+  titleRating: '에어픽 인증 업체',
+  subtitleNote: '에어픽이 직접 확인한 인증 업체 · 실후기·보험·주차환경',
 } as const;
 
-/** 비교 섹션 타이틀 · 공식 파트너 수 */
-export const parkingPartnerSectionTitle = (count: number) => `공식 파트너 ${count}곳`;
+/** 비교 섹션 타이틀 · 에어픽 인증 업체 수 */
+export const parkingPartnerSectionTitle = (count: number) => `에어픽 인증 업체 ${count}곳`;
 
 /** 주차 비교 탭 하단 · 빈 결과 안내 등 내부 링크 */
 export const PARKING_COMPARE_GUIDE_LINKS = [
@@ -159,12 +159,12 @@ export const HOME_HERO_TRUST_CHIPS = ['보험 확인', '주차 위치', '입고 
 export const HOME_TRUST_CRITERIA = {
   eyebrow: 'AIRPICK VERIFIED',
   title: '에어픽이 직접 확인합니다',
-  lead: '입점부터 운영까지, 아래 기준을 통과·준수하는 업체만 공식 파트너로 둡니다.',
+  lead: '입점부터 운영까지, 아래 기준을 통과·준수하는 업체만 에어픽 인증 업체로 둡니다.',
   items: [
     {
       id: 'insurance',
       title: '보험 가입 확인',
-      body: '입점 전 사고 대비 보험 가입 여부를 확인합니다. 보험이 확인된 업체만 공식 파트너로 등록합니다.',
+      body: '입점 전 사고 대비 보험 가입 여부를 확인합니다. 보험이 확인된 업체만 에어픽 인증 업체로 등록합니다.',
     },
     {
       id: 'location',
@@ -174,7 +174,7 @@ export const HOME_TRUST_CRITERIA = {
     {
       id: 'safety',
       title: '안전 운행',
-      body: '에어픽 공식 파트너는 과속·신호위반·주정차위반을 하지 않도록 운영 기준을 준수합니다.',
+      body: '에어픽 인증 업체는 과속·신호위반·주정차위반을 하지 않도록 운영 기준을 준수합니다.',
     },
     {
       id: 'photos',
@@ -235,7 +235,7 @@ export const HOME_WHY_AIRPICK = {
     {
       id: 'curated',
       title: '사업자·보험·주차장부터 확인',
-      body: '무보험·주차장 없는 영업은 걸러냅니다. 기준을 통과한 공식 파트너만 비교·예약할 수 있습니다.',
+      body: '무보험·주차장 없는 영업은 걸러냅니다. 기준을 통과한 에어픽 인증 업체만 비교·예약할 수 있습니다.',
       evidence: 'AIRPICK VERIFIED',
     },
     {
@@ -259,7 +259,7 @@ export const HOME_TRUST_STATS = {
   insuranceLabel: '보험 확인',
   parkingValue: '100%',
   parkingLabel: '주차장 확인',
-  partnersLabel: '엄선된 공식 파트너',
+  partnersLabel: '엄선된 에어픽 인증 업체',
   accidentValue: '0건',
   accidentLabel: '2026년 사고차량',
 } as const;

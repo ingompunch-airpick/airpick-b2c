@@ -64,19 +64,128 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>인천공항 주차대행 비교·예약 | 에어픽</title>
     <style>
-      #root > main {
-        max-width: 32rem;
-        margin: 0 auto;
-        padding: 24px 16px;
+      /* React 마운트 전 셸 — 홈과 같은 톤·레이아웃으로 교체 티를 줄임. SEO 본문은 그대로 노출 */
+      html, body { margin: 0; background: #f4f6f8; }
+      #root {
+        min-height: 100dvh;
         font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-        font-size: 14px;
-        line-height: 1.6;
         color: #0f1a2e;
       }
-      #root > main h1 { font-size: 20px; margin: 0 0 8px; }
-      #root > main h2 { font-size: 16px; margin: 20px 0 6px; }
-      #root > main ul { padding-left: 18px; margin: 0; }
-      #root > main a { color: #b8860b; }
+      .prerender-home { background: #f4f6f8; min-height: 100dvh; padding-bottom: 5rem; }
+      .prerender-home .bar {
+        background: #0f1a2e;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+      }
+      .prerender-home .bar img { width: 1.75rem; height: 1.75rem; object-fit: contain; }
+      .prerender-home .bar strong { font-size: 0.95rem; letter-spacing: -0.02em; }
+      .prerender-home .hero {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+        background: #0f1a2e;
+      }
+      .prerender-home .hero img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 30%;
+      }
+      .prerender-home .hero::after {
+        content: '';
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 5rem;
+        background: linear-gradient(to bottom, #0f1a2e, transparent);
+      }
+      .prerender-home .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 32rem;
+        margin: -3.5rem auto 0;
+        padding: 0 1rem;
+      }
+      @media (min-width: 768px) {
+        .prerender-home .wrap { max-width: 48rem; }
+        .prerender-home .hero { height: 260px; }
+      }
+      .prerender-home .card {
+        background: #fff;
+        border-radius: 28px;
+        padding: 1.1rem 1rem 1.25rem;
+        box-shadow: 0 12px 40px rgba(15, 26, 46, 0.08);
+        outline: 1px solid rgba(15, 26, 46, 0.06);
+      }
+      .prerender-home h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+        line-height: 1.35;
+        letter-spacing: -0.02em;
+      }
+      .prerender-home .lead {
+        margin: 0 0 1rem;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        color: rgba(15, 26, 46, 0.72);
+      }
+      .prerender-home .pills {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin: 0 0 0.75rem;
+      }
+      .prerender-home .pill {
+        border-radius: 999px;
+        background: #f4f5f7;
+        padding: 0.7rem 0.75rem;
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 700;
+        outline: 1px solid rgba(15, 26, 46, 0.08);
+      }
+      .prerender-home .pill.on {
+        background: #0f1a2e;
+        color: #fff;
+        outline: none;
+      }
+      .prerender-home .cta {
+        display: block;
+        margin-top: 0.75rem;
+        border-radius: 999px;
+        background: #c9a962;
+        color: #0f1a2e;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 0.85rem 1rem;
+      }
+      .prerender-home .facts {
+        max-width: 32rem;
+        margin: 1.25rem auto 0;
+        padding: 0 1rem 1rem;
+      }
+      @media (min-width: 768px) {
+        .prerender-home .facts { max-width: 48rem; }
+      }
+      .prerender-home .facts h2 {
+        margin: 1.25rem 0 0.4rem;
+        font-size: 1rem;
+      }
+      .prerender-home .facts p,
+      .prerender-home .facts li {
+        font-size: 0.9rem;
+        line-height: 1.55;
+        color: rgba(15, 26, 46, 0.78);
+      }
+      .prerender-home .facts ul { padding-left: 1.1rem; margin: 0.35rem 0 0; }
+      .prerender-home .facts a { color: #8a6a1c; }
     </style>
     <script type="application/ld+json">
       {
@@ -202,45 +311,111 @@
   </head>
   <body>
     <div id="root">
-      <!-- JS 없이 수집되는 메인 본문. React 마운트 시 #root 내용으로 교체됨 -->
-      <main>
-        <h1>에어픽 공항주차</h1>
-        <p>
-          에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스입니다. 이심(eSIM)은 제휴 할인으로 안내합니다.
-          지금은 주차대행(발렛) 업체부터 예약할 수 있고, 사설주차장은 준비 중입니다.
-        </p>
-        <h2>인천공항 주차 방식 3가지</h2>
-        <ul>
-          <li>
-            <strong>주차대행(발렛)</strong> — 터미널에서 기사에게 차를 맡기고, 돌아올 때 터미널에서 받습니다.
-            제1·제2터미널, 실내·야외 주차장. 인계는 Curbside(출국장) 또는 Drop-off(단기주차장)입니다. (예약 가능)
-          </li>
-          <li>
-            <strong>사설주차장(키 맡김)</strong> — 공항 근처 주차장에 직접 주차하고 차 키를 맡깁니다. (준비 중)
-          </li>
-          <li>
-            <strong>사설주차장(셔틀)</strong> — 직접 주차한 뒤 키를 갖고 셔틀로 공항까지 이동합니다. (준비 중)
-          </li>
-        </ul>
-        <h2>주차대행 비교·예약 방법</h2>
-        <p>
-          터미널, 실내·야외, 맡기는 날과 찾는 날을 고르면 이용 가능한 주차대행 업체와 요금, 후기, 인계 방식이 나옵니다.
-          요금은 입력한 일정 기준 참고가이고, 결제는 현장 결제입니다. 입고 24시간 전까지는 예약 탭에서 무료 취소할 수 있습니다.
-        </p>
-        <p>
-          <a href="/guides/airport-parking-types/">주차 방식 비교 가이드</a>
-          ·
-          <a href="/guides/curbside/">Curbside · Drop-off</a>
-          ·
-          <a href="/guides/">이용 가이드</a>
-          ·
-          <a href="/partners/">입점 업체</a>
-          ·
-          <a href="/faq/">FAQ</a>
-          ·
-          <a href="/about/">에어픽 소개</a>
-        </p>
-      </main>
+      <!-- 크롤러·JS 전: 홈과 같은 골격. React 마운트 시 #root 로 교체 -->
+      <div class="prerender-home">
+        <header class="bar">
+          <img src="/brand-mark-gold.webp?v=9" width="28" height="28" alt="" />
+          <strong>AIRPICK 공항주차</strong>
+        </header>
+        <div class="hero" aria-hidden="true">
+          <img
+            src="/brand/home-why-airport-handoff.jpg"
+            alt=""
+            width="1200"
+            height="600"
+            decoding="async"
+          />
+        </div>
+        <div class="wrap">
+          <main class="card">
+            <h1>인천공항 주차대행, 보험 확인된 업체만 비교하세요</h1>
+            <p class="lead">
+              에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스입니다. 이심(eSIM)은
+              제휴 할인으로 안내합니다. 지금은 주차대행(발렛) 업체부터 예약할 수 있고, 사설주차장은 준비
+              중입니다.
+            </p>
+            <div class="pills" aria-hidden="true">
+              <div class="pill on">제1터미널</div>
+              <div class="pill">제2터미널</div>
+              <div class="pill on">실내</div>
+              <div class="pill">야외</div>
+            </div>
+            <a class="cta" href="/">일정 넣고 업체 보기</a>
+          </main>
+        </div>
+        <section class="facts">
+          <h2>에어픽이 확인하는 것</h2>
+          <ul>
+            <li><strong>사업자</strong> · <strong>보험</strong> · <strong>주차장</strong> · <strong>운영 기준</strong>을 확인한 입점 업체만 비교·예약합니다.</li>
+            <li>자세한 기준은 <a href="/facts/">사실 확인(검증 기준)</a>과 <a href="/partners/">입점 업체</a>를 보세요.</li>
+          </ul>
+          <h2>이용 방법 3단계</h2>
+          <ol>
+            <li>홈에서 터미널 · 실내/야외 · 날짜를 넣습니다.</li>
+            <li>요금·보험·인계 방식·후기를 비교합니다.</li>
+            <li>예약 후 알림톡·내 예약에서 접수 내용을 확인합니다. 결제는 현장 결제입니다.</li>
+          </ol>
+          <p>
+            <a href="/faq/">자주 묻는 질문</a>
+            ·
+            <a href="/guides/peak-soldout/">성수기·만차 가이드</a>
+            ·
+            <a href="/guides/parking-compare/">비교·예약 가이드</a>
+          </p>
+          <h2>인천공항 주차 방식 3가지</h2>
+          <ul>
+            <li>
+              <strong>주차대행(발렛)</strong> — 터미널에서 기사에게 차를 맡기고, 돌아올 때 터미널에서
+              받습니다. 제1·제2터미널, 실내·야외 주차장. 인계는 Curbside(출국장) 또는
+              Drop-off(단기주차장)입니다. (예약 가능)
+            </li>
+            <li>
+              <strong>사설주차장(키 맡김)</strong> — 공항 근처 주차장에 직접 주차하고 차 키를 맡깁니다.
+              (준비 중)
+            </li>
+            <li>
+              <strong>사설주차장(셔틀)</strong> — 직접 주차한 뒤 키를 갖고 셔틀로 공항까지 이동합니다.
+              (준비 중)
+            </li>
+          </ul>
+          <h2>주차대행 비교·예약 방법</h2>
+          <p>
+            터미널, 실내·야외, 맡기는 날과 찾는 날을 고르면 이용 가능한 주차대행 업체와 요금, 후기, 인계
+            방식이 나옵니다. 요금은 입력한 일정 기준 참고가이고, 결제는 현장 결제입니다. 입고 24시간
+            전까지는 예약 탭에서 무료 취소할 수 있습니다.
+          </p>
+          <p>
+            <a href="/guides/airport-parking-types/">주차 방식 비교 가이드</a>
+            ·
+            <a href="/guides/curbside/">Curbside · Drop-off</a>
+            ·
+            <a href="/guides/">이용 가이드</a>
+            ·
+            <a href="/partners/">입점 업체</a>
+            ·
+            <a href="/faq/">FAQ</a>
+            ·
+            <a href="/about/">에어픽 소개</a>
+            ·
+            <a href="/terms/">이용약관</a>
+            ·
+            <a href="/privacy/">개인정보처리방침</a>
+            ·
+            <a href="/refund/">취소·환불 정책</a>
+            ·
+            <a href="/pricing/">요금 안내</a>
+          </p>
+          <p>
+            상호: 에어픽 | 대표자: 김인원 | 사업자등록번호: 776-32-01655 | 주소: 인천시 중구
+            자연대로29, 2017호 | 고객센터: <a href="tel:01025565746">010-2556-5746</a> | 이메일:
+            <a href="mailto:ingompunch@gmail.com">ingompunch@gmail.com</a>
+          </p>
+          <p>
+            에어픽은 주차대행 업체와 이용자를 연결하는 통신판매중개자이며, 주차대행 서비스의
+            당사자가 아닙니다. 서비스 이행에 관한 책임은 각 입점 업체에 있습니다.
+          </p>
+        </section>
+      </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

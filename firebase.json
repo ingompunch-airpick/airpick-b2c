@@ -9,6 +9,16 @@
     ],
     "redirects": [
       {
+        "source": "/guides",
+        "destination": "/guides/",
+        "type": 301
+      },
+      {
+        "source": "/guides/parking-compare",
+        "destination": "/guides/parking-compare/",
+        "type": 301
+      },
+      {
         "source": "/guides/meet-and-greet",
         "destination": "/guides/curbside/",
         "type": 301
@@ -234,6 +244,33 @@
       },
       {
         "source": "/privacy/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300"
+          }
+        ]
+      },
+      {
+        "source": "/terms/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300"
+          }
+        ]
+      },
+      {
+        "source": "/refund/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300"
+          }
+        ]
+      },
+      {
+        "source": "/pricing/**",
         "headers": [
           {
             "key": "Cache-Control",

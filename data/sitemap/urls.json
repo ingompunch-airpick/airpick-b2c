@@ -75,6 +75,12 @@
       "note": "주차대행 보험 확인법"
     },
     {
+      "path": "/guides/peak-soldout/",
+      "changefreq": "weekly",
+      "priority": 0.8,
+      "note": "성수기·연휴 만차 대처"
+    },
+    {
       "path": "/partners/",
       "changefreq": "weekly",
       "priority": 0.75,
@@ -127,6 +133,24 @@
       "changefreq": "yearly",
       "priority": 0.4,
       "note": "개인정보처리방침 (정적 HTML)"
+    },
+    {
+      "path": "/terms/",
+      "changefreq": "yearly",
+      "priority": 0.45,
+      "note": "이용약관 (정적 HTML)"
+    },
+    {
+      "path": "/refund/",
+      "changefreq": "yearly",
+      "priority": 0.45,
+      "note": "취소·환불 정책 (정적 HTML)"
+    },
+    {
+      "path": "/pricing/",
+      "changefreq": "monthly",
+      "priority": 0.55,
+      "note": "요금 안내·예시 견적 스냅샷"
     }
   ],
   "planned": []

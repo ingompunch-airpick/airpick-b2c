@@ -139,7 +139,7 @@ export function sectionHasFaceToFace(items: PricedCompany[], terminal: Terminal)
   return items.some((item) => companyValetFee(item.company, terminal) != null);
 }
 
-/** 공식 파트너만 · 가격순. 대면·비대면 구분은 홈 목록에서 한다 */
+/** 에어픽 인증 업체만 · 가격순. 대면·비대면 구분은 홈 목록에서 한다 */
 export function buildPartnerPriceList(
   companies: Company[],
   search: BookingSearch,

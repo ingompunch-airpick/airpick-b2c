@@ -30,7 +30,7 @@
 
 | 질문형 키워드 (예) | 공식 답 위치 | 비고 |
 | --- | --- | --- |
-| 공식 파트너(입점) | [/partners/](https://www.에어픽.kr/partners/) · [/about/](https://www.에어픽.kr/about/) | 파트너만 · `/guides/partner-vs-external/`는 `/partners/`로 301 |
+| 에어픽 인증 업체(입점) | [/partners/](https://www.에어픽.kr/partners/) · [/about/](https://www.에어픽.kr/about/) | 파트너만 · `/guides/partner-vs-external/`는 `/partners/`로 301 |
 | 와와발렛 / 가유 에어픽 | [/partners/](https://www.에어픽.kr/partners/) | 업체 랜딩 |
 | 인천공항 T1·T2 주차대행 | 가이드 터미널편 · 주차대행 비교 | |
 

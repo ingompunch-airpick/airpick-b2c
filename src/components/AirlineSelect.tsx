@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { AIRLINE_OTHER_NAME, AIRLINE_OPTIONS, isKnownAirlineName } from '../constants/airlines';
+import {
+  AIRLINE_OTHER_NAME,
+  AIRLINE_OPTIONS,
+  icnTerminalHintForAirline,
+  isKnownAirlineName,
+} from '../constants/airlines';
 import { cn } from '../utils/cn';
 
 const SELECT_CLASS =
@@ -12,11 +17,14 @@ export default function AirlineSelect({
   value,
   onChange,
   required = false,
+  /** YYYY-MM-DD — 아시아나 T2 이전일 판단용 (출국일) */
+  referenceDateYmd,
 }: {
   label: string;
   value: string;
   onChange: (name: string) => void;
   required?: boolean;
+  referenceDateYmd?: string;
 }) {
   const isCustomValue = !!value && !isKnownAirlineName(value);
   const [otherMode, setOtherMode] = useState(isCustomValue);
@@ -27,6 +35,7 @@ export default function AirlineSelect({
 
   const showCustomInput = otherMode || isCustomValue;
   const selectValue = showCustomInput ? AIRLINE_OTHER_NAME : value;
+  const terminalHint = !showCustomInput ? icnTerminalHintForAirline(value, referenceDateYmd) : null;
 
   return (
     <div className="block">
@@ -68,6 +77,9 @@ export default function AirlineSelect({
           className={cn(INPUT_CLASS, 'mt-2')}
         />
       )}
+      {terminalHint ? (
+        <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/75">{terminalHint}</p>
+      ) : null}
     </div>
   );
 }

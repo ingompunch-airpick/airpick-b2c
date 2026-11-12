@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import {
   ComparePageSkeleton,
   EsimPageSkeleton,
+  HomePageSkeleton,
   MyPageSkeleton,
 } from './components/LoadingSkeletons';
 import AppMenuSheet from './components/AppMenuSheet';
@@ -82,6 +83,7 @@ const DOCUMENT_TITLE: Record<AppTab, string> = {
 };
 
 function tabPageFallback(tab: AppTab) {
+  if (tab === 'home') return <HomePageSkeleton />;
   if (tab === 'compare') return <ComparePageSkeleton />;
   if (tab === 'esim') return <EsimPageSkeleton />;
   if (tab === 'my') return <MyPageSkeleton />;
@@ -434,7 +436,7 @@ export default function App() {
       />
       <main>
         {loading && (tab === 'home' || tab === 'compare') ? (
-          <ComparePageSkeleton />
+          tab === 'home' ? <HomePageSkeleton /> : <ComparePageSkeleton />
         ) : homeTone ? (
           <Suspense fallback={pageFallback}>{page}</Suspense>
         ) : (

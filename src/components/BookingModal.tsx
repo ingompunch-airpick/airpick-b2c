@@ -16,6 +16,7 @@ import TerminalFields from './TerminalFields';
 import TimeField from './TimeField';
 import AirlineSelect from './AirlineSelect';
 import type { BookingSearch, Company, Terminal } from '../types';
+import { suggestedIcnTerminalForAirline } from '../constants/airlines';
 import { displayCompanyName } from '../utils/display';
 import { ensureAnonymousAuth, submitReservation, subscribeReservation, type BookingForm } from '../lib/reservations';
 import { trackAppointmentScheduled } from '../lib/analytics';
@@ -1090,7 +1091,7 @@ export default function BookingModal({
                   />
                   {form.phone.trim() && !phoneValid ? (
                     <span className="mt-1 block text-[13px] font-semibold text-rose-500">
-                      휴대전화 번호를 확인해 주세요.
+                      010-1234-5678 형식(숫자 11자리)으로 입력해 주세요.
                     </span>
                   ) : null}
                 </label>
@@ -1107,6 +1108,7 @@ export default function BookingModal({
                       label="항공사"
                       required
                       value={form.departureAirline}
+                      referenceDateYmd={search.departureDate}
                       onChange={(departureAirline) => setFormField('departureAirline', departureAirline)}
                     />
                     <label className="block">
@@ -1119,6 +1121,19 @@ export default function BookingModal({
                       />
                     </label>
                   </div>
+                  {(() => {
+                    const suggested = suggestedIcnTerminalForAirline(
+                      form.departureAirline,
+                      search.departureDate
+                    );
+                    if (!suggested || suggested === search.terminal) return null;
+                    return (
+                      <p className="mt-2 text-[12px] font-semibold leading-snug text-amber-800">
+                        선택한 항공사 기준으로는 제{suggested === 'T2' ? '2' : '1'}터미널입니다. 위
+                        출국 터미널을 맞춰 주세요.
+                      </p>
+                    );
+                  })()}
                 </div>
                 <div>
                   <p className="mb-2 text-[13px] font-bold text-muted">귀국</p>
@@ -1127,6 +1142,7 @@ export default function BookingModal({
                       label="항공사"
                       required
                       value={form.arrivalAirline}
+                      referenceDateYmd={search.arrivalDate}
                       onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
                     />
                     <label className="block">

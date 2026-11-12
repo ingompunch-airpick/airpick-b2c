@@ -24,7 +24,25 @@ export const COMPANY_LEGAL = {
   kakaoProfileUrl: 'https://pf.kakao.com/_lxhEnn',
   /** 고객센터 운영 시간 */
   supportHours: '09:00 ~ 18:00',
+  /**
+   * 통신판매업 신고번호. 확정 전 null — 화면에 가짜 번호 금지.
+   * 신고 후 문자열만 채우면 푸터·소개에 노출된다.
+   */
+  mailOrderNumber: null as string | null,
 } as const;
+
+/** 포트원·크롤러용 공개 정책 URL (trailing slash) */
+export const POLICY_PATHS = {
+  terms: '/terms/',
+  privacy: '/privacy/',
+  refund: '/refund/',
+  pricing: '/pricing/',
+  about: '/about/',
+} as const;
+
+/** 푸터·정적 HTML용 중개자 고지 (consent INTERMEDIARY_DISCLAIMER와 동취지) */
+export const FOOTER_INTERMEDIARY_NOTICE =
+  '에어픽은 주차대행 업체와 이용자를 연결하는 통신판매중개자이며, 주차대행 서비스의 당사자가 아닙니다. 서비스 이행에 관한 책임은 각 입점 업체에 있습니다.';
 
 /**
  * 브랜드 검색·AI·네이버 채널용 정의 문장 (한 줄 정본).
@@ -85,9 +103,9 @@ export const AIRPICK_SERVICES = [
   },
 ] as const;
 
-/** 공식 파트너 — 소개 페이지·FAQ 공통 */
+/** 에어픽 인증 업체 — 소개 페이지·FAQ 공통 */
 export const PARTNER_BENEFITS = {
-  title: '공식 파트너',
+  title: '에어픽 인증 업체',
   points: [
     '사업자·보험·주차장·운영을 에어픽에서 확인한 업체예요.',
     '앱에서 바로 예약할 수 있어요.',

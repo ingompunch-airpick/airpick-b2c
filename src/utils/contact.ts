@@ -15,9 +15,13 @@ export function formatPhoneDisplay(phone: string): string {
   return phone;
 }
 
-/** 예약 연락처 — 휴대전화만 (기사 연락·조회에 사용) */
+/**
+ * 예약·프로필 저장용 휴대전화.
+ * 01X-XXXX-XXXX (숫자 11자리)만 허용. 010-414-2709 같은 10자리는 거절.
+ * 비회원 조회 입력은 이 함수를 쓰지 않아 옛 10자리 예약 조회는 가능.
+ */
 export function isValidMobilePhone(phone: string): boolean {
-  return /^01\d{8,9}$/.test(phoneDigits(phone));
+  return /^01\d{9}$/.test(phoneDigits(phone));
 }
 
 /** 입력 중 연락처 — 010-0000-0000 형식 */

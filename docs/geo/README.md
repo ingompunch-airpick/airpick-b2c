@@ -9,9 +9,10 @@
 | 45 | HTML 표·리스트 | 가이드·허브 |
 | 46 | 사업자·입점·보험 범위 | about·가이드 |
 | 47 | llms.txt | https://www.에어픽.kr/llms.txt |
-| 48 | AI 요약 모니터링 | [48-ai-monitoring.md](./48-ai-monitoring.md) |
+| 48 | AI 요약 모니터링 | [48-ai-monitoring.md](./48-ai-monitoring.md) (주 1회·~20문항) |
 | 49 | 틀린 답 교정용 사실 | https://www.에어픽.kr/facts/ |
 | 50 | 근거 블록 | 비교·입점·가이드·facts |
+| — | Bing·IndexNow | [../google/40-bing-indexnow.md](../google/40-bing-indexnow.md) |
 
 정본 한 줄: 에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스입니다. 이심(eSIM)은 제휴 할인으로 안내합니다.
 

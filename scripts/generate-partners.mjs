@@ -501,7 +501,7 @@ ${JSON.stringify(graph, null, 2)}
       ${pageChrome('입점 업체')}
 
       <header class="hero">
-        <p class="eyebrow">공식 파트너</p>
+        <p class="eyebrow">에어픽 인증 업체</p>
         <h1>에어픽에서 예약할 수 있는 업체</h1>
         <p class="answer"><strong>${esc(answer)}</strong></p>
         <p>지금 입점한 주차대행이에요. 사설주차장(키 맡김·셔틀)은 준비 중이에요. 아래에서 고른 뒤, 출국·귀국 일정을 넣고 바로 비교해 보세요.</p>
