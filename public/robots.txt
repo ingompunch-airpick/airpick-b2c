@@ -35,4 +35,47 @@ Disallow: /my
 Disallow: /r/
 Disallow: /admin
 
+# 검색·AI 답변용 봇 — 명시 허용 (GEO)
+User-agent: Yeti
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: Daumoa
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: Claude-User
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
+User-agent: GPTBot
+Allow: /
+Disallow: /my
+Disallow: /r/
+Disallow: /admin
+
 Sitemap: https://www.에어픽.kr/sitemap.xml

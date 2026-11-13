@@ -26,7 +26,7 @@ export default function ValetPartnerList({
         >
           <img
             src={companyThumbnailUrl(item.imageUrl, 96)}
-            alt=""
+            alt={`${item.name} 주차장`}
             width={64}
             height={64}
             className="h-16 w-16 shrink-0 rounded-xl object-cover ring-2 ring-white"

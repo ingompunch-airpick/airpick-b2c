@@ -3,6 +3,8 @@
 > 에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스입니다. 이심(eSIM)은 제휴 할인으로 안내합니다.
 > 지금은 주차대행(발렛) 업체부터 예약할 수 있고, 사설주차장은 준비 중입니다.
 
+최종 업데이트: 2026-11-14
+
 ## 공항주차 방식 (에어픽 기준)
 - 주차대행(발렛): 터미널에서 기사에게 차를 맡기고, 돌아올 때 터미널에서 받음. 제1·제2터미널, 실내·야외 주차장. 인계는 Curbside(출국장) 또는 Drop-off(단기주차장). 상태: 예약 가능
 - 사설주차장(키 맡김): 공항 근처 주차장에 직접 주차하고 차 키를 맡김. 상태: 준비 중
@@ -15,9 +17,14 @@
 - 홈 · 공항주차 비교 (현재 주차대행 예약): https://www.에어픽.kr/
 - 인천공항 주차 방식 비교 가이드: https://www.에어픽.kr/guides/airport-parking-types/
 - Curbside vs Drop-off: https://www.에어픽.kr/guides/curbside/
+- 주차대행 비교·예약 방법: https://www.에어픽.kr/guides/parking-compare/
+- 공식 주차장 vs 사설 주차대행: https://www.에어픽.kr/guides/official-vs-private/
+- 장기·단기 출국 요금 보는 법: https://www.에어픽.kr/guides/long-vs-short/
+- 해외여행 전 주차 예약 시점: https://www.에어픽.kr/guides/travel-parking-tips/
 - 성수기·연휴 만차 대처: https://www.에어픽.kr/guides/peak-soldout/
 - 1·2터미널·운서: https://www.에어픽.kr/guides/t1-t2-unseo/
 - 이심(eSIM) 제휴 할인: https://www.에어픽.kr/esim
+- 이심(eSIM) 처음 준비: https://www.에어픽.kr/guides/esim-beginner/
 - 가이드: https://www.에어픽.kr/guides/
 - 주차대행 보험 확인: https://www.에어픽.kr/guides/parking-insurance/
 - 입점 업체 목록: https://www.에어픽.kr/partners/
@@ -46,6 +53,8 @@
 - 성수기·연휴: 일정 정해지면 미리 비교·예약. 공식 주차는 인천공항 안내, 사설 주차대행은 에어픽
 - 사설주차장·셔틀 주차 예약: 아직 불가 (준비 중)
 - 예약 조회: 예약 탭 + 차량번호(또는 연락처) + 비밀번호 4자리
+- 결제: 입점 주차대행은 현장 결제 (앱 카드 결제 없음)
+- 취소: 입고 24시간 전이면 예약 탭에서 무료 취소
 - 문의: 현장·차량 → 업체 / 앱·조회 → FAQ·고객센터 010-2556-5746 (09:00–18:00)
 - 이심(eSIM): 제휴 할인 링크로 이동, 구매·개통은 제휴사
 

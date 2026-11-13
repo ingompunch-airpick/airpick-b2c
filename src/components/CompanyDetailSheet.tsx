@@ -433,7 +433,7 @@ export default function CompanyDetailSheet({
                     {step.mediaSrc ? (
                       <img
                         src={companyPhotoUrl(step.mediaSrc, 640)}
-                        alt=""
+                        alt={step.title}
                         width={320}
                         height={180}
                         className="mt-2 max-h-36 w-full rounded-xl object-cover ring-1 ring-sky-border/50"

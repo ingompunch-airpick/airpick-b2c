@@ -20,6 +20,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import DateField from '../components/DateField';
 import SiteFooter from '../components/SiteFooter';
+import HomeFaq from '../components/home/HomeFaq';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
@@ -304,10 +305,12 @@ export default function HomePage({
   return (
     <div className="bg-[#f4f6f8] pb-[calc(8rem+env(safe-area-inset-bottom))]">
       <section className="relative">
+        {/* SEO: index.html 프리렌더와 같은 H1 — 앱이 뜬 뒤에도 페이지 제목 유지 */}
+        <h1 className="sr-only">인천공항 주차대행, 보험 확인된 업체만 비교하세요</h1>
         <div className="relative h-[200px] overflow-hidden md:h-[260px]">
           <img
             src="/brand/home-why-airport-handoff.jpg"
-            alt=""
+            alt="인천공항 터미널 앞에서 차를 맡기고 출국하는 여행객"
             className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
           />
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#0f1a2e] to-transparent" />
@@ -554,6 +557,9 @@ export default function HomePage({
       </section>
       <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
         <HomeYoutubeLive />
+      </div>
+      <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
+        <HomeFaq />
       </div>
       <div className="mx-auto mt-10 max-w-6xl px-4 md:px-8">
         <SiteFooter tone="premium" />
@@ -813,7 +819,7 @@ function PriceList({
               >
                 <img
                   src={thumb}
-                  alt=""
+                  alt={`${displayCompanyName(company.name)} 주차장`}
                   className="absolute inset-0 h-full w-full object-cover"
                   loading="lazy"
                   decoding="async"
