@@ -56,6 +56,7 @@ import {
   tabFromPathname,
 } from './utils/appPath';
 import { captureAcquisitionFromLocation } from './utils/acquisition';
+import { recordB2cShortPathVisit } from './lib/shortPathStats';
 import {
   consumeReturnToMenu,
   shouldReturnToMenuOnLaunch,
@@ -333,6 +334,7 @@ export default function App() {
     const path = window.location.pathname;
     const search = window.location.search;
     if (!isSeoDocumentPath(path)) {
+      void recordB2cShortPathVisit(path);
       captureAcquisitionFromLocation(path, search);
     }
     if (!isSeoDocumentPath(path) && tabFromPathname(path) == null) {
@@ -347,6 +349,7 @@ export default function App() {
         window.location.assign(current + currentSearch + window.location.hash);
         return;
       }
+      void recordB2cShortPathVisit(current);
       captureAcquisitionFromLocation(current, currentSearch);
       const next = tabFromPathname(current) ?? 'home';
       setTabState(next);
