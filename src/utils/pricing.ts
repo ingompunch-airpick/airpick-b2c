@@ -4,19 +4,23 @@ import {
   type PricingTerminal,
 } from './pricingProfiles';
 
+/**
+ * 와와 요금 칸이 비었을 때만 쓰는 기본값. B2B utils/pricing.ts · functions priceCheck.ts 와 같게.
+ * 값은 companies/wawa 실제 설정(2026-11-14 확인): 기본 2일 40,000 · 추가 실외 5,000/실내 10,000 · 심야 19:00~04:55 20,000
+ */
 export const WAWA_FEE_DEFAULTS: Partial<Company> = {
   outdoorBasePrice: 40000,
-  outdoorBaseDays: 1,
+  outdoorBaseDays: 2,
   outdoorExtraPrice: 5000,
   indoorBasePrice: 40000,
-  indoorBaseDays: 1,
+  indoorBaseDays: 2,
   indoorExtraPrice: 10000,
   base_price: 40000,
-  base_days: 1,
+  base_days: 2,
   extra_day_price: 5000,
-  surchargePrice: 10000,
-  surchargeStartTime: '20:00',
-  surchargeEndTime: '04:00',
+  surchargePrice: 20000,
+  surchargeStartTime: '19:00',
+  surchargeEndTime: '04:55',
   t2Surcharge: 0,
 };
 
