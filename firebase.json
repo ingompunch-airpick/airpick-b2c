@@ -424,23 +424,7 @@
         "destination": "/index.html"
       },
       {
-        "source": "/long*",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/short*",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/reels*",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/clip*",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/youtube*",
+        "source": "/*",
         "destination": "/index.html"
       }
     ]
