@@ -18,5 +18,7 @@
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <!-- Android 12+ 시스템 스플래시: 남색 배경 + 앱 아이콘(새 캐리어) -->
+        <item name="windowSplashScreenBackground">#0f1a2e</item>
     </style>
 </resources>

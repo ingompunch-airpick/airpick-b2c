@@ -202,7 +202,10 @@
             "url": "https://www.에어픽.kr",
             "logo": "https://www.에어픽.kr/icon-512.png",
             "taxID": "776-32-01655",
-            "founder": { "@type": "Person", "name": "김인원" },
+            "founder": {
+              "@type": "Person",
+              "name": "김인원"
+            },
             "areaServed": {
               "@type": "Place",
               "name": "인천국제공항"
@@ -219,7 +222,9 @@
               "@type": "ContactPoint",
               "telephone": "+82-10-2556-5746",
               "contactType": "customer service",
-              "availableLanguage": ["ko"],
+              "availableLanguage": [
+                "ko"
+              ],
               "hoursAvailable": {
                 "@type": "OpeningHoursSpecification",
                 "dayOfWeek": [
@@ -249,7 +254,9 @@
               "opens": "09:00",
               "closes": "18:00"
             },
-            "sameAs": ["https://pf.kakao.com/_lxhEnn"]
+            "sameAs": [
+              "https://pf.kakao.com/_lxhEnn"
+            ]
           },
           {
             "@type": "WebSite",
@@ -257,7 +264,9 @@
             "url": "https://www.에어픽.kr",
             "name": "에어픽",
             "description": "에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스입니다. 이심(eSIM)은 제휴 할인으로 안내합니다.",
-            "publisher": { "@id": "https://www.에어픽.kr/#organization" },
+            "publisher": {
+              "@id": "https://www.에어픽.kr/#organization"
+            },
             "inLanguage": "ko-KR"
           },
           {
@@ -302,13 +311,21 @@
             "@id": "https://www.에어픽.kr/#webpage",
             "url": "https://www.에어픽.kr/",
             "name": "인천공항 주차대행 비교·예약 | 에어픽",
-            "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
-            "about": { "@id": "https://www.에어픽.kr/#organization" },
+            "isPartOf": {
+              "@id": "https://www.에어픽.kr/#website"
+            },
+            "about": {
+              "@id": "https://www.에어픽.kr/#organization"
+            },
             "description": "에어픽 공항주차 | 인천공항 주차대행·사설주차장 비교·예약. 일정만 넣으면 가격·보험·후기를 한눈에. 지금은 주차대행부터 예약할 수 있어요.",
             "inLanguage": "ko-KR",
             "dateModified": "2026-11-14",
-            "mainEntity": { "@id": "https://www.에어픽.kr/#service" },
-            "hasPart": { "@id": "https://www.에어픽.kr/#faq" }
+            "mainEntity": {
+              "@id": "https://www.에어픽.kr/#service"
+            },
+            "hasPart": {
+              "@id": "https://www.에어픽.kr/#faq"
+            }
           },
           {
             "@type": "Service",
@@ -441,7 +458,8 @@
               (준비 중)
             </li>
           </ul>
-          <!-- home-faq: src/components/home/HomeFaq.tsx·FAQPage JSON-LD 와 같은 문구 -->
+          <!-- 아래 FAQ는 npm run faq 가 src/constants/support.ts 로 생성 — 직접 고치지 마세요 -->
+          <!-- home-faq:start -->
           <h2>자주 묻는 질문</h2>
           <h3>에어픽은 어떤 서비스인가요?</h3>
           <p><strong>에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스입니다. 이심(eSIM)은 제휴 할인으로 안내합니다.</strong> 에어픽은 인천공항 주차대행과 사설주차장을 비교·예약하는 공항주차 서비스이고, 이심(eSIM)은 제휴 할인으로 안내합니다. 지금은 주차대행(발렛) 업체부터 예약할 수 있고, 사설주차장은 준비 중입니다. 확인한 인증 업체만 비교·예약하며, 예약 후 위치·사진·보험을 내 예약에서 확인할 수 있습니다.</p>
@@ -452,6 +470,7 @@
           <h3>주차대행을 무료로 취소할 수 있나요?</h3>
           <p><strong>입고 24시간 전이면 예약 탭에서 무료 취소할 수 있습니다.</strong> 그 이후이거나 이미 입고된 뒤에는 예약 카드의 「업체 문의」로 주차장에 연락합니다. 조회와 취소에는 예약 때 정한 비밀번호 4자리가 필요합니다.</p>
           <p>안내 기준일 2026.11.14 · <a href="/faq/">FAQ 전체 보기</a></p>
+          <!-- home-faq:end -->
           <h2>주차대행 비교·예약 방법</h2>
           <p>
             터미널, 실내·야외, 맡기는 날과 찾는 날을 고르면 이용 가능한 주차대행 업체와 요금, 후기, 인계

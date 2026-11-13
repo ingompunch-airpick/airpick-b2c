@@ -1,4 +1,8 @@
-/** FAQ — 예약 탭·메뉴 (public/faq 와 동기). shortAnswer = PAA/스니펫용 40~60자. */
+/**
+ * FAQ 정본 — 앱(예약 탭 FAQ 시트)·웹 /faq/·홈 FAQ 가 모두 이 파일을 씁니다.
+ * public/faq/index.html 과 index.html 의 FAQ 부분은 `npm run faq`(scripts/generate-faq.mjs)가
+ * 이 데이터로 다시 만듭니다. 문구는 여기서만 고치세요. shortAnswer = PAA/스니펫용 40~60자.
+ */
 
 import { SHORT_ANSWERS } from './officialAnswers';
 
@@ -8,6 +12,8 @@ export interface FaqItem {
   /** 검색·PAA용 짧은 직접답 */
   shortAnswer: string;
   answer: string;
+  /** 웹 FAQ 답변 아래에 붙는 관련 링크 (앱 시트에는 표시 안 함) */
+  links?: { href: string; label: string }[];
 }
 
 export interface FaqCategory {
@@ -34,6 +40,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         shortAnswer: SHORT_ANSWERS.privateLot,
         answer:
           '아직은 주차대행(발렛)만 예약할 수 있습니다. 공항 근처 사설주차장에 직접 주차하고 키를 맡기는 방식과, 주차 후 셔틀로 공항에 가는 방식은 준비 중입니다. 열리면 홈에서 함께 비교할 수 있게 안내합니다.',
+        links: [{ href: '/guides/airport-parking-types/', label: '주차 방식 비교 가이드' }],
       },
       {
         id: 'my-how',
@@ -204,7 +211,31 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         shortAnswer: SHORT_ANSWERS.contact,
         answer:
           '차량 입·출고, 현장 일정, 차량 상태, 입고 24시간 이내 변경·취소 → 예약 카드 「업체 문의」로 주차장에 전화해 주세요. 입고 24시간 전까지의 취소·앱·예약 조회 방법은 이 FAQ를 참고해 주세요. 에어픽 고객센터는 010-2556-5746, 카카오톡 상담, 운영 09:00~18:00입니다.',
+        links: [{ href: 'tel:01025565746', label: '고객센터 전화 010-2556-5746' }],
       },
     ],
   },
 ];
+
+/** 홈 하단 FAQ 4개 (HomeFaq · index.html 프리렌더·FAQPage JSON-LD 가 같이 씀) */
+export const HOME_FAQ_IDS = ['what-is', 'book-how', 'pay-when', 'cancel-free'] as const;
+
+/** 홈 안내 기준일 — 홈 FAQ 문구를 바꾸면 같이 갱신 (index.html WebPage.dateModified 도 생성기가 맞춤) */
+export const HOME_FAQ_UPDATED = '2026-11-14';
+
+export function allFaqItems(): FaqItem[] {
+  return FAQ_CATEGORIES.flatMap((c) => c.items);
+}
+
+/** answer 가 shortAnswer 로 시작하면 겹치는 문장을 뺀 나머지 */
+export function faqRestAnswer(item: FaqItem): string {
+  return item.answer.startsWith(item.shortAnswer)
+    ? item.answer.slice(item.shortAnswer.length).trim()
+    : item.answer;
+}
+
+/** 구조화 데이터(FAQPage)용 전체 답: 화면에 보이는 shortAnswer + 나머지와 같은 문장 */
+export function faqFullAnswer(item: FaqItem): string {
+  const rest = faqRestAnswer(item);
+  return rest ? `${item.shortAnswer} ${rest}` : item.shortAnswer;
+}
