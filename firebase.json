@@ -422,6 +422,26 @@
       {
         "source": "/admin/reviews",
         "destination": "/index.html"
+      },
+      {
+        "source": "/long*",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/short*",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/reels*",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/clip*",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/youtube*",
+        "destination": "/index.html"
       }
     ]
   }
