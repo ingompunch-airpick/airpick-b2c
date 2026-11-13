@@ -9,16 +9,6 @@
     ],
     "redirects": [
       {
-        "source": "/guides",
-        "destination": "/guides/",
-        "type": 301
-      },
-      {
-        "source": "/guides/parking-compare",
-        "destination": "/guides/parking-compare/",
-        "type": 301
-      },
-      {
         "source": "/guides/meet-and-greet",
         "destination": "/guides/curbside/",
         "type": 301
