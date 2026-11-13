@@ -146,7 +146,7 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
           <div className="max-w-xl rounded-[28px] bg-[#0f1a2e]/72 px-6 py-7 backdrop-blur-[2px] md:px-8 md:py-8">
             <div className="flex items-center gap-2">
               <img
-                src="/brand-mark-gold.png?v=9"
+                src="/brand-mark-gold.png?v=10"
                 alt=""
                 width={40}
                 height={40}

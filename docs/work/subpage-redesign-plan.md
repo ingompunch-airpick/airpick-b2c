@@ -98,12 +98,12 @@
 
 ## 검증
 
-- [ ] `npm run guides && npm run partners` 재생성 후 `git diff`에서 본문 텍스트·JSON-LD 변경 0건 (head 링크 추가만)
-- [ ] 모바일 390px·데스크톱 1280px 스크린샷 비교: `/guides/`, 가이드 1편, `/faq/`, `/facts/`, `/pricing/` (전·후)
-- [ ] 폰트: 개발자도구 → 렌더된 폰트가 Pretendard인지
+- [x] `npm run guides && npm run partners` 재생성 후 `git diff`에서 본문 텍스트·JSON-LD 변경 0건 (head 링크 추가만)
+- [x] 모바일 390px·데스크톱 1280px 스크린샷 비교: `/guides/`, 가이드 1편, `/faq/`, `/facts/`, `/pricing/` (전·후)
+- [x] 폰트: 렌더된 폰트가 Pretendard인지 (document.fonts 확인)
 - [ ] 홈 → 메뉴 → 가이드 이동 시 폰트·톤 끊김 없는지 (앱 웹뷰 포함)
 - [ ] Lighthouse 모바일 접근성: 본문 대비 4.5:1 이상, 탭 영역 44px 이상
-- [ ] `./node_modules/.bin/tsc --noEmit -p tsconfig.app.json` (TS 무관하지만 규칙상)
+- [x] `./node_modules/.bin/tsc --noEmit -p tsconfig.app.json` · `vite build` 통과
 
 ## 구현 순서·소요
 
@@ -128,3 +128,5 @@ main만 사용.
 - 2026-11-13 대표: 가이드는 앱 안(웹뷰)에서 열림. → 뒤로가기 바(`page-bar`) 유지.
 - 2026-11-13 대표: 카톡 공유 이미지는 새로 제작.
 - 2026-11-13 대표: FAQ가 /faq로 안 보이는 문제 → 5단계 추가.
+- 2026-11-13 구현: 1·2·3·5단계 + 4단계 16번(theme-color, manifest 포함). 17번 og 이미지는 시안 확인 대기 (아직 미반영).
+- 구현 중 발견(문구라 이번 범위 밖): `/facts/`에 「저장소 docs/aeo/55-brand-scripts.md 참고」, `/pricing/`에 「`getPriceBreakdown`」처럼 내부 경로·함수명이 손님에게 노출됨 → 별도 수정 필요.

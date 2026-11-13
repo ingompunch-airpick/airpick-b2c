@@ -332,10 +332,14 @@ function renderPartner(p, reviewsByCompany) {
     <meta property="og:title" content="${esc(h1)}" />
     <meta property="og:description" content="${esc(description)}" />
     <meta property="og:url" content="${esc(url)}" />
-    <meta property="og:image" content="https://www.에어픽.kr/icon-512.png" />
+    <meta property="og:image" content="https://www.에어픽.kr/brand/og-default.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
     <link rel="stylesheet" href="/seo.css" />
     <script type="application/ld+json">
 ${JSON.stringify(graph, null, 2)}
@@ -490,7 +494,12 @@ function renderHub(partners, reviewsByCompany) {
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
+    <meta property="og:image" content="https://www.에어픽.kr/brand/og-default.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
     <link rel="stylesheet" href="/seo.css" />
     <script type="application/ld+json">
 ${JSON.stringify(graph, null, 2)}

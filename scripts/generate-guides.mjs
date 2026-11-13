@@ -186,11 +186,15 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
     <meta property="og:title" content="${esc(page.h1)}" />
     <meta property="og:description" content="${esc(page.description)}" />
     <meta property="og:url" content="${esc(url)}" />
-    <meta property="og:image" content="https://www.에어픽.kr/icon-512.png" />
+    <meta property="og:image" content="https://www.에어픽.kr/brand/og-default.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
     ${updated ? `<meta property="article:modified_time" content="${esc(updated)}" />` : ''}
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
     <link rel="stylesheet" href="/seo.css" />
     <script type="application/ld+json">
 ${JSON.stringify(graph, null, 2)}
@@ -249,8 +253,8 @@ function renderIndex(pages) {
       const updated = formatUpdated(p.updated || p.dateModified);
       return `        <li>
           <a href="/guides/${esc(p.slug)}/"><strong>${esc(p.h1)}</strong></a>
-          <p class="muted" style="margin:0.25rem 0 0;font-size:0.8125rem;color:var(--muted)">${esc(p.description)}</p>
-          ${updated ? `<p class="muted" style="margin:0.15rem 0 0;font-size:0.75rem;color:var(--muted)">업데이트 ${updated}</p>` : ''}
+          <p class="guide-desc">${esc(p.description)}</p>
+          ${updated ? `<p class="guide-date">업데이트 ${updated}</p>` : ''}
         </li>`;
     })
     .join('\n');
@@ -312,7 +316,12 @@ function renderIndex(pages) {
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="에어픽" />
+    <meta property="og:image" content="https://www.에어픽.kr/brand/og-default.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
     <link rel="stylesheet" href="/seo.css" />
     <script type="application/ld+json">
 ${JSON.stringify(graph, null, 2)}
@@ -333,7 +342,7 @@ ${JSON.stringify(graph, null, 2)}
       </header>
       <section class="section">
         <h2>가이드 목록</h2>
-        <ul style="list-style:none;padding:0;margin:0;display:grid;gap:1rem">
+        <ul class="guide-list">
 ${items}
         </ul>
       </section>

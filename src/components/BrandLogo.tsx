@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { cn } from '../utils/cn';
 
 /** 캐시 무효화 */
-const LOGO_VER = '9';
+const LOGO_VER = '10';
 
 type BrandLogoVariant = 'light' | 'premium' | 'gold' | 'color' | 'white';
 

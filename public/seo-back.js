@@ -33,3 +33,18 @@
     });
   });
 })();
+
+/** 상단 내비에서 지금 보는 섹션 칩 표시 */
+(function () {
+  var path = location.pathname;
+  var links = document.querySelectorAll('.topnav a:not(.brand)');
+  var best = null;
+  links.forEach(function (a) {
+    var href = a.getAttribute('href') || '';
+    if (href === '/' || href.charAt(0) !== '/') return;
+    if (path === href || path.indexOf(href.replace(/\/?$/, '/')) === 0) {
+      if (!best || href.length > best.getAttribute('href').length) best = a;
+    }
+  });
+  if (best) best.setAttribute('aria-current', 'page');
+})();

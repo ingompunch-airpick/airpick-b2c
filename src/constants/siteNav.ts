@@ -3,7 +3,7 @@
 export type SiteNavItem = {
   href: string;
   label: string;
-  /** FAQ는 앱 내 시트, 나머지는 웹 페이지 */
+  /** 앱 내 시트로 열 항목 (2026-11-13부터 메뉴 FAQ도 /faq/ 웹 페이지로 이동 — 예약 화면 FAQ 버튼만 시트) */
   openInApp?: 'faq';
 };
 
@@ -22,7 +22,7 @@ export const SITE_NAV_SECTIONS = [
       { href: '/parking', label: '주차대행 비교' },
       { href: '/esim', label: '이심(eSIM) 제휴 할인' },
       { href: '/guides/', label: '가이드' },
-      { href: '/faq/', label: 'FAQ', openInApp: 'faq' },
+      { href: '/faq/', label: 'FAQ' },
     ],
   },
   {
