@@ -18,6 +18,7 @@ import {
 } from '../utils/reservationPhotos';
 import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
+import { acquisitionFieldsForReservation } from '../utils/acquisition';
 import { createReceiptToken } from '../utils/receiptToken';
 import { normalizeCarNumber, carNumberTail } from '../utils/carNumber';
 
@@ -352,6 +353,8 @@ export async function submitReservation(
   }
 
   if (marketingOptIn) payload.marketingOptIn = true;
+
+  Object.assign(payload, acquisitionFieldsForReservation());
 
   await setDoc(doc(db, 'reservations', id), payload);
 

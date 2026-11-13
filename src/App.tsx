@@ -55,6 +55,7 @@ import {
   syncUrlToTab,
   tabFromPathname,
 } from './utils/appPath';
+import { captureAcquisitionFromLocation } from './utils/acquisition';
 import {
   consumeReturnToMenu,
   shouldReturnToMenuOnLaunch,
@@ -330,6 +331,10 @@ export default function App() {
 
   useEffect(() => {
     const path = window.location.pathname;
+    const search = window.location.search;
+    if (!isSeoDocumentPath(path)) {
+      captureAcquisitionFromLocation(path, search);
+    }
     if (!isSeoDocumentPath(path) && tabFromPathname(path) == null) {
       syncUrlToTab('home', 'replace');
       setTabState('home');
@@ -337,10 +342,12 @@ export default function App() {
 
     const onPopState = () => {
       const current = window.location.pathname;
+      const currentSearch = window.location.search;
       if (isSeoDocumentPath(current)) {
-        window.location.assign(current + window.location.search + window.location.hash);
+        window.location.assign(current + currentSearch + window.location.hash);
         return;
       }
+      captureAcquisitionFromLocation(current, currentSearch);
       const next = tabFromPathname(current) ?? 'home';
       setTabState(next);
       if (next === 'compare') setPendingCompanyId(readParkingCompanyId());
