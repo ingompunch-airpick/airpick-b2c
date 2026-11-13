@@ -10,10 +10,9 @@ export function parseVerificationDocuments(
 
   const v = raw as Record<string, unknown>;
   const businessRegistrationUrl = String(v.businessRegistrationUrl || '').trim() || undefined;
-  const parkingContractUrl = String(v.parkingContractUrl || '').trim() || undefined;
-
-  if (!businessRegistrationUrl && !parkingContractUrl) return undefined;
-  return { businessRegistrationUrl, parkingContractUrl };
+  // 주차장 계약서는 2026-11-14부터 받지도 보여주지도 않음 (B2B 입력 화면 제거) — 기존 값도 무시
+  if (!businessRegistrationUrl) return undefined;
+  return { businessRegistrationUrl };
 }
 
 export function hasBusinessRegistrationDocument(company: Company): boolean {
