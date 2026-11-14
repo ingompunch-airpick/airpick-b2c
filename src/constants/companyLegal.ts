@@ -60,7 +60,7 @@ export const AIRPICK_DEFINITION_META =
   '에어픽 공항주차 | 인천공항 주차대행·사설주차장 비교·예약. 일정만 넣으면 가격·보험·후기를 한눈에. 지금은 주차대행부터 예약할 수 있어요.';
 
 /** 홈 document.title · index.html title 과 동일하게 유지. 화면 로고와는 별개 */
-export const AIRPICK_HOME_DOCUMENT_TITLE = '인천공항 주차대행 비교·예약 | 에어픽';
+export const AIRPICK_HOME_DOCUMENT_TITLE = '에어픽 공항주차 | 인천공항 주차대행·사설주차장 비교·예약';
 
 /** 고객 화면용 한 줄 */
 export const AIRPICK_CUSTOMER_PITCH =
