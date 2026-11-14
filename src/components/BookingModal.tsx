@@ -1045,7 +1045,7 @@ export default function BookingModal({
         role="dialog"
         aria-modal="true"
         aria-label="예약"
-        className="flex h-full w-full max-w-lg flex-col md:max-w-5xl md:flex-row md:gap-5 md:px-5 md:py-4"
+        className="flex h-full min-h-0 w-full max-w-lg flex-col md:max-w-5xl md:flex-row md:gap-5 md:px-5 md:py-4"
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div className="flex shrink-0 justify-end px-3 pt-1 md:px-0">
@@ -1244,8 +1244,8 @@ export default function BookingModal({
           </div>
         </div>
 
-        <aside className="hidden w-[20rem] shrink-0 flex-col md:flex lg:w-[22rem]">
-          <div className="sticky top-0 space-y-3 pt-10">
+        <aside className="hidden min-h-0 w-[20rem] shrink-0 flex-col overflow-y-auto md:flex lg:w-[22rem]">
+          <div className="space-y-3 pt-10 pb-4">
             {summaryCard}
             {cancelNote}
             <div className="overflow-hidden rounded-2xl ring-1 ring-[#0f1a2e]/10">
