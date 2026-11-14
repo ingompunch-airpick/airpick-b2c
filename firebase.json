@@ -77,6 +77,31 @@
         "source": "/admin/reviews/",
         "destination": "/admin/reviews",
         "type": 301
+      },
+      {
+        "source": "/partner",
+        "destination": "/join",
+        "type": 301
+      },
+      {
+        "source": "/partner/",
+        "destination": "/join",
+        "type": 301
+      },
+      {
+        "source": "/partner.html",
+        "destination": "/join",
+        "type": 301
+      },
+      {
+        "source": "/for-partners",
+        "destination": "/join/badge/",
+        "type": 301
+      },
+      {
+        "source": "/for-partners/**",
+        "destination": "/join/badge/",
+        "type": 301
       }
     ],
     "headers": [
@@ -206,7 +231,7 @@
         ]
       },
       {
-        "source": "/for-partners/**",
+        "source": "/join/badge/**",
         "headers": [
           {
             "key": "Cache-Control",
@@ -386,7 +411,7 @@
         }
       },
       {
-        "source": "/partner",
+        "source": "/join",
         "destination": "/partner.html"
       },
       {

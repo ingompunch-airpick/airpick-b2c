@@ -13,5 +13,6 @@ export { MarketingNavbar } from './marketing/MarketingNavbar';
 export { MarketingFooter } from './marketing/MarketingFooter';
 export { SectionTitle } from './marketing/SectionTitle';
 export { DeviceFrame } from './marketing/DeviceFrame';
+export { ScaledIframe } from './marketing/ScaledIframe';
 export { CtaBanner } from './marketing/CtaBanner';
 export * from './lib/motion';

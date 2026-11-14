@@ -99,13 +99,13 @@
       "note": "가유"
     },
     {
-      "path": "/for-partners/",
+      "path": "/join/badge/",
       "changefreq": "monthly",
       "priority": 0.55,
       "note": "입점사 배지·백링크 가이드"
     },
     {
-      "path": "/partner",
+      "path": "/join",
       "changefreq": "weekly",
       "priority": 0.8,
       "note": "B2B 파트너 입점 랜딩"

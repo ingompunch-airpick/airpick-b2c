@@ -165,6 +165,14 @@ export function PartnerApply() {
               >
                 카카오 문의
               </Button>
+              <Button
+                href={`mailto:${COMPANY_LEGAL.email}?subject=${encodeURIComponent('에어픽 입점·제휴 문의')}`}
+                variant="secondary"
+                className="w-full"
+                onClick={() => trackCtaClick('partner_email', 'partner')}
+              >
+                이메일 문의
+              </Button>
               <p className="text-xs leading-relaxed text-mkt-muted">
                 고객센터 {COMPANY_LEGAL.supportHours} ·{' '}
                 {formatPhoneDisplay(COMPANY_LEGAL.phone)}
@@ -173,7 +181,7 @@ export function PartnerApply() {
             <p className="text-center text-xs text-mkt-muted">
               이미 입점한 업체는{' '}
               <a
-                href="/for-partners/"
+                href="/join/badge/"
                 className="font-semibold text-mkt-brand underline-offset-2 hover:underline"
               >
                 입점사 자료실

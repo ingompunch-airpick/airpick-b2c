@@ -25,7 +25,7 @@ export default function PartnerLandingPage() {
   return (
     <div className="mkt-root">
       <MarketingNavbar
-        brandHref="/partner"
+        brandHref="/join"
         brand="AirPick"
         links={NAV_LINKS}
         ctaHref="#apply"

@@ -5,7 +5,7 @@
 
 ## 공개 페이지 (복붙용)
 
-https://www.에어픽.kr/for-partners/
+https://www.에어픽.kr/join/badge/
 
 배지:
 - https://www.에어픽.kr/badges/airpick-compare.svg
@@ -21,7 +21,7 @@ https://www.에어픽.kr/for-partners/
 홈페이지·카톡 프로필에 「에어픽에서 비교·예약」 링크만 붙이면 됩니다.
 
 복붙 가이드(배지·문구):
-https://www.에어픽.kr/for-partners/
+https://www.에어픽.kr/join/badge/
 
 (우리 업체 공개 페이지도 같이 안내 가능합니다)
 와와: https://www.에어픽.kr/partners/wawa/
@@ -43,7 +43,7 @@ https://www.에어픽.kr/for-partners/
 입점 안내를 손님께 더 쉽게 전달하시도록
 홈페이지·카카오톡에 「에어픽에서 비교·예약」 배지/문구를 붙여 주시면 감사하겠습니다.
 
-• 가이드(HTML·문구 복붙): https://www.에어픽.kr/for-partners/
+• 가이드(HTML·문구 복붙): https://www.에어픽.kr/join/badge/
 • 주차대행 비교: https://www.에어픽.kr/
 • 입점 목록: https://www.에어픽.kr/partners/
 
@@ -79,7 +79,7 @@ https://www.에어픽.kr/
 https://www.에어픽.kr/partners/wawa/
 
 배지 HTML·짧은 문구:
-https://www.에어픽.kr/for-partners/
+https://www.에어픽.kr/join/badge/
 
 부담 없이 푸터·예약 안내 칸만으로도 충분합니다.
 ```
@@ -98,7 +98,7 @@ https://www.에어픽.kr/
 https://www.에어픽.kr/partners/gayu/
 
 배지 HTML·짧은 문구:
-https://www.에어픽.kr/for-partners/
+https://www.에어픽.kr/join/badge/
 
 부담 없이 푸터·예약 안내 칸만으로도 충분합니다.
 ```
@@ -130,7 +130,7 @@ https://www.에어픽.kr/for-partners/
 ## 에어픽 쪽 업데이트
 
 - 새 입점: `data/partners/pages.json` 추가 → `npm run partners`
-- `/for-partners/` 에 해당 id 스니펫 추가
+- `/join/badge/` 에 해당 id 스니펫 추가
 - sitemap은 partners 병합으로 자동 포함
 
 ---

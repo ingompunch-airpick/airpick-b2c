@@ -19,7 +19,7 @@ const SEO_DOCUMENT_PREFIXES = [
   '/refund',
   '/pricing',
   '/facts',
-  '/for-partners',
+  '/join',
   '/badges',
 ] as const;
 

@@ -506,11 +506,7 @@ export default function App() {
         {menuOpen && (
           <AppMenuSheet
             onClose={() => setMenuOpen(false)}
-            onOpenSupport={() => {
-              trackCtaClick('open_faq', 'menu');
-              setSupportFromMenu(true);
-              setSupportOpen(true);
-            }}
+            onGoTab={(next) => setTab(next)}
           />
         )}
 

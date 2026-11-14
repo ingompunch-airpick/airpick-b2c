@@ -1,74 +1,44 @@
+import { ArrowRight, ChevronRight, X } from 'lucide-react';
+import { markReturnToMenu } from '../utils/returnToMenu';
 import {
-  BookOpen,
-  Building2,
-  CircleHelp,
-  FileText,
-  LayoutGrid,
-  Mail,
-  MessageCircle,
-  ShieldCheck,
-  Smartphone,
-  Store,
-  ChevronRight,
-  X,
-} from 'lucide-react';
-import {
-  markReturnToMenu,
-} from '../utils/returnToMenu';
-import {
-  openPartnerInquiryEmail,
-  openPartnerInquiryKakao,
-} from '../constants/partnerContact';
-import { SITE_NAV_SECTIONS } from '../constants/siteNav';
+  SITE_NAV_JOIN,
+  SITE_NAV_LEGAL,
+  SITE_NAV_QUICK,
+  SITE_NAV_SECTIONS,
+} from '../constants/siteNav';
+import { trackCtaClick } from '../lib/analytics';
 
-const MENU_ICONS: Record<string, typeof CircleHelp> = {
-  '/parking': LayoutGrid,
-  '/esim': Smartphone,
-  '/guides/': BookOpen,
-  '/guides/parking-insurance/': ShieldCheck,
-  '/partners/': Store,
-  '/faq/': CircleHelp,
-  '/about/': Building2,
-  '/facts/': FileText,
-  '/pricing/': FileText,
-  '/terms/': FileText,
-  '/refund/': FileText,
-  '/privacy/': ShieldCheck,
-  'kakao:partner': MessageCircle,
-  'mailto:partner': Mail,
-};
-
-function MenuItem({
-  label,
-  icon: Icon,
-  onClick,
-}: {
-  label: string;
-  icon: typeof CircleHelp;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full items-center justify-between rounded-2xl bg-white px-4 py-3.5 text-left ring-1 ring-[#d8dee8] transition-colors hover:bg-[#f4f6f9]"
-    >
-      <span className="flex min-w-0 items-center gap-2.5">
-        <Icon size={18} className="shrink-0 text-[#b8923a]" strokeWidth={2} />
-        <span className="text-sm font-bold text-[#0f1a2e]">{label}</span>
-      </span>
-      <ChevronRight size={18} className="shrink-0 text-[#94a3b8]" />
-    </button>
-  );
-}
-
+/**
+ * ≡ 메뉴 — 입점 페이지(/join)와 같은 흰 바탕·굵은 글씨·남색 알약.
+ * 맨 위 큰 버튼 2개(예약) → 고객용 목록 → 업체 배너 → 약관.
+ * 계획: docs/work/subpage-partner-style-plan.md
+ */
 export default function AppMenuSheet({
   onClose,
-  onOpenSupport,
+  onGoTab,
 }: {
   onClose: () => void;
-  onOpenSupport: () => void;
+  /** 주차대행·이심은 앱 안에서 탭만 바꿈 (새로고침 없이) */
+  onGoTab?: (tab: 'home' | 'esim') => void;
 }) {
+  const openPage = (href: string) => {
+    markReturnToMenu();
+    onClose();
+    window.location.assign(href);
+  };
+
+  const openQuick = (href: string) => {
+    const tab = href === '/esim' ? 'esim' : 'home';
+    trackCtaClick(`menu_quick_${tab}`, 'menu');
+    if (onGoTab) {
+      onClose();
+      onGoTab(tab);
+      return;
+    }
+    onClose();
+    window.location.assign(href);
+  };
+
   return (
     <div className="fixed inset-0 z-[65]">
       <button
@@ -77,58 +47,92 @@ export default function AppMenuSheet({
         aria-label="메뉴 닫기"
         onClick={onClose}
       />
-      <div className="absolute right-0 top-0 flex h-full w-[min(100%,300px)] flex-col bg-[#f4f6f9] shadow-xl">
-        <div className="flex items-center justify-between border-b border-[#d8dee8] bg-white px-4 py-3">
-          <p className="text-sm font-bold text-[#0f1a2e]">더보기</p>
+      <div className="absolute bottom-[var(--app-tab-h,56px)] right-0 top-[var(--app-header-h,60px)] flex w-[min(100%,340px)] flex-col bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-[#e5e7eb] px-5 py-3">
+          <p className="text-[18px] font-extrabold tracking-tight text-[#0f1a2e]">메뉴</p>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-[#6b7a8a] hover:bg-[#eef1f5]"
+            className="-mr-2 rounded-full p-2 text-[#6b7280] hover:bg-[#f8fafc]"
             aria-label="닫기"
           >
-            <X size={20} />
+            <X size={22} />
           </button>
         </div>
 
-        <nav className="space-y-5 overflow-y-auto p-3 pb-8" aria-label="사이트 메뉴">
+        <nav
+          className="flex-1 overflow-y-auto pb-6"
+          aria-label="사이트 메뉴"
+        >
+          <div className="grid grid-cols-2 gap-2.5 px-5 pt-5">
+            {SITE_NAV_QUICK.map((item, i) => (
+              <button
+                key={item.href}
+                type="button"
+                onClick={() => openQuick(item.href)}
+                className={
+                  i === 0
+                    ? 'rounded-[20px] bg-[#0f1a2e] p-4 text-left text-white transition active:scale-[0.98]'
+                    : 'rounded-[20px] border border-[#e5e7eb] bg-[#f8fafc] p-4 text-left text-[#0f1a2e] transition active:scale-[0.98]'
+                }
+              >
+                <span className="block text-[12px] font-semibold opacity-70">{item.caption}</span>
+                <span className="mt-4 block text-[16px] font-bold tracking-tight">{item.label}</span>
+              </button>
+            ))}
+          </div>
+
           {SITE_NAV_SECTIONS.map((section) => (
-            <div key={section.id}>
-              <p className="mb-2 px-1 text-[11px] font-bold tracking-wide text-[#6b7a8a]">
-                {section.title}
-              </p>
-              <div className="space-y-2">
-                {section.items.map((item) => {
-                  const Icon = MENU_ICONS[item.href] ?? CircleHelp;
-                  return (
-                    <MenuItem
-                      key={`${section.id}-${item.href}`}
-                      label={item.label}
-                      icon={Icon}
-                      onClick={() => {
-                        if ('openInApp' in item && item.openInApp === 'faq') {
-                          onOpenSupport();
-                          return;
-                        }
-                        if (item.href === 'kakao:partner') {
-                          onClose();
-                          openPartnerInquiryKakao();
-                          return;
-                        }
-                        if (item.href === 'mailto:partner') {
-                          onClose();
-                          openPartnerInquiryEmail();
-                          return;
-                        }
-                        markReturnToMenu();
-                        onClose();
-                        window.location.assign(item.href);
-                      }}
-                    />
-                  );
-                })}
-              </div>
+            <div key={section.id} className="px-5 pt-6">
+              <p className="mb-1 text-[12px] font-bold text-[#9ca3af]">{section.title}</p>
+              <ul>
+                {section.items.map((item) => (
+                  <li key={item.href} className="border-b border-[#f1f3f6] last:border-b-0">
+                    <button
+                      type="button"
+                      onClick={() => openPage(item.href)}
+                      className="flex w-full items-center justify-between py-3.5 text-left text-[16px] font-semibold tracking-tight text-[#0f1a2e] active:opacity-60"
+                    >
+                      {item.label}
+                      <ChevronRight size={18} className="shrink-0 text-[#9ca3af]" aria-hidden />
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
+
+          <div className="px-5 pt-6">
+            <button
+              type="button"
+              onClick={() => {
+                trackCtaClick('menu_join', 'menu');
+                openPage(SITE_NAV_JOIN.href);
+              }}
+              className="block w-full rounded-[20px] bg-gradient-to-br from-[#0f1a2e] to-[#1d2b47] p-5 text-left text-white transition active:scale-[0.99]"
+            >
+              <span className="block text-[12px] font-bold text-[#d9b866]">{SITE_NAV_JOIN.caption}</span>
+              <span className="mt-1.5 block text-[18px] font-bold tracking-tight">{SITE_NAV_JOIN.title}</span>
+              <span className="mt-1 block text-[13px] text-white/70">{SITE_NAV_JOIN.body}</span>
+              <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[14px] font-bold text-[#0f1a2e]">
+                {SITE_NAV_JOIN.cta}
+                <ArrowRight size={16} aria-hidden />
+              </span>
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-x-4 gap-y-2 px-5 pt-6 text-[12px] text-[#9ca3af]">
+            {SITE_NAV_LEGAL.map((item) => (
+              <button
+                key={item.href}
+                type="button"
+                onClick={() => openPage(item.href)}
+                className="hover:text-[#6b7280]"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
         </nav>
       </div>
     </div>

@@ -13,47 +13,50 @@ export type SiteNavSection = {
   items: readonly SiteNavItem[];
 };
 
-/** ≡ 메뉴 · 사용자 여정 섹션 (유심사 「더보기」 참고) */
+/** ≡ 메뉴 맨 위 큰 버튼 2개 — 예약으로 바로 (앱 유입이 많아 엄지 닿는 첫 줄에) */
+export const SITE_NAV_QUICK = [
+  { href: '/', label: '주차대행 비교', caption: '예약하기' },
+  { href: '/esim', label: '이심(eSIM)', caption: '제휴 할인' },
+] as const;
+
+/** ≡ 메뉴 · 고객용 목록 (2026-11-14 입점 페이지 스타일로 재구성) */
 export const SITE_NAV_SECTIONS = [
   {
-    id: 'use',
-    title: '이용 안내',
+    id: 'learn',
+    title: '알아보기',
     items: [
-      { href: '/parking', label: '주차대행 비교' },
-      { href: '/esim', label: '이심(eSIM) 제휴 할인' },
       { href: '/guides/', label: '가이드' },
-      { href: '/faq/', label: 'FAQ' },
+      { href: '/faq/', label: '자주 묻는 질문' },
+      { href: '/pricing/', label: '요금 안내' },
+      { href: '/guides/parking-insurance/', label: '보험 확인하기' },
     ],
   },
   {
-    id: 'trust',
-    title: '입점·신뢰',
+    id: 'airpick',
+    title: '에어픽',
     items: [
       { href: '/partners/', label: '입점 업체' },
-      { href: '/guides/parking-insurance/', label: '보험, 예약 전에 뭘 확인하나요?' },
-    ],
-  },
-  {
-    id: 'business',
-    title: '비즈니스',
-    items: [
-      { href: 'kakao:partner', label: '입점 · 제휴 카카오톡' },
-      { href: 'mailto:partner', label: '입점 · 제휴 이메일' },
-    ],
-  },
-  {
-    id: 'service',
-    title: '서비스 정보',
-    items: [
       { href: '/about/', label: '에어픽 소개' },
       { href: '/facts/', label: '사실 확인' },
-      { href: '/pricing/', label: '요금 안내' },
-      { href: '/terms/', label: '이용약관' },
-      { href: '/refund/', label: '취소·환불 정책' },
-      { href: '/privacy/', label: '개인정보처리방침' },
     ],
   },
 ] as const satisfies readonly SiteNavSection[];
+
+/** ≡ 메뉴 · 업체용 배너 → 입점 신청 페이지 (카카오·메일 문의는 그 페이지 안에) */
+export const SITE_NAV_JOIN = {
+  href: '/join',
+  caption: '업체 사장님이신가요?',
+  title: '에어픽 입점 신청',
+  body: '무료 입점 상담부터 시작하세요.',
+  cta: '입점 신청하기',
+} as const;
+
+/** ≡ 메뉴 맨 아래 작은 글씨 */
+export const SITE_NAV_LEGAL = [
+  { href: '/terms/', label: '이용약관' },
+  { href: '/refund/', label: '취소·환불' },
+  { href: '/privacy/', label: '개인정보처리방침' },
+] as const;
 
 /** 플랫 목록 (사이트링크·크롤용) — 섹션에서 메일·중복 제외 */
 export const SITE_NAV_PRIMARY = [

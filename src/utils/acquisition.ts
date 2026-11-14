@@ -20,6 +20,7 @@ const RESERVED_PATHS = new Set([
   'pricing',
   'facts',
   'for-partners',
+  'join',
   'badges',
   'admin',
   'r',

@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import { Badge, Button, Container, DeviceFrame, FadeIn } from '../../../design-system';
+import { Badge, Button, Container, DeviceFrame, FadeIn, ScaledIframe } from '../../../design-system';
 
 export function PartnerHero() {
   const reduce = useReducedMotion();
@@ -17,15 +17,15 @@ export function PartnerHero() {
       />
 
       <Container className="relative grid items-center gap-12 py-14 lg:grid-cols-12 lg:gap-8 lg:py-20">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-6">
           <FadeIn>
             <Badge>대한민국 공항 플랫폼</Badge>
           </FadeIn>
           <FadeIn delay={0.08}>
-            <h1 className="mt-6 text-4xl font-bold tracking-tight text-mkt-ink md:text-5xl lg:text-[3.25rem] lg:leading-[1.12]">
-              광고비는 계속 오르는데,
+            <h1 className="mt-6 break-keep text-[2.125rem] font-bold leading-[1.2] tracking-tight text-mkt-ink md:text-5xl lg:text-[3.25rem] lg:leading-[1.12]">
+              <span className="sm:whitespace-nowrap">광고비는 계속 오르는데,</span>
               <br />
-              예약은 늘고 있습니까?
+              <span className="sm:whitespace-nowrap">예약은 늘고 있습니까?</span>
             </h1>
           </FadeIn>
           <FadeIn delay={0.16}>
@@ -48,7 +48,7 @@ export function PartnerHero() {
           </FadeIn>
         </div>
 
-        <div className="relative lg:col-span-7">
+        <div className="relative lg:col-span-6">
           <FadeIn delay={0.12} className="relative">
             <div
               className="pointer-events-none absolute -inset-4 rounded-[2rem] bg-mkt-brand/20 blur-2xl"
@@ -60,12 +60,7 @@ export function PartnerHero() {
               label="www.에어픽.kr/"
               contentClassName="aspect-[9/19] min-h-[560px] h-[min(68vh,640px)]"
             >
-              <iframe
-                title="에어픽 주차대행 비교 화면"
-                src="/parking"
-                className="h-full w-full border-0"
-                loading="lazy"
-              />
+              <ScaledIframe title="에어픽 주차대행 비교 화면" src="/" />
             </DeviceFrame>
           </FadeIn>
         </div>

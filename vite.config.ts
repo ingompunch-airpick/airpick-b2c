@@ -14,6 +14,7 @@ function hubHtmlRewrite() {
     '/parking': '/parking.html',
     '/esim': '/esim.html',
     '/partner': '/partner.html',
+    '/join': '/partner.html',
   };
   const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
     const raw = req.url ?? '';
@@ -48,7 +49,7 @@ function seoDocumentRewrite() {
     '/about',
     '/privacy',
     '/facts',
-    '/for-partners',
+    '/join/badge',
     '/badges',
   ] as const;
 
@@ -149,7 +150,7 @@ export default defineConfig({
           '**/privacy/**',
           '**/guides/**',
           '**/partners/**',
-          '**/for-partners/**',
+          '**/join/**',
           '**/facts/**',
           '**/badges/**',
           '**/robots.txt',
@@ -177,7 +178,7 @@ export default defineConfig({
           /^\/privacy(?:\/|$)/,
           /^\/guides(?:\/|$)/,
           /^\/partners(?:\/|$)/,
-          /^\/for-partners(?:\/|$)/,
+          /^\/join(?:\/|$)/,
           /^\/facts(?:\/|$)/,
           /^\/badges(?:\/|$)/,
           /^\/parking(?:\/|$)/,
@@ -213,7 +214,7 @@ export default defineConfig({
           },
           // about/faq/privacy/guides/partners 정적 HTML — 네트워크 우선, 최대 1시간
           {
-            urlPattern: /\/(?:about|faq|privacy|guides|partners|for-partners|facts)(?:\/|$)/i,
+            urlPattern: /\/(?:about|faq|privacy|guides|partners|join|facts)(?:\/|$)/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'seo-html',
