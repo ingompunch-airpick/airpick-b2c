@@ -156,6 +156,7 @@ export default defineConfig({
           '**/robots.txt',
           '**/sitemap.xml',
           '**/seo.css',
+          '**/seo-back.js',
           '**/naver*.html',
           '**/google*.html',
           '**/shared/**',
@@ -209,7 +210,7 @@ export default defineConfig({
           },
           // 정적 SEO·검증 파일 — SW 캐시 금지 (항상 네트워크)
           {
-            urlPattern: /\/(?:robots\.txt|sitemap\.xml|seo\.css|(?:naver|google)[\w-]+\.html)$/i,
+            urlPattern: /\/(?:robots\.txt|sitemap\.xml|seo\.css|seo-back\.js|(?:naver|google)[\w-]+\.html)(?:\?.*)?$/i,
             handler: 'NetworkOnly',
           },
           // about/faq/privacy/guides/partners 정적 HTML — 네트워크 우선, 최대 1시간

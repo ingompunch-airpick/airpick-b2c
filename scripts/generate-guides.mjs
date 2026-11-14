@@ -54,7 +54,7 @@ function pageChrome(title) {
 }
 
 function seoBackScript() {
-  return `<script src="/seo-back.js" defer></script>`;
+  return `<script src="/seo-back.js?v=20261114b" defer></script>`;
 }
 
 function howToJsonLd(howTo, pageUrl) {
@@ -195,7 +195,7 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
-    <link rel="stylesheet" href="/seo.css" />
+    <link rel="stylesheet" href="/seo.css?v=20261114b" />
     <script type="application/ld+json">
 ${JSON.stringify(graph, null, 2)}
     </script>
@@ -322,7 +322,7 @@ function renderIndex(pages) {
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
-    <link rel="stylesheet" href="/seo.css" />
+    <link rel="stylesheet" href="/seo.css?v=20261114b" />
     <script type="application/ld+json">
 ${JSON.stringify(graph, null, 2)}
     </script>

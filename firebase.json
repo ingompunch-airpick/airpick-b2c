@@ -323,6 +323,24 @@
             "value": "public, max-age=3600"
           }
         ]
+      },
+      {
+        "source": "/seo.css",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/seo-back.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=300, must-revalidate"
+          }
+        ]
       }
     ],
     "rewrites": [
