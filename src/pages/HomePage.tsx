@@ -17,7 +17,7 @@ import {
   Warehouse,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DateField from '../components/DateField';
 import SiteFooter from '../components/SiteFooter';
 import HomeFaq from '../components/home/HomeFaq';
@@ -32,7 +32,7 @@ import { listParkingCompareCompanies } from '../lib/parkingCompare';
 import type { BookingSearch, Company, ParkingProductType, Reservation, Terminal } from '../types';
 import { cn } from '../utils/cn';
 import { buildPartnerPriceList, type PricedCompany } from '../utils/compareSort';
-import { formatStayPhrase, todayYmd } from '../utils/dates';
+import { todayYmd } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import { companyCardPhotoUrl } from '../utils/parkingLocation';
@@ -220,8 +220,6 @@ export default function HomePage({
     [affiliateDiscountWon, companies, search, signupCoupon]
   );
 
-  const companySectionRef = useRef<HTMLElement>(null);
-
   const pricedIds = priced.map((item) => item.company.id).join('|');
   useEffect(() => {
     const ids = pricedIds ? pricedIds.split('|').filter(Boolean) : [];
@@ -398,33 +396,11 @@ export default function HomePage({
                 </div>
               </div>
             </div>
-
-            <div>
-              {!loading && priced.length > 0 ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    companySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }
-                  className="inline-flex items-center gap-0.5 rounded-full bg-gold/15 py-1.5 pl-3 pr-2 text-[13px] font-bold text-gold"
-                >
-                  총 {stayLabel(search.departureDate, search.arrivalDate)} · {priced.length}곳 보기
-                  <ChevronRight size={14} strokeWidth={2.5} aria-hidden />
-                </button>
-              ) : (
-                <span className="rounded-full bg-gold/15 px-3 py-1.5 text-[13px] font-bold text-gold">
-                  총 {stayLabel(search.departureDate, search.arrivalDate)}
-                </span>
-              )}
-            </div>
           </div>
         </div>
       </section>
 
-      <section
-        ref={companySectionRef}
-        className="mx-auto mt-8 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4 md:max-w-3xl"
-      >
+      <section className="mx-auto mt-8 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4 md:max-w-3xl">
         <SiteNoticeBanner />
         {noticeReservation ? (
           <button
@@ -627,10 +603,6 @@ function compareHomeCompanies(
     if (a.price !== b.price) return a.price - b.price;
   }
   return displayCompanyName(a.company.name).localeCompare(displayCompanyName(b.company.name), 'ko');
-}
-
-function stayLabel(start: string, end: string): string {
-  return formatStayPhrase(getParkingDayCount(start, end));
 }
 
 function ChoiceLabel({ children, className }: { children: string; className?: string }) {
