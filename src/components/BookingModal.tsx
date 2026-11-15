@@ -19,7 +19,7 @@ import type { BookingSearch, Company, Terminal } from '../types';
 import { suggestedIcnTerminalForAirline } from '../constants/airlines';
 import { displayCompanyName } from '../utils/display';
 import { ensureAnonymousAuth, submitReservation, subscribeReservation, type BookingForm } from '../lib/reservations';
-import { trackAppointmentScheduled } from '../lib/analytics';
+import { trackAppointmentScheduled, trackPurchaseOnce } from '../lib/analytics';
 import { reportError } from '../lib/errorReport';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
@@ -28,6 +28,7 @@ import { cn } from '../utils/cn';
 import { getPriceBreakdown, withAffiliateDiscount } from '../utils/pricing';
 import { useAffiliateOffer } from '../context/AffiliateContext';
 import { isAirpickPartner } from '../utils/compareSort';
+import AirportSavingsLine from './AirportSavingsLine';
 import {
   companySupportsIndoor,
   companySupportsOutdoor,
@@ -525,6 +526,14 @@ export default function BookingModal({
         }
       );
       trackAppointmentScheduled();
+      trackPurchaseOnce({
+        transactionId: id,
+        value: Math.max(0, payable - spend),
+        vendor: company.id,
+        vendorName: company.name,
+        bookingPath: 'airpick_main',
+        bookingMethod: asMember ? 'kakao' : 'guest',
+      });
       saveRecentReservation({
         id,
         carNumber: form.carNumber.trim(),
@@ -747,6 +756,12 @@ export default function BookingModal({
               <dt className="text-[13px] font-semibold text-muted">이용요금</dt>
               <dd className="text-base font-bold text-gold tabular-nums">{shownPayable.toLocaleString()}원</dd>
             </div>
+            <AirportSavingsLine
+              days={breakdown.days}
+              displayPriceWon={shownPayable}
+              compact
+              className="pt-1 text-right"
+            />
           </dl>
           {memberPreview && pointSpendCap >= POINT_STEP_WON ? (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f4f5f7] px-4 py-3">
@@ -997,6 +1012,14 @@ export default function BookingModal({
             {payableTotal.toLocaleString()}원
           </span>
         </div>
+        <AirportSavingsLine
+          days={breakdown.days}
+          displayPriceWon={payableTotal}
+          className="mt-1.5 text-right"
+        />
+        <p className="mt-1.5 text-[11px] font-medium text-muted">
+          심야·옵션은 현장 정책 · 입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전 무료 취소
+        </p>
       </div>
     </div>
   );

@@ -52,6 +52,7 @@ import {
   type CompanyReviewSnapshot,
 } from '../lib/reviews';
 import { useAffiliateOffer } from '../context/AffiliateContext';
+import AirportSavingsLine from '../components/AirportSavingsLine';
 
 type HomeListSort = 'reviews' | 'price';
 
@@ -523,6 +524,7 @@ export default function HomePage({
                     reviews={reviewById}
                     isIndoor={search.isIndoor}
                     terminal={search.terminal}
+                    stayDays={getParkingDayCount(search.departureDate, search.arrivalDate)}
                     onDetail={(company, price) => selectCompany(company, price, 'detail')}
                     onBook={(company, price) => selectCompany(company, price, 'book')}
                   />
@@ -535,6 +537,7 @@ export default function HomePage({
                       reviews={reviewById}
                       isIndoor={search.isIndoor}
                       terminal={search.terminal}
+                      stayDays={getParkingDayCount(search.departureDate, search.arrivalDate)}
                       onDetail={(company, price) => selectCompany(company, price, 'detail')}
                       onBook={(company, price) => selectCompany(company, price, 'book')}
                     />
@@ -548,6 +551,7 @@ export default function HomePage({
                 reviews={reviewById}
                 isIndoor={search.isIndoor}
                 terminal={search.terminal}
+                stayDays={getParkingDayCount(search.departureDate, search.arrivalDate)}
                 onDetail={(company, price) => selectCompany(company, price, 'detail')}
                 onBook={(company, price) => selectCompany(company, price, 'book')}
               />
@@ -754,6 +758,7 @@ function PriceList({
   items,
   isIndoor,
   terminal,
+  stayDays,
   onDetail,
   onBook,
   marks = {},
@@ -762,6 +767,7 @@ function PriceList({
   items: Array<PricedCompany & { listPrice: number }>;
   isIndoor: boolean;
   terminal: Terminal;
+  stayDays: number;
   onDetail: (company: Company, price: number) => void;
   onBook: (company: Company, price: number) => void;
   marks?: Record<string, string>;
@@ -952,6 +958,14 @@ function PriceList({
                       ) : null}
                       <p className="text-[22px] font-bold tabular-nums text-[#0f1a2e]">
                         {price.toLocaleString()}원
+                      </p>
+                      <AirportSavingsLine
+                        days={stayDays}
+                        displayPriceWon={price}
+                        className="mt-1"
+                      />
+                      <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/45">
+                        현장 결제 · 심야·옵션은 현장 정책
                       </p>
                     </div>
                     <div className="relative z-20 grid grid-cols-2 gap-2">

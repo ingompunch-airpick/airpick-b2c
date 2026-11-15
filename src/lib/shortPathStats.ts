@@ -1,10 +1,10 @@
 /**
- * B2C 짧은 경로(/long1 등) 방문 — 일별 sources 카운트.
- * 예약 acquisitionSource 와 별개. 본사 유입 탭에서 읽음.
+ * B2C 짧은 경로(/long1 등)·?src= 방문 — 일별 sources 카운트.
+ * 예약 acquisitionSource 와 같은 키. 본사 유입 탭에서 읽음.
  */
 import { doc, increment, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { sourceFromPath } from '../utils/acquisition';
+import { sourceFromLocation } from '../utils/acquisition';
 
 const SOURCE_RE = /^[a-z0-9_-]{1,40}$/;
 
@@ -16,9 +16,12 @@ function sessionKey(source: string, day: string): string {
   return `b2c.shortpath.${source}.${day}`;
 }
 
-/** 경로 유입 1회(같은 경로·같은 날·같은 탭 세션은 1번). */
-export async function recordB2cShortPathVisit(pathname: string): Promise<void> {
-  const source = sourceFromPath(pathname || '/');
+/** 경로·src 유입 1회(같은 소스·같은 날·같은 탭 세션은 1번). */
+export async function recordB2cShortPathVisit(
+  pathname: string,
+  search = ''
+): Promise<void> {
+  const source = sourceFromLocation(pathname || '/', search);
   if (!source || !SOURCE_RE.test(source)) return;
 
   const day = kstTodayKey();

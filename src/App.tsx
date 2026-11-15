@@ -334,7 +334,7 @@ export default function App() {
     const path = window.location.pathname;
     const search = window.location.search;
     if (!isSeoDocumentPath(path)) {
-      void recordB2cShortPathVisit(path);
+      void recordB2cShortPathVisit(path, search);
       captureAcquisitionFromLocation(path, search);
     }
     if (!isSeoDocumentPath(path) && tabFromPathname(path) == null) {
@@ -349,7 +349,7 @@ export default function App() {
         window.location.assign(current + currentSearch + window.location.hash);
         return;
       }
-      void recordB2cShortPathVisit(current);
+      void recordB2cShortPathVisit(current, currentSearch);
       captureAcquisitionFromLocation(current, currentSearch);
       const next = tabFromPathname(current) ?? 'home';
       setTabState(next);

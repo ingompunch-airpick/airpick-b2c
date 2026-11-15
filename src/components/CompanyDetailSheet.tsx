@@ -1,6 +1,7 @@
 import { Car, Clock, KeyRound, MapPin, Phone, Shield, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AffiliatePrice from './AffiliatePrice';
+import AirportSavingsLine from './AirportSavingsLine';
 import CompanyVerificationDocuments from './CompanyVerificationDocuments';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
 import { pickupPin } from '../data/pickupPins';
@@ -551,6 +552,11 @@ export default function CompanyDetailSheet({
                     ? 'text-2xl font-bold text-muted-light'
                     : 'text-2xl font-bold text-ink'
                 }
+              />
+              <AirportSavingsLine
+                days={getParkingDayCount(search.departureDate, search.arrivalDate)}
+                displayPriceWon={price}
+                className="mt-1"
               />
             </div>
             {telHref ? (
