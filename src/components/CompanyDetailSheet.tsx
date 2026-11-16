@@ -122,11 +122,11 @@ function FactIconRow({
 }) {
   return (
     <li className="flex gap-2.5">
-      <Icon size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-ink" aria-hidden />
-      <span className="min-w-0">
-        <span className="block text-[14px] font-semibold text-ink">{title}</span>
+      <Icon size={20} strokeWidth={2} className="mt-0.5 shrink-0 text-ink" aria-hidden />
+      <span className="min-w-0 text-[15px] font-semibold leading-snug text-ink">
+        {title}
         {detail ? (
-          <span className="mt-0.5 block text-[12px] font-medium leading-snug text-muted">{detail}</span>
+          <span className="font-medium text-ink/55"> · {detail}</span>
         ) : null}
       </span>
     </li>
@@ -332,6 +332,7 @@ export default function CompanyDetailSheet({
   const nightLine = nightSurchargeLine(company);
   const insuranceLabel =
     shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : undefined;
+  const coverageLimitText = company.insurance?.coverageLimitText?.trim() || undefined;
 
   const reviewsLoading = reviewSnapshot == null;
   const reviews = reviewSnapshot?.recent ?? [];
@@ -400,20 +401,22 @@ export default function CompanyDetailSheet({
             <ul className="mt-3 space-y-2.5">
               <FactIconRow icon={Car} title={transferTitle} detail={pin.detail} />
               <FactIconRow icon={KeyRound} title={keyTitle} />
-              <FactIconRow
-                icon={MapPin}
-                title={`${lotLabel} · ${search.terminal}`}
-                detail="현장 결제"
-              />
+              {insuranceLabel || coverageLimitText ? (
+                <FactIconRow
+                  icon={Shield}
+                  title={coverageLimitText || insuranceLabel || '입점 확인 보험'}
+                  detail={
+                    coverageLimitText && insuranceLabel ? insuranceLabel : undefined
+                  }
+                />
+              ) : null}
+              <FactIconRow icon={MapPin} title={`${lotLabel} · ${search.terminal}`} />
               <FactIconRow
                 icon={Clock}
                 title={`입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소`}
               />
               {nightLine ? (
                 <FactIconRow icon={Clock} title="야간·새벽 할증" detail={nightLine} />
-              ) : null}
-              {insuranceLabel ? (
-                <FactIconRow icon={Shield} title={insuranceLabel} detail="입점 확인 보험" />
               ) : null}
             </ul>
           </section>

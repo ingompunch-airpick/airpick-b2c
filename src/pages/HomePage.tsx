@@ -13,7 +13,6 @@ import {
   Shield,
   Star,
   Sun,
-  Wallet,
   Warehouse,
   type LucideIcon,
 } from 'lucide-react';
@@ -781,6 +780,7 @@ function PriceList({
             : null);
         const insuranceLabel =
           shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : null;
+        const coverageLimitText = company.insurance?.coverageLimitText?.trim() || undefined;
         const handoffBadge = valetHandoffBadge(meetHandoff);
         return (
           <article
@@ -873,6 +873,17 @@ function PriceList({
                     <span className="text-[15px] font-semibold text-[#0f1a2e]">{keyText}</span>
                   </li>
                 ) : null}
+                {coverageLimitText || insuranceLabel ? (
+                  <li className="flex gap-2.5">
+                    <Shield size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
+                    <span className="min-w-0 text-[15px] font-semibold leading-snug text-[#0f1a2e]">
+                      {coverageLimitText || insuranceLabel}
+                      {coverageLimitText && insuranceLabel ? (
+                        <span className="font-medium text-[#0f1a2e]/55"> · {insuranceLabel}</span>
+                      ) : null}
+                    </span>
+                  </li>
+                ) : null}
                 {facts.meetHours ? (
                   <li className="flex gap-2.5">
                     <Clock size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
@@ -885,12 +896,6 @@ function PriceList({
                     <span className="text-[15px] font-semibold text-[#0f1a2e]">{facts.ev}</span>
                   </li>
                 ) : null}
-                {insuranceLabel ? (
-                  <li className="flex gap-2.5">
-                    <Shield size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{insuranceLabel}</span>
-                  </li>
-                ) : null}
                 <li className="flex gap-2.5">
                   {isIndoor ? (
                     <Warehouse size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
@@ -898,10 +903,6 @@ function PriceList({
                     <Sun size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
                   )}
                   <span className="text-[15px] font-semibold text-[#0f1a2e]">{lotLabel} 주차장 보관</span>
-                </li>
-                <li className="flex gap-2.5">
-                  <Wallet size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                  <span className="text-[15px] font-semibold text-[#0f1a2e]">현장 결제</span>
                 </li>
               </ul>
 
@@ -936,9 +937,6 @@ function PriceList({
                         displayPriceWon={price}
                         className="mt-1"
                       />
-                      <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/45">
-                        현장 결제 · 심야·옵션은 현장 정책
-                      </p>
                     </div>
                     <div className="relative z-20 grid grid-cols-2 gap-2">
                       <button
