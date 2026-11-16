@@ -485,6 +485,7 @@ export default function BookingModal({
       });
       window.location.assign(`/payment/complete?paymentId=${encodeURIComponent(paymentId)}`);
     } catch (err) {
+      console.error('[portone]', channel, err);
       const message = err instanceof Error ? err.message : '결제에 실패했습니다.';
       window.alert(message);
       setError(message);

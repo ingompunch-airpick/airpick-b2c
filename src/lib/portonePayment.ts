@@ -40,8 +40,12 @@ export function portoneCustomerEmail(opts: {
   return `guest+${digits}@airpick.kr`;
 }
 
+/**
+ * KPN은 paymentId에 영문·숫자만 허용 (하이픈 등 특수문자 불가).
+ * 이니시스와 공통으로 안전한 형태를 쓴다.
+ */
 export function newPortonePaymentId(): string {
-  return `order-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return `order${Date.now()}${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export function paymentCompleteUrl(paymentId: string): string {
