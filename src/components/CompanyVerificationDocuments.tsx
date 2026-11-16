@@ -14,12 +14,14 @@ function DocumentRow({
   icon: Icon,
   title,
   detail,
+  extra,
   href,
   linkLabel,
 }: {
   icon: typeof ShieldCheck;
   title: string;
   detail?: string;
+  extra?: string;
   href?: string;
   linkLabel: string;
 }) {
@@ -33,6 +35,9 @@ function DocumentRow({
           <p className="text-sm font-bold text-ink">{title}</p>
           {detail ? (
             <p className="mt-0.5 text-[11px] font-semibold text-muted">{detail}</p>
+          ) : null}
+          {extra ? (
+            <p className="mt-1 text-[12px] font-semibold leading-snug text-ink">{extra}</p>
           ) : null}
         </div>
       </div>
@@ -66,6 +71,7 @@ export default function CompanyVerificationDocuments({
   const insuranceLabel = displayInsuranceLabel(company);
   const productName = company.insurance?.productName?.trim();
   const certificateUrl = company.insurance?.certificateUrl?.trim();
+  const coverageLimitText = company.insurance?.coverageLimitText?.trim();
 
   return (
     <section
@@ -104,6 +110,7 @@ export default function CompanyVerificationDocuments({
             icon={ShieldCheck}
             title="보험 가입 확인"
             detail={insuranceLabel}
+            extra={coverageLimitText}
             href={certificateUrl}
             linkLabel="보험증권 보기"
           />

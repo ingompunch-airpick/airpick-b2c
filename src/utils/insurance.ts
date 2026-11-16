@@ -24,6 +24,8 @@ export interface InsuranceDisplay {
   summary?: string;
   /** 상품명 등 부가 설명 */
   detail?: string;
+  /** 대인·대물·자차 한 줄 — 상세·예약·내 예약만 (비교 카드 제외) */
+  coverageLimitText?: string;
   /** 보험증권 보기 URL */
   certificateUrl?: string;
 }
@@ -36,6 +38,9 @@ function parseInsuranceObject(raw: Record<string, unknown>): CompanyInsurance | 
 
   const provider = raw.provider ? String(raw.provider).trim() : undefined;
   const productName = raw.productName ? String(raw.productName).trim() : undefined;
+  const coverageLimitText = raw.coverageLimitText
+    ? String(raw.coverageLimitText).trim()
+    : undefined;
   const limitRaw = raw.coverageLimitWon ?? raw.coverageLimit;
   const coverageLimitWon =
     limitRaw !== undefined && limitRaw !== null && limitRaw !== ''
@@ -46,6 +51,7 @@ function parseInsuranceObject(raw: Record<string, unknown>): CompanyInsurance | 
     enrolled: true,
     provider: provider || undefined,
     productName: productName || undefined,
+    coverageLimitText: coverageLimitText || undefined,
     coverageLimitWon:
       coverageLimitWon !== undefined && !Number.isNaN(coverageLimitWon)
         ? coverageLimitWon
@@ -128,11 +134,13 @@ export function resolveInsuranceDisplay(
   const productName = resolveDisplayProductName(insurance);
   const detail =
     productName && insurance.provider ? undefined : productName || undefined;
+  const coverageLimitText = insurance.coverageLimitText?.trim() || undefined;
 
   return {
     status: 'enrolled',
     summary,
     detail,
+    coverageLimitText,
     certificateUrl: insurance.certificateUrl,
   };
 }

@@ -6,7 +6,6 @@ import { companyThumbnailUrl } from '../utils/imageUrl';
 import { getCompanyParkingLot } from '../utils/parkingLocation';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 import {
-  formatCoverageLimitWon,
   formatInsuranceSummary,
   INSURANCE_DISCLAIMER,
 } from '../utils/insurance';
@@ -48,12 +47,8 @@ export default function BookingPartnerSummary({
   const name = displayCompanyName(company.name);
   const insurance = company.insurance?.enrolled ? company.insurance : undefined;
   const insuranceSummary = insurance ? formatInsuranceSummary(insurance) : undefined;
-  const insuranceLine = [
-    insuranceSummary,
-    insurance?.coverageLimitWon ? `한도 ${formatCoverageLimitWon(insurance.coverageLimitWon)}` : '',
-  ]
-    .filter(Boolean)
-    .join(', ');
+  const coverageLimitText = insurance?.coverageLimitText?.trim() || undefined;
+  const insuranceLine = [insuranceSummary, coverageLimitText].filter(Boolean).join(', ');
   const businessUrl = company.verificationDocuments?.businessRegistrationUrl?.trim();
   const contractUrl = company.verificationDocuments?.parkingContractUrl?.trim();
   const certificateUrl = insurance?.certificateUrl?.trim();

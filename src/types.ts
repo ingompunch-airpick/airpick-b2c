@@ -3,6 +3,8 @@ export interface CompanyInsurance {
   provider?: string;
   /** B2B에 적은 상품명 그대로 */
   productName?: string;
+  /** 대인·대물·자차 한 줄. 있으면 상세·예약·내 예약 보험 칸에만 표시 */
+  coverageLimitText?: string;
   coverageLimitWon?: number;
   /** 보험증권 이미지·PDF URL (손님 상세에서 확인) */
   certificateUrl?: string;

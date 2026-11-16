@@ -500,6 +500,7 @@ export default function ReservationCard({
               <InsuranceCoverageCard
                 summary={insuranceDisplay.summary}
                 detail={insuranceDisplay.detail}
+                coverageLimitText={insuranceDisplay.coverageLimitText}
                 certificateUrl={insuranceDisplay.certificateUrl}
               />
             ) : (

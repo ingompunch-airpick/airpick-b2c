@@ -5,15 +5,18 @@ import { cn } from '../utils/cn';
 export default function InsuranceCoverageCard({
   summary,
   detail,
+  coverageLimitText,
   certificateUrl,
   className,
 }: {
   summary: string;
   detail?: string;
+  coverageLimitText?: string;
   certificateUrl?: string;
   className?: string;
 }) {
   const cert = certificateUrl?.trim();
+  const limitText = coverageLimitText?.trim();
 
   return (
     <section
@@ -32,6 +35,9 @@ export default function InsuranceCoverageCard({
           <p className="mt-1 text-[13px] font-bold leading-snug text-ink">{summary}</p>
           {detail ? (
             <p className="mt-0.5 text-[11px] font-semibold text-muted">{detail}</p>
+          ) : null}
+          {limitText ? (
+            <p className="mt-1 text-[12px] font-semibold leading-snug text-ink">{limitText}</p>
           ) : null}
         </div>
       </div>
