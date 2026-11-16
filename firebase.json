@@ -441,6 +441,10 @@
         "destination": "/index.html"
       },
       {
+        "source": "/payment/complete",
+        "destination": "/index.html"
+      },
+      {
         "source": "/directions",
         "destination": "/index.html"
       },

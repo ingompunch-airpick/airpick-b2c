@@ -116,10 +116,5 @@ VITE_PORTONE_* 만 사용. Secret·웹훅·FAQ 전면 전환·예약 자동 묶�
 
 ## 메모 (사람이 적음)
 
-<!--
-storeId=
-이니시스 channelKey=
-KPN channelKey=
-이메일 없을 때 심사용 기본값=
-승인 여부=
--->
+- **승인 (2026-11-16):** 구현 진행. 키는 로컬 `.env`의 `VITE_PORTONE_*` (커밋 금지).
+- 이메일 없을 때: `guest+{휴대폰숫자}@airpick.kr`

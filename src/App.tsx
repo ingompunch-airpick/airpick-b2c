@@ -48,9 +48,12 @@ import { AIRPICK_HOME_DOCUMENT_TITLE } from './constants/companyLegal';
 import {
   clearParkingCompanyQuery,
   clearReviewQueryParam,
+  isPaymentCompletePath,
   isSeoDocumentPath,
+  normalizePathname,
   readInitialTab,
   readParkingCompanyId,
+  readPaymentIdFromLocation,
   readReviewReservationId,
   syncUrlToTab,
   tabFromPathname,
@@ -76,6 +79,7 @@ const BookingModal = lazy(() => import('./components/BookingModal'));
 const SupportPage = lazy(() => import('./pages/SupportPage'));
 const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
 const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
+const PaymentCompletePage = lazy(() => import('./pages/PaymentCompletePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
   home: AIRPICK_HOME_DOCUMENT_TITLE,
@@ -104,6 +108,12 @@ function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
 
 export default function App() {
   const [tab, setTabState] = useState<AppTab>(() => readInitialTab());
+  const [paymentCompleteOpen, setPaymentCompleteOpen] = useState(
+    () => isPaymentCompletePath(window.location.pathname)
+  );
+  const [paymentCompleteId, setPaymentCompleteId] = useState<string | null>(() =>
+    readPaymentIdFromLocation()
+  );
   const [showBrandIntro, setShowBrandIntro] = useState(() =>
     shouldShowBrandIntroOnLaunch(readInitialTab())
   );
@@ -333,6 +343,11 @@ export default function App() {
   useEffect(() => {
     const path = window.location.pathname;
     const search = window.location.search;
+    if (isPaymentCompletePath(path)) {
+      setPaymentCompleteOpen(true);
+      setPaymentCompleteId(readPaymentIdFromLocation());
+      return;
+    }
     if (!isSeoDocumentPath(path)) {
       void recordB2cShortPathVisit(path, search);
       captureAcquisitionFromLocation(path, search);
@@ -349,6 +364,13 @@ export default function App() {
         window.location.assign(current + currentSearch + window.location.hash);
         return;
       }
+      if (isPaymentCompletePath(current)) {
+        setPaymentCompleteOpen(true);
+        setPaymentCompleteId(readPaymentIdFromLocation());
+        return;
+      }
+      setPaymentCompleteOpen(false);
+      setPaymentCompleteId(null);
       void recordB2cShortPathVisit(current, currentSearch);
       captureAcquisitionFromLocation(current, currentSearch);
       const next = tabFromPathname(current) ?? 'home';
@@ -361,6 +383,12 @@ export default function App() {
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
+
+  const leavePaymentComplete = (next: AppTab) => {
+    setPaymentCompleteOpen(false);
+    setPaymentCompleteId(null);
+    setTab(next, 'replace');
+  };
 
   const page = useMemo(() => {
     if (tab === 'home') {
@@ -435,6 +463,34 @@ export default function App() {
   }
 
   const homeTone = tab === 'home';
+
+  if (paymentCompleteOpen || isPaymentCompletePath(normalizePathname(window.location.pathname))) {
+    return (
+      <div className="min-h-dvh bg-white text-ink">
+        <Header
+          wide={false}
+          loggedIn={loggedIn}
+          onOpenAccount={() => leavePaymentComplete('my')}
+          onOpenMenu={() => setMenuOpen(true)}
+        />
+        <main>
+          <Suspense fallback={null}>
+            <PaymentCompletePage
+              paymentId={paymentCompleteId ?? readPaymentIdFromLocation()}
+              onGoHome={() => leavePaymentComplete('home')}
+              onGoMy={() => leavePaymentComplete('my')}
+            />
+          </Suspense>
+        </main>
+        <BottomNav
+          active={tab}
+          tone="premium"
+          onChange={(next) => leavePaymentComplete(next)}
+          onPrefetchTab={prefetchAppTab}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-white text-ink">

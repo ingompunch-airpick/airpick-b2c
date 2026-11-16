@@ -66,6 +66,12 @@ import {
   socialLoginErrorMessage,
   type SocialProviderId,
 } from '../lib/socialAuth';
+import {
+  isPortoneEnabled,
+  portoneCustomerEmail,
+  requestPortoneCardPayment,
+  type PortoneChannel,
+} from '../lib/portonePayment';
 
 const FIELD_CLASS =
   'w-full rounded-lg border border-[#d8dee8] bg-white px-3 py-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
@@ -189,6 +195,8 @@ export default function BookingModal({
   const [editSchedule, setEditSchedule] = useState(false);
   const [showOptionalNotes, setShowOptionalNotes] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [payingChannel, setPayingChannel] = useState<PortoneChannel | null>(null);
+  const portoneOn = isPortoneEnabled();
   const [error, setError] = useState('');
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [completedPayable, setCompletedPayable] = useState(0);
@@ -450,7 +458,39 @@ export default function BookingModal({
   const backToForm = () => {
     persistDraft(false);
     setConfirming(false);
+    setPayingChannel(null);
     setError('');
+  };
+
+  const payWithPortone = async (channel: PortoneChannel) => {
+    if (payingChannel || loading) return;
+    const fullName = form.userName.trim();
+    const phoneNumber = form.phone.trim();
+    if (!fullName || !phoneValid) {
+      setError('결제에는 예약자 이름과 휴대폰 번호가 필요합니다.');
+      return;
+    }
+    const amount = memberPreview ? payableTotal : breakdown.total;
+    setPayingChannel(channel);
+    setError('');
+    try {
+      const { auth } = await import('../firebase');
+      const memberEmail = auth.currentUser?.email ?? null;
+      const { paymentId } = await requestPortoneCardPayment({
+        channel,
+        totalAmount: amount,
+        fullName,
+        phoneNumber,
+        email: portoneCustomerEmail({ memberEmail, phone: phoneNumber }),
+      });
+      window.location.assign(`/payment/complete?paymentId=${encodeURIComponent(paymentId)}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '결제에 실패했습니다.';
+      window.alert(message);
+      setError(message);
+    } finally {
+      setPayingChannel(null);
+    }
   };
 
   const placeReservation = async (asMember: boolean) => {
@@ -794,6 +834,31 @@ export default function BookingModal({
                   <Plus size={16} />
                 </button>
               </div>
+            </div>
+          ) : null}
+
+          {portoneOn ? (
+            <div className="mt-5 space-y-2">
+              <p className="text-[13px] font-bold text-ink">카드 결제 (PG 심사용)</p>
+              <button
+                type="button"
+                disabled={loading || authBusy || payingChannel != null}
+                onClick={() => void payWithPortone('inicis')}
+                className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white disabled:opacity-60"
+              >
+                {payingChannel === 'inicis' ? '결제창 여는 중…' : 'KG이니시스 카드결제'}
+              </button>
+              <button
+                type="button"
+                disabled={loading || authBusy || payingChannel != null}
+                onClick={() => void payWithPortone('kpn')}
+                className="w-full rounded-xl bg-white py-3.5 text-[16px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15 disabled:opacity-60"
+              >
+                {payingChannel === 'kpn' ? '결제창 여는 중…' : 'KPN 카드결제'}
+              </button>
+              <p className="text-center text-[12px] font-medium text-muted">
+                테스트 결제 · 현장 접수는 아래에서 가능합니다
+              </p>
             </div>
           ) : null}
 

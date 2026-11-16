@@ -35,6 +35,18 @@ export function isSeoDocumentPath(pathname: string): boolean {
   );
 }
 
+/** PortOne 결제 완료 복귀 URL */
+export function isPaymentCompletePath(pathname: string): boolean {
+  return normalizePathname(pathname) === '/payment/complete';
+}
+
+export function readPaymentIdFromLocation(): string | null {
+  if (typeof window === 'undefined') return null;
+  if (!isPaymentCompletePath(window.location.pathname)) return null;
+  const id = new URLSearchParams(window.location.search).get('paymentId')?.trim();
+  return id || null;
+}
+
 /** pathname → 탭. 앱 탭이 아니면 null */
 export function tabFromPathname(pathname: string): AppTab | null {
   const path = normalizePathname(pathname);

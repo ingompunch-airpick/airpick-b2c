@@ -31,6 +31,7 @@
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",
     "@capacitor/splash-screen": "^8.0.1",
+    "@portone/browser-sdk": "^0.1.13",
     "clsx": "^2.1.1",
     "firebase": "^12.14.0",
     "framer-motion": "^12.42.2",
