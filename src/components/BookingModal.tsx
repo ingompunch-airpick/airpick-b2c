@@ -838,31 +838,6 @@ export default function BookingModal({
             </div>
           ) : null}
 
-          {portoneOn ? (
-            <div className="mt-5 space-y-2">
-              <p className="text-[13px] font-bold text-ink">카드 결제 (PG 심사용)</p>
-              <button
-                type="button"
-                disabled={loading || authBusy || payingChannel != null}
-                onClick={() => void payWithPortone('inicis')}
-                className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white disabled:opacity-60"
-              >
-                {payingChannel === 'inicis' ? '결제창 여는 중…' : 'KG이니시스 카드결제'}
-              </button>
-              <button
-                type="button"
-                disabled={loading || authBusy || payingChannel != null}
-                onClick={() => void payWithPortone('kpn')}
-                className="w-full rounded-xl bg-white py-3.5 text-[16px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15 disabled:opacity-60"
-              >
-                {payingChannel === 'kpn' ? '결제창 여는 중…' : 'KPN 카드결제'}
-              </button>
-              <p className="text-center text-[12px] font-medium text-muted">
-                테스트 결제 · 현장 접수는 아래에서 가능합니다
-              </p>
-            </div>
-          ) : null}
-
           {memberPreview ? (
             <button
               type="button"
@@ -943,6 +918,30 @@ export default function BookingModal({
           >
             수정
           </button>
+
+          {portoneOn ? (
+            <div className="mt-6 space-y-2 border-t border-[#0f1a2e]/10 pt-4">
+              <p className="text-center text-[12px] font-semibold text-muted">
+                테스트용 · PG 심사 전용 (손님은 위 접수를 이용해 주세요)
+              </p>
+              <button
+                type="button"
+                disabled={loading || authBusy || payingChannel != null}
+                onClick={() => void payWithPortone('inicis')}
+                className="w-full rounded-xl bg-[#f4f5f7] py-2.5 text-[14px] font-bold text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10 disabled:opacity-60"
+              >
+                {payingChannel === 'inicis' ? '결제창 여는 중…' : 'KG이니시스 카드결제 (테스트)'}
+              </button>
+              <button
+                type="button"
+                disabled={loading || authBusy || payingChannel != null}
+                onClick={() => void payWithPortone('kpn')}
+                className="w-full rounded-xl bg-[#f4f5f7] py-2.5 text-[14px] font-bold text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10 disabled:opacity-60"
+              >
+                {payingChannel === 'kpn' ? '결제창 여는 중…' : 'KPN 카드결제 (테스트)'}
+              </button>
+            </div>
+          ) : null}
           {error ? <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{error}</p> : null}
         </div>
       </div>
