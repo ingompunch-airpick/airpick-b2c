@@ -290,7 +290,9 @@ export const BRAND_INTRO = {
   kicker: '인천공항 공항주차 비교·예약',
   titleLead: '여행의 시작부터,',
   titleRest: '주차는 믿을 수 있게.',
-  checks: ['사업자 확인', '보험 확인', '주차장 확인'],
+  /** 네 칸 위 한 줄 약속 */
+  promiseLine: '인증된 업체만',
+  checks: ['사업자', '주차장', '보험', 'CCTV'],
   enterCta: '업체와 요금 비교하기',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',

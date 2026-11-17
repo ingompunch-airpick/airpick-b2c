@@ -2,9 +2,10 @@
  * 가이드 랜딩 HTML 생성
  * 소스: data/guides/pages.json
  * 출력: public/guides/{slug}/index.html
+ * draft: AIRPICK_GUIDES_INCLUDE_DRAFT=1 일 때만 출력
  * 수정 후: npm run guides
  */
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -12,6 +13,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const dataPath = path.join(root, 'data/guides/pages.json');
 const outRoot = path.join(root, 'public/guides');
+const llmsPath = path.join(root, 'public/llms.txt');
+const LLMS_START = '<!-- guides:auto:start -->';
+const LLMS_END = '<!-- guides:auto:end -->';
+
+const includeDraft =
+  String(process.env.AIRPICK_GUIDES_INCLUDE_DRAFT || '').trim() === '1';
 
 function esc(s) {
   return String(s)
@@ -22,7 +29,7 @@ function esc(s) {
 }
 
 function faqJsonLd(faqs) {
-  return faqs.map((f) => ({
+  return (faqs || []).map((f) => ({
     '@type': 'Question',
     name: f.q,
     acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -34,6 +41,29 @@ function formatUpdated(iso) {
   const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!m) return esc(iso);
   return `${m[1]}.${m[2]}.${m[3]}`;
+}
+
+function pageStatus(page) {
+  return page.status === 'draft' ? 'draft' : 'published';
+}
+
+function isPublished(page) {
+  return pageStatus(page) === 'published';
+}
+
+/** CTA에 ?src=guide_{slug} (기존 유입 추적) */
+function withGuideSrc(href, slug) {
+  const raw = String(href || '/').trim() || '/';
+  const src = `guide_${slug}`.slice(0, 40);
+  try {
+    const base = 'https://www.에어픽.kr';
+    const u = new URL(raw, base);
+    u.searchParams.set('src', src);
+    return `${u.pathname}${u.search}${u.hash}` || `/?src=${encodeURIComponent(src)}`;
+  } catch {
+    const join = raw.includes('?') ? '&' : '?';
+    return `${raw}${join}src=${encodeURIComponent(src)}`;
+  }
 }
 
 function pageChrome(title) {
@@ -73,14 +103,47 @@ function howToJsonLd(howTo, pageUrl) {
   };
 }
 
-function renderPage(page, allPages) {
+function dateMetaLine(updatedLabel, verifiedLabel) {
+  if (!updatedLabel && !verifiedLabel) return '';
+  const parts = [];
+  if (updatedLabel) parts.push(`최종 수정일: ${updatedLabel}`);
+  if (verifiedLabel) parts.push(`정보 확인일: ${verifiedLabel}`);
+  return `<p class="muted" style="font-size:0.8125rem;color:var(--muted)">${parts.join(' / ')}</p>`;
+}
+
+function sourcesHtml(page) {
+  const sources = Array.isArray(page.sources) ? page.sources.filter((s) => s?.name) : [];
+  if (sources.length === 0) return '';
+  const verifiedLabel = formatUpdated(page.verified);
+  const items = sources
+    .map((s) => {
+      const name = esc(s.name);
+      const url = String(s.url || '').trim();
+      if (url) {
+        return `          <li><a href="${esc(url)}" rel="noopener noreferrer">${name}</a></li>`;
+      }
+      return `          <li>${name}</li>`;
+    })
+    .join('\n');
+  return `      <section class="section">
+        <h2>출처</h2>
+        <ul>
+${items}
+        </ul>
+        ${verifiedLabel ? `<p class="muted" style="font-size:0.8125rem;color:var(--muted)">정보 확인일: ${verifiedLabel}</p>` : ''}
+      </section>`;
+}
+
+function renderPage(page, publishedPages) {
   const url = `https://www.에어픽.kr/guides/${page.slug}/`;
-  const otherGuides = allPages
+  const ctaHref = withGuideSrc(page.ctaHref || '/', page.slug);
+  const secondaryHref = withGuideSrc('/', page.slug);
+  const otherGuides = publishedPages
     .filter((p) => p.slug !== page.slug)
     .map((p) => `<li><a href="/guides/${esc(p.slug)}/">${esc(p.h1)}</a></li>`)
     .join('\n            ');
 
-  const sectionsHtml = page.sections
+  const sectionsHtml = (page.sections || [])
     .map((sec) => {
       const body = (sec.paragraphs || []).map((p) => `<p>${p}</p>`).join('\n        ');
       const list = sec.list
@@ -108,7 +171,7 @@ ${sec.table.rows
     })
     .join('\n\n');
 
-  const faqHtml = page.faqs
+  const faqHtml = (page.faqs || [])
     .map(
       (f, i) => `        <details${i === 0 ? ' open' : ''}>
           <summary>${esc(f.q)}</summary>
@@ -119,8 +182,11 @@ ${sec.table.rows
 
   const updated = page.updated || page.dateModified || '';
   const published = page.published || page.datePublished || updated;
+  const verified = String(page.verified || '').trim();
   const updatedLabel = formatUpdated(updated);
+  const verifiedLabel = formatUpdated(verified);
   const howTo = howToJsonLd(page.howTo, url);
+  const isDraft = pageStatus(page) === 'draft';
 
   const howToHtml =
     page.howTo?.steps?.length > 0
@@ -146,13 +212,17 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
         ],
       },
       {
-        '@type': 'WebPage',
-        '@id': `${url}#webpage`,
+        '@type': 'Article',
+        '@id': `${url}#article`,
         url,
+        headline: page.h1,
         name: page.title,
         description: page.description,
         ...(published ? { datePublished: published } : {}),
         ...(updated ? { dateModified: updated } : {}),
+        author: { '@type': 'Organization', name: '에어픽', url: 'https://www.에어픽.kr/' },
+        publisher: { '@type': 'Organization', name: '에어픽', url: 'https://www.에어픽.kr/' },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': url },
         isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
         breadcrumb: { '@id': `${url}#breadcrumb` },
         inLanguage: 'ko-KR',
@@ -169,8 +239,8 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
 
   const secondaryCta =
     page.ctaHref === '/esim'
-      ? `<a class="cta secondary" href="/">주차대행도 비교하기</a>`
-      : `<a class="cta secondary" href="/">주차대행 비교하기</a>`;
+      ? `<a class="cta secondary" href="${esc(secondaryHref)}">주차대행도 비교하기</a>`
+      : `<a class="cta secondary" href="${esc(secondaryHref)}">주차대행 비교하기</a>`;
 
   return `<!doctype html>
 <html lang="ko">
@@ -179,7 +249,7 @@ ${page.howTo.steps.map((s) => `          <li><strong>${esc(s.name)}</strong> —
     <script src="/canonical-host.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f1a2e" />
-    <title>${esc(page.title)}</title>
+    ${isDraft ? '<meta name="robots" content="noindex,nofollow" />\n    ' : ''}<title>${esc(page.title)}</title>
     <meta name="description" content="${esc(page.description)}" />
     <link rel="canonical" href="${esc(url)}" />
     <meta property="og:type" content="article" />
@@ -209,8 +279,8 @@ ${JSON.stringify(graph, null, 2)}
         <h1>${esc(page.h1)}</h1>
         ${page.answer ? `<p class="answer"><strong>${esc(page.answer)}</strong></p>` : ''}
         <p>${page.lead}</p>
-        ${updatedLabel ? `<p class="muted" style="font-size:0.8125rem;color:var(--muted)">마지막 업데이트: ${updatedLabel}</p>` : ''}
-        <a class="cta" href="${esc(page.ctaHref)}">${esc(page.ctaLabel)}</a>
+        ${dateMetaLine(updatedLabel, verifiedLabel)}
+        <a class="cta" href="${esc(ctaHref)}">${esc(page.ctaLabel)}</a>
         ${secondaryCta}
       </header>
 
@@ -223,6 +293,8 @@ ${sectionsHtml}
 ${faqHtml}
       </section>
 
+${sourcesHtml(page)}
+
       <section class="section">
         <h2>더 알아보기</h2>
         <ul>
@@ -233,7 +305,7 @@ ${faqHtml}
             <li><a href="/faq/">자주 묻는 질문</a></li>
         </ul>
         <p style="margin-top:1.25rem">
-          <a class="cta" href="${esc(page.ctaHref)}">${esc(page.ctaLabel)}</a>
+          <a class="cta" href="${esc(ctaHref)}">${esc(page.ctaLabel)}</a>
           ${secondaryCta}
         </p>
       </section>
@@ -246,16 +318,32 @@ ${faqHtml}
 `;
 }
 
-function renderIndex(pages) {
-  const url = 'https://www.에어픽.kr/guides/';
-  const items = pages
-    .map((p) => {
-      const updated = formatUpdated(p.updated || p.dateModified);
-      return `        <li>
+function guideListItem(p) {
+  const updated = formatUpdated(p.updated || p.dateModified);
+  return `        <li>
           <a href="/guides/${esc(p.slug)}/"><strong>${esc(p.h1)}</strong></a>
           <p class="guide-desc">${esc(p.description)}</p>
           ${updated ? `<p class="guide-date">업데이트 ${updated}</p>` : ''}
         </li>`;
+}
+
+function renderIndex(pages) {
+  const url = 'https://www.에어픽.kr/guides/';
+  const byCategory = new Map();
+  for (const p of pages) {
+    const cat = String(p.category || '').trim() || '기타';
+    if (!byCategory.has(cat)) byCategory.set(cat, []);
+    byCategory.get(cat).push(p);
+  }
+  const categoryBlocks = [...byCategory.entries()]
+    .map(([cat, list]) => {
+      const items = list.map(guideListItem).join('\n');
+      return `      <section class="section">
+        <h2>${esc(cat)}</h2>
+        <ul class="guide-list">
+${items}
+        </ul>
+      </section>`;
     })
     .join('\n');
 
@@ -340,12 +428,7 @@ ${JSON.stringify(graph, null, 2)}
         <a class="cta" href="/">주차대행 비교·예약</a>
         <a class="cta secondary" href="/esim">이심 제휴 할인</a>
       </header>
-      <section class="section">
-        <h2>가이드 목록</h2>
-        <ul class="guide-list">
-${items}
-        </ul>
-      </section>
+${categoryBlocks}
       <section class="section">
         <h2>바로 비교하기</h2>
         <a class="cta" href="/">주차대행 비교하기</a>
@@ -357,6 +440,79 @@ ${items}
 `;
 }
 
+function shortDesc(description, max = 80) {
+  const t = String(description || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (t.length <= max) return t;
+  return `${t.slice(0, max - 1)}…`;
+}
+
+function buildLlmsGuideBlock(publishedPages) {
+  const lines = publishedPages.map(
+    (p) =>
+      `- ${p.h1}: https://www.에어픽.kr/guides/${p.slug}/ — ${shortDesc(p.description)}`
+  );
+  return [
+    LLMS_START,
+    '## 가이드',
+    ...lines,
+    `- 가이드 목록: https://www.에어픽.kr/guides/`,
+    LLMS_END,
+  ].join('\n');
+}
+
+async function patchLlmsGuides(publishedPages) {
+  let raw = await readFile(llmsPath, 'utf8');
+  const block = buildLlmsGuideBlock(publishedPages);
+  const start = raw.indexOf(LLMS_START);
+  const end = raw.indexOf(LLMS_END);
+  if (start >= 0 && end > start) {
+    raw = `${raw.slice(0, start)}${block}${raw.slice(end + LLMS_END.length)}`;
+  } else {
+    // 마커 없으면 「## 핵심 페이지」 앞에 삽입
+    const anchor = raw.indexOf('## 핵심 페이지');
+    if (anchor >= 0) {
+      raw = `${raw.slice(0, anchor)}${block}\n\n${raw.slice(anchor)}`;
+    } else {
+      raw = `${raw.trimEnd()}\n\n${block}\n`;
+    }
+  }
+  // auto 블록 밖의 /guides/ 줄 제거 (허브·개별 URL 중복 방지)
+  const s = raw.indexOf(LLMS_START);
+  const e = raw.indexOf(LLMS_END);
+  if (s >= 0 && e > s) {
+    const before = raw.slice(0, s);
+    const mid = raw.slice(s, e + LLMS_END.length);
+    const after = raw.slice(e + LLMS_END.length);
+    const stripGuideBullets = (chunk) =>
+      chunk
+        .split('\n')
+        .filter((line) => !/https:\/\/www\.에어픽\.kr\/guides\//.test(line))
+        .join('\n');
+    raw = `${stripGuideBullets(before)}${mid}${stripGuideBullets(after)}`;
+  }
+
+  await writeFile(llmsPath, raw.replace(/\n{3,}/g, '\n\n'), 'utf8');
+  console.log('[guides] patched public/llms.txt guides section');
+}
+
+async function cleanGuideDirs(keepSlugs) {
+  const keep = new Set(keepSlugs);
+  let entries = [];
+  try {
+    entries = await readdir(outRoot, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const ent of entries) {
+    if (!ent.isDirectory()) continue;
+    if (keep.has(ent.name)) continue;
+    await rm(path.join(outRoot, ent.name), { recursive: true, force: true });
+    console.log(`[guides] removed stale /guides/${ent.name}/`);
+  }
+}
+
 async function main() {
   const raw = await readFile(dataPath, 'utf8');
   const { pages } = JSON.parse(raw);
@@ -364,16 +520,27 @@ async function main() {
     throw new Error('data/guides/pages.json: pages[] 가 비어 있습니다.');
   }
 
-  await mkdir(outRoot, { recursive: true });
-  await writeFile(path.join(outRoot, 'index.html'), renderIndex(pages), 'utf8');
+  const publishedPages = pages.filter(isPublished);
+  const draftPages = pages.filter((p) => pageStatus(p) === 'draft');
+  const outputPages = includeDraft ? [...publishedPages, ...draftPages] : publishedPages;
 
-  for (const page of pages) {
+  if (!includeDraft && draftPages.length > 0) {
+    console.log(`[guides] skip ${draftPages.length} draft (set AIRPICK_GUIDES_INCLUDE_DRAFT=1 for preview)`);
+  }
+
+  await mkdir(outRoot, { recursive: true });
+  await cleanGuideDirs(outputPages.map((p) => p.slug));
+  await writeFile(path.join(outRoot, 'index.html'), renderIndex(publishedPages), 'utf8');
+
+  for (const page of outputPages) {
     const dir = path.join(outRoot, page.slug);
     await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, 'index.html'), renderPage(page, pages), 'utf8');
-    console.log(`[guides] wrote /guides/${page.slug}/`);
+    await writeFile(path.join(dir, 'index.html'), renderPage(page, publishedPages), 'utf8');
+    console.log(`[guides] wrote /guides/${page.slug}/${pageStatus(page) === 'draft' ? ' (draft)' : ''}`);
   }
-  console.log(`[guides] wrote /guides/ index (${pages.length} pages)`);
+  console.log(`[guides] wrote /guides/ index (${publishedPages.length} published)`);
+
+  await patchLlmsGuides(publishedPages);
 }
 
 main().catch((err) => {

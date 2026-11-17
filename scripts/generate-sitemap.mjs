@@ -16,6 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const configPath = path.join(root, 'data/sitemap/urls.json');
 const partnersPath = path.join(root, 'data/partners/pages.json');
+const guidesPath = path.join(root, 'data/guides/pages.json');
 const outPath = path.join(root, 'public/sitemap.xml');
 
 const EXCLUDE_PREFIXES = ['/my', '/r/', '/admin', '/api/'];
@@ -110,6 +111,35 @@ async function main() {
     }
   } catch (err) {
     console.warn(`[sitemap] partners merge skipped: ${err.message}`);
+  }
+
+  // 가이드 — status=published 만 (허브는 urls.json에 있을 수 있음)
+  try {
+    const guidesRaw = await readFile(guidesPath, 'utf8');
+    const { pages } = JSON.parse(guidesRaw);
+    if (Array.isArray(pages)) {
+      for (const page of pages) {
+        if (page?.status === 'draft') continue;
+        const slug = String(page?.slug || '').trim();
+        if (!slug) continue;
+        const pathname = `/guides/${slug}/`;
+        if (seen.has(pathname)) {
+          // urls.json에 남아 있어도 lastmod를 updated로 맞춤
+          const hit = entries.find((e) => e.loc === `${base}${pathname}`);
+          if (hit && page.updated) hit.lastmod = String(page.updated).slice(0, 10);
+          continue;
+        }
+        seen.add(pathname);
+        entries.push({
+          loc: `${base}${pathname}`,
+          lastmod: page.updated ? String(page.updated).slice(0, 10) : lastmodDefault,
+          changefreq: 'weekly',
+          priority: '0.85',
+        });
+      }
+    }
+  } catch (err) {
+    console.warn(`[sitemap] guides merge skipped: ${err.message}`);
   }
 
   if (entries.length === 0) {

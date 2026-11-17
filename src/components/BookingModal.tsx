@@ -732,7 +732,7 @@ export default function BookingModal({
           <p className="mt-1.5 text-sm font-medium text-muted">
             {memberPreview
               ? '맞으면 이 금액으로 접수합니다. 내 예약에서 바로 볼 수 있습니다.'
-              : '맞으면 접수 방법을 고르세요. 입력한 내용은 저장되어 있습니다.'}
+              : '카카오로 접수하면 출고 후 포인트가 적립됩니다. 비회원으로도 접수할 수 있습니다.'}
           </p>
 
           <dl className="mt-5 space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
@@ -847,7 +847,7 @@ export default function BookingModal({
                 className="mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#FEE500] py-3.5 text-[16px] font-bold text-[#191919] disabled:opacity-60"
               >
                 <KakaoBubble />
-                {authBusy ? '로그인 중…' : '카카오로 접수'}
+                {authBusy ? '로그인 중…' : '카카오 로그인해서 적립하기'}
               </button>
               {!guestMode ? (
                 <button

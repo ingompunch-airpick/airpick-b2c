@@ -13,20 +13,24 @@
 ## 공식 사이트
 - https://www.에어픽.kr/
 
+<!-- guides:auto:start -->
+## 가이드
+- 인천공항 주차 방식 비교: 주차대행 vs 사설주차장 vs 셔틀: https://www.에어픽.kr/guides/airport-parking-types/ — 인천공항 공항주차는 주차대행(발렛), 사설주차장 키 맡김, 사설주차장 셔틀 세 가지로 나뉩니다. 차를 어디서 맡기는지, 키는 누가 갖는지, 공…
+- 인천공항 주차대행, Curbside와 Drop-off는 어떻게 다른가요?: https://www.에어픽.kr/guides/curbside/ — 인천공항 주차대행의 두 인계 방식. Curbside는 출국장에서 기사에게 차를 맡기고, Drop-off는 단기주차장에 세운 뒤 입장합니다. 에…
+- 인천공항 주차대행, 어떻게 비교·예약하나요?: https://www.에어픽.kr/guides/parking-compare/ — 인천공항 주차대행·발렛파킹을 한곳에서 비교·예약하는 방법. 요금이 업체마다 다른 이유, 보험·거리 보는 법, 에어픽 인증 업체 예약, 당일·미…
+- 인천공항 공식 주차장 vs 사설, 뭐가 다른가요?: https://www.에어픽.kr/guides/official-vs-private/ — 인천공항 공식 주차장과 사설 주차대행·발렛의 차이. 공식은 공항이 인정한 주차 옵션이고, 사설은 가격·서비스·예약을 비교해 고를 수 있습니다.…
+- 1터미널·2터미널·운서역, 주차대행은 어떻게 고르나요?: https://www.에어픽.kr/guides/t1-t2-unseo/ — 인천공항 1터미널·2터미널·운서역 기준으로 주차대행·발렛을 고르는 법. 출국 터미널에 맞춘 거리·요금 비교, 운서 인근 사설과 ‘운서역 주차’…
+- 장기·단기 출국, 주차대행 요금은 어떻게 보나요?: https://www.에어픽.kr/guides/long-vs-short/ — 인천공항 장기주차·단기주차, 며칠 맡길 때 주차대행·발렛 요금을 어떻게 비교할지. 기본일수·초과일 때문에 순위가 바뀌는 이유, 일정별 시나리오…
+- 해외여행 전, 인천공항 주차는 언제 예약하나요?: https://www.에어픽.kr/guides/travel-parking-tips/ — 해외여행 전 인천공항 주차대행·발렛 꿀팁. 출국 D-7~D-1 순서, 1·2터미널·장기 일정 비교, 성수기 예약, 이심(eSIM)까지 한 번에…
+- 해외여행 이심(eSIM), 처음이면 뭐부터 하나요?: https://www.에어픽.kr/guides/esim-beginner/ — 해외여행 이심(eSIM) 처음이라면. eSIM과 실물 유심 차이, 공항 구매 vs 미리 준비, 나라·용량·일수 고르는 법, 에어픽 제휴 할인으…
+- 주차대행 보험, 예약 전에 뭘 확인하나요?: https://www.에어픽.kr/guides/parking-insurance/ — 인천공항 주차대행·발렛 보험을 에어픽에서 어떻게 보는지. 파트너 상세·예약 카드 안내와 확인할 항목을 정리합니다. 보장 단정은 하지 않습니다.
+- 성수기·연휴에 인천공항 주차가 만차일 때 어떻게 하나요?: https://www.에어픽.kr/guides/peak-soldout/ — 설·여름휴가·연휴에 인천공항 공식 주차·사설 주차대행이 빠를 때. 여유 있게 비교·예약하는 순서와 공식 vs 사설 차이를 정리합니다. 만차 대…
+- 가이드 목록: https://www.에어픽.kr/guides/
+<!-- guides:auto:end -->
+
 ## 핵심 페이지
 - 홈 · 공항주차 비교 (현재 주차대행 예약): https://www.에어픽.kr/
-- 인천공항 주차 방식 비교 가이드: https://www.에어픽.kr/guides/airport-parking-types/
-- Curbside vs Drop-off: https://www.에어픽.kr/guides/curbside/
-- 주차대행 비교·예약 방법: https://www.에어픽.kr/guides/parking-compare/
-- 공식 주차장 vs 사설 주차대행: https://www.에어픽.kr/guides/official-vs-private/
-- 장기·단기 출국 요금 보는 법: https://www.에어픽.kr/guides/long-vs-short/
-- 해외여행 전 주차 예약 시점: https://www.에어픽.kr/guides/travel-parking-tips/
-- 성수기·연휴 만차 대처: https://www.에어픽.kr/guides/peak-soldout/
-- 1·2터미널·운서: https://www.에어픽.kr/guides/t1-t2-unseo/
 - 이심(eSIM) 제휴 할인: https://www.에어픽.kr/esim
-- 이심(eSIM) 처음 준비: https://www.에어픽.kr/guides/esim-beginner/
-- 가이드: https://www.에어픽.kr/guides/
-- 주차대행 보험 확인: https://www.에어픽.kr/guides/parking-insurance/
 - 입점 업체 목록: https://www.에어픽.kr/partners/
 - 와와발렛: https://www.에어픽.kr/partners/wawa/
 - 가유: https://www.에어픽.kr/partners/gayu/

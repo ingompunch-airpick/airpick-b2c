@@ -1,11 +1,11 @@
 {
-  "comment": "사이트맵 소스. 경로만 적으면 scripts/generate-sitemap.mjs 가 public/sitemap.xml 을 갱신한다. /my · /r/* · /admin 은 넣지 말 것.",
+  "comment": "사이트맵 소스. 가이드 개별 URL은 pages.json(published)에서 자동 병합. /my · /r/* · /admin 금지.",
   "baseUrl": "https://www.에어픽.kr",
   "urls": [
     {
       "path": "/",
       "changefreq": "daily",
-      "priority": 1.0,
+      "priority": 1,
       "note": "홈 · 비교 허브 진입"
     },
     {
@@ -19,66 +19,6 @@
       "changefreq": "weekly",
       "priority": 0.85,
       "note": "가이드 허브"
-    },
-    {
-      "path": "/guides/airport-parking-types/",
-      "changefreq": "weekly",
-      "priority": 0.85,
-      "note": "공항주차 방식 비교 (주차대행·사설주차장·셔틀)"
-    },
-    {
-      "path": "/guides/curbside/",
-      "changefreq": "weekly",
-      "priority": 0.85,
-      "note": "주차대행 Curbside vs Drop-off"
-    },
-    {
-      "path": "/guides/parking-compare/",
-      "changefreq": "weekly",
-      "priority": 0.85,
-      "note": "주차대행 비교·예약 가이드"
-    },
-    {
-      "path": "/guides/official-vs-private/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "공식 vs 사설"
-    },
-    {
-      "path": "/guides/t1-t2-unseo/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "T1·T2·운서"
-    },
-    {
-      "path": "/guides/long-vs-short/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "장기·단기"
-    },
-    {
-      "path": "/guides/travel-parking-tips/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "해외여행 꿀팁"
-    },
-    {
-      "path": "/guides/esim-beginner/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "이심(eSIM) 초보 가이드"
-    },
-    {
-      "path": "/guides/parking-insurance/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "주차대행 보험 확인법"
-    },
-    {
-      "path": "/guides/peak-soldout/",
-      "changefreq": "weekly",
-      "priority": 0.8,
-      "note": "성수기·연휴 만차 대처"
     },
     {
       "path": "/partners/",

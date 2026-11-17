@@ -1,5 +1,5 @@
 {
-  "comment": "가이드 랜딩 소스. 수정 후 npm run guides → public/guides/ 갱신. build 시에도 실행.",
+  "comment": "가이드 랜딩 소스. status published만 본 사이트. draft는 AIRPICK_GUIDES_INCLUDE_DRAFT=1 미리보기. npm run guides → public/guides/",
   "pages": [
     {
       "slug": "airport-parking-types",
@@ -117,7 +117,10 @@
       ],
       "updated": "2026-11-04",
       "published": "2026-11-04",
-      "answer": "주차대행은 터미널에서 맡기고, 사설주차장은 직접 주차 후 키를 맡기거나 셔틀로 공항에 갑니다."
+      "answer": "주차대행은 터미널에서 맡기고, 사설주차장은 직접 주차 후 키를 맡기거나 셔틀로 공항에 갑니다.",
+      "status": "published",
+      "category": "공항주차 방식",
+      "sources": []
     },
     {
       "slug": "curbside",
@@ -208,7 +211,10 @@
       ],
       "updated": "2026-11-07",
       "published": "2026-11-06",
-      "answer": "Curbside는 출국장에서 기사에게 맡기고, Drop-off는 단기주차장에 세운 뒤 입장합니다."
+      "answer": "Curbside는 출국장에서 기사에게 맡기고, Drop-off는 단기주차장에 세운 뒤 입장합니다.",
+      "status": "published",
+      "category": "주차대행",
+      "sources": []
     },
     {
       "slug": "parking-compare",
@@ -335,7 +341,10 @@
           }
         ]
       },
-      "answer": "일정·터미널·실내/야외를 넣고 요금을 비교한 뒤, 앱에서 바로 예약하세요."
+      "answer": "일정·터미널·실내/야외를 넣고 요금을 비교한 뒤, 앱에서 바로 예약하세요.",
+      "status": "published",
+      "category": "주차대행",
+      "sources": []
     },
     {
       "slug": "official-vs-private",
@@ -457,7 +466,10 @@
       ],
       "updated": "2026-11-04",
       "published": "2026-07-14",
-      "answer": "공식은 공항 안내 기준, 사설·발렛은 에어픽에서 요금·거리를 비교합니다."
+      "answer": "공식은 공항 안내 기준, 사설·발렛은 에어픽에서 요금·거리를 비교합니다.",
+      "status": "published",
+      "category": "공항주차 방식",
+      "sources": []
     },
     {
       "slug": "t1-t2-unseo",
@@ -559,7 +571,10 @@
       ],
       "updated": "2026-11-10",
       "published": "2026-07-14",
-      "answer": "항공권 터미널(1·2터미널)과 운서 동선을 먼저 보고, 그다음 요금·실내/야외를 고르세요."
+      "answer": "항공권 터미널(1·2터미널)과 운서 동선을 먼저 보고, 그다음 요금·실내/야외를 고르세요.",
+      "status": "published",
+      "category": "터미널",
+      "sources": []
     },
     {
       "slug": "long-vs-short",
@@ -681,7 +696,10 @@
       ],
       "updated": "2026-09-05",
       "published": "2026-07-14",
-      "answer": "맡기는 일수에 따라 업체 요금 순위가 바뀌므로, 출국·귀국 일정으로 다시 비교하세요."
+      "answer": "맡기는 일수에 따라 업체 요금 순위가 바뀌므로, 출국·귀국 일정으로 다시 비교하세요.",
+      "status": "published",
+      "category": "요금·일정",
+      "sources": []
     },
     {
       "slug": "travel-parking-tips",
@@ -758,7 +776,10 @@
       ],
       "updated": "2026-11-04",
       "published": "2026-07-14",
-      "answer": "출국 전 주차대행은 비교·예약하고, 이심은 제휴 할인으로 준비하세요."
+      "answer": "출국 전 주차대행은 비교·예약하고, 이심은 제휴 할인으로 준비하세요.",
+      "status": "published",
+      "category": "요금·일정",
+      "sources": []
     },
     {
       "slug": "esim-beginner",
@@ -919,7 +940,10 @@
           }
         ]
       },
-      "answer": "에어픽은 제휴 할인 링크만 안내해요. 구매·개통은 제휴사 사이트에서 하세요."
+      "answer": "에어픽은 제휴 할인 링크만 안내해요. 구매·개통은 제휴사 사이트에서 하세요.",
+      "status": "published",
+      "category": "이심",
+      "sources": []
     },
     {
       "slug": "parking-insurance",
@@ -1017,7 +1041,10 @@
           }
         ]
       },
-      "answer": "입점 업체는 상세·예약 카드에서 보험 안내를 확인하세요. 보장 내용은 업체 안내가 기준이에요."
+      "answer": "입점 업체는 상세·예약 카드에서 보험 안내를 확인하세요. 보장 내용은 업체 안내가 기준이에요.",
+      "status": "published",
+      "category": "신뢰·보험",
+      "sources": []
     },
     {
       "slug": "peak-soldout",
@@ -1042,7 +1069,11 @@
         {
           "h2": "공식 주차 vs 사설 주차대행 (만차일 때)",
           "table": {
-            "headers": ["구분", "볼 점", "어디서 확인"],
+            "headers": [
+              "구분",
+              "볼 점",
+              "어디서 확인"
+            ],
             "rows": [
               [
                 "인천공항 공식 주차",
@@ -1122,7 +1153,10 @@
           }
         ]
       },
-      "answer": "성수기·연휴는 일정이 정해지면 미리 비교·예약하세요. 공식 주차는 인천공항 안내, 사설 주차대행은 에어픽에서 업체별로 봅니다."
+      "answer": "성수기·연휴는 일정이 정해지면 미리 비교·예약하세요. 공식 주차는 인천공항 안내, 사설 주차대행은 에어픽에서 업체별로 봅니다.",
+      "status": "published",
+      "category": "요금·일정",
+      "sources": []
     }
   ]
 }

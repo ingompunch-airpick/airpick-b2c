@@ -24,9 +24,7 @@ import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
 import { pickupPin } from '../data/pickupPins';
-import { applyKakaoLogin } from '../lib/members';
 import { readMember, subscribeMember } from '../lib/memberSession';
-import { socialLoginErrorMessage } from '../lib/socialAuth';
 import { listParkingCompareCompanies } from '../lib/parkingCompare';
 import type { BookingSearch, Company, ParkingProductType, Reservation, Terminal } from '../types';
 import { cn } from '../utils/cn';
@@ -126,8 +124,6 @@ export default function HomePage({
   );
   const [memberReservations, setMemberReservations] = useState<Reservation[]>([]);
   const [reviewById, setReviewById] = useState<Record<string, CompanyReviewSnapshot>>({});
-  const [authBusy, setAuthBusy] = useState(false);
-  const [loginError, setLoginError] = useState('');
   const [listSort, setListSort] = useState<HomeListSort>('reviews');
   const [justBooked, setJustBooked] = useState<Reservation | null | undefined>(null);
   const today = todayYmd();
@@ -412,36 +408,6 @@ export default function HomePage({
             <ChevronRight size={16} className="shrink-0 text-[#0f1a2e]/45" />
           </button>
         ) : null}
-        {memberOn ? null : (
-          <div className="mb-5">
-            <button
-              type="button"
-              disabled={authBusy}
-              onClick={() => {
-                setAuthBusy(true);
-                setLoginError('');
-                void applyKakaoLogin()
-                  .catch((err) => {
-                    console.error('kakao login failed', err);
-                    setLoginError(socialLoginErrorMessage(err) || '로그인에 실패했습니다.');
-                  })
-                  .finally(() => setAuthBusy(false));
-              }}
-              className="flex w-full items-center justify-between gap-3 rounded-2xl bg-[#FEE500] px-4 py-3.5 text-left active:scale-[0.99] disabled:opacity-60"
-            >
-              <span className="min-w-0">
-                <span className="block text-[13px] font-semibold text-[#191919]/70">카카오 로그인</span>
-                <span className="mt-0.5 block text-[17px] font-bold leading-snug text-[#191919]">
-                  {authBusy ? '로그인 중…' : '예약 확인 · 알림톡 받기'}
-                </span>
-              </span>
-              <ChevronRight size={20} strokeWidth={2.5} className="shrink-0 text-[#191919]" aria-hidden />
-            </button>
-            {loginError ? (
-              <p className="mt-2 text-[13px] font-semibold text-rose-500">{loginError}</p>
-            ) : null}
-          </div>
-        )}
         {loading ? (
           <p className="text-[16px] font-semibold text-[#0f1a2e]">업체를 불러오는 중입니다.</p>
         ) : (

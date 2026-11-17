@@ -1,4 +1,4 @@
-import { ArrowRight, FileCheck, ShieldCheck, Warehouse } from 'lucide-react';
+import { ArrowRight, Cctv, FileCheck, ShieldCheck, Warehouse } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { BRAND_INTRO } from '../constants/marketing';
 
@@ -118,7 +118,8 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
   const mdUp = useIsMdUp();
   const videoSrc = mdUp ? BRAND_INTRO.videoDesktop : BRAND_INTRO.videoMobile;
   const posterSrc = mdUp ? BRAND_INTRO.posterDesktop : BRAND_INTRO.posterMobile;
-  const checkIcons = [FileCheck, ShieldCheck, Warehouse] as const;
+  /** 사업자 · 주차장 · 보험 · CCTV */
+  const checkIcons = [FileCheck, Warehouse, ShieldCheck, Cctv] as const;
 
   return (
     <div className="fixed inset-0 z-[80] bg-[#0a1628] text-white">
@@ -164,15 +165,18 @@ export default function BrandIntroGate({ onEnter }: { onEnter: () => void }) {
               {BRAND_INTRO.titleRest}
             </h1>
 
-            <ul className="mt-6 grid w-full grid-cols-3 gap-1.5">
+            <p className="mt-6 text-center text-[13px] font-bold tracking-[-0.005em] text-white/90 md:text-[14px]">
+              {BRAND_INTRO.promiseLine}
+            </p>
+            <ul className="mt-2.5 grid w-full grid-cols-2 gap-1.5">
               {BRAND_INTRO.checks.map((label, index) => {
                 const Icon = checkIcons[index] ?? FileCheck;
                 return (
                   <li
                     key={label}
-                    className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-white/25 bg-white/10 px-1.5 py-1.5 text-[12px] font-semibold tracking-[-0.005em] text-white md:gap-1.5 md:text-[13px]"
+                    className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/25 bg-white/10 px-2 py-2 text-[13px] font-semibold tracking-[-0.005em] text-white md:text-[14px]"
                   >
-                    <Icon size={14} strokeWidth={2.25} className="shrink-0" aria-hidden />
+                    <Icon size={15} strokeWidth={2.25} className="shrink-0" aria-hidden />
                     {label}
                   </li>
                 );
