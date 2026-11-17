@@ -25,7 +25,7 @@ import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
 import { pickupPin } from '../data/pickupPins';
 import { applyKakaoLogin } from '../lib/members';
-import { hasSignupCoupon, MEMBER_DISCOUNT_WON, readMember, subscribeMember } from '../lib/memberSession';
+import { readMember, subscribeMember } from '../lib/memberSession';
 import { socialLoginErrorMessage } from '../lib/socialAuth';
 import { listParkingCompareCompanies } from '../lib/parkingCompare';
 import type { BookingSearch, Company, ParkingProductType, Reservation, Terminal } from '../types';
@@ -126,7 +126,6 @@ export default function HomePage({
   );
   const [memberReservations, setMemberReservations] = useState<Reservation[]>([]);
   const [reviewById, setReviewById] = useState<Record<string, CompanyReviewSnapshot>>({});
-  const [signupCoupon, setSignupCoupon] = useState(() => hasSignupCoupon(readMember()));
   const [authBusy, setAuthBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [listSort, setListSort] = useState<HomeListSort>('reviews');
@@ -144,7 +143,6 @@ export default function HomePage({
       subscribeMember(() => {
         const member = readMember();
         setMemberOn(Boolean(member));
-        setSignupCoupon(hasSignupCoupon(member));
         setReservationKey((member?.reservationIds ?? []).join('|'));
       }),
     []
@@ -215,8 +213,8 @@ export default function HomePage({
   }, [search, usedReservations]);
 
   const priced = useMemo(
-    () => priceCompanies(companies, search, affiliateDiscountWon, signupCoupon),
-    [affiliateDiscountWon, companies, search, signupCoupon]
+    () => priceCompanies(companies, search, affiliateDiscountWon),
+    [affiliateDiscountWon, companies, search]
   );
 
   const pricedIds = priced.map((item) => item.company.id).join('|');
@@ -434,9 +432,7 @@ export default function HomePage({
               <span className="min-w-0">
                 <span className="block text-[13px] font-semibold text-[#191919]/70">카카오 로그인하면</span>
                 <span className="mt-0.5 block text-[17px] font-bold leading-snug text-[#191919]">
-                  {authBusy
-                    ? '로그인 중…'
-                    : `아래 가격에서 첫 예약 ${MEMBER_DISCOUNT_WON.toLocaleString()}원 할인`}
+                  {authBusy ? '로그인 중…' : '내 예약을 한곳에서 보고 알림톡으로 받아요'}
                 </span>
               </span>
               <ChevronRight size={20} strokeWidth={2.5} className="shrink-0 text-[#191919]" aria-hidden />
@@ -550,8 +546,7 @@ export default function HomePage({
 function priceCompanies(
   companies: Company[],
   search: BookingSearch,
-  affiliateDiscountWon: number,
-  signupCoupon: boolean
+  affiliateDiscountWon: number
 ) {
   const partners = listParkingCompareCompanies(companies).filter((company) => {
     const face = companyIsFaceHandoff(company, search);
@@ -581,7 +576,7 @@ function priceCompanies(
     .map((item) => ({
       ...item,
       listPrice: item.price,
-      price: signupCoupon ? Math.max(0, item.price - MEMBER_DISCOUNT_WON) : item.price,
+      price: item.price,
     }))
     .sort((a, b) => compareHomeCompanies(a, b, {}));
 }

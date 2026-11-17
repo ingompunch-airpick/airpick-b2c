@@ -269,7 +269,7 @@ export async function submitReservation(
   pointSpendWon?: number,
   /** 손님이 고른 주차 상품. 비대면 추가요금이 있으면 같이 남긴다 */
   parkingProduct?: { id: string; dropFee: number },
-  /** 가입 첫 예약 할인·정산용. listPrice=할인 전, signupCouponWon=뺀 금액 */
+  /** listPrice=표시 합계. signupCouponWon은 폐지된 첫 예약 할인(옛 예약만) */
   pricingMeta?: { listPrice: number; signupCouponWon?: number }
 ): Promise<string> {
   await ensureAnonymousAuth();

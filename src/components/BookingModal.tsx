@@ -45,13 +45,10 @@ import { maxPointSpend, POINT_STEP_WON, subscribePointBalance } from '../lib/poi
 import { handoffPlaceLine, pickupPin } from '../data/pickupPins';
 import { itchaHandoffPlace } from '../data/itchaPickup';
 import {
-  hasSignupCoupon,
   isSavedBookerName,
-  MEMBER_DISCOUNT_WON,
   memberHasFrequentInfo,
   readMember,
   rememberMemberReservation,
-  subscribeMember,
 } from '../lib/memberSession';
 import {
   clearBookingDraft,
@@ -178,7 +175,6 @@ export default function BookingModal({
   const formRef = useRef<HTMLFormElement>(null);
   const asMemberRef = useRef(Boolean(readMember()));
   const [memberPreview, setMemberPreview] = useState(() => Boolean(readMember()));
-  const [signupCoupon, setSignupCoupon] = useState(() => hasSignupCoupon(readMember()));
   const [pointBalance, setPointBalance] = useState(0);
   const [pointSpend, setPointSpend] = useState(0);
   const [pendingProvider, setPendingProvider] = useState<SocialProviderId | null>(null);
@@ -240,8 +236,7 @@ export default function BookingModal({
     return withAffiliateDiscount(base, affiliateDiscountWon);
   }, [company, search, isT2, valetFee, dropFee, affiliateDiscountWon]);
 
-  const couponWon = memberPreview && signupCoupon ? MEMBER_DISCOUNT_WON : 0;
-  const payableBeforePoints = Math.max(0, breakdown.total - couponWon);
+  const payableBeforePoints = breakdown.total;
   const pointSpendCap = memberPreview ? maxPointSpend(pointBalance, payableBeforePoints) : 0;
   const pointSpendWon = Math.min(pointSpend, pointSpendCap);
   const payableTotal = Math.max(0, payableBeforePoints - pointSpendWon);
@@ -298,8 +293,6 @@ export default function BookingModal({
     setError('');
     return true;
   };
-
-  useEffect(() => subscribeMember(() => setSignupCoupon(hasSignupCoupon(readMember()))), []);
 
   useEffect(() => {
     const uid = readMember()?.uid;
@@ -507,8 +500,7 @@ export default function BookingModal({
     }
     const bookingForm = { ...form, reservationPassword: password };
     const payload = bookingSearch();
-    const usingCoupon = asMember && hasSignupCoupon(readMember());
-    const payable = Math.max(0, breakdown.total - (usingCoupon ? MEMBER_DISCOUNT_WON : 0));
+    const payable = breakdown.total;
     const spend = asMember ? Math.min(pointSpend, maxPointSpend(pointBalance, payable)) : 0;
 
     submittingRef.current = true;
@@ -563,7 +555,6 @@ export default function BookingModal({
         parkingProduct ? { id: parkingProduct.id, dropFee } : undefined,
         {
           listPrice: breakdown.total,
-          ...(usingCoupon ? { signupCouponWon: MEMBER_DISCOUNT_WON } : {}),
         }
       );
       trackAppointmentScheduled();
@@ -583,7 +574,7 @@ export default function BookingModal({
       if (asMember) {
         const next = rememberMemberReservation(id, form.carNumber.trim());
         if (next?.uid) {
-          void saveKakaoMember({ ...next, marketingOptIn, signupCouponUsed: true }).catch(() => undefined);
+          void saveKakaoMember({ ...next, marketingOptIn }).catch(() => undefined);
         }
       }
       clearBookingDraft();
@@ -696,9 +687,6 @@ export default function BookingModal({
               는 <span className="font-bold text-ink">예약 탭</span>에서 차량번호와 함께 입력해야
               입고 위치·사진을 확인할 수 있어요.
             </p>
-            <p className="mt-2 text-[13px] font-semibold text-ink">
-              카카오로 처음 접수하는 예약은 {MEMBER_DISCOUNT_WON.toLocaleString()}원 할인됩니다.
-            </p>
           </div>
           ) : null}
 
@@ -724,7 +712,6 @@ export default function BookingModal({
 
   if (confirming) {
     const guestPayable = breakdown.total;
-    const firstBookingPayable = Math.max(0, breakdown.total - MEMBER_DISCOUNT_WON);
     const shownPayable = memberPreview ? payableTotal : guestPayable;
     return (
       <div className={bookingShell}>
@@ -849,9 +836,7 @@ export default function BookingModal({
                 ? '접수 중…'
                 : pointSpendWon > 0
                   ? `포인트 ${pointSpendWon.toLocaleString()}원 빼고 접수`
-                  : signupCoupon
-                    ? '5,000원 할인 적용하고 접수'
-                    : '이 금액으로 접수'}
+                  : '이 금액으로 접수'}
             </button>
           ) : (
             <>
@@ -862,9 +847,7 @@ export default function BookingModal({
                 className="mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#FEE500] py-3.5 text-[16px] font-bold text-[#191919] disabled:opacity-60"
               >
                 <KakaoBubble />
-                {authBusy
-                  ? '로그인 중…'
-                  : `카카오로 접수 · 첫 예약 ${firstBookingPayable.toLocaleString()}원`}
+                {authBusy ? '로그인 중…' : '카카오로 접수'}
               </button>
               {!guestMode ? (
                 <button

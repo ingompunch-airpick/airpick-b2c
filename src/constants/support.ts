@@ -77,13 +77,6 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
           '픽업지는 업체와 터미널마다 다릅니다. 접수 후 내 예약 카드와 접수증에 그 업체의 픽업지가 나옵니다.',
       },
       {
-        id: 'signup-coupon',
-        question: '5,000원 할인은 언제 적용되나요?',
-        shortAnswer: SHORT_ANSWERS.signupCoupon,
-        answer:
-          '카카오 가입 후 첫 예약 한 번만 5,000원이 빠집니다. 이미 예약한 계정과 그다음 예약은 정가입니다.',
-      },
-      {
         id: 'book-change',
         question: '에어픽 주차대행 예약 변경·취소는 어떻게 하나요?',
         shortAnswer: SHORT_ANSWERS.cancel,

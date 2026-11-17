@@ -1,14 +1,6 @@
 const KEY = 'airpick_member_v1';
 const EVENT = 'airpick-member';
 
-export const MEMBER_DISCOUNT_WON = 5000;
-
-/** 가입 후 첫 예약 한 장. 이미 예약한 계정에는 다시 주지 않는다. */
-export function hasSignupCoupon(member: MemberSession | null | undefined): boolean {
-  if (!member?.uid || member.provider !== 'kakao') return false;
-  if (member.signupCouponUsed) return false;
-  return member.reservationIds.length === 0;
-}
 export const MEMBER_PLACEHOLDER_NAME = '카카오 회원';
 
 export interface MemberSession {
@@ -30,7 +22,7 @@ export interface MemberSession {
   photoUrl?: string;
   /** 내 예약에서 자주 쓰는 정보를 저장했는지 */
   frequentSaved?: boolean;
-  /** 가입 쿠폰을 이미 썼는지 */
+  /** @deprecated 첫 예약 5천원 할인 폐지. 옛 세션 호환용으로만 읽음 */
   signupCouponUsed?: boolean;
 }
 

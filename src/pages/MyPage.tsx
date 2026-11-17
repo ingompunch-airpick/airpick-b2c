@@ -3,7 +3,6 @@ import {
   clearMember,
   isSavedBookerName,
   memberHasFrequentInfo,
-  MEMBER_DISCOUNT_WON,
   MEMBER_PLACEHOLDER_NAME,
   readMember,
   saveMember,
@@ -556,7 +555,7 @@ export default function MyPage({
                     d="M12 3C6.5 3 2 6.6 2 11.1c0 2.9 1.9 5.4 4.8 6.8-.2.7-1.1 4-1.1 4.1 0 .2.2.3.3.2.2 0 3.5-2.3 4.1-2.7.6.1 1.3.2 1.9.2 5.5 0 10-3.6 10-8.1S17.5 3 12 3z"
                   />
                 </svg>
-                {authBusy ? '로그인 중…' : `카카오 로그인 하고 첫 예약 ${MEMBER_DISCOUNT_WON.toLocaleString()}원 할인받기`}
+                {authBusy ? '로그인 중…' : '카카오 로그인하고 내 예약 보기'}
               </button>
               {loginError ? (
                 <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{loginError}</p>

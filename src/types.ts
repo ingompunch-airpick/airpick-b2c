@@ -175,7 +175,7 @@ export interface Reservation {
   totalPrice: number;
   /** 가입 할인·포인트 전 정가. 없으면 totalPrice */
   listPrice?: number;
-  /** 카카오 가입 첫 예약 할인(원). 있으면 미적용 */
+  /** @deprecated 첫 예약 5천원 할인 폐지. 옛 예약 문서에만 남을 수 있음 */
   signupCouponWon?: number;
   /** 접수 때 사용한 포인트. totalPrice 는 이미 빠진 현장 결제 금액 */
   pointSpentWon?: number;
