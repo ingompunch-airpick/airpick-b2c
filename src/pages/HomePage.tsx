@@ -430,9 +430,9 @@ export default function HomePage({
               className="flex w-full items-center justify-between gap-3 rounded-2xl bg-[#FEE500] px-4 py-3.5 text-left active:scale-[0.99] disabled:opacity-60"
             >
               <span className="min-w-0">
-                <span className="block text-[13px] font-semibold text-[#191919]/70">카카오 로그인하면</span>
+                <span className="block text-[13px] font-semibold text-[#191919]/70">카카오 로그인</span>
                 <span className="mt-0.5 block text-[17px] font-bold leading-snug text-[#191919]">
-                  {authBusy ? '로그인 중…' : '내 예약을 한곳에서 보고 알림톡으로 받아요'}
+                  {authBusy ? '로그인 중…' : '예약 확인 · 알림톡 받기'}
                 </span>
               </span>
               <ChevronRight size={20} strokeWidth={2.5} className="shrink-0 text-[#191919]" aria-hidden />
