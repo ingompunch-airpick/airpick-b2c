@@ -144,6 +144,7 @@ function renderPage(page, publishedPages) {
   const sectionsHtml = (page.sections || [])
     .map((sec) => {
       const body = (sec.paragraphs || []).map((p) => `<p>${p}</p>`).join('\n        ');
+      const bodyAfter = (sec.paragraphsAfter || []).map((p) => `<p>${p}</p>`).join('\n        ');
       const list = sec.list
         ? `<ul>\n${sec.list.map((li) => `          <li>${li}</li>`).join('\n')}\n        </ul>`
         : '';
@@ -165,6 +166,7 @@ ${sec.table.rows
         ${body}
         ${list}
         ${table}
+        ${bodyAfter}
       </section>`;
     })
     .join('\n\n');
@@ -276,7 +278,7 @@ ${JSON.stringify(graph, null, 2)}
         <p class="eyebrow">${esc(page.eyebrow)}</p>
         <h1>${esc(page.h1)}</h1>
         ${page.answer ? `<p class="answer"><strong>${esc(page.answer)}</strong></p>` : ''}
-        <p>${page.lead}</p>
+        ${page.lead ? `<p>${page.lead}</p>` : ''}
         ${dateMetaLine(updatedLabel, verifiedLabel)}
         <a class="cta" href="${esc(ctaHref)}">${esc(page.ctaLabel)}</a>
         ${secondaryCta}
