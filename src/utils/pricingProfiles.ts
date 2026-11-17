@@ -16,6 +16,7 @@ export function calculateGayuBasePrice(totalDays: number, terminal: PricingTermi
 export interface GayuParkingPriceInput {
   totalDays: number;
   terminal: PricingTerminal;
+  /** @deprecated 카드 할증(×1.1) 폐지. 호출부 호환용으로만 남김 */
   isCard?: boolean;
   departureDate?: string;
   arrivalDate?: string;
@@ -29,7 +30,6 @@ export function calculateGayuParkingPrice(input: GayuParkingPriceInput): number 
   const {
     totalDays,
     terminal,
-    isCard = false,
     departureDate,
     arrivalDate,
     departureTime = '10:00',
@@ -49,10 +49,6 @@ export function calculateGayuParkingPrice(input: GayuParkingPriceInput): number 
     if (arrivalDate && checkNightSurcharge(`${arrivalDate} ${arrivalTime}`, nightStart, nightEnd)) {
       total += nightFee;
     }
-  }
-
-  if (isCard) {
-    total = Math.floor(total * 1.1);
   }
 
   return total;

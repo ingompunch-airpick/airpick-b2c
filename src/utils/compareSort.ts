@@ -35,7 +35,6 @@ export function calculateComparePrice(
 ): number {
   const totalDays = getParkingDayCount(search.departureDate, search.arrivalDate);
   const terminal = toPricingTerminal(search.terminal);
-  /** 비교 화면은 현금·계좌 기준 (카드 결제 시 현장 +10%) */
   const isCard = false;
 
   let base: number;

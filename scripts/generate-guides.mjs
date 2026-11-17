@@ -114,7 +114,6 @@ function dateMetaLine(updatedLabel, verifiedLabel) {
 function sourcesHtml(page) {
   const sources = Array.isArray(page.sources) ? page.sources.filter((s) => s?.name) : [];
   if (sources.length === 0) return '';
-  const verifiedLabel = formatUpdated(page.verified);
   const items = sources
     .map((s) => {
       const name = esc(s.name);
@@ -130,7 +129,6 @@ function sourcesHtml(page) {
         <ul>
 ${items}
         </ul>
-        ${verifiedLabel ? `<p class="muted" style="font-size:0.8125rem;color:var(--muted)">정보 확인일: ${verifiedLabel}</p>` : ''}
       </section>`;
 }
 

@@ -261,7 +261,7 @@ export interface BookingSearch {
   /** 귀국 터미널 — 없으면 terminal과 동일 */
   arrivalTerminal?: Terminal;
   isIndoor: boolean;
-  /** 신용카드 결제 시 요금 +10% 반영 (현장 카드) */
+  /** @deprecated 카드 할증 폐지. 호출 호환용 */
   isCardPayment?: boolean;
   /** 입점 업체 대면(출국장 앞 직접 인계) 입고 희망 — 대면 가능 업체 우선·발렛비 합산 */
   faceToFace?: boolean;

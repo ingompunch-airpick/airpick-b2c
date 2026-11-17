@@ -216,10 +216,9 @@ export function getPriceBreakdown(
       nightDetails.push(`출차 +${nightFee.toLocaleString()}원`);
     }
 
+    /** 카드 ×1.1 할증 폐지 — isCardPayment는 호출 호환만 */
+    void isCardPayment;
     let total = baseTotal + nightSurcharge;
-    if (isCardPayment) {
-      total = Math.floor(total * 1.1);
-    }
     total += valetFee + dropFee;
 
     /** 기본 구간과 초과분을 나눠야 명세 합이 합계와 맞는다 */
