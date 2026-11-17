@@ -107,7 +107,8 @@ export function campaignFromLocation(pathname: string, search = ''): Acquisition
   const clickId =
     campaignValue(params.get('gclid')) ||
     campaignValue(params.get('fbclid')) ||
-    campaignValue(params.get('ttclid'));
+    campaignValue(params.get('ttclid')) ||
+    campaignValue(params.get('oppref'));
 
   let medium = queryMedium;
   if (!medium) {
