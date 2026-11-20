@@ -36,12 +36,17 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
             인천공항 주차대행 비교·예약 플랫폼. 신뢰를 기준으로 입점 업체를 선별합니다.
           </p>
           <p className="mt-4 text-xs leading-relaxed text-mkt-muted">
-            상호: {COMPANY_LEGAL.name} | 대표자: {COMPANY_LEGAL.representative} | 사업자등록번호:{' '}
-            {COMPANY_LEGAL.registrationNumber}
+            상호: {COMPANY_LEGAL.name} (서비스명 {COMPANY_LEGAL.serviceName}) | 대표:{' '}
+            {COMPANY_LEGAL.representative}
+            <br />
+            사업자등록번호: {COMPANY_LEGAL.registrationNumber}
             {COMPANY_LEGAL.mailOrderNumber
-              ? ` | 통신판매업 신고번호: ${COMPANY_LEGAL.mailOrderNumber}`
-              : ''}{' '}
-            | 주소: {COMPANY_LEGAL.address} | 고객센터:{' '}
+              ? ` | 통신판매업 신고: ${COMPANY_LEGAL.mailOrderNumber}`
+              : ''}
+            <br />
+            주소: {COMPANY_LEGAL.address}
+            <br />
+            고객센터:{' '}
             {tel ? (
               <a href={tel} className="text-mkt-brand underline-offset-2 hover:underline">
                 {phoneLabel}
@@ -56,6 +61,8 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
             >
               {COMPANY_LEGAL.email}
             </a>
+            <br />
+            개인정보 보호책임자: {COMPANY_LEGAL.privacyOfficer}
           </p>
           <p className="mt-3 text-xs leading-relaxed text-mkt-muted">{FOOTER_INTERMEDIARY_NOTICE}</p>
         </div>
@@ -69,7 +76,7 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
       </Container>
       <Container className="mt-10 border-t border-mkt-border pt-6">
         <p className="text-xs text-mkt-muted">
-          © {year} {COMPANY_LEGAL.name} · AirPick. All rights reserved.
+          © {year} {COMPANY_LEGAL.name}. All rights reserved.
         </p>
       </Container>
     </footer>

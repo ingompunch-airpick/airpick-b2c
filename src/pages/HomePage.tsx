@@ -28,7 +28,11 @@ import { readMember, subscribeMember } from '../lib/memberSession';
 import { listParkingCompareCompanies } from '../lib/parkingCompare';
 import type { BookingSearch, Company, ParkingProductType, Reservation, Terminal } from '../types';
 import { cn } from '../utils/cn';
-import { buildPartnerPriceList, type PricedCompany } from '../utils/compareSort';
+import {
+  buildPartnerPriceList,
+  comparePartnerRelativeOrder,
+  type PricedCompany,
+} from '../utils/compareSort';
 import { todayYmd } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
@@ -554,6 +558,8 @@ function compareHomeCompanies(
   sort: HomeListSort = 'reviews'
 ): number {
   if (Boolean(a.soldOut) !== Boolean(b.soldOut)) return a.soldOut ? 1 : -1;
+  const partnerOrder = comparePartnerRelativeOrder(a.company.id, b.company.id);
+  if (partnerOrder !== 0) return partnerOrder;
   const reviewDiff = (reviews[b.company.id]?.count ?? 0) - (reviews[a.company.id]?.count ?? 0);
   if (sort === 'price') {
     if (a.price !== b.price) return a.price - b.price;

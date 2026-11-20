@@ -3,14 +3,17 @@
 export const COMPANY_LEGAL = {
   /** 대외 브랜드명 */
   serviceName: '에어픽',
-  /** 운영·사업자 상호 */
-  name: '에어픽',
+  /** 운영·사업자 상호 — 사업자등록증 표기 그대로 */
+  name: '에어픽 공항주차',
   registrationNumber: '776-32-01655',
   representative: '김인원',
-  address: '인천시 중구 자연대로29, 2017호',
+  /** 사업자등록증 사업장 소재지 그대로 */
+  address: '인천광역시 영종구 자연대로 29, 20층 2017호(중산동, 더스텔라)',
   email: 'ingompunch@gmail.com',
-  phone: '01025565746',
-  privacyOfficer: '김인원',
+  /** 고객센터 유선(스마트콜) */
+  phone: '050713285746',
+  /** 개인정보 보호책임자 한 줄 (초안) */
+  privacyOfficer: '김인원 · 대표 · 010-2556-5746',
   /** 서비스 영역 */
   serviceArea: '인천공항',
   /** 공식 사이트 — canonical·sitemap·JSON-LD 와 동일 (유니코드 www) */
@@ -25,10 +28,12 @@ export const COMPANY_LEGAL = {
   /** 고객센터 운영 시간 */
   supportHours: '09:00 ~ 18:00',
   /**
-   * 통신판매업 신고번호. 확정 전 null — 화면에 가짜 번호 금지.
-   * 신고 후 문자열만 채우면 푸터·소개에 노출된다.
+   * 통신판매업 신고번호. 확정 전 「신고 진행 중」— 가짜 번호 금지.
+   * 신고 후 실제 번호 문자열로 교체.
    */
-  mailOrderNumber: null as string | null,
+  mailOrderNumber: '신고 진행 중' as string | null,
+  /** 약관·방침 시행일 표기 */
+  policyEffectiveDate: '2026년 7월 1일',
 } as const;
 
 /** 포트원·크롤러용 공개 정책 URL (trailing slash) */
@@ -42,7 +47,7 @@ export const POLICY_PATHS = {
 
 /** 푸터·정적 HTML용 중개자 고지 (consent INTERMEDIARY_DISCLAIMER와 동취지) */
 export const FOOTER_INTERMEDIARY_NOTICE =
-  '에어픽은 주차대행 업체와 이용자를 연결하는 통신판매중개자이며, 주차대행 서비스의 당사자가 아닙니다. 서비스 이행에 관한 책임은 각 입점 업체에 있습니다.';
+  '에어픽은 통신판매중개자로서 주차대행 서비스의 거래 당사자가 아니며, 입점업체가 제공하는 서비스의 이행 및 책임은 해당 입점업체에 있습니다.';
 
 /**
  * 브랜드 검색·AI·네이버 채널용 정의 문장 (한 줄 정본).

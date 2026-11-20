@@ -7,14 +7,6 @@ import {
 } from '../constants/companyLegal';
 import { buildTelHref, formatPhoneDisplay } from '../utils/contact';
 
-const POLICY_LINKS = [
-  { href: POLICY_PATHS.terms, label: '이용약관' },
-  { href: POLICY_PATHS.privacy, label: '개인정보처리방침' },
-  { href: POLICY_PATHS.refund, label: '취소·환불 정책' },
-  { href: POLICY_PATHS.pricing, label: '요금 안내' },
-  { href: POLICY_PATHS.about, label: '소개' },
-] as const;
-
 /** 홈·앱 하단 — 메뉴는 ≡ 시트. 사업자·정책은 크롤러가 읽도록 항상 노출 */
 export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'premium' }) {
   const tel = buildTelHref(COMPANY_LEGAL.phone);
@@ -32,16 +24,50 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         {AIRPICK_DEFINITION} {AIRPICK_AVAILABILITY_NOTE}
       </p>
 
+      <nav
+        aria-label="약관·정책"
+        className="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-[10px] font-bold text-muted"
+      >
+        <a href={POLICY_PATHS.terms} className="text-brand underline-offset-2 hover:underline">
+          이용약관
+        </a>
+        <span className="font-medium text-muted-light" aria-hidden>
+          |
+        </span>
+        <a href={POLICY_PATHS.privacy} className="text-brand underline-offset-2 hover:underline">
+          <strong>개인정보처리방침</strong>
+        </a>
+        <span className="font-medium text-muted-light" aria-hidden>
+          |
+        </span>
+        <a href={POLICY_PATHS.refund} className="text-brand underline-offset-2 hover:underline">
+          취소·환불 정책
+        </a>
+        <span className="font-medium text-muted-light" aria-hidden>
+          |
+        </span>
+        <a
+          href={COMPANY_LEGAL.kakaoChatUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-brand underline-offset-2 hover:underline"
+        >
+          고객문의
+        </a>
+      </nav>
+
       <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
-        상호: {COMPANY_LEGAL.name} | 대표자: {COMPANY_LEGAL.representative} | 사업자등록번호:{' '}
-        {COMPANY_LEGAL.registrationNumber}
+        상호: {COMPANY_LEGAL.name} (서비스명 {COMPANY_LEGAL.serviceName}) | 대표:{' '}
+        {COMPANY_LEGAL.representative}
+        <br />
+        사업자등록번호: {COMPANY_LEGAL.registrationNumber}
         {COMPANY_LEGAL.mailOrderNumber ? (
-          <>
-            {' '}
-            | 통신판매업 신고번호: {COMPANY_LEGAL.mailOrderNumber}
-          </>
-        ) : null}{' '}
-        | 주소: {COMPANY_LEGAL.address} | 고객센터:{' '}
+          <> | 통신판매업 신고: {COMPANY_LEGAL.mailOrderNumber}</>
+        ) : null}
+        <br />
+        주소: {COMPANY_LEGAL.address}
+        <br />
+        고객센터:{' '}
         {tel ? (
           <a href={tel} className="text-brand underline-offset-2 hover:underline">
             {phoneLabel}
@@ -56,36 +82,16 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         >
           {COMPANY_LEGAL.email}
         </a>
+        <br />
+        개인정보 보호책임자: {COMPANY_LEGAL.privacyOfficer}
       </p>
-
-      <nav
-        aria-label="약관·정책"
-        className="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-[10px] font-bold text-muted"
-      >
-        {POLICY_LINKS.map((link, i) => (
-          <span key={link.href} className="inline-flex items-center gap-2">
-            {i > 0 ? <span className="font-medium text-muted-light" aria-hidden>|</span> : null}
-            <a href={link.href} className="text-brand underline-offset-2 hover:underline">
-              {link.label}
-            </a>
-          </span>
-        ))}
-      </nav>
 
       <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
         {FOOTER_INTERMEDIARY_NOTICE}
       </p>
 
       <p className="mt-2 text-[10px] font-medium text-muted-light">
-        고객센터 카카오톡 · {COMPANY_LEGAL.supportHours} ·{' '}
-        <a
-          href={COMPANY_LEGAL.kakaoChatUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-brand underline-offset-2 hover:underline"
-        >
-          상담 열기
-        </a>
+        © {COMPANY_LEGAL.name}. All rights reserved. · 고객센터 {COMPANY_LEGAL.supportHours}
       </p>
     </footer>
   );

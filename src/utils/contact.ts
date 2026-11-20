@@ -10,6 +10,10 @@ export function buildTelHref(phone?: string): string | undefined {
 
 export function formatPhoneDisplay(phone: string): string {
   const d = phoneDigits(phone);
+  /** 050x 스마트콜 등 12자리 — 0507-1328-5746 */
+  if (d.length === 12 && d.startsWith('050')) {
+    return `${d.slice(0, 4)}-${d.slice(4, 8)}-${d.slice(8)}`;
+  }
   if (d.length === 11) return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
   if (d.length === 10) return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
   return phone;

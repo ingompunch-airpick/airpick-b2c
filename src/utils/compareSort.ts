@@ -17,6 +17,22 @@ export function isAirpickPartner(company: Company): boolean {
   return company.isAirpickPartner !== false;
 }
 
+/**
+ * 홈·비교에서 두 업체가 함께 있을 때 고정 상대 순위 (후기·가격보다 앞).
+ * 둘 다 목록에 있을 때만 적용 — 다른 업체와의 순서는 그대로.
+ */
+const PARTNER_RELATIVE_ORDER: Record<string, number> = {
+  bucks: 0,
+  asia: 1,
+};
+
+export function comparePartnerRelativeOrder(aId: string, bId: string): number {
+  const a = PARTNER_RELATIVE_ORDER[aId.trim().toLowerCase()];
+  const b = PARTNER_RELATIVE_ORDER[bId.trim().toLowerCase()];
+  if (a == null || b == null) return 0;
+  return a - b;
+}
+
 export interface PricedCompany {
   company: Company;
   price: number;
@@ -114,6 +130,8 @@ function sortByPrice(
 ): PricedCompany[] {
   return sortSoldOutLast(
     [...items].sort((a, b) => {
+      const partnerOrder = comparePartnerRelativeOrder(a.company.id, b.company.id);
+      if (partnerOrder !== 0) return partnerOrder;
       if (a.price !== b.price) return a.price - b.price;
       const aSnap = reviewSnapshots[a.company.id];
       const bSnap = reviewSnapshots[b.company.id];
@@ -158,6 +176,8 @@ export function sortPartnersByRating(
 ): PricedCompany[] {
   return sortSoldOutLast(
     [...items].sort((a, b) => {
+      const partnerOrder = comparePartnerRelativeOrder(a.company.id, b.company.id);
+      if (partnerOrder !== 0) return partnerOrder;
       const aSnap = reviewSnapshots[a.company.id];
       const bSnap = reviewSnapshots[b.company.id];
       const aRating =

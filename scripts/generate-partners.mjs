@@ -7,6 +7,7 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LEGAL_SITE_FOOTER_HTML } from './legal-site-footer.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -411,6 +412,7 @@ ${reviewsSectionHtml(reviewBundle)}
       </section>
 
       <p class="footer-note">현장 입고·출고·차량 문의는 예약하신 업체로, 앱·예약 조회는 에어픽 고객센터로 문의해 주세요.</p>
+${LEGAL_SITE_FOOTER_HTML}
     </div>
     ${seoBackScript()}
   </body>
@@ -545,6 +547,7 @@ ${JSON.stringify(graph, null, 2)}
       </section>
 
       <p class="footer-note">${esc(CUSTOMER_PITCH)}</p>
+${LEGAL_SITE_FOOTER_HTML}
     </div>
     ${seoBackScript()}
   </body>

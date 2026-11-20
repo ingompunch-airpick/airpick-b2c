@@ -8,6 +8,7 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LEGAL_SITE_FOOTER_HTML } from './legal-site-footer.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -311,6 +312,7 @@ ${sourcesHtml(page)}
       </section>
 
       <p class="footer-note">가이드는 참고용이에요. 최종 요금·규정은 비교·예약 화면과 업체·제휴사 안내를 확인해 주세요.</p>
+${LEGAL_SITE_FOOTER_HTML}
     </div>
     ${seoBackScript()}
   </body>
@@ -433,6 +435,7 @@ ${categoryBlocks}
         <h2>바로 비교하기</h2>
         <a class="cta" href="/">주차대행 비교하기</a>
       </section>
+${LEGAL_SITE_FOOTER_HTML}
     </div>
     ${seoBackScript()}
   </body>

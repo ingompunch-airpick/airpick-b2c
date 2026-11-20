@@ -77,9 +77,14 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
         </PolicySection>
 
         <PolicySection title="5. 결제 정보 · 처리 위탁">
-          현재 주차대행은 <strong className="font-bold text-ink">현장 결제</strong>가 기본이며, 에어픽
-          앱은 주차 요금 카드번호를 저장하지 않습니다. 향후 앱 결제가 도입되면 결제대행사 위탁 내용을
-          이 방침에 추가합니다. 서버 호스팅·데이터 보관은 Google Firebase를 사용합니다.
+          결제 처리·취소·환불은 계약 예정 결제대행사에 위탁하며, 카드번호 등은 PG사가 처리하고
+          회사는 저장하지 않습니다. 예약 알림은 네이버 클라우드에 위탁합니다. Firestore·손님용
+          Functions는 Firebase asia-northeast3(서울)을 쓰고, 카카오·익명 로그인은 Firebase
+          Authentication(Google LLC, 해외 처리 가능)을 사용합니다. 국외이전 상세는
+          <a href="/privacy/" className="text-brand underline-offset-2 hover:underline">
+            개인정보처리방침
+          </a>
+          정적 페이지를 따릅니다.
         </PolicySection>
 
         <PolicySection title="6. 개인정보 보호책임자">
@@ -121,7 +126,7 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
         </PolicySection>
 
         <p className="mt-6 text-[10px] font-medium text-muted-light">
-          시행일: 2026년 6월 21일 · 개정 안내: 2026년 11월 12일
+          시행일: {COMPANY_LEGAL.policyEffectiveDate}
         </p>
         <p className="mt-2 text-[10px] font-medium text-muted-light">
           <a href="/terms/" className="text-brand underline-offset-2 hover:underline">

@@ -231,6 +231,16 @@ details.faq p.answer { font-weight: 700; color: var(--ink); }
 .evidence { border-radius: var(--r-md); padding: 22px; background: #fff; border: 1px solid var(--border); }
 
 .footer-note { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; font-weight: 500; line-height: 1.7; color: var(--muted-light); }
+.legal-footer p { margin: 0 0 10px; }
+.legal-footer p:last-child { margin-bottom: 0; }
+.legal-footer-links { font-weight: 600; color: var(--muted); }
+.legal-footer-links a { font-weight: 600; }
+.legal-footer table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+.legal-footer th, .legal-footer td, .policy-table th, .policy-table td {
+  border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top;
+}
+.policy-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+.policy-table th { background: var(--sub); font-weight: 700; }
 
 @media (min-width: 768px) {
   .wrap { padding-bottom: 96px; }
