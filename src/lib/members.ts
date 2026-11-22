@@ -11,6 +11,28 @@ import {
   type MemberSession,
 } from './memberSession';
 
+/** 로컬 순서 먼저, 서버 이어 붙이고 중복 제거. 최대 20개. */
+function mergeReservationIds(
+  local: string[] | undefined,
+  server: string[] | undefined
+): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of [...(local ?? []), ...(server ?? [])]) {
+    const id = String(raw);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+    if (out.length >= 20) break;
+  }
+  return out;
+}
+
+function serverReservationIds(data: Record<string, unknown> | undefined): string[] {
+  if (!data || !Array.isArray(data.reservationIds)) return [];
+  return data.reservationIds.map(String);
+}
+
 /** 카카오 닉네임·사진은 표시용으로만 붙인다. 예약자명은 기존에 저장한 값이나 손님이 적은 값만 남긴다. */
 export function memberFromKakaoProfile(
   profile: SocialProfile,
@@ -88,15 +110,30 @@ export async function rememberedKakaoMember(
   local: MemberSession | null
 ): Promise<MemberSession | null> {
   const same = local?.uid === uid ? local : null;
-  if (same && memberHasFrequentInfo(same)) return same;
   const snap = await getDoc(doc(db, 'members', uid)).catch(() => null);
-  const account = snap?.exists() ? bookerSessionFromAccount(uid, snap.data() as Record<string, unknown>) : null;
-  if (!account) return same;
+  const data = snap?.exists() ? (snap.data() as Record<string, unknown>) : undefined;
+  const serverIds = serverReservationIds(data);
+
+  if (same && memberHasFrequentInfo(same)) {
+    return {
+      ...same,
+      reservationIds: mergeReservationIds(same.reservationIds, serverIds),
+    };
+  }
+
+  const account = data ? bookerSessionFromAccount(uid, data) : null;
+  if (!account) {
+    if (!same) return null;
+    return {
+      ...same,
+      reservationIds: mergeReservationIds(same.reservationIds, serverIds),
+    };
+  }
   return {
     ...account,
     nickname: same?.nickname || account.nickname,
     photoUrl: same?.photoUrl || account.photoUrl,
-    reservationIds: same?.reservationIds.length ? same.reservationIds : account.reservationIds,
+    reservationIds: mergeReservationIds(same?.reservationIds, account.reservationIds),
     marketingOptIn: same?.marketingOptIn === true || account.marketingOptIn === true,
     createdAt: account.createdAt || same?.createdAt,
     signupCouponUsed: same?.signupCouponUsed === true || account.signupCouponUsed === true ? true : undefined,
@@ -130,6 +167,7 @@ export async function saveKakaoMember(session: MemberSession): Promise<void> {
   let createdAt = session.createdAt || now;
   let serverExists = false;
   let serverPhone = '';
+  let serverIds: string[] = [];
   if (session.uid && kakaoUid === session.uid) {
     const snap = await getDoc(doc(db, 'members', session.uid)).catch(() => null);
     if (snap?.exists()) {
@@ -138,15 +176,17 @@ export async function saveKakaoMember(session: MemberSession): Promise<void> {
       const prev = data.createdAt;
       if (typeof prev === 'string' && prev.length > 0 && prev.length <= 40) createdAt = prev;
       serverPhone = typeof data.phone === 'string' ? data.phone : '';
+      serverIds = serverReservationIds(data);
     }
   }
 
+  const reservationIds = mergeReservationIds(session.reservationIds, serverIds);
   const next: MemberSession = {
     ...session,
     phone: localPhone || (serverPhone.replace(/\D/g, '').length >= 10 ? serverPhone : ''),
     provider: 'kakao',
     createdAt,
-    reservationIds: (session.reservationIds ?? []).slice(0, 20),
+    reservationIds,
   };
   saveMember(next);
   if (!next.uid) return;

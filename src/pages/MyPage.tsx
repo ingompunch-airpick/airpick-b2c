@@ -37,8 +37,132 @@ import {
 } from '../lib/reservations';
 import { submitCompanyReview } from '../lib/reviews';
 import { POINT_STEP_WON, subscribePointBalance } from '../lib/points';
-import type { Company, Reservation, ReservationLookupMode } from '../types';
+import type { Company, Reservation, ReservationLookupMode, Terminal } from '../types';
 import { clearRecentReservation, getRecentReservation } from '../utils/recentReservation';
+import { displayCompanyName } from '../utils/display';
+import { getStatusLabel } from '../utils/trust';
+import { todaySeoulYmd, ymdToInputValue } from '../lib/icnFlight';
+import { terminalLabel } from '../utils/terminalLabels';
+
+type ReservationBucket = 'active' | 'done' | 'cancelled';
+
+function reservationBucket(status: string): ReservationBucket {
+  if (status === 'cancelled') return 'cancelled';
+  if (status === 'checked_out' || status === 'completed_out') return 'done';
+  if (
+    status === 'pending' ||
+    status === 'scheduled' ||
+    status === 'pending_in' ||
+    status === 'checked_in' ||
+    status === 'completed_in' ||
+    status === 'request_out'
+  ) {
+    return 'active';
+  }
+  return 'active';
+}
+
+const WEEKDAY_KO = ['일', '월', '화', '수', '목', '금', '토'] as const;
+
+function calendarDayDiff(fromYmd: string, toYmd: string): number {
+  const [y1, m1, d1] = fromYmd.split('-').map(Number);
+  const [y2, m2, d2] = toYmd.split('-').map(Number);
+  const a = Date.UTC(y1, m1 - 1, d1);
+  const b = Date.UTC(y2, m2 - 1, d2);
+  return Math.round((b - a) / 86_400_000);
+}
+
+function formatMmDd(ymd: string): string {
+  const parts = ymd.split('-');
+  if (parts.length < 3) return ymd;
+  return `${parts[1]}.${parts[2]}`;
+}
+
+function weekdayKo(ymd: string): string {
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return '';
+  return WEEKDAY_KO[new Date(y, m - 1, d).getDay()] ?? '';
+}
+
+function departureDdayBadge(departureDate: string, arrivalDate: string): string {
+  const today = ymdToInputValue(todaySeoulYmd()) || todaySeoulYmd();
+  const dep = departureDate;
+  const arr = arrivalDate;
+  if (today < dep) {
+    const n = calendarDayDiff(today, dep);
+    return `출국 D-${n}`;
+  }
+  if (today === dep) return '오늘 출국';
+  if (today < arr) {
+    const n = calendarDayDiff(today, arr);
+    return `귀국 D-${n}`;
+  }
+  if (today === arr) return '오늘 귀국';
+  return '';
+}
+
+function asTerminal(raw: string | undefined): Terminal {
+  return raw === 'T2' ? 'T2' : 'T1';
+}
+
+function pickUpcomingReservation(rows: Reservation[]): Reservation | null {
+  const today = ymdToInputValue(todaySeoulYmd()) || todaySeoulYmd();
+  const active = rows.filter(
+    (item) =>
+      reservationBucket(item.status) === 'active' && item.arrivalDate >= today
+  );
+  if (active.length === 0) return null;
+  return [...active].sort((a, b) => {
+    const byDate = a.departureDate.localeCompare(b.departureDate);
+    if (byDate !== 0) return byDate;
+    return (a.departureTime || '').localeCompare(b.departureTime || '');
+  })[0];
+}
+
+function UpcomingReservationCard({
+  reservation,
+  onOpenDetail,
+}: {
+  reservation: Reservation;
+  onOpenDetail: () => void;
+}) {
+  const dep = reservation.departureDate;
+  const time = (reservation.departureTime || '').slice(0, 5);
+  const day = weekdayKo(dep);
+  const terminal = terminalLabel(asTerminal(reservation.departureTerminal));
+  return (
+    <div className="mt-4 rounded-[20px] bg-[#f4f5f7] px-4 py-4">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[13px] font-medium text-[#0f1a2e]/55">다가오는 예약</p>
+        <span className="shrink-0 rounded-full bg-white px-2.5 py-0.5 text-[12px] font-semibold text-[#0f1a2e]">
+          {departureDdayBadge(reservation.departureDate, reservation.arrivalDate)}
+        </span>
+      </div>
+      <p className="mt-1 text-[13px] font-semibold text-brand">
+        {getStatusLabel(reservation.status)}
+      </p>
+      <p className="mt-0.5 text-[16px] font-bold text-[#0f1a2e]">
+        {displayCompanyName(reservation.companyName)}
+      </p>
+      <p className="mt-2 text-[14px] font-semibold tabular-nums text-[#0f1a2e]">
+        {formatMmDd(dep)}
+        {day ? ` (${day})` : ''}
+        {time ? ` ${time}` : ''}
+        {` · ${terminal}`}
+      </p>
+      <p className="mt-0.5 text-[13px] font-medium tabular-nums text-[#0f1a2e]/55">
+        귀국 {formatMmDd(reservation.arrivalDate)}
+      </p>
+      <button
+        type="button"
+        onClick={onOpenDetail}
+        className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-2.5 text-[14px] font-semibold text-white"
+      >
+        예약 상세 보기
+      </button>
+    </div>
+  );
+}
 
 function InfoEditButton({
   editing,
@@ -171,6 +295,10 @@ export default function MyPage({
   const [marketingError, setMarketingError] = useState('');
   const [marketingResultLine, setMarketingResultLine] = useState('');
   const marketingResultTitleId = useId();
+  const [reservationTab, setReservationTab] = useState<ReservationBucket>('active');
+  const [scrollToReservationId, setScrollToReservationId] = useState<string | null>(null);
+  const reservationCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const userPickedReservationTabRef = useRef(false);
 
   useEffect(() => subscribeMember(() => setMember(readMember())), []);
 
@@ -295,8 +423,10 @@ export default function MyPage({
 
   const handleCancel = async (reservation: Reservation, password: string) => {
     await cancelReservation(reservation.id, password);
-    setReservations((prev) => prev.filter((r) => r.id !== reservation.id));
-    setGuestReservations((prev) => prev.filter((r) => r.id !== reservation.id));
+    const markCancelled = (prev: Reservation[]) =>
+      prev.map((r) => (r.id === reservation.id ? { ...r, status: 'cancelled' } : r));
+    setReservations(markCancelled);
+    setGuestReservations(markCancelled);
     if (getRecentReservation()?.id === reservation.id) clearRecentReservation();
   };
 
@@ -468,13 +598,44 @@ export default function MyPage({
   const memberRows = reservations.filter((item) =>
     (member?.reservationIds ?? []).includes(item.id)
   );
-  const sortReservations = (rows: Reservation[]) =>
+  const activeMemberRows = memberRows.filter((item) => reservationBucket(item.status) === 'active');
+  const doneMemberRows = memberRows.filter((item) => reservationBucket(item.status) === 'done');
+  const cancelledMemberRows = memberRows.filter(
+    (item) => reservationBucket(item.status) === 'cancelled'
+  );
+  const activeCount = activeMemberRows.length;
+  const doneCount = doneMemberRows.length;
+  const cancelledCount = cancelledMemberRows.length;
+  const upcomingReservation = member ? pickUpcomingReservation(memberRows) : null;
+
+  const sortGuestReservations = (rows: Reservation[]) =>
     [...rows].sort((a, b) => {
       const rank = (status: string) => (status === 'cancelled' ? 1 : 0);
       return rank(a.status) - rank(b.status);
     });
+  const sortTabReservations = (rows: Reservation[], tab: ReservationBucket) => {
+    if (tab === 'active') {
+      return [...rows].sort((a, b) => {
+        const byDate = a.departureDate.localeCompare(b.departureDate);
+        if (byDate !== 0) return byDate;
+        return (a.departureTime || '').localeCompare(b.departureTime || '');
+      });
+    }
+    if (tab === 'done') {
+      return [...rows].sort((a, b) => b.arrivalDate.localeCompare(a.arrivalDate));
+    }
+    return rows;
+  };
+  const memberTabRows = sortTabReservations(
+    reservationTab === 'active'
+      ? activeMemberRows
+      : reservationTab === 'done'
+        ? doneMemberRows
+        : cancelledMemberRows,
+    reservationTab
+  );
   const visibleReservations = (() => {
-    if (member) return memberRows;
+    if (member) return memberTabRows;
     const merged: Reservation[] = searched ? [...guestReservations] : [];
     if (!searched && lastReservationId) {
       const justBooked = reservations.find((item) => item.id === lastReservationId);
@@ -488,8 +649,42 @@ export default function MyPage({
   })();
   const displayName = member ? usableKakaoNickname(member.nickname) : '';
   const greetingName = isSavedBookerName(profileName) ? profileName.trim() : displayName;
-  const listedReservations = sortReservations(visibleReservations);
-  const openReservationCount = memberRows.filter((item) => item.status !== 'cancelled').length;
+  const listedReservations = member
+    ? memberTabRows
+    : sortGuestReservations(visibleReservations);
+  const tabCount =
+    reservationTab === 'active'
+      ? activeCount
+      : reservationTab === 'done'
+        ? doneCount
+        : cancelledCount;
+
+  useEffect(() => {
+    if (!member) {
+      userPickedReservationTabRef.current = false;
+      return;
+    }
+    if (autoOpenReviewId) {
+      const target =
+        memberRows.find((item) => item.id === autoOpenReviewId) ||
+        reservations.find((item) => item.id === autoOpenReviewId);
+      if (target) {
+        setReservationTab(reservationBucket(target.status));
+        return;
+      }
+    }
+    if (userPickedReservationTabRef.current) return;
+    setReservationTab(activeCount >= 1 ? 'active' : doneCount >= 1 ? 'done' : 'active');
+  }, [member, autoOpenReviewId, activeCount, doneCount, memberRows, reservations]);
+
+  useEffect(() => {
+    if (!scrollToReservationId) return;
+    const el = reservationCardRefs.current[scrollToReservationId];
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setScrollToReservationId(null);
+  }, [scrollToReservationId, reservationTab, listedReservations]);
+
   const bookerReady =
     isSavedBookerName(profileName) &&
     isValidMobilePhone(profilePhone) &&
@@ -564,6 +759,19 @@ export default function MyPage({
                 로그아웃
               </button>
             </div>
+            {upcomingReservation ? (
+              <UpcomingReservationCard
+                reservation={upcomingReservation}
+                onOpenDetail={() => {
+                  setReservationTab('active');
+                  setScrollToReservationId(upcomingReservation.id);
+                  reservationSectionRef.current?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  });
+                }}
+              />
+            ) : null}
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="rounded-2xl bg-[#f4f5f7] px-4 py-3">
                 <p className="text-[13px] font-medium text-[#0f1a2e]/55">포인트</p>
@@ -578,14 +786,18 @@ export default function MyPage({
               </div>
               <button
                 type="button"
-                onClick={() =>
-                  reservationSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
+                onClick={() => {
+                  setReservationTab('active');
+                  reservationSectionRef.current?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  });
+                }}
                 className="rounded-2xl bg-[#f4f5f7] px-4 py-3 text-left"
               >
-                <p className="text-[13px] font-medium text-[#0f1a2e]/55">예약</p>
+                <p className="text-[13px] font-medium text-[#0f1a2e]/55">진행 중</p>
                 <p className="mt-1 text-[18px] font-bold tabular-nums text-[#0f1a2e]">
-                  {openReservationCount}건
+                  {activeCount}건
                 </p>
               </button>
             </div>
@@ -675,58 +887,101 @@ export default function MyPage({
       {member || visibleReservations.length > 0 || (lookupMode === 'guest' && searched && !loading) ? (
         <section ref={reservationSectionRef}>
           {member ? (
-            <div className="mb-2 flex items-baseline justify-between px-1">
-              <h2 className="text-[16px] font-bold text-[#0f1a2e]">내 예약</h2>
-              <p className="text-[13px] font-medium text-[#0f1a2e]/55">{openReservationCount}건</p>
-            </div>
+            <>
+              <div className="mb-2 flex items-baseline justify-between px-1">
+                <h2 className="text-[16px] font-bold text-[#0f1a2e]">내 예약</h2>
+                <p className="text-[13px] font-medium text-[#0f1a2e]/55">{tabCount}건</p>
+              </div>
+              <div className="mb-3 grid grid-cols-3 gap-1.5">
+                {(
+                  [
+                    { id: 'active' as const, label: `진행 중 ${activeCount}` },
+                    { id: 'done' as const, label: `완료 ${doneCount}` },
+                    { id: 'cancelled' as const, label: `취소 ${cancelledCount}` },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      userPickedReservationTabRef.current = true;
+                      setReservationTab(tab.id);
+                    }}
+                    className={cn(
+                      'rounded-xl py-2 text-[13px] font-semibold',
+                      reservationTab === tab.id
+                        ? 'bg-[#0f1a2e] text-white'
+                        : 'bg-[#f4f5f7] text-[#0f1a2e]'
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </>
           ) : visibleReservations.length > 0 ? (
             <p className="mb-2 px-1 text-xs font-bold text-muted">
               예약 {visibleReservations.length}건 · 위치 · 사진 · 보험
             </p>
           ) : null}
-          {visibleReservations.length > 0 ? (
+          {listedReservations.length > 0 ? (
             <div className="space-y-3">
               {listedReservations.map((reservation) => (
-                <ReservationCard
+                <div
                   key={reservation.id}
-                  reservation={reservation}
-                  company={companyMap[reservation.companyId]}
-                  showVehicle={
-                    !member || !(member.reservationIds ?? []).includes(reservation.id)
-                  }
-                  memberReview={Boolean(
-                    member?.uid && reservation.userId && reservation.userId === member.uid
-                  )}
-                  onBookAirpick={onBookParking}
-                  onCancel={(password) => handleCancel(reservation, password)}
-                  lookupPassword={lookupPassword}
-                  autoOpenReview={autoOpenReviewId === reservation.id}
-                  onAutoOpenReviewHandled={() => {
-                    if (autoOpenReviewId === reservation.id) {
-                      setAutoOpenReviewId(null);
-                      onReviewDeepLinkHandled?.();
-                    }
+                  ref={(node) => {
+                    reservationCardRefs.current[reservation.id] = node;
                   }}
-                  onSubmitReview={(password, rating, body, photoDataUrls) =>
-                    handleSubmitReview(reservation, password, rating, body, photoDataUrls)
-                  }
-                />
+                >
+                  <ReservationCard
+                    reservation={reservation}
+                    company={companyMap[reservation.companyId]}
+                    showVehicle={
+                      !member || !(member.reservationIds ?? []).includes(reservation.id)
+                    }
+                    memberReview={Boolean(
+                      member?.uid && reservation.userId && reservation.userId === member.uid
+                    )}
+                    onBookAirpick={onBookParking}
+                    onCancel={(password) => handleCancel(reservation, password)}
+                    lookupPassword={lookupPassword}
+                    autoOpenReview={autoOpenReviewId === reservation.id}
+                    onAutoOpenReviewHandled={() => {
+                      if (autoOpenReviewId === reservation.id) {
+                        setAutoOpenReviewId(null);
+                        onReviewDeepLinkHandled?.();
+                      }
+                    }}
+                    onSubmitReview={(password, rating, body, photoDataUrls) =>
+                      handleSubmitReview(reservation, password, rating, body, photoDataUrls)
+                    }
+                  />
+                </div>
               ))}
             </div>
           ) : member ? (
-            <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-6 text-center">
-              <p className="text-[16px] font-semibold text-[#0f1a2e]">아직 예약이 없어요</p>
-              <p className="mt-2 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/55">
-                카카오로 접수한 예약만 여기에 모입니다.
-              </p>
-              <button
-                type="button"
-                onClick={onBookParking}
-                className="mt-4 h-[52px] w-full rounded-[16px] bg-gold text-[16px] font-semibold text-[#0f1a2e]"
-              >
-                예약하러 가기
-              </button>
-            </div>
+            reservationTab === 'active' ? (
+              <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-6 text-center">
+                <p className="text-[16px] font-semibold text-[#0f1a2e]">진행 중인 예약이 없어요</p>
+                <button
+                  type="button"
+                  onClick={onBookParking}
+                  className="mt-4 h-[52px] w-full rounded-[16px] bg-gold text-[16px] font-semibold text-[#0f1a2e]"
+                >
+                  예약하러 가기
+                </button>
+              </div>
+            ) : reservationTab === 'done' ? (
+              <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-6 text-center">
+                <p className="text-[16px] font-semibold text-[#0f1a2e]">
+                  아직 이용을 마친 예약이 없어요
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-6 text-center">
+                <p className="text-[16px] font-semibold text-[#0f1a2e]">취소한 예약이 없어요</p>
+              </div>
+            )
           ) : (
             <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-8 text-center">
               <p className="text-[15px] font-semibold text-[#0f1a2e]">일치하는 예약이 없습니다</p>
@@ -890,7 +1145,7 @@ export default function MyPage({
       {member ? (
         <>
           <section>
-            <h2 className="mb-2 px-1 text-[13px] font-medium text-[#0f1a2e]/55">설정</h2>
+            <h2 className="mb-2 px-1 text-[13px] font-medium text-[#0f1a2e]/55">도움말</h2>
             <div className="overflow-hidden rounded-[20px] bg-[#f4f5f7]">
               {guideRows.map((row, index) => (
                 <div key={row.key} className={index > 0 ? 'border-t border-[#0f1a2e]/8' : undefined}>
