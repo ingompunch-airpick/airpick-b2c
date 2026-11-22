@@ -59,6 +59,11 @@ import {
 } from '../lib/bookingDraft';
 import { memberFromKakaoProfile, saveKakaoMember } from '../lib/members';
 import {
+  formatMarketingResultLine,
+  readMarketingConsent,
+  setMarketingConsent,
+} from '../lib/marketingConsent';
+import {
   signInWithKakao,
   socialLoginErrorMessage,
   type SocialProviderId,
@@ -180,12 +185,18 @@ export default function BookingModal({
   const [pendingProvider, setPendingProvider] = useState<SocialProviderId | null>(null);
   const [pendingUid, setPendingUid] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
-  /** 마케팅은 빈 칸이 기본. 체크하면 소식·할인 안내를 받는다. */
+  /** 마케팅은 빈 칸이 기본. 회원은 서버 값으로 맞춘다. */
   const [marketingOptIn, setMarketingOptIn] = useState(() => {
+    const loggedIn = readMember();
+    if (loggedIn?.uid && loggedIn.provider === 'kakao') {
+      return loggedIn.marketingOptIn === true;
+    }
     const draft = draftFor(company.id);
     if (draft && typeof draft.marketingOptIn === 'boolean') return draft.marketingOptIn;
-    return readMember()?.marketingOptIn === true;
+    return false;
   });
+  const [marketingTouched, setMarketingTouched] = useState(false);
+  const marketingTouchedRef = useRef(false);
   const [confirming, setConfirming] = useState(() => draftFor(company.id)?.confirmed === true);
   const [guestMode, setGuestMode] = useState(false);
   const [editSchedule, setEditSchedule] = useState(false);
@@ -198,6 +209,7 @@ export default function BookingModal({
   const [completedPayable, setCompletedPayable] = useState(0);
   const pendingPointSpendRef = useRef(0);
   const [completedAsMember, setCompletedAsMember] = useState(false);
+  const [marketingResultLine, setMarketingResultLine] = useState('');
   const submittingRef = useRef(false);
 
   const arrivalTerminal = differentArrivalTerminal
@@ -280,7 +292,9 @@ export default function BookingModal({
       provider: 'kakao',
       uid: uid || existing?.uid,
       createdAt: existing?.createdAt,
-      marketingOptIn: marketingOptIn || existing?.marketingOptIn === true,
+      marketingOptIn: existing?.marketingOptIn === true,
+      marketingAgreedAt: existing?.marketingAgreedAt,
+      marketingWithdrawnAt: existing?.marketingWithdrawnAt,
       nickname: existing?.nickname,
       photoUrl: existing?.photoUrl,
       frequentSaved: true,
@@ -303,6 +317,21 @@ export default function BookingModal({
     }
     return subscribePointBalance(uid, setPointBalance);
   }, [memberPreview]);
+
+  useEffect(() => {
+    const uid = readMember()?.uid;
+    if (!uid || readMember()?.provider !== 'kakao') return;
+    let cancelled = false;
+    void readMarketingConsent(uid)
+      .then((consent) => {
+        if (cancelled || marketingTouchedRef.current) return;
+        setMarketingOptIn(consent.optIn);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!completedId) return;
@@ -571,16 +600,28 @@ export default function BookingModal({
         carNumber: form.carNumber.trim(),
         arrivalDate: payload.arrivalDate,
       });
+      let resultLine = '';
       if (asMember) {
         const next = rememberMemberReservation(id, form.carNumber.trim());
         if (next?.uid) {
-          void saveKakaoMember({ ...next, marketingOptIn }).catch(() => undefined);
+          try {
+            await saveKakaoMember(next);
+            if (marketingTouched) {
+              const result = await setMarketingConsent(marketingOptIn, 'booking');
+              resultLine = formatMarketingResultLine(result.agree, result.at);
+            }
+          } catch {
+            /* 회원·동의 저장 실패는 예약 접수를 막지 않는다 */
+          }
         }
+      } else if (marketingTouched && marketingOptIn) {
+        resultLine = formatMarketingResultLine(true, new Date().toISOString());
       }
       clearBookingDraft();
       pendingPointSpendRef.current = spend;
       setCompletedPayable(Math.max(0, payable - spend));
       setCompletedAsMember(asMember);
+      setMarketingResultLine(resultLine);
       setForm((prev) => ({ ...prev, reservationPassword: password }));
       setCompletedId(id);
       onBooked?.(id);
@@ -628,6 +669,11 @@ export default function BookingModal({
             {displayCompanyName(company.name)} · {formatStayPhrase(breakdown.days)} 주차
           </p>
           <p className="mt-2 text-sm font-semibold text-ink">카카오 알림톡으로 접수증이 갑니다.</p>
+          {marketingResultLine ? (
+            <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
+              {marketingResultLine}
+            </p>
+          ) : null}
 
           <dl className="mt-5 space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
             <div className="flex items-center justify-between gap-4">
@@ -1300,7 +1346,11 @@ export default function BookingModal({
             <div className="rounded-2xl bg-white ring-1 ring-[#0f1a2e]/8">
               <BookingConsent
                 marketingOptIn={marketingOptIn}
-                onMarketingOptInChange={setMarketingOptIn}
+                onMarketingOptInChange={(value) => {
+                  marketingTouchedRef.current = true;
+                  setMarketingTouched(true);
+                  setMarketingOptIn(value);
+                }}
                 providerName={companyName}
               />
             </div>

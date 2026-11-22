@@ -52,6 +52,7 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
             <li>주차대행 예약 접수·조회·취소 및 제휴 업체 연동</li>
             <li>고객 상담, 문의·민원 처리</li>
             <li>서비스 개선, 부정 이용 방지, 법령상 의무 이행</li>
+            <li>광고성 정보 전송(동의한 경우에 한함): 할인·이벤트 안내</li>
           </ul>
         </PolicySection>
 
@@ -67,6 +68,7 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
           원칙적으로 개인정보 처리 목적이 달성되면 지체 없이 파기합니다. 다만 관계 법령에 따라 보존할
           필요가 있는 경우 해당 기간 동안 보관합니다. 예: 계약·청약철회 기록 5년, 대금 결제 및 재화
           공급 기록 5년, 소비자 불만·분쟁 처리 기록 3년(전자상거래법), 접속 기록 3개월(통신비밀보호법).
+          광고성 정보 수신 동의 정보: 동의 철회 또는 회원 탈퇴 시까지
         </PolicySection>
 
         <PolicySection title="4. 개인정보의 제3자 제공">

@@ -14,8 +14,12 @@ export interface MemberSession {
   provider?: 'kakao';
   uid?: string;
   createdAt?: string;
-  /** 행사·혜택 안내(문자·카카오톡) 선택 동의 */
+  /** 광고성 정보 수신 동의 */
   marketingOptIn?: boolean;
+  /** 지금 유효한 동의 시각(ISO). 화면 표시용 캐시 */
+  marketingAgreedAt?: string;
+  /** 철회 시각(ISO). 화면 표시용 캐시 */
+  marketingWithdrawnAt?: string;
   /** 카카오 닉네임. 화면 표시용 */
   nickname?: string;
   /** 카카오 프로필 사진 */
@@ -77,6 +81,14 @@ function parse(raw: string | null): MemberSession | null {
       uid: data.uid ? String(data.uid) : undefined,
       createdAt: data.createdAt ? String(data.createdAt) : undefined,
       marketingOptIn: data.marketingOptIn === true,
+      marketingAgreedAt:
+        typeof data.marketingAgreedAt === 'string' && data.marketingAgreedAt
+          ? data.marketingAgreedAt
+          : undefined,
+      marketingWithdrawnAt:
+        typeof data.marketingWithdrawnAt === 'string' && data.marketingWithdrawnAt
+          ? data.marketingWithdrawnAt
+          : undefined,
       nickname: nickname || undefined,
       photoUrl: httpPhoto(data.photoUrl),
       frequentSaved:

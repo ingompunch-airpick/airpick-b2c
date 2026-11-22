@@ -124,38 +124,50 @@ export async function saveKakaoMember(session: MemberSession): Promise<void> {
       ? user.uid
       : null;
 
+  const localPhoneDigits = session.phone.replace(/\D/g, '');
+  const localPhone = localPhoneDigits.length >= 10 ? session.phone.trim() : '';
+
   let createdAt = session.createdAt || now;
-  if (session.uid && kakaoUid === session.uid && session.phone.trim().length >= 10) {
+  let serverExists = false;
+  let serverPhone = '';
+  if (session.uid && kakaoUid === session.uid) {
     const snap = await getDoc(doc(db, 'members', session.uid)).catch(() => null);
-    const prev = snap?.exists() ? snap.data()?.createdAt : undefined;
-    if (typeof prev === 'string' && prev.length > 0 && prev.length <= 40) createdAt = prev;
+    if (snap?.exists()) {
+      serverExists = true;
+      const data = snap.data() as Record<string, unknown>;
+      const prev = data.createdAt;
+      if (typeof prev === 'string' && prev.length > 0 && prev.length <= 40) createdAt = prev;
+      serverPhone = typeof data.phone === 'string' ? data.phone : '';
+    }
   }
 
   const next: MemberSession = {
     ...session,
+    phone: localPhone || (serverPhone.replace(/\D/g, '').length >= 10 ? serverPhone : ''),
     provider: 'kakao',
     createdAt,
     reservationIds: (session.reservationIds ?? []).slice(0, 20),
   };
   saveMember(next);
   if (!next.uid) return;
-  // 배포된 규칙은 전화번호 10자 미만을 거절한다. 번호는 예약할 때 저장한다.
-  if (next.phone.trim().length < 10) return;
   if (kakaoUid !== next.uid) {
     throw new Error('카카오 로그인이 풀려 있습니다. 로그아웃 후 다시 로그인한 뒤 저장해 주세요.');
   }
+
+  const serverHasPhone = serverPhone.replace(/\D/g, '').length >= 10;
+  const omitPhone = serverExists && serverHasPhone && !localPhone;
 
   await setDoc(
     doc(db, 'members', next.uid),
     {
       uid: next.uid,
       name: next.name,
-      phone: next.phone,
+      ...(omitPhone ? {} : { phone: localPhone }),
       carModel: (next.carModel ?? '').slice(0, 40),
       carNumber: next.carNumber,
       provider: 'kakao',
       reservationIds: next.reservationIds,
-      marketingOptIn: next.marketingOptIn === true,
+      ...(serverExists ? {} : { marketingOptIn: false }),
       ...(next.signupCouponUsed ? { signupCouponUsed: true } : {}),
       createdAt,
       updatedAt: now,

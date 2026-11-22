@@ -1,4 +1,4 @@
-import { ChevronRight, Pencil, User } from 'lucide-react';
+import { ChevronRight, Pencil, User, X } from 'lucide-react';
 import {
   clearMember,
   isSavedBookerName,
@@ -10,6 +10,12 @@ import {
   usableKakaoNickname,
 } from '../lib/memberSession';
 import { applyKakaoLogin, rememberedKakaoMember, saveKakaoMember } from '../lib/members';
+import {
+  formatMarketingResultLine,
+  formatMarketingStatusLine,
+  readMarketingConsent,
+  setMarketingConsent,
+} from '../lib/marketingConsent';
 import { subscribeKakaoLoginError, takeKakaoLoginError } from '../lib/bookingDraft';
 import {
   markKakaoLoggedOut,
@@ -18,7 +24,7 @@ import {
 } from '../lib/socialAuth';
 import { formatPhoneInput, isValidMobilePhone } from '../utils/contact';
 import { cn } from '../utils/cn';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ESIM_GUIDE_TITLE } from '../constants/marketing';
 import ReservationCard from '../components/ReservationCard';
 import ReservationLookupForm from '../components/ReservationLookupForm';
@@ -151,8 +157,81 @@ export default function MyPage({
   const [guestReservations, setGuestReservations] = useState<Reservation[]>([]);
   const [authBusy, setAuthBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [marketingOptIn, setMarketingOptIn] = useState(
+    () => readMember()?.marketingOptIn === true
+  );
+  const [marketingStatus, setMarketingStatus] = useState(() =>
+    formatMarketingStatusLine({
+      optIn: readMember()?.marketingOptIn === true,
+      agreedAt: readMember()?.marketingAgreedAt,
+      withdrawnAt: readMember()?.marketingWithdrawnAt,
+    })
+  );
+  const [marketingSaving, setMarketingSaving] = useState(false);
+  const [marketingError, setMarketingError] = useState('');
+  const [marketingResultLine, setMarketingResultLine] = useState('');
+  const marketingResultTitleId = useId();
 
   useEffect(() => subscribeMember(() => setMember(readMember())), []);
+
+  useEffect(() => {
+    const uid = member?.uid;
+    if (!uid) {
+      setMarketingOptIn(false);
+      setMarketingStatus('받지 않음');
+      setMarketingError('');
+      return;
+    }
+    let cancelled = false;
+    void readMarketingConsent(uid)
+      .then((consent) => {
+        if (cancelled) return;
+        setMarketingOptIn(consent.optIn);
+        setMarketingStatus(formatMarketingStatusLine(consent));
+        setMarketingError('');
+      })
+      .catch(() => {
+        if (cancelled) return;
+        const local = readMember();
+        const consent = {
+          optIn: local?.marketingOptIn === true,
+          agreedAt: local?.marketingAgreedAt,
+          withdrawnAt: local?.marketingWithdrawnAt,
+        };
+        setMarketingOptIn(consent.optIn);
+        setMarketingStatus(formatMarketingStatusLine(consent));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [member?.uid]);
+
+  const onToggleMarketing = async () => {
+    if (!member?.uid || marketingSaving) return;
+    const next = !marketingOptIn;
+    const prevOptIn = marketingOptIn;
+    const prevStatus = marketingStatus;
+    setMarketingOptIn(next);
+    setMarketingSaving(true);
+    setMarketingError('');
+    try {
+      const result = await setMarketingConsent(next, 'mypage');
+      const consent = await readMarketingConsent(member.uid).catch(() => ({
+        optIn: result.agree,
+        agreedAt: result.agree ? result.at : undefined,
+        withdrawnAt: result.agree ? undefined : result.at,
+      }));
+      setMarketingOptIn(consent.optIn);
+      setMarketingStatus(formatMarketingStatusLine(consent));
+      setMarketingResultLine(formatMarketingResultLine(result.agree, result.at));
+    } catch {
+      setMarketingOptIn(prevOptIn);
+      setMarketingStatus(prevStatus);
+      setMarketingError('저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setMarketingSaving(false);
+    }
+  };
   useEffect(() => {
     if (!member?.uid) {
       setPointBalance(0);
@@ -728,6 +807,84 @@ export default function MyPage({
             <p className="mt-2 px-1 text-[13px] font-semibold text-rose-500">{bookerError}</p>
           ) : null}
         </section>
+      ) : null}
+
+      {member ? (
+        <section>
+          <h2 className="mb-2 px-1 text-[13px] font-medium text-[#0f1a2e]/55">알림 설정</h2>
+          <div className="overflow-hidden rounded-[20px] bg-[#f4f5f7]">
+            <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+              <div className="min-w-0">
+                <p className="text-[15px] font-semibold text-[#0f1a2e]">
+                  광고성 정보 수신 (문자·카카오톡)
+                </p>
+                <p className="mt-0.5 text-[12px] font-medium text-[#0f1a2e]/55">{marketingStatus}</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={marketingOptIn}
+                disabled={marketingSaving}
+                onClick={() => void onToggleMarketing()}
+                className={cn(
+                  'relative h-7 w-12 shrink-0 rounded-full transition-colors',
+                  marketingOptIn ? 'bg-brand' : 'bg-[#0f1a2e]/20',
+                  marketingSaving && 'opacity-60'
+                )}
+              >
+                <span
+                  className={cn(
+                    'absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform',
+                    marketingOptIn ? 'translate-x-5' : 'translate-x-0.5'
+                  )}
+                />
+              </button>
+            </div>
+          </div>
+          {marketingError ? (
+            <p className="mt-2 px-1 text-[13px] font-semibold text-rose-500">{marketingError}</p>
+          ) : null}
+        </section>
+      ) : null}
+
+      {marketingResultLine ? (
+        <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center">
+          <button
+            type="button"
+            className="absolute inset-0 bg-[#0f1a2e]/50"
+            aria-label="닫기"
+            onClick={() => setMarketingResultLine('')}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={marketingResultTitleId}
+            className="relative z-10 w-full max-w-lg rounded-t-3xl bg-white px-5 py-5 shadow-xl sm:rounded-3xl"
+          >
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <h3 id={marketingResultTitleId} className="text-base font-bold text-[#0f1a2e]">
+                처리 결과
+              </h3>
+              <button
+                type="button"
+                onClick={() => setMarketingResultLine('')}
+                className="shrink-0 rounded-full p-1.5 hover:bg-[#f4f5f7]"
+              >
+                <X size={18} className="text-[#0f1a2e]/55" />
+              </button>
+            </div>
+            <p className="text-[14px] font-medium leading-relaxed text-[#0f1a2e]">
+              {marketingResultLine}
+            </p>
+            <button
+              type="button"
+              onClick={() => setMarketingResultLine('')}
+              className="mt-4 w-full rounded-xl bg-[#0f1a2e] py-3 text-sm font-bold text-white"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
       ) : null}
 
       {member ? (

@@ -91,11 +91,11 @@ function ConsentSheet({
   );
 }
 
-type SheetKey = 'platform' | 'partner' | 'privacy' | 'thirdParty';
+type SheetKey = 'platform' | 'partner' | 'privacy' | 'thirdParty' | 'marketing';
 
 /**
  * 필수 약관은 예약 완료로 동의.
- * 마케팅은 빈 칸이며, 체크하면 소식·할인 안내를 받는다.
+ * 마케팅은 빈 칸이 기본.
  */
 export default function BookingConsent({
   marketingOptIn,
@@ -121,19 +121,22 @@ export default function BookingConsent({
           className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
         />
         <span className="text-[13px] font-medium leading-relaxed text-ink">
-          에어픽의 소식·할인 안내를 받겠습니다.{' '}
+          [선택] 광고성 정보 수신 동의 (문자·카카오톡){' '}
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
-              setSheet('privacy');
+              setSheet('marketing');
             }}
             className="font-bold text-brand underline-offset-2 hover:underline"
           >
-            개인정보처리방침
+            자세히
           </button>
         </span>
       </label>
+      <p className="pl-[26px] text-[12px] font-medium leading-relaxed text-muted">
+        할인·이벤트 소식을 보내드려요. 동의하지 않아도 예약할 수 있어요.
+      </p>
 
       <p className="text-[12px] font-medium italic leading-relaxed text-muted">
         예약을 완료하면{' '}
@@ -220,6 +223,41 @@ export default function BookingConsent({
             {PRIVACY_CONSENT.retention}
           </p>
           <p className="mt-1.5">{PRIVACY_CONSENT.notice}</p>
+        </ConsentSheet>
+      ) : null}
+
+      {sheet === 'marketing' ? (
+        <ConsentSheet title="광고성 정보 수신 동의 (선택)" onClose={() => setSheet(null)}>
+          <p>
+            <span className="font-bold text-ink">항목: </span>
+            이름, 휴대전화번호
+          </p>
+          <p className="mt-1.5">
+            <span className="font-bold text-ink">목적: </span>
+            에어픽 할인·이벤트 등 광고성 정보 전송
+          </p>
+          <p className="mt-1.5">
+            <span className="font-bold text-ink">수단: </span>
+            문자, 카카오톡
+          </p>
+          <p className="mt-1.5">
+            <span className="font-bold text-ink">보유 기간: </span>
+            동의 철회 또는 회원 탈퇴 시까지
+          </p>
+          <p className="mt-1.5">
+            <span className="font-bold text-ink">철회: </span>
+            마이페이지 &gt; 알림 설정, 또는 받은 메시지의 수신거부 방법
+          </p>
+          <p className="mt-1.5">동의하지 않아도 예약에 불이익이 없어요.</p>
+          <p className="mt-3">
+            <button
+              type="button"
+              onClick={() => setSheet('privacy')}
+              className="font-bold text-brand underline-offset-2 hover:underline"
+            >
+              개인정보처리방침
+            </button>
+          </p>
         </ConsentSheet>
       ) : null}
 
