@@ -4,13 +4,16 @@ import {
   getAdditionalUserInfo,
   getRedirectResult,
   linkWithPopup,
+  linkWithRedirect,
   signInWithCredential,
   signInWithPopup,
+  signInWithRedirect,
   updateProfile,
   type User,
   type UserCredential,
 } from 'firebase/auth';
 import { usableKakaoNickname } from './memberSession';
+import { firebaseConfig } from '../config/firebase';
 import { auth } from '../firebase';
 
 export type SocialProviderId = 'kakao';
@@ -190,6 +193,20 @@ function profileFromUser(user: User): SocialProfile {
     email: textOf(user.email),
     photoUrl: firstPhoto([user.photoURL, ...user.providerData.map((item) => item.photoURL)]),
   };
+}
+
+/** 카카오톡·네이버·인스타·페이스북·라인 인앱 브라우저 */
+function isInAppBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return (
+    ua.includes('KAKAOTALK') ||
+    ua.includes('NAVER(inapp') ||
+    ua.includes('Instagram') ||
+    ua.includes('FBAN') ||
+    ua.includes('FBAV') ||
+    ua.includes('Line/')
+  );
 }
 
 /** 이미 로그인된 카카오 계정에서 닉네임·사진을 다시 읽는다. 예약자명으로는 쓰지 않는다. */
@@ -376,10 +393,26 @@ async function kakaoCredential(): Promise<UserCredential> {
   }
 }
 
-/** 같은 창 이동은 돌아온 뒤 결과가 사라져 버튼이 그대로인 것처럼 보인다. 팝업만 쓴다. */
+/** 인앱(카카오톡 등)은 팝업 통신이 안 되므로 같은 창 redirect. 그 외는 팝업. */
 export async function signInWithKakao(): Promise<SocialProfile> {
-  clearKakaoRedirectPending();
   clearKakaoLoggedOut();
+  if (isInAppBrowser() && location.hostname === firebaseConfig.authDomain) {
+    try {
+      sessionStorage.setItem(KAKAO_REDIRECT_FLAG, '1');
+    } catch {
+      /* ignore */
+    }
+    const provider = kakaoProvider();
+    const current = auth.currentUser;
+    if (current?.isAnonymous) {
+      await linkWithRedirect(current, provider);
+    } else {
+      await signInWithRedirect(auth, provider);
+    }
+    // 페이지가 이동하므로 호출부가 에러·화면 변경을 하지 않게 끝나지 않는 Promise
+    return new Promise<SocialProfile>(() => {});
+  }
+  clearKakaoRedirectPending();
   const cred = await kakaoCredential();
   const tokenResponse = tokenResponseOf(cred);
   const accessToken =
@@ -392,11 +425,13 @@ export async function signInWithKakao(): Promise<SocialProfile> {
   );
   const rawInfo = parsedRawUserInfo(tokenResponse);
   const profile = profileFromCredential('kakao', cred);
-  const [oidcInfo, account, talkProfile] = await Promise.all([
-    kakaoJson('/api/kakao-oidc-userinfo', accessToken),
-    kakaoJson('/api/kakao-user-me', accessToken),
-    kakaoJson('/api/kakao-talk-profile', accessToken),
-  ]);
+  const [oidcInfo, account, talkProfile] = import.meta.env.DEV
+    ? await Promise.all([
+        kakaoJson('/api/kakao-oidc-userinfo', accessToken),
+        kakaoJson('/api/kakao-user-me', accessToken),
+        kakaoJson('/api/kakao-talk-profile', accessToken),
+      ])
+    : [{}, {}, {}];
   const gathered = [
     collectIdentity(oidcInfo),
     collectIdentity(account),
@@ -451,7 +486,7 @@ export async function signInWithKakao(): Promise<SocialProfile> {
 /** React Strict Mode에서 effect가 두 번 돌아도 getRedirectResult는 한 번만 읽는다. */
 let redirectResultPromise: Promise<SocialProfile | null> | null = null;
 
-/** 예전에 쓰던 리다이렉트 복귀용. 새 로그인은 팝업을 쓴다. */
+/** 인앱 redirect 복귀. 예약 draft·/my 복원은 App 쪽이 그대로 처리한다. */
 export function completeKakaoRedirectLogin(): Promise<SocialProfile | null> {
   if (!redirectResultPromise) {
     redirectResultPromise = (async () => {
@@ -463,6 +498,17 @@ export function completeKakaoRedirectLogin(): Promise<SocialProfile | null> {
         if (isKakaoUser(auth.currentUser)) return profileFromUser(auth.currentUser);
         return null;
       } catch (err) {
+        const existing = err instanceof FirebaseError ? OAuthProvider.credentialFromError(err) : null;
+        if (existing) {
+          try {
+            const cred = await signInWithCredential(auth, existing);
+            clearKakaoRedirectPending();
+            return profileFromCredential('kakao', cred);
+          } catch (signInErr) {
+            clearKakaoRedirectPending();
+            throw signInErr;
+          }
+        }
         clearKakaoRedirectPending();
         throw err;
       }

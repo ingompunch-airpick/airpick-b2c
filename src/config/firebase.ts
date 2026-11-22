@@ -2,7 +2,7 @@ export const firebaseConfig = {
   projectId: 'airpick-reservation',
   appId: '1:417452643834:web:b42b0c3f863b3b7c370043',
   apiKey: 'AIzaSyDbZyPUwzp166aX8PzDmoIzqER8bDV8tyo',
-  authDomain: 'airpick-reservation.firebaseapp.com',
+  authDomain: 'www.xn--oh5b1bw17d.kr',
   storageBucket: 'airpick-reservation.firebasestorage.app',
   messagingSenderId: '417452643834',
   measurementId: 'G-258VBKY6C2',
