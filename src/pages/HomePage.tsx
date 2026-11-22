@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import DateField from '../components/DateField';
-import SiteFooter from '../components/SiteFooter';
 import HomeFaq from '../components/home/HomeFaq';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
@@ -506,9 +505,7 @@ export default function HomePage({
       <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
         <HomeFaq />
       </div>
-      <div className="mx-auto mt-10 max-w-6xl px-4 md:px-8">
-        <SiteFooter tone="premium" />
-      </div>
+      {/* 홈 사업자·약관 푸터는 index.html #pg-legal-footer (React 밖) — PG 봇용 */}
     </div>
   );
 }

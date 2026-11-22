@@ -207,12 +207,49 @@ export default function App() {
     };
   }, []);
 
+  /** 첫 페인트 뒤에 Firestore 구독 — PG 헤드리스가 네트워크 대기로 타임아웃 나는 것 완화 */
   useEffect(() => {
-    const unsub = subscribeCompanies((list) => {
-      setCompanies(list.filter((c) => c.id !== 'airpick' && c.id !== 'air25' && c.id !== 'demo'));
-      setLoading(false);
+    let cancelled = false;
+    let unsub: (() => void) | undefined;
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+
+    const start = () => {
+      if (cancelled) return;
+      unsub = subscribeCompanies((list) => {
+        setCompanies(list.filter((c) => c.id !== 'airpick' && c.id !== 'air25' && c.id !== 'demo'));
+        setLoading(false);
+      });
+    };
+
+    const afterPaint = () => {
+      const ric = (
+        window as Window & {
+          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+        }
+      ).requestIdleCallback;
+      if (typeof ric === 'function') {
+        idleId = ric(start, { timeout: 2000 });
+      } else {
+        timeoutId = window.setTimeout(start, 100);
+      }
+    };
+
+    const raf1 = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(afterPaint);
     });
-    return unsub;
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(raf1);
+      if (idleId != null) {
+        (
+          window as Window & { cancelIdleCallback?: (id: number) => void }
+        ).cancelIdleCallback?.(idleId);
+      }
+      if (timeoutId != null) window.clearTimeout(timeoutId);
+      unsub?.();
+    };
   }, []);
 
   /** 카카오 로그인 같은 창 복귀 — 예약 창·입력값을 다시 연다 */
