@@ -13,7 +13,8 @@ export const SHORT_ANSWERS = {
   bookHow: '홈에서 터미널, 실내·야외, 날짜를 고른 뒤 업체를 비교하고 접수합니다.',
   pickup: '픽업지는 업체와 터미널마다 다릅니다. 접수 후 내 예약과 접수증에서 확인합니다.',
   cancel: '입고 24시간 전이면 예약 탭에서 무료 취소할 수 있습니다. 그 이후·입고 후는 업체에 문의하세요.',
-  payCard: '아니요. 입점 예약은 현장 결제이며, 앱에서 카드를 받지 않습니다.',
+  payCard:
+    '온라인 결제(카드·간편결제)를 준비 중이며, 오픈 전까지는 현장에서 결제합니다.',
   photos: '입고·출고 처리 후 기사가 찍은 사진이 예약 탭에 올라옵니다.',
   locationInsurance: '입점 예약이면 예약 카드의 주차 위치·보험 블록에서 확인합니다.',
   contact:
@@ -45,13 +46,15 @@ export const VOICE_BRAND_BLURB =
 /** 음성·고객센터만 */
 export const VOICE_SUPPORT_BLURB = `에어픽 고객센터 번호는 ${formatPhoneDisplay(COMPANY_LEGAL.phone)}이고, 운영 시간은 ${COMPANY_LEGAL.supportHours}입니다. 카카오톡 상담도 됩니다.`;
 
+/** PG 심사·공개 카피 공통 — 부정형(없음/안 받음) 금지 */
+export const PAYMENT_STATUS_COPY =
+  '온라인 결제(카드·간편결제)를 준비 중이며, 오픈 전까지는 현장에서 결제합니다.';
+
 /**
  * 알림톡·앱 카피 동기화 메모 (B2B 알림톡은 별도 repo — 문구만 맞춤).
- * 입점 주차대행 공개 카피의 결제는 「현장 결제」로 통일.
  */
 export const COPY_SYNC_NOTES = [
-  '입점 예약 결제: 현장 결제 (앱 카드 결제 없음) — FAQ·비교 화면·예약 UI와 동일',
+  `입점 예약 결제: ${PAYMENT_STATUS_COPY}`,
   '예약 조회: 예약 탭 + 차량번호/연락처 + 비밀번호 4자리',
   '현장·차량: 업체 문의 / 앱·조회: FAQ·에어픽 고객센터',
-  '약관에 장래 플랫폼 결제 문구가 있어도, 현재 공개 카피는 현장 결제로 안내',
 ] as const;

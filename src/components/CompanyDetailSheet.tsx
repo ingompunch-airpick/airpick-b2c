@@ -543,7 +543,7 @@ export default function CompanyDetailSheet({
           </div>
           <div className="mb-3 flex items-end justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold text-muted">총 {stay} · 현장 결제</p>
+              <p className="text-[11px] font-semibold text-muted">총 {stay} · 온라인 결제 준비 중</p>
               <AffiliatePrice
                 price={price}
                 affiliateDiscountWon={affiliateDiscountWon}

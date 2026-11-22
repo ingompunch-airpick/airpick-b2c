@@ -47,7 +47,7 @@ export function cancelGuideSteps(): GuideStep[] {
     {
       id: 'pay',
       title: '결제',
-      body: '입점 예약은 현장 결제입니다. 앱에서 카드 결제를 받지 않습니다.',
+      body: '온라인 결제(카드·간편결제)를 준비 중이며, 오픈 전까지는 현장에서 결제합니다.',
     },
   ];
 }

@@ -177,7 +177,7 @@ export interface Reservation {
   listPrice?: number;
   /** @deprecated 첫 예약 5천원 할인 폐지. 옛 예약 문서에만 남을 수 있음 */
   signupCouponWon?: number;
-  /** 접수 때 사용한 포인트. totalPrice 는 이미 빠진 현장 결제 금액 */
+  /** 접수 때 사용한 포인트. totalPrice 는 포인트 차감 후 결제 예정 금액 */
   pointSpentWon?: number;
   /** 서버가 포인트 사용을 확인했는지 */
   pointSpendSettled?: boolean;

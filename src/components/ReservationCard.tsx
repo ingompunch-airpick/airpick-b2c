@@ -267,7 +267,7 @@ export default function ReservationCard({
   const locationPending = !parkingDisplay && statusStep < 1;
   const paymentLabel =
     !reservation.paymentMethod || reservation.paymentMethod === 'unpaid'
-      ? '현장 결제'
+      ? '온라인 결제 준비 중'
       : reservation.paymentMethod;
 
   if (reservation.status === 'cancelled') {
