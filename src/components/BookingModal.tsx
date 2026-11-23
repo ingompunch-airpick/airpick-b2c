@@ -18,7 +18,13 @@ import AirlineSelect from './AirlineSelect';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { suggestedIcnTerminalForAirline } from '../constants/airlines';
 import { displayCompanyName } from '../utils/display';
-import { ensureAnonymousAuth, submitReservation, subscribeReservation, type BookingForm } from '../lib/reservations';
+import {
+  ensureAnonymousAuth,
+  SoldOutError,
+  submitReservation,
+  subscribeReservation,
+  type BookingForm,
+} from '../lib/reservations';
 import { trackAppointmentScheduled, trackPurchaseOnce } from '../lib/analytics';
 import { reportError } from '../lib/errorReport';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
@@ -634,6 +640,14 @@ export default function BookingModal({
       onBooked?.(id);
     } catch (err) {
       console.error(err);
+      if (
+        err instanceof SoldOutError ||
+        (err as { code?: string })?.code === 'SOLD_OUT' ||
+        (err instanceof Error && err.message.includes('만차'))
+      ) {
+        setError(err instanceof Error ? err.message : '만차입니다');
+        return;
+      }
       reportError('error', err, '예약 저장');
       const raw = err instanceof Error ? err.message : '';
       setError(

@@ -362,6 +362,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/reservation-cancel/, '/cancelReservation'),
       },
+      '/api/reservation-create': {
+        target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/reservation-create/, '/createReservation'),
+      },
       '/api/reservation-review': {
         target: 'https://asia-northeast3-airpick-reservation.cloudfunctions.net',
         changeOrigin: true,

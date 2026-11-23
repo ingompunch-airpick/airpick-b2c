@@ -1,9 +1,6 @@
 import { signInAnonymously } from 'firebase/auth';
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-
-const LOOKUP_API_PATH = '/api/reservation-lookup';
-const CANCEL_API_PATH = '/api/reservation-cancel';
 import { fetchCompanyBookingPolicy } from './companies';
 import { assertHourlyCapacityAvailable } from './hourlyCapacityFirestore';
 import type { BookingSearch, Reservation, ReservationLookupMode } from '../types';
@@ -21,6 +18,18 @@ import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
 import { acquisitionFieldsForReservation } from '../utils/acquisition';
 import { createReceiptToken } from '../utils/receiptToken';
 import { normalizeCarNumber, carNumberTail } from '../utils/carNumber';
+
+const LOOKUP_API_PATH = '/api/reservation-lookup';
+const CANCEL_API_PATH = '/api/reservation-cancel';
+const CREATE_API_PATH = '/api/reservation-create';
+
+export class SoldOutError extends Error {
+  readonly code = 'SOLD_OUT' as const;
+  constructor(message = '만차입니다') {
+    super(message);
+    this.name = 'SoldOutError';
+  }
+}
 
 export interface BookingForm {
   userName: string;
@@ -249,6 +258,10 @@ export async function cancelReservation(id: string, password: string): Promise<v
   }
 }
 
+/**
+ * TODO(온라인 결제): 예약 생성 후 `/pay/{reservationId}` 고유 URL로 결제 페이지를 연다.
+ * 결제 대기 중에는 정원을 일정 시간 점유하고, 결제 실패 시 예약을 자동 취소하지 않는다.
+ */
 export async function submitReservation(
   companyId: string,
   companyName: string,
@@ -361,7 +374,35 @@ export async function submitReservation(
 
   Object.assign(payload, acquisitionFieldsForReservation());
 
-  await setDoc(doc(db, 'reservations', id), payload);
-
-  return id;
+  // 서버 트랜잭션: partner+date+parking_type 슬롯 차감과 예약 생성을 원자적으로.
+  // 호출 인자·페이로드 필드는 기존 setDoc 과 동일. 만차면 문서를 만들지 않고 SOLD_OUT.
+  const idToken = await auth.currentUser?.getIdToken();
+  if (!idToken) {
+    throw new Error('예약 저장에 실패했습니다. Firebase 익명 로그인 설정을 확인해 주세요.');
+  }
+  const res = await fetch(CREATE_API_PATH, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ id, ...payload }),
+  });
+  let data: { ok?: boolean; id?: string; error?: string } = {};
+  try {
+    data = (await res.json()) as typeof data;
+  } catch {
+    data = {};
+  }
+  if (res.status === 409 && data.error === 'SOLD_OUT') {
+    throw new SoldOutError();
+  }
+  if (!res.ok || data.ok !== true || !data.id) {
+    throw new Error(
+      data.error === 'already_exists'
+        ? '예약 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+        : '예약 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+    );
+  }
+  return data.id;
 }

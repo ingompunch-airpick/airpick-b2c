@@ -366,6 +366,13 @@
         }
       },
       {
+        "source": "/api/reservation-create",
+        "function": {
+          "functionId": "createReservation",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "/api/reservation-review",
         "function": {
           "functionId": "submitReview",
