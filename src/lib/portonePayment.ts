@@ -54,6 +54,11 @@ export function paymentCompleteUrl(paymentId: string): string {
   return url.toString();
 }
 
+/**
+ * TODO(온라인 결제): 상품 결제는 `/pay/{reservationId}` 예약별 고유 URL.
+ * (현재 `/payment/complete` 는 PG 심사용이며 예약 점유·실패 시 자동취소 금지 원칙과 별개.)
+ */
+
 export async function requestPortoneCardPayment(opts: {
   channel: PortoneChannel;
   totalAmount: number;

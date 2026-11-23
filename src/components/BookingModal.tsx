@@ -9,7 +9,7 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import BookingConsent from './BookingConsent';
 import DateField from './DateField';
 import TerminalFields from './TerminalFields';
@@ -140,6 +140,7 @@ export default function BookingModal({
   onDismiss,
   onSuccess,
   onBooked,
+  onBrowseOtherCompanies,
 }: {
   company: Company;
   search: BookingSearch;
@@ -149,6 +150,8 @@ export default function BookingModal({
   onSuccess: (reservationId: string) => void;
   /** 접수가 저장된 순간. 닫기를 눌러도 홈에서 이 예약을 보여 준다. */
   onBooked?: (reservationId: string) => void;
+  /** 만차 시 다른 업체 비교로 이동 */
+  onBrowseOtherCompanies?: () => void;
 }) {
   const [search, setSearch] = useState<BookingSearch>(() => {
     const base = draftFor(company.id)?.search ?? initialSearch;
@@ -207,6 +210,9 @@ export default function BookingModal({
   const [payingChannel, setPayingChannel] = useState<PortoneChannel | null>(null);
   const portoneOn = isPortoneEnabled();
   const [error, setError] = useState('');
+  const [soldOut, setSoldOut] = useState(false);
+  const [soldOutDetail, setSoldOutDetail] = useState('');
+  const parkingTypeName = useId();
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [completedPayable, setCompletedPayable] = useState(0);
   const pendingPointSpendRef = useRef(0);
@@ -486,6 +492,7 @@ export default function BookingModal({
     setError('');
   };
 
+  // TODO(온라인 결제): PG 심사용. 상품 결제는 `/pay/{reservationId}` + 대기 점유, 실패 시 자동취소 금지.
   const payWithPortone = async (channel: PortoneChannel) => {
     if (payingChannel || loading) return;
     const fullName = form.userName.trim();
@@ -538,6 +545,8 @@ export default function BookingModal({
     asMemberRef.current = asMember;
     setLoading(true);
     setError('');
+    setSoldOut(false);
+    setSoldOutDetail('');
     try {
       const localCheck = checkBookingPolicy(
         payload.departureDate,
@@ -563,7 +572,11 @@ export default function BookingModal({
           }
         );
       } catch (capErr) {
-        setError(capErr instanceof Error ? capErr.message : '해당 시간대 예약이 마감되었습니다.');
+        const detail =
+          capErr instanceof Error ? capErr.message : '해당 시간대 예약이 마감되었습니다.';
+        setSoldOut(true);
+        setSoldOutDetail(detail);
+        setError('');
         return;
       }
 
@@ -657,6 +670,84 @@ export default function BookingModal({
     if (ok) await placeReservation(true);
   };
 
+  if (soldOut) {
+    const canFlipOutdoor = companySupportsOutdoor(company) && search.isIndoor;
+    const canFlipIndoor = companySupportsIndoor(company) && !search.isIndoor;
+    return (
+      <div className={bookingShell}>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="booking-soldout-title"
+          className="h-full w-full max-w-lg overflow-y-auto bg-white px-6 pt-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-left"
+        >
+          <h2 id="booking-soldout-title" className="text-xl font-bold text-ink">
+            만차입니다
+          </h2>
+          <p className="mt-2 text-sm font-medium leading-relaxed text-muted">
+            {displayCompanyName(company.name)} ·{' '}
+            {formatDateDisplay(search.departureDate)} {search.departureTime} ·{' '}
+            {parkingTypeLabel(search.isIndoor)}
+          </p>
+          {soldOutDetail ? (
+            <p className="mt-2 text-[13px] font-medium text-muted">{soldOutDetail}</p>
+          ) : null}
+          <p className="mt-4 text-sm font-bold text-ink">대안을 골라 주세요</p>
+          <ul className="mt-3 space-y-2">
+            {onBrowseOtherCompanies ? (
+              <li>
+                <button
+                  type="button"
+                  onClick={onBrowseOtherCompanies}
+                  className="w-full rounded-xl bg-brand py-3.5 text-sm font-bold text-white hover:bg-brand-dark"
+                >
+                  다른 업체 보기
+                </button>
+              </li>
+            ) : null}
+            {canFlipOutdoor || canFlipIndoor ? (
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch((prev) => ({ ...prev, isIndoor: !prev.isIndoor }));
+                    setSoldOut(false);
+                    setSoldOutDetail('');
+                    setEditSchedule(true);
+                  }}
+                  className="w-full rounded-xl bg-white py-3.5 text-sm font-bold text-ink ring-1 ring-[#0f1a2e]/12"
+                >
+                  {canFlipOutdoor ? '야외 보관으로 바꿔 보기' : '실내 보관으로 바꿔 보기'}
+                </button>
+              </li>
+            ) : null}
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setSoldOut(false);
+                  setSoldOutDetail('');
+                  setEditSchedule(true);
+                  setConfirming(false);
+                }}
+                className="w-full rounded-xl bg-white py-3.5 text-sm font-bold text-ink ring-1 ring-[#0f1a2e]/12"
+              >
+                날짜·시간 바꾸기
+              </button>
+            </li>
+          </ul>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-4 w-full py-2 text-sm font-semibold text-muted"
+          >
+            닫기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (completedId) {
     return (
       <div className={bookingShell}>
@@ -687,6 +778,12 @@ export default function BookingModal({
               <dt className="text-[13px] font-semibold text-muted">예약번호</dt>
               <dd className="font-mono text-sm font-bold text-ink break-all text-right">
                 {completedId}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-[13px] font-semibold text-muted">업체명</dt>
+              <dd className="text-sm font-bold text-ink text-right">
+                {displayCompanyName(company.name)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
@@ -729,19 +826,26 @@ export default function BookingModal({
             </div>
           </dl>
 
-          {!completedAsMember ? (
           <div className="mt-4 rounded-2xl bg-brand/5 p-4 text-left ring-1 ring-brand/15">
-            <p className="text-sm font-bold text-ink">예약 비밀번호를 꼭 기억해 주세요</p>
+            <p className="text-sm font-bold text-ink">조회 방법</p>
             <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-muted">
-              입력하신 4자리 비밀번호
-              <span className="mx-1 rounded-md bg-white px-2 py-0.5 font-mono text-sm font-bold tracking-widest text-brand ring-1 ring-brand/20">
-                {form.reservationPassword}
-              </span>
-              는 <span className="font-bold text-ink">예약 탭</span>에서 차량번호와 함께 입력해야
-              입고 위치·사진을 확인할 수 있어요.
+              {completedAsMember ? (
+                <>
+                  <span className="font-bold text-ink">예약 탭</span>에서 카카오 로그인 후 내 예약을
+                  확인하거나, 차량번호·비밀번호 4자리로 비회원 조회할 수 있어요.
+                </>
+              ) : (
+                <>
+                  입력하신 4자리 비밀번호
+                  <span className="mx-1 rounded-md bg-white px-2 py-0.5 font-mono text-sm font-bold tracking-widest text-brand ring-1 ring-brand/20">
+                    {form.reservationPassword}
+                  </span>
+                  는 <span className="font-bold text-ink">예약 탭</span>에서 차량번호와 함께 입력해야
+                  입고 위치·사진을 확인할 수 있어요.
+                </>
+              )}
             </p>
           </div>
-          ) : null}
 
           <button
             type="button"
@@ -1079,31 +1183,51 @@ export default function BookingModal({
             onArrivalChange={(t) => setSearch((prev) => ({ ...prev, arrivalTerminal: t }))}
             inactiveClassName="bg-sky-soft text-muted"
           />
-          <p className="text-[13px] font-bold text-muted">주차 공간</p>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              disabled={!companySupportsOutdoor(company)}
-              onClick={() => setSearch((prev) => ({ ...prev, isIndoor: false }))}
-              className={cn(
-                'rounded-xl py-2 text-[13px] font-bold transition-colors disabled:opacity-40',
-                !search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-              )}
-            >
-              야외
-            </button>
-            <button
-              type="button"
-              disabled={!companySupportsIndoor(company)}
-              onClick={() => setSearch((prev) => ({ ...prev, isIndoor: true }))}
-              className={cn(
-                'rounded-xl py-2 text-[13px] font-bold transition-colors disabled:opacity-40',
-                search.isIndoor ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
-              )}
-            >
-              실내
-            </button>
-          </div>
+          <fieldset>
+            <legend className="text-[13px] font-bold text-muted">주차 공간</legend>
+            <div className="mt-1 grid grid-cols-2 gap-2">
+              {(
+                [
+                  {
+                    value: false,
+                    label: '야외',
+                    disabled: !companySupportsOutdoor(company),
+                  },
+                  {
+                    value: true,
+                    label: '실내',
+                    disabled: !companySupportsIndoor(company),
+                  },
+                ] as const
+              ).map((opt) => {
+                const id = `${parkingTypeName}-${opt.value ? 'indoor' : 'outdoor'}`;
+                const selected = search.isIndoor === opt.value;
+                return (
+                  <label
+                    key={id}
+                    htmlFor={id}
+                    className={cn(
+                      'rounded-xl py-2 text-center text-[13px] font-bold transition-colors',
+                      opt.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
+                      selected ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
+                    )}
+                  >
+                    <input
+                      id={id}
+                      type="radio"
+                      name={parkingTypeName}
+                      value={opt.value ? 'indoor' : 'outdoor'}
+                      checked={selected}
+                      disabled={opt.disabled}
+                      onChange={() => setSearch((prev) => ({ ...prev, isIndoor: opt.value }))}
+                      className="sr-only"
+                    />
+                    {opt.label}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
         </div>
       ) : null}
       <div className="mt-3 border-t border-[#0f1a2e]/8 pt-3">

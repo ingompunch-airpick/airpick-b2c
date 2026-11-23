@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { Terminal } from '../types';
 import { cn } from '../utils/cn';
 import { terminalLabel } from '../utils/terminalLabels';
@@ -19,33 +20,52 @@ export default function TerminalFields({
   onDepartureChange: (terminal: Terminal) => void;
   onDifferentArrivalChange: (different: boolean) => void;
   onArrivalChange: (terminal: Terminal) => void;
-  /** 비활성 버튼 배경 — SearchPanel vs BookingModal */
+  /** 비선택 옵션 배경 — SearchPanel vs BookingModal */
   inactiveClassName?: string;
 }) {
+  const depName = useId();
+  const arrName = useId();
+  const diffId = useId();
+
   return (
     <div className="space-y-2">
-      <p className="text-[11px] font-bold text-muted">출국 터미널</p>
-      <div className="grid grid-cols-2 gap-2">
-        {TERMINALS.map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => onDepartureChange(t)}
-            className={cn(
-              'rounded-xl py-2 text-xs font-bold transition-colors',
-              departure === t ? 'bg-[#0f1a2e] text-white' : inactiveClassName
-            )}
-          >
-            {terminalLabel(t)}
-          </button>
-        ))}
-      </div>
+      <fieldset>
+        <legend className="text-[11px] font-bold text-muted">출국 터미널</legend>
+        <div className="mt-1 grid grid-cols-2 gap-2">
+          {TERMINALS.map((t) => {
+            const id = `${depName}-${t}`;
+            const selected = departure === t;
+            return (
+              <label
+                key={t}
+                htmlFor={id}
+                className={cn(
+                  'cursor-pointer rounded-xl py-2 text-center text-xs font-bold transition-colors',
+                  selected ? 'bg-[#0f1a2e] text-white' : inactiveClassName
+                )}
+              >
+                <input
+                  id={id}
+                  type="radio"
+                  name={depName}
+                  value={t}
+                  checked={selected}
+                  onChange={() => onDepartureChange(t)}
+                  className="sr-only"
+                />
+                {terminalLabel(t)}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
       <p className="text-[11px] font-medium leading-snug text-muted">
         대한항공·아시아나(2026.1.14~)는 제2터미널. 항공권 터미널과 맞춰 주세요.
       </p>
 
-      <label className="flex items-center gap-2 pt-0.5">
+      <label htmlFor={diffId} className="flex items-center gap-2 pt-0.5">
         <input
+          id={diffId}
           type="checkbox"
           checked={differentArrival}
           onChange={(e) => onDifferentArrivalChange(e.target.checked)}
@@ -54,26 +74,38 @@ export default function TerminalFields({
         <span className="text-[11px] font-semibold text-muted">귀국 터미널이 다릅니다</span>
       </label>
 
-      {differentArrival && (
-        <>
-          <p className="text-[11px] font-bold text-muted">귀국 터미널</p>
-          <div className="grid grid-cols-2 gap-2">
-            {TERMINALS.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onArrivalChange(t)}
-                className={cn(
-                  'rounded-xl py-2 text-xs font-bold transition-colors',
-                  arrival === t ? 'bg-[#0f1a2e] text-white' : inactiveClassName
-                )}
-              >
-                {terminalLabel(t)}
-              </button>
-            ))}
+      {differentArrival ? (
+        <fieldset>
+          <legend className="text-[11px] font-bold text-muted">귀국 터미널</legend>
+          <div className="mt-1 grid grid-cols-2 gap-2">
+            {TERMINALS.map((t) => {
+              const id = `${arrName}-${t}`;
+              const selected = arrival === t;
+              return (
+                <label
+                  key={t}
+                  htmlFor={id}
+                  className={cn(
+                    'cursor-pointer rounded-xl py-2 text-center text-xs font-bold transition-colors',
+                    selected ? 'bg-[#0f1a2e] text-white' : inactiveClassName
+                  )}
+                >
+                  <input
+                    id={id}
+                    type="radio"
+                    name={arrName}
+                    value={t}
+                    checked={selected}
+                    onChange={() => onArrivalChange(t)}
+                    className="sr-only"
+                  />
+                  {terminalLabel(t)}
+                </label>
+              );
+            })}
           </div>
-        </>
-      )}
+        </fieldset>
+      ) : null}
     </div>
   );
 }

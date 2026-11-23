@@ -8,14 +8,14 @@
     <title>요금 안내 · 에어픽</title>
     <meta
       name="description"
-      content="에어픽 인천공항 주차대행 상품·요금 안내. 예시 일정 기준 예상 요금(원). 온라인 결제 준비 중."
+      content="에어픽 입점 주차대행 요금표. T1/T2·실내/야외·3·5·7일 기준 예상 요금(앱 견적과 동일 산식). 기준일 2026-11-23."
     />
     <link rel="canonical" href="https://www.에어픽.kr/pricing/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="요금 안내 · 에어픽" />
     <meta
       property="og:description"
-      content="주차대행 상품 설명과 예시 일정 기준 예상 요금입니다. 온라인 결제(카드·간편결제)를 준비 중이며, 오픈 전까지는 현장에서 결제합니다."
+      content="입점 업체별 T1/T2·실내/야외·3·5·7일 예상 요금. 앱 견적과 같은 계산. 기준일 2026-11-23."
     />
     <meta property="og:url" content="https://www.에어픽.kr/pricing/" />
     <meta property="og:locale" content="ko_KR" />
@@ -27,12 +27,21 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
     <link rel="stylesheet" href="/seo.css?v=20261114b" />
+    <style>
+      .pricing-table th { vertical-align: top; }
+      .pricing-day { display: block; font-weight: 700; }
+      .pricing-range { display: block; margin-top: 0.25rem; font-size: 0.72rem; font-weight: 500; color: #5a6578; white-space: nowrap; }
+      @media (max-width: 640px) {
+        .pricing-range { white-space: normal; }
+      }
+    </style>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebPage",
         "name": "요금 안내",
         "url": "https://www.에어픽.kr/pricing/",
+        "dateModified": "2026-11-23",
         "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
         "about": { "@id": "https://www.에어픽.kr/#organization" },
         "inLanguage": "ko-KR"
@@ -59,10 +68,43 @@
         <h1>요금 안내</h1>
         <p>
           에어픽에서 예약할 수 있는 상품은 <strong>인천공항 주차대행(발렛) 비교·예약</strong>입니다.
-          요금은 입점 업체가 정하고, 일정·터미널·실내/야외·인계 방식에 따라 달라집니다.
+          아래 금액은 앱 예약 화면과 <strong>같은 견적 함수</strong>로, Firestore 입점 요금 설정을 읽어 계산한 스냅샷입니다.
           온라인 결제(카드·간편결제)를 준비 중이며, 오픈 전까지는 현장에서 결제합니다.
         </p>
       </header>
+
+      <section class="section">
+        <h2>계산 기준</h2>
+        <div class="card">
+          <dl class="dl">
+            <div>
+              <dt>기준일</dt>
+              <dd>2026.11.23 (요금표 생성일, KST)</dd>
+            </div>
+            <div>
+              <dt>예시 일정</dt>
+              <dd>
+                <ul style="margin:0;padding-left:1.1rem">
+            <li><strong>3일 · 2박 3일</strong> — 2026.11.24 10:00 ~ 2026.11.26 10:00</li>
+            <li><strong>5일 · 4박 5일</strong> — 2026.11.24 10:00 ~ 2026.11.28 10:00</li>
+            <li><strong>7일 · 6박 7일</strong> — 2026.11.24 10:00 ~ 2026.11.30 10:00</li>
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>포함</dt>
+              <dd>터미널(T1/T2) · 실내/야외(업체 지원 범위) · 주간 입출고(심야 할증 없음) · 발렛·비대면 추가요금 0원</dd>
+            </div>
+            <div>
+              <dt>주의</dt>
+              <dd>
+                실제 예약 화면 견적이 우선입니다. 심야·대면 인계·성수기 등에 따라 달라질 수 있으며, 최저가 단정이 아닙니다.
+                최신 비교는 <a href="/">홈</a>·입점 목록은 <a href="/partners/">/partners/</a>.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
 
       <section class="section">
         <h2>상품 설명</h2>
@@ -96,50 +138,229 @@
         </div>
       </section>
 
-      <section class="section">
-        <h2>예시 일정 기준 예상 요금</h2>
+<section class="section">
+        <h2>가유 주차대행</h2>
         <div class="card">
-          <p>
-            아래 금액은 앱 예약 화면과 같은 요금 기준으로 계산한
-            <strong>예시 일정 스냅샷</strong>입니다. 실제 예약 화면 견적이 우선이며, 옵션·심야·결제
-            수단 등에 따라 달라질 수 있습니다. 최저가 단정이 아닙니다.
-          </p>
-          <p>
-            <strong>예시 일정</strong>: 2026년 12월 1일 10:00 입고 ~ 2026년 12월 4일 10:00 출고 ·
-            제1터미널 · 주간(심야 할증 없음) · 현금·현장 기준(카드 할증 미적용) · 발렛/비대면
-            추가요금 0원
-          </p>
-          <table>
+          <table class="pricing-table">
             <thead>
               <tr>
-                <th scope="col">상품(업체·유형)</th>
-                <th scope="col">이용 일수</th>
-                <th scope="col">예상 요금</th>
+                <th scope="col">터미널</th>
+                <th scope="col">보관</th>
+                <th scope="col"><span class="pricing-day">3일 · 2박 3일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.26 10:00</span></th>
+                <th scope="col"><span class="pricing-day">5일 · 4박 5일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.28 10:00</span></th>
+                <th scope="col"><span class="pricing-day">7일 · 6박 7일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.30 10:00</span></th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>와와발렛 · 야외 주차대행 (T1)</td>
-                <td>4일</td>
-                <td>55,000원</td>
+<tr>
+                <td>T1</td>
+                <td>야외</td>
+                <td>40,000원</td>
+                <td>50,000원</td>
+                <td>60,000원</td>
               </tr>
-              <tr>
-                <td>와와발렛 · 실내 주차대행 (T1)</td>
-                <td>4일</td>
+<tr>
+                <td>T2</td>
+                <td>야외</td>
+                <td>50,000원</td>
+                <td>60,000원</td>
                 <td>70,000원</td>
-              </tr>
-              <tr>
-                <td>가유 · 야외 주차대행 (T1)</td>
-                <td>4일</td>
-                <td>45,000원</td>
               </tr>
             </tbody>
           </table>
-          <p>
-            최신 요금은 홈에서 터미널·실내/야외·날짜를 넣어
-            <a href="/">비교·예약</a>해 주세요. 입점 목록은
-            <a href="/partners/">/partners/</a>에서 볼 수 있습니다.
-          </p>
+        </div>
+      </section>
+
+<section class="section">
+        <h2>시즌주차대행</h2>
+        <div class="card">
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th scope="col">터미널</th>
+                <th scope="col">보관</th>
+                <th scope="col"><span class="pricing-day">3일 · 2박 3일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.26 10:00</span></th>
+                <th scope="col"><span class="pricing-day">5일 · 4박 5일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.28 10:00</span></th>
+                <th scope="col"><span class="pricing-day">7일 · 6박 7일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.30 10:00</span></th>
+              </tr>
+            </thead>
+            <tbody>
+<tr>
+                <td>T1</td>
+                <td>야외</td>
+                <td>40,000원</td>
+                <td>50,000원</td>
+                <td>60,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>야외</td>
+                <td>50,000원</td>
+                <td>60,000원</td>
+                <td>70,000원</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+<section class="section">
+        <h2>아시아 주차대행</h2>
+        <div class="card">
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th scope="col">터미널</th>
+                <th scope="col">보관</th>
+                <th scope="col"><span class="pricing-day">3일 · 2박 3일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.26 10:00</span></th>
+                <th scope="col"><span class="pricing-day">5일 · 4박 5일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.28 10:00</span></th>
+                <th scope="col"><span class="pricing-day">7일 · 6박 7일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.30 10:00</span></th>
+              </tr>
+            </thead>
+            <tbody>
+<tr>
+                <td>T1</td>
+                <td>실내</td>
+                <td>50,000원</td>
+                <td>70,000원</td>
+                <td>90,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>실내</td>
+                <td>50,000원</td>
+                <td>70,000원</td>
+                <td>90,000원</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+<section class="section">
+        <h2>안녕 주차대행</h2>
+        <div class="card">
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th scope="col">터미널</th>
+                <th scope="col">보관</th>
+                <th scope="col"><span class="pricing-day">3일 · 2박 3일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.26 10:00</span></th>
+                <th scope="col"><span class="pricing-day">5일 · 4박 5일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.28 10:00</span></th>
+                <th scope="col"><span class="pricing-day">7일 · 6박 7일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.30 10:00</span></th>
+              </tr>
+            </thead>
+            <tbody>
+<tr>
+                <td>T1</td>
+                <td>야외</td>
+                <td>40,000원</td>
+                <td>50,000원</td>
+                <td>60,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>야외</td>
+                <td>50,000원</td>
+                <td>60,000원</td>
+                <td>70,000원</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+<section class="section">
+        <h2>와와 발렛</h2>
+        <div class="card">
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th scope="col">터미널</th>
+                <th scope="col">보관</th>
+                <th scope="col"><span class="pricing-day">3일 · 2박 3일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.26 10:00</span></th>
+                <th scope="col"><span class="pricing-day">5일 · 4박 5일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.28 10:00</span></th>
+                <th scope="col"><span class="pricing-day">7일 · 6박 7일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.30 10:00</span></th>
+              </tr>
+            </thead>
+            <tbody>
+<tr>
+                <td>T1</td>
+                <td>실내</td>
+                <td>50,000원</td>
+                <td>70,000원</td>
+                <td>90,000원</td>
+              </tr>
+<tr>
+                <td>T1</td>
+                <td>야외</td>
+                <td>45,000원</td>
+                <td>55,000원</td>
+                <td>65,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>실내</td>
+                <td>50,000원</td>
+                <td>70,000원</td>
+                <td>90,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>야외</td>
+                <td>45,000원</td>
+                <td>55,000원</td>
+                <td>65,000원</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+<section class="section">
+        <h2>주차벅스 주차대행</h2>
+        <div class="card">
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th scope="col">터미널</th>
+                <th scope="col">보관</th>
+                <th scope="col"><span class="pricing-day">3일 · 2박 3일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.26 10:00</span></th>
+                <th scope="col"><span class="pricing-day">5일 · 4박 5일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.28 10:00</span></th>
+                <th scope="col"><span class="pricing-day">7일 · 6박 7일</span><span class="pricing-range">2026.11.24 10:00 ~ 2026.11.30 10:00</span></th>
+              </tr>
+            </thead>
+            <tbody>
+<tr>
+                <td>T1</td>
+                <td>실내</td>
+                <td>50,000원</td>
+                <td>70,000원</td>
+                <td>90,000원</td>
+              </tr>
+<tr>
+                <td>T1</td>
+                <td>야외</td>
+                <td>45,000원</td>
+                <td>55,000원</td>
+                <td>65,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>실내</td>
+                <td>60,000원</td>
+                <td>80,000원</td>
+                <td>100,000원</td>
+              </tr>
+<tr>
+                <td>T2</td>
+                <td>야외</td>
+                <td>55,000원</td>
+                <td>65,000원</td>
+                <td>75,000원</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 

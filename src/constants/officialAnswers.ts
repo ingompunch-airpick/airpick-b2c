@@ -57,4 +57,5 @@ export const COPY_SYNC_NOTES = [
   `입점 예약 결제: ${PAYMENT_STATUS_COPY}`,
   '예약 조회: 예약 탭 + 차량번호/연락처 + 비밀번호 4자리',
   '현장·차량: 업체 문의 / 앱·조회: FAQ·에어픽 고객센터',
+  '확정 알림톡(reserve): 「본인이 한 예약이 아니면 취소해 주세요」 안내 포함 — B2B·NCP 템플릿 동기화',
 ] as const;

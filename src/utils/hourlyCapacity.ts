@@ -115,7 +115,7 @@ export function evaluateHourlyCapacity(args: {
       max,
       hour,
       used,
-      message: `${formatHourLabel(hour)} 시간대 예약이 마감되었습니다. (시간당 ${max}대)`,
+      message: `만차입니다. ${formatHourLabel(hour)} 시간대 예약이 마감되었습니다. (시간당 ${max}대)`,
     };
   }
 

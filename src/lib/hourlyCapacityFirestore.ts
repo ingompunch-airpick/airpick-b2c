@@ -34,6 +34,10 @@ function normalizeDateYmd(raw: string): string {
  * capacity/{companyId}__{날짜} — 시간대별 대수만 담긴 집계 문서.
  * 예약 문서에는 손님 연락처·차량번호가 있어 브라우저에서 직접 조회하지 않는다.
  * 갱신은 B2B Functions(onReservationSync)가 한다.
+ *
+ * TODO(B2B): 동시 예약 원자성 — partner_id+date+parking_type 키로 조건부 차감
+ * (transaction / increment) 해서 1건만 성공하게 하고, B2C는 그 결과를 따르게 할 것.
+ * 지금은 읽기 선검사 + B2B 생성 후 enforceParkingCapacityOnCreate 거절에 의존한다.
  */
 async function fetchCapacityHours(
   companyId: string,

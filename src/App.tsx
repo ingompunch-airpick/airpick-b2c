@@ -65,6 +65,7 @@ import {
   shouldReturnToMenuOnLaunch,
 } from './utils/returnToMenu';
 import { defaultBookingSearch } from './utils/dates';
+import { readBookingQueryPrefill } from './utils/bookingSearchFromQuery';
 import { calculatePrice, applyAffiliateCustomerDiscount } from './utils/pricing';
 import { isAirpickPartner } from './utils/compareSort';
 import { useAffiliateOffer } from './context/AffiliateContext';
@@ -102,6 +103,8 @@ function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
     clearBrandIntroSeen();
     return true;
   }
+  /** 예약 프리필·파트너 딥링크는 게이트 스킵 (브라우저 에이전트·공유 URL) */
+  if (readBookingQueryPrefill().patched) return false;
   /** 직링크(/parking, /esim, /my)는 게이트 스킵. 홈은 이 브라우저에서 시작하기 전만 */
   return initialTab === 'home' && !hasSeenBrandIntro();
 }
@@ -117,7 +120,7 @@ export default function App() {
   const [showBrandIntro, setShowBrandIntro] = useState(() =>
     shouldShowBrandIntroOnLaunch(readInitialTab())
   );
-  const [search, setSearch] = useState<BookingSearch>(defaultBookingSearch);
+  const [search, setSearch] = useState<BookingSearch>(() => readBookingQueryPrefill().search);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [partnerDetail, setPartnerDetail] = useState<{ company: Company; price: number } | null>(
@@ -131,7 +134,7 @@ export default function App() {
     readReviewReservationId()
   );
   const [pendingCompanyId, setPendingCompanyId] = useState<string | null>(() =>
-    readParkingCompanyId()
+    readParkingCompanyId() || readBookingQueryPrefill().partnerId
   );
   const [menuOpen, setMenuOpen] = useState(() => shouldReturnToMenuOnLaunch());
   const [loggedIn, setLoggedIn] = useState(() => Boolean(readMember()));
@@ -585,6 +588,11 @@ export default function App() {
             onDismiss={() => {
               setBookingTarget(null);
               setSearch(defaultBookingSearch());
+            }}
+            onBrowseOtherCompanies={() => {
+              setBookingTarget(null);
+              setPartnerDetail(null);
+              setTab('compare');
             }}
             onSuccess={(id) => {
               trackParkingBookComplete(bookingTarget.company.id, bookingTarget.company.name);

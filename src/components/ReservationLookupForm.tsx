@@ -33,23 +33,37 @@ export default function ReservationLookupForm({
         <span className="text-sm font-bold text-ink">예약 조회</span>
       </div>
 
-      <div className="mb-3 flex gap-2">
-        {modes.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setMode(id)}
-            className={cn(
-              'flex-1 rounded-xl py-2.5 text-xs font-bold transition-colors',
-              mode === id
-                ? 'bg-[#0f1a2e] text-white shadow-sm'
-                : 'bg-white text-muted ring-1 ring-[#0f1a2e]/12'
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <fieldset className="mb-3">
+        <legend className="sr-only">조회 기준</legend>
+        <div className="flex gap-2">
+          {modes.map(({ id, label }) => {
+            const selected = mode === id;
+            return (
+              <label
+                key={id}
+                htmlFor={`lookup-mode-${id}`}
+                className={cn(
+                  'flex-1 cursor-pointer rounded-xl py-2.5 text-center text-xs font-bold transition-colors',
+                  selected
+                    ? 'bg-[#0f1a2e] text-white shadow-sm'
+                    : 'bg-white text-muted ring-1 ring-[#0f1a2e]/12'
+                )}
+              >
+                <input
+                  id={`lookup-mode-${id}`}
+                  type="radio"
+                  name="lookup-mode"
+                  value={id}
+                  checked={selected}
+                  onChange={() => setMode(id)}
+                  className="sr-only"
+                />
+                {label}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
 
       <label className="block">
         <span className="mb-1 block text-xs font-bold text-muted">{active.label}</span>

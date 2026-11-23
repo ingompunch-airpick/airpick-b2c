@@ -603,16 +603,19 @@ export default function ReservationCard({
               <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-muted">
                 취소 후에는 되돌릴 수 없습니다. 예약 비밀번호 4자리를 입력해 주세요.
               </p>
-              <input
-                type="password"
-                inputMode="numeric"
-                autoComplete="off"
-                maxLength={4}
-                value={cancelPw}
-                onChange={(e) => setCancelPw(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                placeholder="비밀번호 4자리"
-                className="mt-3 w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-rose-400"
-              />
+              <label className="mt-3 block">
+                <span className="mb-1.5 block text-[11px] font-bold text-ink">예약 비밀번호</span>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={4}
+                  value={cancelPw}
+                  onChange={(e) => setCancelPw(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  placeholder="비밀번호 4자리"
+                  className="w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-rose-400"
+                />
+              </label>
               {cancelError && (
                 <p className="mt-2 text-[11px] font-semibold text-rose-600">{cancelError}</p>
               )}

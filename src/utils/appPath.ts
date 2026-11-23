@@ -130,21 +130,30 @@ export function clearReviewQueryParam(): void {
   window.history.replaceState({ tab: 'my' }, '', '/my');
 }
 
-/** `/parking?company={id}` — 홈 지도 허브 → 비교 프리필 */
+/** `/parking?company={id}` · `?partner=` — 상세 시트 프리필 */
 export function readParkingCompanyId(): string | null {
   if (typeof window === 'undefined') return null;
-  if (normalizePathname(window.location.pathname) !== '/' && normalizePathname(window.location.pathname) !== '/parking') {
-    return null;
-  }
-  const id = new URLSearchParams(window.location.search).get('company')?.trim();
-  return id || null;
+  const path = normalizePathname(window.location.pathname);
+  if (path !== '/' && path !== '/parking') return null;
+  const params = new URLSearchParams(window.location.search);
+  return params.get('partner')?.trim() || params.get('company')?.trim() || null;
 }
 
 export function clearParkingCompanyQuery(): void {
   if (typeof window === 'undefined') return;
-  if (normalizePathname(window.location.pathname) !== '/parking') return;
-  if (!new URLSearchParams(window.location.search).has('company')) return;
-  window.history.replaceState({ tab: 'compare' }, '', '/parking');
+  const path = normalizePathname(window.location.pathname);
+  if (path !== '/' && path !== '/parking') return;
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('company') && !params.has('partner')) return;
+  params.delete('company');
+  params.delete('partner');
+  const qs = params.toString();
+  const nextPath = path === '/parking' ? '/parking' : '/';
+  window.history.replaceState(
+    { tab: path === '/parking' ? 'compare' : 'home' },
+    '',
+    qs ? `${nextPath}?${qs}` : nextPath
+  );
 }
 
 export function pathForParking(companyId?: string): string {

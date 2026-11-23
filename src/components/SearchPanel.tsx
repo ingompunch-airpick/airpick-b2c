@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import DateField from './DateField';
 import TimeField from './TimeField';
 import TerminalFields from './TerminalFields';
@@ -20,6 +20,7 @@ export default function SearchPanel({
   defaultCollapsed?: boolean;
 }) {
   const [open, setOpen] = useState(!defaultCollapsed);
+  const parkingTypeName = useId();
   const days = getParkingDayCount(search.departureDate, search.arrivalDate);
   const today = todayYmd();
   const arrivalTerminal = search.arrivalTerminal ?? search.terminal;
@@ -134,28 +135,41 @@ export default function SearchPanel({
         />
       </div>
 
-      <div className="mt-2 grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => onChange({ ...search, isIndoor: false })}
-          className={cn(
-            'rounded-xl py-2 text-xs font-bold transition-colors',
-            !search.isIndoor ? 'bg-[#0f1a2e] text-white' : 'bg-white text-muted'
-          )}
-        >
-          야외
-        </button>
-        <button
-          type="button"
-          onClick={() => onChange({ ...search, isIndoor: true })}
-          className={cn(
-            'rounded-xl py-2 text-xs font-bold transition-colors',
-            search.isIndoor ? 'bg-[#0f1a2e] text-white' : 'bg-white text-muted'
-          )}
-        >
-          실내
-        </button>
-      </div>
+      <fieldset className="mt-2">
+        <legend className="sr-only">주차 공간</legend>
+        <div className="grid grid-cols-2 gap-2">
+          {(
+            [
+              { value: false, label: '야외' },
+              { value: true, label: '실내' },
+            ] as const
+          ).map((opt) => {
+            const id = `${parkingTypeName}-${opt.value ? 'indoor' : 'outdoor'}`;
+            const selected = search.isIndoor === opt.value;
+            return (
+              <label
+                key={id}
+                htmlFor={id}
+                className={cn(
+                  'cursor-pointer rounded-xl py-2 text-center text-xs font-bold transition-colors',
+                  selected ? 'bg-[#0f1a2e] text-white' : 'bg-white text-muted'
+                )}
+              >
+                <input
+                  id={id}
+                  type="radio"
+                  name={parkingTypeName}
+                  value={opt.value ? 'indoor' : 'outdoor'}
+                  checked={selected}
+                  onChange={() => onChange({ ...search, isIndoor: opt.value })}
+                  className="sr-only"
+                />
+                {opt.label}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
 
       <p className="mt-2 text-center text-[11px] font-semibold text-muted">
         총 <span className="font-bold text-[#0f1a2e]">{days}일</span> · {search.departureTime} →{' '}
