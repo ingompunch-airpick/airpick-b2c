@@ -6,7 +6,7 @@ export function displayInsuranceLabel(company: Company): string | null {
 }
 
 /**
- * 타임라인의 현재 칸. 0 접수, 1 입고, 2 주차중, 3 출고.
+ * 타임라인의 현재 칸. 0 확정, 1 입고, 2 주차중, 3 출고.
  * 4는 출고까지 끝난 상태라 칸이 모두 채워진다.
  * 주차장 위치·사진은 2(주차 중)부터 연다.
  */
@@ -27,7 +27,7 @@ export function getStatusStep(status: string): number {
 
 export function getStatusLabel(status: string): string {
   const map: Record<string, string> = {
-    pending: '접수 완료',
+    pending: '예약 확정',
     scheduled: '입고 예정',
     pending_in: '입고 예정',
     checked_in: '주차 중',
@@ -37,7 +37,7 @@ export function getStatusLabel(status: string): string {
     completed_out: '출고 완료',
     cancelled: '취소됨',
   };
-  return map[status] ?? '접수 완료';
+  return map[status] ?? '예약 확정';
 }
 
 /** 손님용 표시명 — 「홍길동 기사」 (마스터 폴백「업체 담당」은 그대로) */

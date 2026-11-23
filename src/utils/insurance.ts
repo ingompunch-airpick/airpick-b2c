@@ -1,4 +1,5 @@
 import type { Company, CompanyInsurance, Reservation } from '../types';
+import { formatCoverageLimitDisplay } from './coverageLimitDisplay';
 
 const INSURANCE_DISCLAIMER =
   '보험 적용·보상 범위는 해당 업체와 보험사 약관에 따릅니다.';
@@ -134,7 +135,11 @@ export function resolveInsuranceDisplay(
   const productName = resolveDisplayProductName(insurance);
   const detail =
     productName && insurance.provider ? undefined : productName || undefined;
-  const coverageLimitText = insurance.coverageLimitText?.trim() || undefined;
+  const coverageLimitText =
+    formatCoverageLimitDisplay(insurance.coverageLimitText) ||
+    (typeof insurance.coverageLimitWon === 'number' && insurance.coverageLimitWon > 0
+      ? formatCoverageLimitWon(insurance.coverageLimitWon)
+      : undefined);
 
   return {
     status: 'enrolled',
@@ -143,6 +148,13 @@ export function resolveInsuranceDisplay(
     coverageLimitText,
     certificateUrl: insurance.certificateUrl,
   };
+}
+
+/** 화면 표기용 보험 한도 한 줄 (원본 필드는 그대로 둠) */
+export function displayCoverageLimitText(company: Company): string | undefined {
+  const raw = company.insurance?.coverageLimitText?.trim();
+  const formatted = formatCoverageLimitDisplay(raw);
+  return formatted || undefined;
 }
 
 function legacyReservationInsurance(reservation: Reservation): CompanyInsurance | undefined {

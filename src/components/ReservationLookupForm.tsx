@@ -6,6 +6,7 @@ import { cn } from '../utils/cn';
 const modes: { id: ReservationLookupMode; label: string; placeholder: string }[] = [
   { id: 'carNumber', label: '차량번호', placeholder: '예: 12가 1234' },
   { id: 'phone', label: '연락처', placeholder: '010-1234-5678' },
+  { id: 'bookingNo', label: '예약번호', placeholder: '예: AP-0324-A7K2' },
 ];
 
 export default function ReservationLookupForm({
@@ -35,7 +36,7 @@ export default function ReservationLookupForm({
 
       <fieldset className="mb-3">
         <legend className="sr-only">조회 기준</legend>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           {modes.map(({ id, label }) => {
             const selected = mode === id;
             return (
@@ -43,7 +44,7 @@ export default function ReservationLookupForm({
                 key={id}
                 htmlFor={`lookup-mode-${id}`}
                 className={cn(
-                  'flex-1 cursor-pointer rounded-xl py-2.5 text-center text-xs font-bold transition-colors',
+                  'flex-1 cursor-pointer rounded-xl px-1 py-2.5 text-center text-[11px] font-bold transition-colors sm:text-xs',
                   selected
                     ? 'bg-[#0f1a2e] text-white shadow-sm'
                     : 'bg-white text-muted ring-1 ring-[#0f1a2e]/12'

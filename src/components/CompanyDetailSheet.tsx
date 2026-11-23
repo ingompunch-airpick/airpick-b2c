@@ -28,6 +28,7 @@ import { valetHandoffBadge, valetHandoffTitle } from '../utils/parkingProducts';
 import { getParkingDayCount } from '../utils/pricing';
 import { resolveCompanyUsageSteps } from '../utils/companyUsageGuide';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
+import { displayCoverageLimitText } from '../utils/insurance';
 import { displayInsuranceLabel } from '../utils/trust';
 import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { cn } from '../utils/cn';
@@ -332,7 +333,7 @@ export default function CompanyDetailSheet({
   const nightLine = nightSurchargeLine(company);
   const insuranceLabel =
     shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : undefined;
-  const coverageLimitText = company.insurance?.coverageLimitText?.trim() || undefined;
+  const coverageLimitText = displayCoverageLimitText(company);
 
   const reviewsLoading = reviewSnapshot == null;
   const reviews = reviewSnapshot?.recent ?? [];

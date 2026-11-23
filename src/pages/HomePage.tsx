@@ -32,15 +32,17 @@ import {
   comparePartnerRelativeOrder,
   type PricedCompany,
 } from '../utils/compareSort';
-import { todayYmd } from '../utils/dates';
+import { formatStayPhrase, todayYmd } from '../utils/dates';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import { companyCardPhotoUrl } from '../utils/parkingLocation';
 import { PARKING_LABEL_INDOOR, PARKING_LABEL_OUTDOOR } from '../utils/parkingType';
 import { displayInsuranceLabel, getStatusLabel } from '../utils/trust';
 import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
+import { displayCoverageLimitText } from '../utils/insurance';
 import {
   findParkingProduct,
+  formatOperatingHandoffLine,
   parkingProductFacts,
   valetHandoffBadge,
   valetHandoffTitle,
@@ -720,7 +722,7 @@ function PriceList({
   const lotLabel = isIndoor ? PARKING_LABEL_INDOOR : PARKING_LABEL_OUTDOOR;
 
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid items-stretch gap-3 md:grid-cols-2">
       {items.map(({ company, price, listPrice, soldOut }) => {
         const badge = productBadge(company.id, lowestId, reviewedId);
         const snapshot = reviews[company.id];
@@ -728,11 +730,12 @@ function PriceList({
           snapshot && snapshot.count > 0 && snapshot.averageRating != null && snapshot.averageRating > 0
             ? snapshot.averageRating
             : null;
-        const thumb = companyThumbnailUrl(companyCardPhotoUrl(company, isIndoor), 480);
+        const thumb = companyThumbnailUrl(companyCardPhotoUrl(company, isIndoor), 640);
         const meetHandoff = companyIsFaceHandoff(company, { isIndoor, terminal });
         const pin = pickupPin(terminal, meetHandoff ? 'depart' : 'short');
         const product = findParkingProduct(company, { isIndoor, terminal }, meetHandoff);
         const facts = parkingProductFacts(product);
+        const operatingHandoff = formatOperatingHandoffLine(facts);
         const transfer = transferRow(product?.type ?? 'valet', meetHandoff);
         const keyLeave = product?.keyHandover !== 'keep';
         const keyText =
@@ -744,21 +747,19 @@ function PriceList({
             : null);
         const insuranceLabel =
           shouldShowInsuranceBadge(company) ? displayInsuranceLabel(company) : null;
-        const coverageLimitText = company.insurance?.coverageLimitText?.trim() || undefined;
+        const coverageLimitText = displayCoverageLimitText(company);
         const handoffBadge = valetHandoffBadge(meetHandoff);
+        const stayLabel = formatStayPhrase(stayDays);
         return (
           <article
             key={company.id}
             className={cn(
-              'relative w-full overflow-hidden rounded-2xl bg-white text-left ring-1 ring-[#0f1a2e]/10',
+              'relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white text-left ring-1 ring-[#0f1a2e]/10',
               soldOut && 'opacity-40'
             )}
           >
-            {thumb ? (
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 w-[46%] min-w-[8.5rem] max-w-[13.5rem]"
-                aria-hidden
-              >
+            <div className="relative h-28 w-full shrink-0 bg-[#0f1a2e] sm:h-36">
+              {thumb ? (
                 <img
                   src={thumb}
                   alt={`${displayCompanyName(company.name)} 주차장`}
@@ -766,10 +767,17 @@ function PriceList({
                   loading="lazy"
                   decoding="async"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-white from-0% via-white/55 to-transparent" />
-              </div>
-            ) : null}
-            <div className="relative z-10 flex min-w-0 flex-col px-4 py-4">
+              ) : (
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-white/75"
+                  aria-hidden
+                >
+                  <SquareParking size={28} strokeWidth={1.75} />
+                  <span className="text-[12px] font-semibold tracking-wide">사진 준비 중</span>
+                </div>
+              )}
+            </div>
+            <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col px-4 py-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <p className="text-[18px] font-bold leading-snug text-[#0f1a2e]">
@@ -809,12 +817,7 @@ function PriceList({
                 </div>
               </div>
 
-              <ul
-                className={cn(
-                  'mb-3 mt-3.5 space-y-2.5',
-                  thumb && 'pr-[38%] sm:pr-[9.5rem]'
-                )}
-              >
+              <ul className="mb-3 mt-3.5 space-y-2.5">
                 <li className="flex gap-2.5">
                   <transfer.Icon size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
                   <span className="min-w-0 text-[15px] font-semibold leading-snug text-[#0f1a2e]">
@@ -848,10 +851,10 @@ function PriceList({
                     </span>
                   </li>
                 ) : null}
-                {facts.meetHours ? (
+                {operatingHandoff ? (
                   <li className="flex gap-2.5">
                     <Clock size={20} strokeWidth={2} className={FACT_ICON} aria-hidden />
-                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{facts.meetHours}</span>
+                    <span className="text-[15px] font-semibold text-[#0f1a2e]">{operatingHandoff}</span>
                   </li>
                 ) : null}
                 {facts.ev ? (
@@ -872,22 +875,10 @@ function PriceList({
 
               <div className="mt-auto border-t border-[#0f1a2e]/8 pt-3">
                 {soldOut ? (
-                  <p
-                    className={cn(
-                      'text-[17px] font-bold text-[#0f1a2e]',
-                      thumb && 'pr-[38%] sm:pr-[9.5rem]'
-                    )}
-                  >
-                    마감
-                  </p>
+                  <p className="text-[17px] font-bold text-[#0f1a2e]">마감</p>
                 ) : (
                   <>
-                    <div
-                      className={cn(
-                        'mb-3 text-left',
-                        thumb && 'pr-[38%] sm:pr-[9.5rem]'
-                      )}
-                    >
+                    <div className="mb-3 text-left">
                       {listPrice > price ? (
                         <p className="text-[14px] font-semibold text-[#0f1a2e]/45 line-through">
                           {listPrice.toLocaleString()}원
@@ -895,6 +886,9 @@ function PriceList({
                       ) : null}
                       <p className="text-[22px] font-bold tabular-nums text-[#0f1a2e]">
                         {price.toLocaleString()}원
+                      </p>
+                      <p className="mt-0.5 text-[13px] font-semibold text-[#0f1a2e]/55">
+                        {stayLabel} · 총액
                       </p>
                       <AirportSavingsLine
                         days={stayDays}

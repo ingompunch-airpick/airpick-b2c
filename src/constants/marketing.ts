@@ -489,4 +489,4 @@ export const TRUST_BADGES = [
   { id: 'insurance', label: '보험' },
 ] as const;
 
-export const RESERVATION_STEPS = ['접수', '입고', '주차중', '출고'] as const;
+export const RESERVATION_STEPS = ['확정', '입고', '주차중', '출고'] as const;

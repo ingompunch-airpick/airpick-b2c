@@ -1,6 +1,6 @@
 import { Building2, ExternalLink, FileText, ShieldCheck } from 'lucide-react';
 import type { Company } from '../types';
-import { INSURANCE_DISCLAIMER } from '../utils/insurance';
+import { displayCoverageLimitText, INSURANCE_DISCLAIMER } from '../utils/insurance';
 import { displayInsuranceLabel } from '../utils/trust';
 import {
   companyHasVerificationDocuments,
@@ -71,7 +71,7 @@ export default function CompanyVerificationDocuments({
   const insuranceLabel = displayInsuranceLabel(company);
   const productName = company.insurance?.productName?.trim();
   const certificateUrl = company.insurance?.certificateUrl?.trim();
-  const coverageLimitText = company.insurance?.coverageLimitText?.trim();
+  const coverageLimitText = displayCoverageLimitText(company);
 
   return (
     <section

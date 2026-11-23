@@ -119,7 +119,12 @@ export interface ParkingProductFacts {
   key?: string;
   ev?: string;
   hours?: string;
+  /** @deprecated 운영·인계 분리 전 한 줄. 화면은 operatingLine·handoffLine 사용 */
   meetHours?: string;
+  /** 예: 운영 24시간 / 운영 09:00–18:00 */
+  operatingLine?: string;
+  /** 예: 대면 인계 / 비대면(직접 주차) */
+  handoffLine?: string;
   transfer?: string;
 }
 
@@ -135,16 +140,23 @@ export function parkingProductFacts(product: ParkingProduct | null): ParkingProd
   facts.ev = product.evCharging === 'yes' ? '전기차 충전 가능' : '전기차 충전 불가';
   if (product.hours) {
     facts.hours = 'allDay' in product.hours ? '연중무휴' : `${product.hours.open}–${product.hours.close} 영업`;
+    facts.operatingLine =
+      'allDay' in product.hours ? '운영 24시간' : `운영 ${product.hours.open}–${product.hours.close}`;
   }
   if (product.meet) {
     const meetHours = product.meetHours ?? { allDay: true };
+    facts.handoffLine = '대면 인계';
     if ('allDay' in meetHours) {
+      if (!facts.operatingLine) facts.operatingLine = '운영 24시간';
       facts.meetHours = '24시간 대면 운영';
     } else {
       const range = `${meetHours.open}–${meetHours.close}`;
+      if (!facts.operatingLine) facts.operatingLine = `운영 ${range}`;
       facts.meetHours = product.drop ? `${range} 대면 · 그 외 비대면` : `${range} 대면`;
+      if (product.drop) facts.handoffLine = '대면 인계(시간 외 비대면)';
     }
   } else if (product.drop) {
+    facts.handoffLine = '비대면(직접 주차)';
     facts.meetHours = '모두 비대면';
   }
   const transfer = [product.transferNote, product.transferMinutes ? `약 ${product.transferMinutes}분` : '']
@@ -152,4 +164,10 @@ export function parkingProductFacts(product: ParkingProduct | null): ParkingProd
     .join(' · ');
   if (transfer) facts.transfer = transfer;
   return facts;
+}
+
+/** 카드 Clock 줄 — 운영·인계를 · 로 이어 붙임. 둘 다 없으면 null */
+export function formatOperatingHandoffLine(facts: ParkingProductFacts): string | null {
+  const parts = [facts.operatingLine, facts.handoffLine].filter(Boolean);
+  return parts.length ? parts.join(' · ') : null;
 }

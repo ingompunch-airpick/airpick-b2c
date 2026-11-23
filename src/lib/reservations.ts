@@ -1,9 +1,17 @@
 import { signInAnonymously } from 'firebase/auth';
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { auth, db } from '../firebase';
-
-const LOOKUP_API_PATH = '/api/reservation-lookup';
-const CANCEL_API_PATH = '/api/reservation-cancel';
 import { fetchCompanyBookingPolicy } from './companies';
 import { assertHourlyCapacityAvailable } from './hourlyCapacityFirestore';
 import type { BookingSearch, Reservation, ReservationLookupMode } from '../types';
@@ -21,6 +29,10 @@ import { RESERVATION_CREATED_BY } from '../constants/reservationSource';
 import { acquisitionFieldsForReservation } from '../utils/acquisition';
 import { createReceiptToken } from '../utils/receiptToken';
 import { normalizeCarNumber, carNumberTail } from '../utils/carNumber';
+import { generateBookingNo, normalizeBookingNoInput, BOOKING_NO_RE } from '../utils/bookingNo';
+
+const LOOKUP_API_PATH = '/api/reservation-lookup';
+const CANCEL_API_PATH = '/api/reservation-cancel';
 
 export interface BookingForm {
   userName: string;
@@ -52,8 +64,10 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
   const checkOutPhotos = getReservationCheckOutPhotos({ checkOutPhotos: rawCheckOut });
   const insurance = parseInsuranceFromFirestore(data);
 
+  const bookingNoRaw = data.bookingNo ? String(data.bookingNo).trim() : '';
   return {
     id,
+    bookingNo: bookingNoRaw && BOOKING_NO_RE.test(bookingNoRaw) ? bookingNoRaw : undefined,
     userId: data.userId ? String(data.userId) : undefined,
     companyId: String(data.companyId || ''),
     companyName: String(data.companyName || ''),
@@ -131,6 +145,22 @@ export function createReservationId(): string {
   return `res_${Date.now()}${suffix}`;
 }
 
+/** bookingNo 중복 시 재시도. 조회 권한이 없으면 생성만 하고 통과한다. */
+async function allocateBookingNo(maxAttempts = 8): Promise<string> {
+  for (let i = 0; i < maxAttempts; i++) {
+    const candidate = generateBookingNo();
+    try {
+      const snap = await getDocs(
+        query(collection(db, 'reservations'), where('bookingNo', '==', candidate), limit(1))
+      );
+      if (snap.empty) return candidate;
+    } catch {
+      return candidate;
+    }
+  }
+  return generateBookingNo();
+}
+
 export async function ensureAnonymousAuth(): Promise<void> {
   if (auth.currentUser) return;
   await signInAnonymously(auth);
@@ -193,9 +223,11 @@ export async function lookupReservations(
   value: string,
   password: string
 ): Promise<Reservation[]> {
-  const trimmed = value.trim();
+  const trimmed =
+    mode === 'bookingNo' ? normalizeBookingNoInput(value) : value.trim();
   const pw = password.trim();
   if (!trimmed || !/^\d{4}$/.test(pw)) return [];
+  if (mode === 'bookingNo' && !BOOKING_NO_RE.test(trimmed)) return [];
 
   const res = await fetch(LOOKUP_API_PATH, {
     method: 'POST',
@@ -273,7 +305,7 @@ export async function submitReservation(
   pricingMeta?: { listPrice: number; signupCouponWon?: number },
   /** 「에어픽을 어떻게 알게 되셨나요?」(선택) */
   heardFrom?: string
-): Promise<string> {
+): Promise<{ id: string; bookingNo: string }> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
   await assertHourlyCapacityAvailable(
@@ -283,11 +315,13 @@ export async function submitReservation(
   );
 
   const id = createReservationId();
+  const bookingNo = await allocateBookingNo();
   const now = new Date().toISOString();
 
   const payload: Record<string, unknown> = {
     userId: auth.currentUser?.uid || 'guest',
     ...(auth.currentUser && !auth.currentUser.isAnonymous ? { memberProvider: 'kakao' } : {}),
+    bookingNo,
     companyId,
     companyName,
     userName: form.userName.trim(),
@@ -363,5 +397,22 @@ export async function submitReservation(
 
   await setDoc(doc(db, 'reservations', id), payload);
 
-  return id;
+  return { id, bookingNo };
 }
+
+/**
+ * 예약 완료 후 heardFrom만 채움. Firestore rules: 생성자 + 기존 값 비어 있을 때만.
+ */
+export async function updateReservationHeardFrom(
+  reservationId: string,
+  heardFrom: string
+): Promise<void> {
+  const value = heardFrom.trim().slice(0, 80);
+  if (!reservationId || !value) {
+    throw new Error('유입 경로를 선택해 주세요.');
+  }
+  await ensureAnonymousAuth();
+  await updateDoc(doc(db, 'reservations', reservationId), { heardFrom: value });
+}
+
+export { normalizeBookingNoInput, BOOKING_NO_RE };

@@ -18,7 +18,13 @@ import AirlineSelect from './AirlineSelect';
 import type { BookingSearch, Company, Terminal } from '../types';
 import { suggestedIcnTerminalForAirline } from '../constants/airlines';
 import { displayCompanyName } from '../utils/display';
-import { ensureAnonymousAuth, submitReservation, subscribeReservation, type BookingForm } from '../lib/reservations';
+import {
+  ensureAnonymousAuth,
+  submitReservation,
+  subscribeReservation,
+  updateReservationHeardFrom,
+  type BookingForm,
+} from '../lib/reservations';
 import { trackAppointmentScheduled, trackPurchaseOnce } from '../lib/analytics';
 import { reportError } from '../lib/errorReport';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
@@ -77,6 +83,18 @@ import {
 
 const FIELD_CLASS =
   'w-full rounded-lg border border-[#d8dee8] bg-white px-3 py-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
+
+const HEARD_FROM_OPTIONS = [
+  '네이버 검색',
+  '네이버 광고',
+  '유튜브',
+  '블로그·카페',
+  'ChatGPT 등 AI',
+  'AI 비서가 대신 예약(피클 등)',
+  '지인 추천',
+  '입점업체 소개',
+  '기타',
+] as const;
 
 function draftFor(companyId: string) {
   const draft = readBookingDraft();
@@ -200,7 +218,10 @@ export default function BookingModal({
   });
   const [marketingTouched, setMarketingTouched] = useState(false);
   const marketingTouchedRef = useRef(false);
-  const [heardFrom, setHeardFrom] = useState('');
+  const [heardFromSaved, setHeardFromSaved] = useState<string | null>(null);
+  const [heardFromBusy, setHeardFromBusy] = useState(false);
+  const [heardFromError, setHeardFromError] = useState('');
+  const [heardFromOtherOpen, setHeardFromOtherOpen] = useState(false);
   const [heardFromOther, setHeardFromOther] = useState('');
   const [confirming, setConfirming] = useState(() => draftFor(company.id)?.confirmed === true);
   const [guestMode, setGuestMode] = useState(false);
@@ -214,6 +235,7 @@ export default function BookingModal({
   const [soldOutDetail, setSoldOutDetail] = useState('');
   const parkingTypeName = useId();
   const [completedId, setCompletedId] = useState<string | null>(null);
+  const [completedBookingNo, setCompletedBookingNo] = useState<string | null>(null);
   const [completedPayable, setCompletedPayable] = useState(0);
   const pendingPointSpendRef = useRef(0);
   const [completedAsMember, setCompletedAsMember] = useState(false);
@@ -580,7 +602,7 @@ export default function BookingModal({
         return;
       }
 
-      const id = await submitReservation(
+      const { id, bookingNo } = await submitReservation(
         company.id,
         company.name,
         payload,
@@ -599,12 +621,7 @@ export default function BookingModal({
         parkingProduct ? { id: parkingProduct.id, dropFee } : undefined,
         {
           listPrice: breakdown.total,
-        },
-        heardFrom === '기타'
-          ? heardFromOther.trim()
-            ? `기타: ${heardFromOther.trim().slice(0, 60)}`
-            : '기타'
-          : heardFrom.trim() || undefined
+        }
       );
       trackAppointmentScheduled();
       trackPurchaseOnce({
@@ -643,6 +660,7 @@ export default function BookingModal({
       setCompletedAsMember(asMember);
       setMarketingResultLine(resultLine);
       setForm((prev) => ({ ...prev, reservationPassword: password }));
+      setCompletedBookingNo(bookingNo);
       setCompletedId(id);
       onBooked?.(id);
     } catch (err) {
@@ -761,12 +779,14 @@ export default function BookingModal({
             <Check size={32} className="text-brand" strokeWidth={3} />
           </div>
           <h2 id="booking-complete-title" className="mt-4 text-xl font-bold text-ink">
-            예약이 접수되었습니다
+            예약이 확정되었습니다
           </h2>
           <p className="mt-1.5 text-sm font-medium text-muted">
             {displayCompanyName(company.name)} · {formatStayPhrase(breakdown.days)} 주차
           </p>
-          <p className="mt-2 text-sm font-semibold text-ink">카카오 알림톡으로 접수증이 갑니다.</p>
+          <p className="mt-2 text-sm font-semibold text-ink">
+            카카오 알림톡으로 예약 내역을 보내드려요.
+          </p>
           {marketingResultLine ? (
             <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
               {marketingResultLine}
@@ -777,7 +797,7 @@ export default function BookingModal({
             <div className="flex items-center justify-between gap-4">
               <dt className="text-[13px] font-semibold text-muted">예약번호</dt>
               <dd className="font-mono text-sm font-bold text-ink break-all text-right">
-                {completedId}
+                {completedBookingNo || completedId}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
@@ -845,7 +865,89 @@ export default function BookingModal({
                 </>
               )}
             </p>
+            <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-muted">
+              예약번호로도 조회할 수 있어요.
+            </p>
           </div>
+
+          {!heardFromSaved ? (
+            <div className="mt-4 rounded-2xl bg-[#f4f5f7] p-4 text-left">
+              <p className="text-sm font-bold text-ink">에어픽을 어떻게 알게 되셨나요? (선택)</p>
+              <p className="mt-1 text-[12px] font-medium text-muted">한 번 탭하면 저장됩니다.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {HEARD_FROM_OPTIONS.map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    disabled={heardFromBusy}
+                    onClick={async () => {
+                      if (label === '기타') {
+                        setHeardFromOtherOpen(true);
+                        setHeardFromError('');
+                        return;
+                      }
+                      setHeardFromBusy(true);
+                      setHeardFromError('');
+                      try {
+                        await updateReservationHeardFrom(completedId, label);
+                        setHeardFromSaved(label);
+                        setHeardFromOtherOpen(false);
+                      } catch {
+                        setHeardFromError('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+                      } finally {
+                        setHeardFromBusy(false);
+                      }
+                    }}
+                    className={cn(
+                      'rounded-full bg-white px-3 py-2 text-[12px] font-bold text-ink ring-1 ring-[#0f1a2e]/12 transition active:scale-[0.98] disabled:opacity-60',
+                      heardFromOtherOpen && label === '기타' && 'ring-2 ring-brand'
+                    )}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {heardFromOtherOpen ? (
+                <div className="mt-3 flex gap-2">
+                  <input
+                    value={heardFromOther}
+                    onChange={(e) => setHeardFromOther(e.target.value)}
+                    placeholder="직접 입력"
+                    maxLength={60}
+                    className={`${FIELD_CLASS} flex-1 py-2.5`}
+                  />
+                  <button
+                    type="button"
+                    disabled={heardFromBusy || !heardFromOther.trim()}
+                    onClick={async () => {
+                      const value = `기타: ${heardFromOther.trim().slice(0, 60)}`;
+                      setHeardFromBusy(true);
+                      setHeardFromError('');
+                      try {
+                        await updateReservationHeardFrom(completedId, value);
+                        setHeardFromSaved(value);
+                        setHeardFromOtherOpen(false);
+                      } catch {
+                        setHeardFromError('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+                      } finally {
+                        setHeardFromBusy(false);
+                      }
+                    }}
+                    className="shrink-0 rounded-lg bg-[#0f1a2e] px-3 py-2.5 text-[12px] font-bold text-white disabled:opacity-60"
+                  >
+                    저장
+                  </button>
+                </div>
+              ) : null}
+              {heardFromError ? (
+                <p className="mt-2 text-[12px] font-semibold text-rose-500">{heardFromError}</p>
+              ) : null}
+            </div>
+          ) : (
+            <p className="mt-4 text-[13px] font-semibold text-muted">
+              유입 경로 · {heardFromSaved}
+            </p>
+          )}
 
           <button
             type="button"
@@ -1473,37 +1575,6 @@ export default function BookingModal({
                 ) : null}
               </div>
             </section>
-
-            <div className="rounded-2xl bg-white px-3 py-3 ring-1 ring-[#0f1a2e]/8">
-              <label className="block">
-                <span className="mb-1.5 block text-[13px] font-bold text-ink">
-                  에어픽을 어떻게 알게 되셨나요? (선택)
-                </span>
-                <select
-                  value={heardFrom}
-                  onChange={(e) => setHeardFrom(e.target.value)}
-                  className={FIELD_CLASS}
-                >
-                  <option value="">선택해 주세요</option>
-                  <option value="네이버 검색">네이버 검색</option>
-                  <option value="네이버 광고">네이버 광고</option>
-                  <option value="유튜브">유튜브</option>
-                  <option value="블로그·카페">블로그·카페</option>
-                  <option value="ChatGPT 등 AI">ChatGPT 등 AI</option>
-                  <option value="지인 추천">지인 추천</option>
-                  <option value="입점업체 소개">입점업체 소개</option>
-                  <option value="기타">기타(직접 입력)</option>
-                </select>
-              </label>
-              {heardFrom === '기타' ? (
-                <input
-                  value={heardFromOther}
-                  onChange={(e) => setHeardFromOther(e.target.value)}
-                  placeholder="직접 입력"
-                  className={`${FIELD_CLASS} mt-2`}
-                />
-              ) : null}
-            </div>
 
             <div className="rounded-2xl bg-white ring-1 ring-[#0f1a2e]/8">
               <BookingConsent

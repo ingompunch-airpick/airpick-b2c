@@ -55,9 +55,33 @@ export function getCancelEligibility(
   if (now > deadline) {
     return {
       cancellable: false,
-      reason: `입고 ${cutoffHours}시간 전까지만 앱에서 취소할 수 있습니다. 업체로 문의해 주세요.`,
+      reason: '무료 취소 기간이 지났어요. 업체로 문의해 주세요',
     };
   }
 
   return { cancellable: true };
+}
+
+/** 무료 취소 마감 시각 (입고 − 24시간). 파싱 실패 시 null */
+export function getCancelDeadline(reservation: Reservation): Date | null {
+  const checkIn = parseCheckInDate(reservation);
+  if (!checkIn) return null;
+  return new Date(checkIn.getTime() - getCancelCutoffHours() * 60 * 60 * 1000);
+}
+
+/** 예: 3월 24일 10:00까지 무료 취소 */
+export function formatFreeCancelUntilLine(
+  reservation: Reservation,
+  now: Date = new Date()
+): string | null {
+  const deadline = getCancelDeadline(reservation);
+  if (!deadline) return null;
+  if (now > deadline) {
+    return '무료 취소 기간이 지났어요. 업체로 문의해 주세요';
+  }
+  const month = deadline.getMonth() + 1;
+  const day = deadline.getDate();
+  const hh = String(deadline.getHours()).padStart(2, '0');
+  const mm = String(deadline.getMinutes()).padStart(2, '0');
+  return `${month}월 ${day}일 ${hh}:${mm}까지 무료 취소`;
 }

@@ -158,6 +158,8 @@ export interface Company {
 
 export interface Reservation {
   id: string;
+  /** 손님용 예약번호 AP-MMDD-XXXX. 없으면 문서 id 표시 */
+  bookingNo?: string;
   /** 예약한 로그인 계정. 비회원은 guest */
   userId?: string;
   companyId: string;
@@ -232,7 +234,7 @@ export interface Reservation {
   checkedOutAt?: string;
 }
 
-export type ReservationLookupMode = 'carNumber' | 'phone';
+export type ReservationLookupMode = 'carNumber' | 'phone' | 'bookingNo';
 
 export type Terminal = 'T1' | 'T2';
 

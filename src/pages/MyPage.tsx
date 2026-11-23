@@ -40,6 +40,7 @@ import { POINT_STEP_WON, subscribePointBalance } from '../lib/points';
 import type { Company, Reservation, ReservationLookupMode, Terminal } from '../types';
 import { clearRecentReservation, getRecentReservation } from '../utils/recentReservation';
 import { displayCompanyName } from '../utils/display';
+import { displayReservationCode } from '../utils/bookingNo';
 import { getStatusLabel } from '../utils/trust';
 import { todaySeoulYmd, ymdToInputValue } from '../lib/icnFlight';
 import { terminalLabel } from '../utils/terminalLabels';
@@ -140,6 +141,9 @@ function UpcomingReservationCard({
       </div>
       <p className="mt-1 text-[13px] font-semibold text-brand">
         {getStatusLabel(reservation.status)}
+      </p>
+      <p className="mt-0.5 font-mono text-[12px] font-bold tracking-wide text-[#0f1a2e]/70">
+        예약번호 {displayReservationCode(reservation)}
       </p>
       <p className="mt-0.5 text-[16px] font-bold text-[#0f1a2e]">
         {displayCompanyName(reservation.companyName)}
@@ -267,7 +271,7 @@ export default function MyPage({
   const [reviewLinkHint, setReviewLinkHint] = useState('');
   const [member, setMember] = useState(() => readMember());
   const [pointBalance, setPointBalance] = useState(0);
-  const [lookupMode, setLookupMode] = useState<'member' | 'guest'>('member');
+  const [lookupMode, setLookupMode] = useState<'member' | 'guest'>('guest');
   const [profileName, setProfileName] = useState(() => {
     const current = readMember();
     return current && isSavedBookerName(current.name) ? current.name.trim() : '';
@@ -809,7 +813,7 @@ export default function MyPage({
             <p className="text-[13px] font-medium text-gold">예약 조회</p>
             <h1 className="mt-1 text-[16px] font-bold leading-tight text-[#0f1a2e]">내 예약 확인</h1>
             <p className="mt-1 text-[14px] font-medium text-[#0f1a2e]/55">
-              카카오 로그인 또는 차량번호로 찾습니다.
+              예약번호 · 차량번호 · 카카오 로그인으로 찾습니다.
             </p>
           </section>
           <div className="grid grid-cols-2 gap-2">
@@ -868,7 +872,7 @@ export default function MyPage({
       !member &&
       reservations.some((item) => item.id === lastReservationId) ? (
         <p className="px-1 text-xs font-semibold text-[#0f1a2e]">
-          방금 접수한 예약을 먼저 보여드립니다
+          방금 예약한 내역이에요
         </p>
       ) : null}
 
@@ -921,7 +925,7 @@ export default function MyPage({
             </>
           ) : visibleReservations.length > 0 ? (
             <p className="mb-2 px-1 text-xs font-bold text-muted">
-              예약 {visibleReservations.length}건 · 위치 · 사진 · 보험
+              예약 {visibleReservations.length}건
             </p>
           ) : null}
           {listedReservations.length > 0 ? (

@@ -12,9 +12,13 @@ import { resolveParkingLocationDisplay } from '../utils/parkingLocation';
 import { companyPhotoUrl } from '../utils/imageUrl';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { resolveInsuranceDisplay } from '../utils/insurance';
+import { displayReservationCode } from '../utils/bookingNo';
 import { getStatusLabel, getStatusStep, formatCheckInStaffLine, formatCheckOutStaffLine } from '../utils/trust';
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
-import { getCancelEligibility } from '../utils/reservationCancel';
+import {
+  formatFreeCancelUntilLine,
+  getCancelEligibility,
+} from '../utils/reservationCancel';
 import { isReservationReviewable } from '../lib/reviews';
 import { handoffPlaceLine, pickupNaverMapUrl } from '../data/pickupPins';
 import { itchaHandoffPlace } from '../data/itchaPickup';
@@ -267,8 +271,9 @@ export default function ReservationCard({
   const locationPending = !parkingDisplay && statusStep < 1;
   const paymentLabel =
     !reservation.paymentMethod || reservation.paymentMethod === 'unpaid'
-      ? '온라인 결제 준비 중'
+      ? '현장 결제'
       : reservation.paymentMethod;
+  const freeCancelLine = formatFreeCancelUntilLine(reservation);
 
   if (reservation.status === 'cancelled') {
     const dep = reservation.departureDate.slice(5).replace('-', '.');
@@ -401,8 +406,8 @@ export default function ReservationCard({
             </p>
           ) : null}
         </div>
-        <p className="max-w-[9.5rem] shrink-0 break-all text-right font-mono text-[10px] font-semibold text-muted-light">
-          {reservation.id}
+        <p className="max-w-[9.5rem] shrink-0 break-all text-right font-mono text-[11px] font-bold tracking-wide text-ink">
+          {displayReservationCode(reservation)}
         </p>
       </div>
 
@@ -418,6 +423,9 @@ export default function ReservationCard({
           ) || company?.pickupLocation
         }
       />
+      <p className="mt-1.5 text-[13px] font-semibold leading-snug text-[#0f1a2e]/70">
+        귀국 후 착륙하면 업체로 전화 주세요. 출고 장소를 안내해 드려요
+      </p>
       <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
         {reservation.totalPrice.toLocaleString()}원
         <span className="ml-2 text-[13px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
@@ -574,74 +582,82 @@ export default function ReservationCard({
       )}
 
       {onCancel &&
-      !cancelEligibility.cancellable &&
-      cancelEligibility.reason &&
       (reservation.status === 'pending' ||
         reservation.status === 'scheduled' ||
         reservation.status === 'pending_in') && (
-        <p className="mt-3 text-center text-[12px] font-semibold leading-relaxed text-muted">
-          {cancelEligibility.reason}
-        </p>
-      )}
-
-      {reservation.status !== 'cancelled' && onCancel && cancelEligibility.cancellable && (
         <div className="mt-3">
-          {!cancelOpen ? (
-            <button
-              type="button"
-              onClick={() => setCancelOpen(true)}
-              className="w-full rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/10 transition-colors hover:text-rose-500"
-            >
-              예약 취소
-            </button>
-          ) : (
-            <div className="rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-100">
-              <div className="flex items-center gap-2">
-                <XCircle size={16} className="text-rose-500" strokeWidth={2.25} />
-                <p className="text-sm font-bold text-ink">예약을 취소할까요?</p>
-              </div>
-              <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-muted">
-                취소 후에는 되돌릴 수 없습니다. 예약 비밀번호 4자리를 입력해 주세요.
-              </p>
-              <label className="mt-3 block">
-                <span className="mb-1.5 block text-[11px] font-bold text-ink">예약 비밀번호</span>
-                <input
-                  type="password"
-                  inputMode="numeric"
-                  autoComplete="off"
-                  maxLength={4}
-                  value={cancelPw}
-                  onChange={(e) => setCancelPw(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  placeholder="비밀번호 4자리"
-                  className="w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-rose-400"
-                />
-              </label>
-              {cancelError && (
-                <p className="mt-2 text-[11px] font-semibold text-rose-600">{cancelError}</p>
+          {freeCancelLine ? (
+            <p
+              className={cn(
+                'mb-2 text-center text-[12px] font-semibold leading-relaxed',
+                cancelEligibility.cancellable ? 'text-[#0f1a2e]/70' : 'text-muted'
               )}
-              <div className="mt-3 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCancelOpen(false);
-                    setCancelPw('');
-                    setCancelError('');
-                  }}
-                  className="flex-1 rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/12"
-                >
-                  닫기
-                </button>
-                <button
-                  type="button"
-                  disabled={cancelLoading || !/^\d{4}$/.test(cancelPw)}
-                  onClick={handleCancel}
-                  className="flex-1 rounded-xl bg-rose-500 py-2.5 text-xs font-bold text-white transition-colors hover:bg-rose-600 disabled:opacity-60"
-                >
-                  {cancelLoading ? '취소 중…' : '예약 취소 확정'}
-                </button>
+            >
+              {freeCancelLine}
+            </p>
+          ) : !cancelEligibility.cancellable && cancelEligibility.reason ? (
+            <p className="mb-2 text-center text-[12px] font-semibold leading-relaxed text-muted">
+              {cancelEligibility.reason}
+            </p>
+          ) : null}
+          {cancelEligibility.cancellable ? (
+            !cancelOpen ? (
+              <button
+                type="button"
+                onClick={() => setCancelOpen(true)}
+                className="w-full rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/10 transition-colors hover:text-rose-500"
+              >
+                예약 취소
+              </button>
+            ) : (
+              <div className="rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-100">
+                <div className="flex items-center gap-2">
+                  <XCircle size={16} className="text-rose-500" strokeWidth={2.25} />
+                  <p className="text-sm font-bold text-ink">예약을 취소할까요?</p>
+                </div>
+                <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-muted">
+                  취소 후에는 되돌릴 수 없습니다. 예약 비밀번호 4자리를 입력해 주세요.
+                </p>
+                <label className="mt-3 block">
+                  <span className="mb-1.5 block text-[11px] font-bold text-ink">예약 비밀번호</span>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    maxLength={4}
+                    value={cancelPw}
+                    onChange={(e) => setCancelPw(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    placeholder="비밀번호 4자리"
+                    className="w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-semibold tracking-widest text-ink outline-none focus:border-rose-400"
+                  />
+                </label>
+                {cancelError && (
+                  <p className="mt-2 text-[11px] font-semibold text-rose-600">{cancelError}</p>
+                )}
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCancelOpen(false);
+                      setCancelPw('');
+                      setCancelError('');
+                    }}
+                    className="flex-1 rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/12"
+                  >
+                    닫기
+                  </button>
+                  <button
+                    type="button"
+                    disabled={cancelLoading || !/^\d{4}$/.test(cancelPw)}
+                    onClick={handleCancel}
+                    className="flex-1 rounded-xl bg-rose-500 py-2.5 text-xs font-bold text-white transition-colors hover:bg-rose-600 disabled:opacity-60"
+                  >
+                    {cancelLoading ? '취소 중…' : '예약 취소 확정'}
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          ) : null}
         </div>
       )}
 
