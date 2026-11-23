@@ -197,6 +197,8 @@ export default function BookingModal({
   });
   const [marketingTouched, setMarketingTouched] = useState(false);
   const marketingTouchedRef = useRef(false);
+  const [heardFrom, setHeardFrom] = useState('');
+  const [heardFromOther, setHeardFromOther] = useState('');
   const [confirming, setConfirming] = useState(() => draftFor(company.id)?.confirmed === true);
   const [guestMode, setGuestMode] = useState(false);
   const [editSchedule, setEditSchedule] = useState(false);
@@ -584,7 +586,12 @@ export default function BookingModal({
         parkingProduct ? { id: parkingProduct.id, dropFee } : undefined,
         {
           listPrice: breakdown.total,
-        }
+        },
+        heardFrom === '기타'
+          ? heardFromOther.trim()
+            ? `기타: ${heardFromOther.trim().slice(0, 60)}`
+            : '기타'
+          : heardFrom.trim() || undefined
       );
       trackAppointmentScheduled();
       trackPurchaseOnce({
@@ -1342,6 +1349,37 @@ export default function BookingModal({
                 ) : null}
               </div>
             </section>
+
+            <div className="rounded-2xl bg-white px-3 py-3 ring-1 ring-[#0f1a2e]/8">
+              <label className="block">
+                <span className="mb-1.5 block text-[13px] font-bold text-ink">
+                  에어픽을 어떻게 알게 되셨나요? (선택)
+                </span>
+                <select
+                  value={heardFrom}
+                  onChange={(e) => setHeardFrom(e.target.value)}
+                  className={FIELD_CLASS}
+                >
+                  <option value="">선택해 주세요</option>
+                  <option value="네이버 검색">네이버 검색</option>
+                  <option value="네이버 광고">네이버 광고</option>
+                  <option value="유튜브">유튜브</option>
+                  <option value="블로그·카페">블로그·카페</option>
+                  <option value="ChatGPT 등 AI">ChatGPT 등 AI</option>
+                  <option value="지인 추천">지인 추천</option>
+                  <option value="입점업체 소개">입점업체 소개</option>
+                  <option value="기타">기타(직접 입력)</option>
+                </select>
+              </label>
+              {heardFrom === '기타' ? (
+                <input
+                  value={heardFromOther}
+                  onChange={(e) => setHeardFromOther(e.target.value)}
+                  placeholder="직접 입력"
+                  className={`${FIELD_CLASS} mt-2`}
+                />
+              ) : null}
+            </div>
 
             <div className="rounded-2xl bg-white ring-1 ring-[#0f1a2e]/8">
               <BookingConsent

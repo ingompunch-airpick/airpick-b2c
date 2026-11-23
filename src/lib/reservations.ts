@@ -270,7 +270,9 @@ export async function submitReservation(
   /** 손님이 고른 주차 상품. 비대면 추가요금이 있으면 같이 남긴다 */
   parkingProduct?: { id: string; dropFee: number },
   /** listPrice=표시 합계. signupCouponWon은 폐지된 첫 예약 할인(옛 예약만) */
-  pricingMeta?: { listPrice: number; signupCouponWon?: number }
+  pricingMeta?: { listPrice: number; signupCouponWon?: number },
+  /** 「에어픽을 어떻게 알게 되셨나요?」(선택) */
+  heardFrom?: string
 ): Promise<string> {
   await ensureAnonymousAuth();
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
@@ -353,6 +355,9 @@ export async function submitReservation(
   }
 
   if (marketingOptIn) payload.marketingOptIn = true;
+
+  const heard = (heardFrom || '').trim().slice(0, 80);
+  if (heard) payload.heardFrom = heard;
 
   Object.assign(payload, acquisitionFieldsForReservation());
 

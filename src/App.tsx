@@ -386,8 +386,8 @@ export default function App() {
       return;
     }
     if (!isSeoDocumentPath(path)) {
-      void recordB2cShortPathVisit(path, search);
-      captureAcquisitionFromLocation(path, search);
+      void recordB2cShortPathVisit(path, search, { allowOrganic: true });
+      captureAcquisitionFromLocation(path, search, { allowOrganic: true });
     }
     if (!isSeoDocumentPath(path) && tabFromPathname(path) == null) {
       syncUrlToTab('home', 'replace');
@@ -408,8 +408,8 @@ export default function App() {
       }
       setPaymentCompleteOpen(false);
       setPaymentCompleteId(null);
-      void recordB2cShortPathVisit(current, currentSearch);
-      captureAcquisitionFromLocation(current, currentSearch);
+      void recordB2cShortPathVisit(current, currentSearch, { allowOrganic: false });
+      captureAcquisitionFromLocation(current, currentSearch, { allowOrganic: false });
       const next = tabFromPathname(current) ?? 'home';
       setTabState(next);
       if (next === 'compare') setPendingCompanyId(readParkingCompanyId());
