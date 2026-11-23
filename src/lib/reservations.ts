@@ -214,9 +214,22 @@ export function subscribeReservation(
   );
 }
 
+/** 조회·취소 비밀번호 연속 실패(429) — 화면 공통 문구 */
+export const PASSWORD_RATE_LIMIT_MESSAGE =
+  '비밀번호를 여러 번 틀렸어요. 5분 뒤 다시 시도하거나, 카카오 알림톡의 접수증 보기로 확인해 주세요. 고객센터 0507-1328-5746 (09:00~18:00)';
+
+export class PasswordRateLimitedError extends Error {
+  readonly code = 'rate_limited' as const;
+  constructor(message = PASSWORD_RATE_LIMIT_MESSAGE) {
+    super(message);
+    this.name = 'PasswordRateLimitedError';
+  }
+}
+
 /**
  * 예약 조회 — 서버(Cloud Function)에서 비밀번호를 검증하고
  * 민감 필드를 제거한 데이터만 반환한다. 비번이 틀리면 빈 배열이 온다.
+ * 연속 실패로 차단되면 PasswordRateLimitedError.
  */
 export async function lookupReservations(
   mode: ReservationLookupMode,
@@ -234,6 +247,9 @@ export async function lookupReservations(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mode, value: trimmed, password: pw }),
   });
+  if (res.status === 429) {
+    throw new PasswordRateLimitedError();
+  }
   if (!res.ok) return [];
 
   const json = (await res.json()) as {
@@ -267,6 +283,9 @@ export async function cancelReservation(id: string, password: string): Promise<v
   } catch {
     error = '';
   }
+  if (res.status === 429 || error === 'rate_limited') {
+    throw new PasswordRateLimitedError();
+  }
   switch (error) {
     case 'invalid_password':
       throw new Error('예약 비밀번호가 일치하지 않습니다.');
@@ -274,6 +293,10 @@ export async function cancelReservation(id: string, password: string): Promise<v
       throw new Error('이미 취소된 예약입니다.');
     case 'not_found':
       throw new Error('예약을 찾을 수 없습니다.');
+    case 'cancel_deadline_passed':
+      throw new Error('무료 취소 기간이 지났어요. 업체로 문의해 주세요');
+    case 'not_cancellable_status':
+      throw new Error('입고가 시작된 예약은 업체로 문의해 주세요');
     case 'too_late':
       throw new Error('입고 24시간 전까지만 앱에서 취소할 수 있습니다. 업체로 문의해 주세요.');
     default:

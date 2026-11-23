@@ -33,6 +33,8 @@ import {
   cancelReservation,
   fetchReservationById,
   lookupReservations,
+  PASSWORD_RATE_LIMIT_MESSAGE,
+  PasswordRateLimitedError,
   subscribeReservation,
 } from '../lib/reservations';
 import { submitCompanyReview } from '../lib/reviews';
@@ -564,7 +566,11 @@ export default function MyPage({
       setGuestReservations(list);
     } catch (err) {
       console.error(err);
-      setError('예약 조회에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      setError(
+        err instanceof PasswordRateLimitedError
+          ? PASSWORD_RATE_LIMIT_MESSAGE
+          : '예약 조회에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+      );
       setGuestReservations([]);
     } finally {
       setLoading(false);
