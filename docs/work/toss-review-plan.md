@@ -56,3 +56,10 @@ B2C는 **클라이언트 `setDoc`** → Rules가 실제 create 차단 가능해�
 
 - `SiteFooter`, `MarketingFooter`, `index.html#pg-legal-footer`, `scripts/legal-site-footer.mjs` → 정적 재생성
 - About React는 이미 상호만 — `public/about` SSG만 맞춤
+
+## 작업 2 취소·환불 규정 (11-24 구현)
+- 규칙(대표 확정): 기준 = 입고 예정 시각(KST). 24시간 전까지(그 시각 포함) 100% / 그 뒤~입고 전 50% / 입고 이후(노쇼 포함) 0%. 결항 등 4항 예외는 기존대로 전액.
+- `APP_CONFIG.refund` (fullRefundHours 24, lateRefundRatio 0.5) + `src/utils/refundPolicy.ts` `calcRefund` / `kstCheckInDate` / `formatRefundLine`. 경계값 테스트 PASS(25h·24h·23h·1분 전·입고 시각·입고 후).
+- 문구: `public/refund/index.html` 2항 표·3항(온라인/현장 결제 구분)·5항, 개정일 표기. `consent.ts` 플랫폼 약관 제5조·업체 약관 제3조①.
+- 현장 결제 예약은 동작 그대로(24시간 이내 앱 취소 불가 → 업체 연락).
+- 작업 3으로 넘김: 결제 직전 필수 동의 체크, 온라인 결제 건 취소 화면의 예상 환불액(`formatRefundLine`), 24시간 이내 50% 셀프 취소·포트원 부분 환불. 결제 금액 필드가 생긴 뒤에 붙인다.

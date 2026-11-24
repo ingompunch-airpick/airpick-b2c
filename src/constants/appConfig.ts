@@ -22,6 +22,16 @@ export const APP_CONFIG = {
   bookingAdvanceBlockedMessage: '예약은 출국 6개월 전부터 가능해요',
   bookingStayBlockedMessage: '한 번에 최대 90일까지 예약할 수 있어요',
   /**
+   * 취소·환불 비율 (기준 = 입고 예정 시각, 한국 시간).
+   * 입고 fullRefundHours 시간 전까지(정확히 그 시각 포함) 전액,
+   * 그 뒤 ~ 입고 전 lateRefundRatio, 입고 이후 0.
+   * 바꾸면 public/refund/index.html·consent.ts 문구도 같이 바꿀 것.
+   */
+  refund: {
+    fullRefundHours: 24,
+    lateRefundRatio: 0.5,
+  },
+  /**
    * 결제 노출. off=일반 예약만. test/live는 작업 3.
    * 채널은 포트원→토스만 (이니시스·KPN 폐기 예정).
    */
