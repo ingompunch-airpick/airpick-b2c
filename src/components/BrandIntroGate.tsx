@@ -135,7 +135,7 @@ export default function BrandIntroGate({
   };
 
   const subBtn =
-    'flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-3 text-[14px] font-semibold text-white backdrop-blur-[2px] transition hover:bg-white/20 active:scale-[0.98] md:px-6 md:text-[15px]';
+    'flex items-center justify-center rounded-full border border-white/50 bg-[#0a1628]/45 px-4 py-3 text-[14px] font-bold text-white backdrop-blur-[3px] [text-shadow:none] transition hover:bg-white/20 active:scale-[0.98] md:px-6 md:text-[15px]';
 
   return (
     <div className="fixed inset-0 z-[80] bg-[#0a1628] text-white">
@@ -146,10 +146,15 @@ export default function BrandIntroGate({
           reducedMotion={reducedMotion}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-[#0a1628]/60" aria-hidden />
+        <div className="absolute inset-0 bg-[#0a1628]/65" aria-hidden />
+        {/* 글자 뒤만 한 번 더 어둡게 — 가독성 */}
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_52%,rgba(10,22,40,0.6)_0%,rgba(10,22,40,0)_100%)]"
+          aria-hidden
+        />
       </div>
 
-      <div className="relative z-10 flex h-full w-full flex-col items-center px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] text-center">
+      <div className="relative z-10 flex h-full w-full flex-col items-center px-5 [text-shadow:0_2px_14px_rgba(0,0,0,0.55)] pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] text-center">
         <div className="flex w-full max-w-5xl items-center gap-2">
           <img
             src="/brand-mark-gold.png?v=10"
@@ -163,34 +168,34 @@ export default function BrandIntroGate({
         </div>
 
         <div className="flex w-full max-w-4xl flex-1 flex-col items-center justify-center">
-          <p className="text-[14px] font-medium leading-snug text-white/80 md:text-[17px]">
+          <p className="text-[15px] font-semibold leading-snug text-white md:text-[19px]">
             {APP_CONFIG.introStatText}
           </p>
           <span className="mt-4 block h-[2px] w-10 bg-[#c9a962] md:mt-5" aria-hidden />
 
-          <h1 className="mt-4 text-[32px] font-light leading-[1.25] tracking-[-0.02em] md:mt-5 md:text-[56px]">
+          <h1 className="mt-4 text-[34px] font-medium leading-[1.25] tracking-[-0.02em] md:mt-5 md:text-[60px]">
             <span className="block md:inline">{BRAND_INTRO.titleLead}</span>{' '}
             <strong className="block font-extrabold md:inline">{BRAND_INTRO.titleRest}</strong>
           </h1>
-          <p className="mt-3 text-[11px] font-semibold tracking-[0.35em] text-white/75 md:mt-4 md:text-[15px]">
+          <p className="mt-3 text-[12px] font-bold tracking-[0.35em] text-white/95 md:mt-4 md:text-[16px]">
             {BRAND_INTRO.subtitleEn}
           </p>
 
           <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 md:mt-8 md:gap-x-6">
             {BRAND_INTRO.checks.map((label) => (
-              <li key={label} className="inline-flex items-center gap-1 text-[15px] font-semibold md:text-[17px]">
+              <li key={label} className="inline-flex items-center gap-1 text-[16px] font-bold md:text-[19px]">
                 <Check size={16} strokeWidth={3} className="text-[#c9a962]" aria-hidden />
                 {label}
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-[13px] font-medium text-white/80 md:text-[15px]">{BRAND_INTRO.promiseLine}</p>
+          <p className="mt-2 text-[14px] font-semibold text-white md:text-[17px]">{BRAND_INTRO.promiseLine}</p>
 
           <div className="mt-7 grid w-full max-w-md grid-cols-3 gap-2 md:mt-9 md:flex md:max-w-none md:flex-wrap md:justify-center md:gap-3">
             <button
               type="button"
               onClick={() => onEnter('home')}
-              className="col-span-3 flex items-center justify-center gap-2 rounded-full bg-[#c9a962] px-6 py-3.5 text-[16px] font-bold text-[#0a1628] transition active:scale-[0.98] md:px-8 md:text-[17px]"
+              className="col-span-3 flex items-center justify-center gap-2 rounded-full bg-[#c9a962] [text-shadow:none] px-6 py-3.5 text-[16px] font-bold text-[#0a1628] transition active:scale-[0.98] md:px-8 md:text-[17px]"
             >
               {BRAND_INTRO.enterCta}
               <ArrowRight size={18} strokeWidth={2.5} aria-hidden />
@@ -207,7 +212,7 @@ export default function BrandIntroGate({
           </div>
         </div>
 
-        <p className="text-[14px] font-bold text-white md:text-[17px]">{BRAND_INTRO.tagline}</p>
+        <p className="text-[15px] font-bold text-white md:text-[19px]">{BRAND_INTRO.tagline}</p>
       </div>
     </div>
   );
