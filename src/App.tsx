@@ -160,11 +160,11 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const dismissBrandIntro = () => {
+  const dismissBrandIntro = (target: 'home' | 'my' = 'home') => {
     markBrandIntroSeen();
     setShowBrandIntro(false);
-    setTab('home', 'replace');
-    trackCtaClick('brand_intro_enter', 'brand_intro');
+    setTab(target, 'replace');
+    trackCtaClick(target === 'my' ? 'brand_intro_my' : 'brand_intro_enter', 'brand_intro');
   };
 
   useEffect(() => {

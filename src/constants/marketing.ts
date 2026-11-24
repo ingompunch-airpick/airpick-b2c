@@ -287,13 +287,20 @@ export const BRAND_INTRO = {
   /** 업체와 요금 비교하기를 누른 브라우저는 다시 안 띄움. 직링크는 스킵. 테스트: /?intro=1 */
   brand: 'AIRPICK',
   wordmark: '에어픽',
-  kicker: '인천공항 공항주차 비교·예약',
-  titleLead: '여행의 시작부터,',
-  titleRest: '주차는 믿을 수 있게.',
-  /** 네 칸 위 한 줄 약속 */
-  promiseLine: '인증된 업체만',
+  /** 상단 통계 문구는 APP_CONFIG.introStatText */
+  titleLead: '확인된 업체에만',
+  titleRest: '내 차를 맡기세요',
+  subtitleEn: 'VERIFIED VALET PARKING',
   checks: ['사업자', '주차장', '보험', 'CCTV'],
-  enterCta: '업체와 요금 비교하기',
+  /** 체크 아래 설명 — 4가지 모두 확인된 업체만 입점(대표 확인 11-24) */
+  promiseLine: '에어픽은 4가지를 직접 확인한 업체만 소개해요',
+  enterCta: '업체·요금 비교하기',
+  myCta: '예약 확인',
+  guideCta: '이용 가이드',
+  guideHref: '/guides/',
+  verifiedCta: '확인 기준 보기',
+  verifiedHref: '/verified/',
+  tagline: '여행의 시작부터, 주차는 믿을 수 있게.',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',
   videoMobile: '/brand/intro-mobile.mp4',
