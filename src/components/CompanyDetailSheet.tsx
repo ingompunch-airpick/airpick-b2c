@@ -32,6 +32,7 @@ import { displayCoverageLimitText } from '../utils/insurance';
 import { displayInsuranceLabel } from '../utils/trust';
 import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { cn } from '../utils/cn';
+import { APP_CONFIG } from '../constants/appConfig';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
@@ -415,6 +416,12 @@ export default function CompanyDetailSheet({
               <FactIconRow
                 icon={Clock}
                 title={`입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소`}
+                detail={`이후 입고 전까지 ${Math.round(APP_CONFIG.refund.lateRefundRatio * 100)}% 환불 · 입고 후 환불 불가`}
+              />
+              <FactIconRow
+                icon={Clock}
+                title="예약 가능 기간"
+                detail={APP_CONFIG.bookingWindowNotice}
               />
               {nightLine ? (
                 <FactIconRow icon={Clock} title="야간·새벽 할증" detail={nightLine} />

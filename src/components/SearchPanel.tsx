@@ -116,7 +116,7 @@ export default function SearchPanel({
         />
       </div>
       <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/50">
-        {APP_CONFIG.bookingWindowNotice}
+        {APP_CONFIG.bookingWindowShort}
       </p>
 
       <div className="mt-2 grid grid-cols-2 gap-2">

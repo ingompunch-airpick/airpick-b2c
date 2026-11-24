@@ -17,6 +17,9 @@ export const APP_CONFIG = {
   maxAdvanceDaysApprox: 184,
   /** 서비스 제공기간 고지 (결제일 기준 상한 안내) */
   serviceWindowMonths: 9,
+  /** 검색 패널용 짧은 안내 (한 줄) */
+  bookingWindowShort: '출국 6개월 전부터 예약 · 한 번에 최대 90일',
+  /** 상품 상세·결제용 전체 안내 (카드사 심사: 서비스 제공기간 명시) */
   bookingWindowNotice:
     '예약은 출국 6개월 전부터, 한 번에 최대 90일까지 가능합니다. (서비스 제공기간: 결제일로부터 최대 9개월)',
   bookingAdvanceBlockedMessage: '예약은 출국 6개월 전부터 가능해요',
