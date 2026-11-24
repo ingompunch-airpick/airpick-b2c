@@ -311,6 +311,27 @@ export const BRAND_INTRO = {
   posterMobile: '/brand/intro-mobile-poster.jpg',
 } as const;
 
+/**
+ * 가격 포함 안내 (공항가자 「추가요금 없음」 참고, 11-24).
+ * calculatePrice = 야간·T2·피크 할증 포함, 발렛비는 예약 화면 합계에 포함.
+ * 「추가요금 없음」 단정 금지 — 연장·대형차 등은 업체 고지 기준(약관 제2조③).
+ */
+export const PRICE_INCLUSION = {
+  cardSuffix: '야간·터미널 할증 포함',
+  bookingLine: '야간·터미널 할증 포함 금액',
+  detailTitle: '할증 포함 금액',
+  detailBody:
+    '야간·터미널 할증은 표시 금액에 미리 넣어 보여 드려요. 일정 연장·대형 차량 등 업체가 미리 알린 경우에만 현장에서 추가요금이 생길 수 있어요.',
+} as const;
+
+/** 홈 · 검색 카드 아래 에어픽 기능 한 줄 (실제 제공 기능만) */
+export const HOME_FEATURE_STRIP = [
+  { id: 'photo', label: '입고 사진 확인' },
+  { id: 'location', label: '주차 위치 공개' },
+  { id: 'cancel', label: '24시간 전 무료 취소' },
+  { id: 'price', label: '할증 포함 총액' },
+] as const;
+
 /** 홈 · 여행 정보 입력 후 결과로 */
 export const HOME_TRIP_CONTINUE_CTA = '내 여행 준비 시작';
 

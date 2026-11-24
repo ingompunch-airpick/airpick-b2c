@@ -1,4 +1,4 @@
-import { Car, Clock, KeyRound, MapPin, Phone, Shield, Star, X } from 'lucide-react';
+import { Car, Clock, KeyRound, MapPin, Phone, Receipt, Shield, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AffiliatePrice from './AffiliatePrice';
 import AirportSavingsLine from './AirportSavingsLine';
@@ -33,6 +33,7 @@ import { displayInsuranceLabel } from '../utils/trust';
 import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { cn } from '../utils/cn';
 import { APP_CONFIG } from '../constants/appConfig';
+import { PRICE_INCLUSION } from '../constants/marketing';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
@@ -417,6 +418,11 @@ export default function CompanyDetailSheet({
                 icon={Clock}
                 title={`입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소`}
                 detail={`이후 입고 전까지 ${Math.round(APP_CONFIG.refund.lateRefundRatio * 100)}% 환불 · 입고 후 환불 불가`}
+              />
+              <FactIconRow
+                icon={Receipt}
+                title={PRICE_INCLUSION.detailTitle}
+                detail={PRICE_INCLUSION.detailBody}
               />
               <FactIconRow
                 icon={Clock}

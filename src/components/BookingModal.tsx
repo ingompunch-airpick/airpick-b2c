@@ -83,6 +83,7 @@ import {
   type SocialProviderId,
 } from '../lib/socialAuth';
 import { portoneCustomerEmail, requestPortoneCardPayment } from '../lib/portonePayment';
+import { PRICE_INCLUSION } from '../constants/marketing';
 import { isPaymentStepVisible, isTestPaymentMode, savePaySummary } from '../lib/paymentMode';
 
 const FIELD_CLASS =
@@ -1407,7 +1408,7 @@ export default function BookingModal({
           className="mt-1.5 text-right"
         />
         <p className="mt-1.5 text-[11px] font-medium text-muted">
-          심야·옵션은 현장 정책 · 입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전 무료 취소
+          {PRICE_INCLUSION.bookingLine} · 입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전 무료 취소
         </p>
       </div>
     </div>

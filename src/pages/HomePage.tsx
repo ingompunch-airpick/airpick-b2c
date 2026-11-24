@@ -20,6 +20,8 @@ import { useEffect, useMemo, useState } from 'react';
 import DateField from '../components/DateField';
 import HomeFaq from '../components/home/HomeFaq';
 import HomeBrandHero from '../components/home/HomeBrandHero';
+import HomeFeatureStrip from '../components/home/HomeFeatureStrip';
+import { PRICE_INCLUSION } from '../constants/marketing';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
@@ -401,6 +403,7 @@ export default function HomePage({
               </div>
             </div>
           </div>
+          <HomeFeatureStrip />
         </div>
       </section>
 
@@ -894,7 +897,7 @@ function PriceList({
                         {price.toLocaleString()}원
                       </p>
                       <p className="mt-0.5 text-[13px] font-semibold text-[#0f1a2e]/55">
-                        {stayLabel} · 총액
+                        {stayLabel} · 총액 ({PRICE_INCLUSION.cardSuffix})
                       </p>
                       <AirportSavingsLine
                         days={stayDays}
