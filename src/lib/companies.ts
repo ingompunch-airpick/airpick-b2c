@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Company } from '../types';
 import { deriveParkingAddressesFromCompanyData } from '../utils/companyParking';
@@ -156,29 +156,55 @@ export async function fetchCompanyById(companyId: string): Promise<Company | nul
 }
 
 const companyListeners = new Set<(companies: Company[]) => void>();
+/** 세션 동안 유지. 구독 해제해도 비우지 않는다. */
 let companyListCache: Company[] | null = null;
-let stopCompanyListener: (() => void) | null = null;
+let companyListInFlight: Promise<Company[]> | null = null;
 
-/** 화면 여러 곳이 불러도 Firestore 구독은 하나만 연다. */
+function notifyCompanyListeners(list: Company[]): void {
+  companyListeners.forEach((listener) => listener(list));
+}
+
+async function ensureCompaniesLoaded(): Promise<Company[]> {
+  if (companyListCache) return companyListCache;
+  if (companyListInFlight) return companyListInFlight;
+
+  companyListInFlight = fetchCompanies()
+    .then((list) => {
+      companyListCache = list;
+      companyListInFlight = null;
+      notifyCompanyListeners(list);
+      return list;
+    })
+    .catch((err) => {
+      companyListInFlight = null;
+      throw err;
+    });
+
+  return companyListInFlight;
+}
+
+/**
+ * 화면 여러 곳이 불러도 getDocs는 세션당 한 번.
+ * 실시간 onSnapshot 없음 — 예약 직전 개별 getDoc으로 마감·휴무를 맞춘다.
+ */
 export function subscribeCompanies(onData: (companies: Company[]) => void): () => void {
   companyListeners.add(onData);
-  if (companyListCache) onData(companyListCache);
-  if (!stopCompanyListener) {
-    stopCompanyListener = onSnapshot(collection(db, 'companies'), (snap) => {
-      const list = snap.docs
-        .map((d) => normalizeCompany(d.id, d.data() as Record<string, unknown>))
-        .filter((c): c is Company => c !== null)
-        .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-      companyListCache = list;
-      companyListeners.forEach((listener) => listener(list));
+  if (companyListCache) {
+    onData(companyListCache);
+  } else {
+    void ensureCompaniesLoaded().catch((err) => {
+      console.warn('companies load failed:', err);
     });
   }
   return () => {
     companyListeners.delete(onData);
-    if (companyListeners.size === 0 && stopCompanyListener) {
-      stopCompanyListener();
-      stopCompanyListener = null;
-      companyListCache = null;
-    }
   };
+}
+
+/** 예약 직전 등 — 단건 최신값을 캐시에 반영(있을 때만) */
+export function patchCompanyInSessionCache(company: Company): void {
+  if (!companyListCache) return;
+  const next = companyListCache.map((item) => (item.id === company.id ? company : item));
+  companyListCache = next;
+  notifyCompanyListeners(next);
 }

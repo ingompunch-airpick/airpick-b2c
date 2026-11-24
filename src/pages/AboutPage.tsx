@@ -133,6 +133,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
           <dl className="space-y-1.5 rounded-2xl bg-sky-soft px-4 py-3.5 text-xs font-medium text-ink ring-1 ring-sky-border/60">
             <InfoRow label="브랜드" value={COMPANY_LEGAL.serviceName} />
             <InfoRow label="상호" value={COMPANY_LEGAL.name} />
+            <InfoRow label="서비스명" value={COMPANY_LEGAL.serviceName} />
             <InfoRow label="대표" value={COMPANY_LEGAL.representative} />
             <InfoRow label="사업자등록번호" value={COMPANY_LEGAL.registrationNumber} />
             <InfoRow label="주소" value={COMPANY_LEGAL.address} />

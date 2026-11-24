@@ -210,7 +210,7 @@ export default function App() {
     };
   }, []);
 
-  /** 첫 페인트 뒤에 Firestore 구독 — PG 헤드리스가 네트워크 대기로 타임아웃 나는 것 완화 */
+  /** 첫 페인트 뒤에 companies 1회 로드(세션 캐시) — PG 헤드리스 네트워크 타임아웃 완화 */
   useEffect(() => {
     let cancelled = false;
     let unsub: (() => void) | undefined;

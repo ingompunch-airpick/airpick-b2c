@@ -4,7 +4,9 @@ import TimeField from './TimeField';
 import TerminalFields from './TerminalFields';
 import type { BookingSearch, Terminal } from '../types';
 import { cn } from '../utils/cn';
+import { APP_CONFIG } from '../constants/appConfig';
 import { formatDateDisplay, todayYmd } from '../utils/dates';
+import { maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
 import { getParkingDayCount } from '../utils/pricing';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { formatTerminalSummary } from '../utils/terminalLabels';
@@ -92,10 +94,14 @@ export default function SearchPanel({
           label="맡기는 날"
           value={search.departureDate}
           min={today}
+          max={maxDepartureYmd(today)}
           onChange={(departureDate) => {
             const next = { ...search, departureDate };
+            const arrMax = maxArrivalYmd(departureDate);
             if (next.arrivalDate < departureDate) {
               next.arrivalDate = departureDate;
+            } else if (next.arrivalDate > arrMax) {
+              next.arrivalDate = arrMax;
             }
             onChange(next);
           }}
@@ -105,9 +111,13 @@ export default function SearchPanel({
           label="찾는 날"
           value={search.arrivalDate}
           min={search.departureDate}
+          max={maxArrivalYmd(search.departureDate)}
           onChange={(arrivalDate) => onChange({ ...search, arrivalDate })}
         />
       </div>
+      <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/50">
+        {APP_CONFIG.bookingWindowNotice}
+      </p>
 
       <div className="mt-2 grid grid-cols-2 gap-2">
         <TimeField

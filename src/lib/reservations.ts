@@ -19,6 +19,7 @@ import {
   bookingPolicyMessage,
   checkBookingPolicy,
 } from '../utils/bookingPolicy';
+import { bookingWindowMessage, checkBookingWindow } from '../utils/bookingWindow';
 import {
   getReservationCheckInPhotos,
   getReservationCheckOutPhotos,
@@ -171,6 +172,10 @@ export async function assertBookingAllowed(
   departureDate: string,
   arrivalDate: string
 ): Promise<void> {
+  const windowCheck = checkBookingWindow(departureDate, arrivalDate);
+  if (!windowCheck.allowed) {
+    throw new Error(bookingWindowMessage(windowCheck));
+  }
   const policy = await fetchCompanyBookingPolicy(companyId);
   if (!policy) {
     throw new Error('업체 정보를 찾을 수 없습니다.');

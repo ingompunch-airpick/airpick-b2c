@@ -14,6 +14,7 @@ const SEO_DOCUMENT_PREFIXES = [
   '/partners',
   '/faq',
   '/about',
+  '/verified',
   '/privacy',
   '/terms',
   '/refund',

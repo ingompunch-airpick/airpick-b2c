@@ -106,8 +106,8 @@ export const AIRPICK_VERIFIED = {
   label: 'AIRPICK VERIFIED',
   eyebrow: '에어픽 인증 업체',
   homeLine: '에어픽이 직접 확인한 인증 업체',
-  criteriaCta: '선정 기준 보기',
-  criteriaHref: '/partners/',
+  criteriaCta: '확인 기준 보기',
+  criteriaHref: '/verified/',
   checklist: [
     '사업자 확인',
     '보험 가입 확인',

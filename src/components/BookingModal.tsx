@@ -27,8 +27,16 @@ import {
 } from '../lib/reservations';
 import { trackAppointmentScheduled, trackPurchaseOnce } from '../lib/analytics';
 import { reportError } from '../lib/errorReport';
+import { fetchCompanyById, patchCompanyInSessionCache } from '../lib/companies';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
+import {
+  bookingWindowMessage,
+  checkBookingWindow,
+  maxArrivalYmd,
+  maxDepartureYmd,
+} from '../utils/bookingWindow';
+import { APP_CONFIG } from '../constants/appConfig';
 import { formatDateDisplay, formatStayPhrase, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
 import { getPriceBreakdown, withAffiliateDiscount } from '../utils/pricing';
@@ -570,12 +578,23 @@ export default function BookingModal({
     setSoldOut(false);
     setSoldOutDetail('');
     try {
+      const latestCompany = (await fetchCompanyById(company.id)) ?? company;
+      if (latestCompany !== company) {
+        patchCompanyInSessionCache(latestCompany);
+      }
+
+      const windowCheck = checkBookingWindow(payload.departureDate, payload.arrivalDate);
+      if (!windowCheck.allowed) {
+        setError(bookingWindowMessage(windowCheck));
+        return;
+      }
+
       const localCheck = checkBookingPolicy(
         payload.departureDate,
         payload.arrivalDate,
-        company.isOpen !== false,
-        company.blockedDates ?? [],
-        company.sameDayBookingBlocked === true
+        latestCompany.isOpen !== false,
+        latestCompany.blockedDates ?? [],
+        latestCompany.sameDayBookingBlocked === true
       );
       if (!localCheck.allowed) {
         setError(bookingPolicyMessage(localCheck, payload.departureDate, payload.arrivalDate));
@@ -585,12 +604,12 @@ export default function BookingModal({
       try {
         await ensureAnonymousAuth();
         await assertHourlyCapacityAvailable(
-          company.id,
+          latestCompany.id,
           payload.departureDate,
           payload.departureTime,
           {
-            hourlyCapEnabled: company.hourlyCapEnabled,
-            maxCarsPerHour: company.maxCarsPerHour,
+            hourlyCapEnabled: latestCompany.hourlyCapEnabled,
+            maxCarsPerHour: latestCompany.maxCarsPerHour,
           }
         );
       } catch (capErr) {
@@ -603,13 +622,13 @@ export default function BookingModal({
       }
 
       const { id, bookingNo } = await submitReservation(
-        company.id,
-        company.name,
+        latestCompany.id,
+        latestCompany.name,
         payload,
         bookingForm,
         payable,
         search.faceToFace === true ? { valetFee } : undefined,
-        affiliateOffer && isAirpickPartner(company)
+        affiliateOffer && isAirpickPartner(latestCompany)
           ? {
               code: affiliateOffer.code,
               customerDiscountWon: breakdown.affiliateDiscountWon ?? 0,
@@ -1247,11 +1266,15 @@ export default function BookingModal({
               label="맡기는 날"
               value={search.departureDate}
               min={today}
+              max={maxDepartureYmd(today)}
               onChange={(departureDate) => {
                 setSearch((prev) => {
                   const next = { ...prev, departureDate };
+                  const arrMax = maxArrivalYmd(departureDate);
                   if (next.arrivalDate < departureDate) {
                     next.arrivalDate = departureDate;
+                  } else if (next.arrivalDate > arrMax) {
+                    next.arrivalDate = arrMax;
                   }
                   return next;
                 });
@@ -1261,9 +1284,13 @@ export default function BookingModal({
               label="찾는 날"
               value={search.arrivalDate}
               min={search.departureDate}
+              max={maxArrivalYmd(search.departureDate)}
               onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}
             />
           </div>
+          <p className="text-[11px] font-medium leading-relaxed text-muted">
+            {APP_CONFIG.bookingWindowNotice}
+          </p>
           <div className="grid grid-cols-2 gap-2">
             <TimeField
               label="맡기는 시간"

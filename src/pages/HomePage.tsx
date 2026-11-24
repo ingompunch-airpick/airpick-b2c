@@ -32,7 +32,9 @@ import {
   comparePartnerRelativeOrder,
   type PricedCompany,
 } from '../utils/compareSort';
+import { APP_CONFIG } from '../constants/appConfig';
 import { formatStayPhrase, todayYmd } from '../utils/dates';
+import { maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import { companyCardPhotoUrl } from '../utils/parkingLocation';
@@ -358,9 +360,12 @@ export default function HomePage({
                     label="맡기는 날"
                     value={search.departureDate}
                     min={today}
+                    max={maxDepartureYmd(today)}
                     onChange={(departureDate) => {
                       const next = { ...search, departureDate };
+                      const arrMax = maxArrivalYmd(departureDate);
                       if (next.arrivalDate < departureDate) next.arrivalDate = departureDate;
+                      else if (next.arrivalDate > arrMax) next.arrivalDate = arrMax;
                       onSearchChange(next);
                     }}
                   />
@@ -370,9 +375,13 @@ export default function HomePage({
                     label="찾는 날"
                     value={search.arrivalDate}
                     min={search.departureDate}
+                    max={maxArrivalYmd(search.departureDate)}
                     onChange={(arrivalDate) => onSearchChange({ ...search, arrivalDate })}
                   />
                 </div>
+                <p className="mt-2 text-[11px] font-medium leading-snug text-[#0f1a2e]/50">
+                  {APP_CONFIG.bookingWindowNotice}
+                </p>
               </div>
               <div>
                 <ChoiceLabel>시간</ChoiceLabel>

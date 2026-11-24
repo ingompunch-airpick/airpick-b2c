@@ -36,8 +36,11 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
             인천공항 주차대행 비교·예약 플랫폼. 신뢰를 기준으로 입점 업체를 선별합니다.
           </p>
           <p className="mt-4 text-xs leading-relaxed text-mkt-muted">
-            상호: {COMPANY_LEGAL.name} (서비스명 {COMPANY_LEGAL.serviceName}) | 대표:{' '}
-            {COMPANY_LEGAL.representative}
+            상호: {COMPANY_LEGAL.name}
+            <br />
+            서비스명: {COMPANY_LEGAL.serviceName}
+            <br />
+            대표: {COMPANY_LEGAL.representative}
             <br />
             사업자등록번호: {COMPANY_LEGAL.registrationNumber}
             {COMPANY_LEGAL.mailOrderNumber

@@ -17,7 +17,8 @@ import {
   computeLeaveBy,
   parseHmToMinutes,
 } from '../../utils/leaveByCalculator';
-import { formatDateDisplay } from '../../utils/dates';
+import { formatDateDisplay, todayYmd } from '../../utils/dates';
+import { maxArrivalYmd, maxDepartureYmd } from '../../utils/bookingWindow';
 import { getParkingDayCount } from '../../utils/pricing';
 import {
   APP_TAB_SOON,
@@ -395,9 +396,13 @@ export default function TripHomeHub({
             tone="premium"
             label="맡기는 날"
             value={departureDate}
+            min={todayYmd()}
+            max={maxDepartureYmd(todayYmd())}
             onChange={(next) => {
               setDepartureDate(next);
+              const arrMax = maxArrivalYmd(next);
               if (arrivalDate < next) setArrivalDate(addDaysInput(next, 1));
+              else if (arrivalDate > arrMax) setArrivalDate(arrMax);
             }}
           />
           <TimeField
@@ -438,6 +443,7 @@ export default function TripHomeHub({
             label="찾는 날"
             value={arrivalDate}
             min={departureDate}
+            max={maxArrivalYmd(departureDate)}
             onChange={setArrivalDate}
           />
           <TimeField

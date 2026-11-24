@@ -57,8 +57,11 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
       </nav>
 
       <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
-        상호: {COMPANY_LEGAL.name} (서비스명 {COMPANY_LEGAL.serviceName}) | 대표:{' '}
-        {COMPANY_LEGAL.representative}
+        상호: {COMPANY_LEGAL.name}
+        <br />
+        서비스명: {COMPANY_LEGAL.serviceName}
+        <br />
+        대표: {COMPANY_LEGAL.representative}
         <br />
         사업자등록번호: {COMPANY_LEGAL.registrationNumber}
         {COMPANY_LEGAL.mailOrderNumber ? (
