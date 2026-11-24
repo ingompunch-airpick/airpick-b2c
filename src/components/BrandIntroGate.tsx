@@ -38,7 +38,7 @@ export function shouldForceBrandIntro(): boolean {
   }
 }
 
-function usePrefersReducedMotion(): boolean {
+export function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -50,7 +50,7 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-function useIsMdUp(): boolean {
+export function useIsMdUp(): boolean {
   const [mdUp, setMdUp] = useState(() =>
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false
   );
@@ -64,7 +64,7 @@ function useIsMdUp(): boolean {
   return mdUp;
 }
 
-function IntroVideo({
+export function IntroVideo({
   src,
   poster,
   className,

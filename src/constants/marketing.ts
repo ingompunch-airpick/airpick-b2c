@@ -300,6 +300,9 @@ export const BRAND_INTRO = {
   guideHref: '/guides/',
   verifiedCta: '확인 기준 보기',
   verifiedHref: '/verified/',
+  /** 홈 배너 CTA → 아래 검색 카드로 스크롤 */
+  homeCta: '업체·요금 비교하기',
+  homeVerifiedLink: '확인 기준 보기',
   tagline: '여행의 시작부터, 주차는 믿을 수 있게.',
   /** public/brand — PC 16:9 / 모바일 9:16 */
   videoDesktop: '/brand/intro-desktop.mp4',

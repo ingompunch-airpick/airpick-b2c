@@ -9,7 +9,6 @@ import AppMenuSheet from './components/AppMenuSheet';
 import BottomNav from './components/BottomNav';
 import BrandIntroGate, {
   clearBrandIntroSeen,
-  hasSeenBrandIntro,
   markBrandIntroSeen,
   shouldForceBrandIntro,
 } from './components/BrandIntroGate';
@@ -103,10 +102,12 @@ function shouldShowBrandIntroOnLaunch(initialTab: AppTab): boolean {
     clearBrandIntroSeen();
     return true;
   }
-  /** 예약 프리필·파트너 딥링크는 게이트 스킵 (브라우저 에이전트·공유 URL) */
-  if (readBookingQueryPrefill().patched) return false;
-  /** 직링크(/parking, /esim, /my)는 게이트 스킵. 홈은 이 브라우저에서 시작하기 전만 */
-  return initialTab === 'home' && !hasSeenBrandIntro();
+  /**
+   * 11-24: 인트로 게이트 폐지 → 같은 메시지를 홈 상단 배너(HomeBrandHero)로.
+   * 예약하러 온 손님이 한 단계 더 누르지 않게. 옛 게이트는 ?intro=1 미리보기만.
+   */
+  void initialTab;
+  return false;
 }
 
 export default function App() {
