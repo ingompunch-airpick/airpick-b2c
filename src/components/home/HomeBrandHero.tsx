@@ -1,4 +1,4 @@
-import { ArrowDown, Check } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { APP_CONFIG } from '../../constants/appConfig';
 import { BRAND_INTRO } from '../../constants/marketing';
 import { trackCtaClick } from '../../lib/analytics';
@@ -36,7 +36,9 @@ export default function HomeBrandHero({ searchTargetId }: { searchTargetId: stri
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-5 pb-20 pt-9 text-center [text-shadow:0_2px_14px_rgba(0,0,0,0.55)] md:pb-24 md:pt-14">
+      {/* 배너는 메시지만 — 약속(안심케어)은 검색 카드 바로 아래 AIRPICK PROMISE 줄에서 */}
+      <div className="relative z-10 mx-auto max-w-4xl px-5 pb-20 pt-10 md:pb-24 md:pt-16">
+      <div className="flex flex-col items-center text-center [text-shadow:0_2px_14px_rgba(0,0,0,0.55)]">
         {/* 모바일은 문장 단위로 줄바꿈 — 「맡기시나 / 요?」처럼 끊기지 않게 */}
         <p className="text-[14px] font-semibold leading-snug text-white md:text-[18px]">
           {APP_CONFIG.introStatText.split(/(?<=\.)\s+/).map((part, i) => (
@@ -52,33 +54,16 @@ export default function HomeBrandHero({ searchTargetId }: { searchTargetId: stri
           <span className="block md:inline">{BRAND_INTRO.titleLead}</span>{' '}
           <strong className="block font-extrabold md:inline">{BRAND_INTRO.titleRest}</strong>
         </p>
-        <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 md:mt-6 md:gap-x-6">
-          {BRAND_INTRO.checks.map((label) => (
-            <li key={label} className="inline-flex items-center gap-1 text-[15px] font-bold md:text-[18px]">
-              <Check size={16} strokeWidth={3} className="text-[#c9a962]" aria-hidden />
-              {label}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-1.5 text-[13px] font-semibold text-white md:text-[16px]">
-          {BRAND_INTRO.promiseLine}{' '}
-          <a
-            href={BRAND_INTRO.verifiedHref}
-            onClick={() => trackCtaClick('home_hero_verified', 'home_hero')}
-            className="whitespace-nowrap text-[#e3c987] underline underline-offset-2"
-          >
-            {BRAND_INTRO.homeVerifiedLink}
-          </a>
-        </p>
-
         <button
           type="button"
           onClick={goSearch}
-          className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-[#c9a962] px-7 py-3 text-[15px] font-bold text-[#0a1628] transition [text-shadow:none] active:scale-[0.98] md:mt-7 md:px-8 md:py-3.5 md:text-[17px]"
+          className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#c9a962] px-7 py-3 text-[15px] font-bold text-[#0a1628] transition [text-shadow:none] active:scale-[0.98] md:mt-7 md:px-8 md:py-3.5 md:text-[17px]"
         >
           {BRAND_INTRO.homeCta}
           <ArrowDown size={18} strokeWidth={2.5} aria-hidden />
         </button>
+      </div>
+
       </div>
     </div>
   );
