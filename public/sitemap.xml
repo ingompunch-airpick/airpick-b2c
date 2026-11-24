@@ -92,6 +92,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.에어픽.kr/verified/</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.에어픽.kr/care/</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.에어픽.kr/guides/airport-parking-types/</loc>
     <lastmod>2026-11-18</lastmod>
     <changefreq>weekly</changefreq>

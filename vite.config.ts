@@ -48,6 +48,7 @@ function seoDocumentRewrite() {
     '/faq',
     '/about',
     '/verified',
+    '/care',
     '/privacy',
     '/facts',
     '/join/badge',
@@ -148,6 +149,7 @@ export default defineConfig({
         globIgnores: [
           '**/about/**',
           '**/verified/**',
+          '**/care/**',
           '**/faq/**',
           '**/privacy/**',
           '**/guides/**',
@@ -178,6 +180,7 @@ export default defineConfig({
           /^\/seo\.css$/,
           /^\/about(?:\/|$)/,
           /^\/verified(?:\/|$)/,
+          /^\/care(?:\/|$)/,
           /^\/faq(?:\/|$)/,
           /^\/privacy(?:\/|$)/,
           /^\/guides(?:\/|$)/,
@@ -218,7 +221,7 @@ export default defineConfig({
           },
           // about/faq/privacy/guides/partners 정적 HTML — 네트워크 우선, 최대 1시간
           {
-            urlPattern: /\/(?:about|verified|faq|privacy|guides|partners|join|facts)(?:\/|$)/i,
+            urlPattern: /\/(?:about|verified|care|faq|privacy|guides|partners|join|facts)(?:\/|$)/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'seo-html',

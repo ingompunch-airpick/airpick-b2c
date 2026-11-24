@@ -1,6 +1,6 @@
 import { Camera, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL } from '../constants/marketing';
+import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL, AIRPICK_CARE } from '../constants/marketing';
 import ParkingMapPinPreview from './ParkingMapPinPreview';
 import ReviewWriteModal from './ReviewWriteModal';
 import InsuranceCoverageCard from './InsuranceCoverageCard';
@@ -13,6 +13,7 @@ import { companyPhotoUrl } from '../utils/imageUrl';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { resolveInsuranceDisplay } from '../utils/insurance';
 import { displayReservationCode } from '../utils/bookingNo';
+import { COMPANY_LEGAL } from '../constants/companyLegal';
 import { getStatusLabel, getStatusStep, formatCheckInStaffLine, formatCheckOutStaffLine } from '../utils/trust';
 import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import {
@@ -660,6 +661,24 @@ export default function ReservationCard({
           ) : null}
         </div>
       )}
+
+      {/* 에어픽 안심케어 접수 — 예약번호를 같이 보내 달라고 안내 */}
+      <a
+        href={COMPANY_LEGAL.kakaoChatUrl}
+        target="_blank"
+        rel="noopener"
+        className="mt-4 flex items-center justify-between gap-2 rounded-2xl bg-[#0f1a2e] px-4 py-3 text-white"
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <ShieldCheck size={18} strokeWidth={2.25} className="shrink-0 text-[#c9a962]" aria-hidden />
+          <span className="min-w-0">
+            <span className="block text-[14px] font-bold">문제가 생겼나요? {AIRPICK_CARE.badge} 접수</span>
+            <span className="block text-[12px] font-medium text-white/70">
+              카카오톡으로 예약번호 {displayReservationCode(reservation)}를 보내 주세요 · {AIRPICK_CARE.hours}
+            </span>
+          </span>
+        </span>
+      </a>
 
       {reviewOpen && onSubmitReview && (
         <ReviewWriteModal

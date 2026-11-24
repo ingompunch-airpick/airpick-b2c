@@ -91,6 +91,18 @@
       "changefreq": "monthly",
       "priority": 0.55,
       "note": "요금 안내·예시 견적 스냅샷"
+    },
+    {
+      "path": "/verified/",
+      "changefreq": "monthly",
+      "priority": 0.7,
+      "note": "업체 확인 기준"
+    },
+    {
+      "path": "/care/",
+      "changefreq": "monthly",
+      "priority": 0.7,
+      "note": "에어픽 안심케어"
     }
   ],
   "planned": []

@@ -1,4 +1,4 @@
-import { Car, Clock, KeyRound, MapPin, Phone, Receipt, Shield, Star, X } from 'lucide-react';
+import { Car, Clock, KeyRound, MapPin, Phone, Receipt, Shield, ShieldCheck, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AffiliatePrice from './AffiliatePrice';
 import AirportSavingsLine from './AirportSavingsLine';
@@ -33,7 +33,8 @@ import { displayInsuranceLabel } from '../utils/trust';
 import { shouldShowInsuranceBadge } from '../utils/trustDisplay';
 import { cn } from '../utils/cn';
 import { APP_CONFIG } from '../constants/appConfig';
-import { PRICE_INCLUSION } from '../constants/marketing';
+import { AIRPICK_CARE, PRICE_INCLUSION } from '../constants/marketing';
+import { isPaymentStepVisible } from '../lib/paymentMode';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
@@ -414,14 +415,15 @@ export default function CompanyDetailSheet({
   const reviewAverage = reviewSnapshot?.averageRating;
 
   return (
-    <div className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center sm:p-4">
+    /* 헤더·하단 탭 사이에만 띄움 — 예전엔 하단 탭이 「예약하기」 버튼을 가렸음 */
+    <div className="fixed inset-x-0 top-[var(--app-header-h,60px)] bottom-[var(--app-tab-h,56px)] z-[55] flex items-end justify-center sm:items-center sm:p-4">
       <button
         type="button"
         className="absolute inset-0 bg-sky-deep/50"
         aria-label="닫기"
         onClick={onClose}
       />
-      <div className="relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl">
+      <div className="relative z-10 flex max-h-full w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl">
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-sky-border/50 px-5 py-4">
           <div className="flex min-w-0 gap-3">
             {thumbSrc ? (
@@ -507,6 +509,24 @@ export default function CompanyDetailSheet({
           </section>
 
           <PriceBreakdownCard company={company} search={search} affiliateDiscountWon={affiliateDiscountWon} />
+
+          {/* 에어픽 안심케어 — 입점 업체 전부 적용 */}
+          <section className="mt-4 rounded-2xl bg-[#0f1a2e] p-4 text-white" aria-label={AIRPICK_CARE.name}>
+            <p className="flex items-center gap-1.5 text-[14px] font-bold">
+              <ShieldCheck size={17} strokeWidth={2.5} className="text-[#c9a962]" aria-hidden />
+              {AIRPICK_CARE.name} 적용
+            </p>
+            <ul className="mt-2 space-y-1 text-[13px] font-medium leading-relaxed text-white/80">
+              {AIRPICK_CARE.items
+                .filter((item) => item.id !== 'verified')
+                .map((item) => (
+                  <li key={item.id}>· {item.title}</li>
+                ))}
+            </ul>
+            <a href={AIRPICK_CARE.href} className="mt-2 inline-block text-[13px] font-bold text-[#e3c987] underline underline-offset-2">
+              안심케어 자세히 보기
+            </a>
+          </section>
 
           <section className="mt-4 space-y-3 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">이용 방법</p>
@@ -630,7 +650,7 @@ export default function CompanyDetailSheet({
           </div>
           <div className="mb-3 flex items-end justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold text-muted">총 {stay} · 온라인 결제 준비 중</p>
+              <p className="text-[11px] font-semibold text-muted">총 {stay}{isPaymentStepVisible() ? '' : ' · 온라인 결제 준비 중'}</p>
               <AffiliatePrice
                 price={price}
                 affiliateDiscountWon={affiliateDiscountWon}

@@ -11,6 +11,7 @@ import {
   PlaneTakeoff,
   SquareParking,
   Shield,
+  ShieldCheck,
   Star,
   Sun,
   Warehouse,
@@ -22,7 +23,7 @@ import HomeFaq from '../components/home/HomeFaq';
 import HomeBrandHero from '../components/home/HomeBrandHero';
 import HomeFeatureStrip from '../components/home/HomeFeatureStrip';
 import HomeHowItWorks from '../components/home/HomeHowItWorks';
-import { PRICE_INCLUSION } from '../constants/marketing';
+import { AIRPICK_CARE, PRICE_INCLUSION } from '../constants/marketing';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
@@ -795,6 +796,11 @@ function PriceList({
                   <span className="text-[12px] font-semibold tracking-wide">사진 준비 중</span>
                 </div>
               )}
+              {/* 입점 업체 전부 안심케어 적용 */}
+              <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#0f1a2e]/85 px-2.5 py-1 text-[12px] font-bold text-white backdrop-blur-sm">
+                <ShieldCheck size={14} strokeWidth={2.5} className="text-[#c9a962]" aria-hidden />
+                {AIRPICK_CARE.badge}
+              </span>
             </div>
             <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col px-4 py-4">
               <div className="flex items-start justify-between gap-2">
