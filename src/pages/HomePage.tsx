@@ -21,6 +21,7 @@ import DateField from '../components/DateField';
 import HomeFaq from '../components/home/HomeFaq';
 import HomeBrandHero from '../components/home/HomeBrandHero';
 import HomeFeatureStrip from '../components/home/HomeFeatureStrip';
+import HomeHowItWorks from '../components/home/HomeHowItWorks';
 import { PRICE_INCLUSION } from '../constants/marketing';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
@@ -510,6 +511,9 @@ export default function HomePage({
           </>
         )}
       </section>
+      <div className="mx-auto mt-12 max-w-lg px-4 md:max-w-3xl">
+        <HomeHowItWorks />
+      </div>
       <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
         <HomeYoutubeLive />
       </div>

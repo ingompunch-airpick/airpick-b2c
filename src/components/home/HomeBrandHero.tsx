@@ -37,8 +37,14 @@ export default function HomeBrandHero({ searchTargetId }: { searchTargetId: stri
       </div>
 
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-5 pb-20 pt-9 text-center [text-shadow:0_2px_14px_rgba(0,0,0,0.55)] md:pb-24 md:pt-14">
+        {/* 모바일은 문장 단위로 줄바꿈 — 「맡기시나 / 요?」처럼 끊기지 않게 */}
         <p className="text-[14px] font-semibold leading-snug text-white md:text-[18px]">
-          {APP_CONFIG.introStatText}
+          {APP_CONFIG.introStatText.split(/(?<=\.)\s+/).map((part, i) => (
+            <span key={i} className="block md:inline">
+              {i > 0 ? <span className="hidden md:inline"> </span> : null}
+              {part}
+            </span>
+          ))}
         </p>
         <span className="mt-3 block h-[2px] w-10 bg-[#c9a962] md:mt-4" aria-hidden />
 
@@ -46,10 +52,6 @@ export default function HomeBrandHero({ searchTargetId }: { searchTargetId: stri
           <span className="block md:inline">{BRAND_INTRO.titleLead}</span>{' '}
           <strong className="block font-extrabold md:inline">{BRAND_INTRO.titleRest}</strong>
         </p>
-        <p className="mt-2 text-[11px] font-bold tracking-[0.35em] text-white/95 md:mt-3 md:text-[15px]">
-          {BRAND_INTRO.subtitleEn}
-        </p>
-
         <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 md:mt-6 md:gap-x-6">
           {BRAND_INTRO.checks.map((label) => (
             <li key={label} className="inline-flex items-center gap-1 text-[15px] font-bold md:text-[18px]">

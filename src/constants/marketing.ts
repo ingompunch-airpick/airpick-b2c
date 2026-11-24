@@ -332,6 +332,35 @@ export const HOME_FEATURE_STRIP = [
   { id: 'price', label: '할증 포함 총액' },
 ] as const;
 
+/** 홈 · 업체 목록 아래 「에어픽은 이렇게 달라요」 + 「이용 방법」 (실제 제공 기능만) */
+export const HOME_HOW = {
+  whyTitle: '에어픽은 이렇게 달라요',
+  why: [
+    {
+      id: 'verified',
+      title: '맡기기 전에, 업체부터 확인',
+      body: '사업자·주차장·보험·CCTV를 서류와 현장 방문으로 확인한 업체만 소개해요. 입점 뒤에도 6개월마다 다시 가 봐요.',
+    },
+    {
+      id: 'after',
+      title: '맡긴 뒤에도, 내 차 확인',
+      body: '입고 사진과 주차 위치를 내 예약에서 바로 볼 수 있어요. 실내로 예약했는데 야외로 옮겨지는지 숨기지 않아요.',
+    },
+    {
+      id: 'price',
+      title: '할증까지 넣은 총액으로 비교',
+      body: '야간·터미널 할증을 넣은 금액으로 업체를 나란히 비교해요. 입고 24시간 전까지는 무료로 취소할 수 있어요.',
+    },
+  ],
+  stepsTitle: '이용 방법',
+  steps: [
+    { id: 'book', title: '비교하고 예약', body: '날짜·터미널을 고르고 업체를 비교해 예약해요.' },
+    { id: 'handoff', title: '공항에서 차 인계', body: '예약한 시간·장소에서 기사에게 차와 키를 맡기고 출국해요.' },
+    { id: 'check', title: '사진·위치 확인', body: '여행 중에도 입고 사진과 주차 위치를 내 예약에서 확인해요.' },
+    { id: 'return', title: '귀국하면 차 받기', body: '도착 시간에 맞춰 약속한 장소에서 차를 돌려받아요.' },
+  ],
+} as const;
+
 /** 홈 · 여행 정보 입력 후 결과로 */
 export const HOME_TRIP_CONTINUE_CTA = '내 여행 준비 시작';
 
