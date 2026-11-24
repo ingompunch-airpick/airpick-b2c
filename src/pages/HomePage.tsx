@@ -313,10 +313,14 @@ export default function HomePage({
         <HomeBrandHero searchTargetId="home-search" />
 
         <div
-          id="home-search"
-          className="relative z-10 mx-auto -mt-14 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4 md:max-w-3xl"
+          className="relative z-10 mx-auto -mt-14 max-w-lg px-4 md:max-w-3xl"
         >
-          <div className="space-y-4 rounded-[28px] bg-white p-4 shadow-[0_12px_40px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/6 md:p-5">
+          {/* 약속(안심케어)을 먼저 보여 주고 바로 아래 검색 카드 (대표 결정 11-24) */}
+          <HomePromiseStrip />
+          <div
+            id="home-search"
+            className="mt-4 scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] space-y-4 rounded-[28px] bg-white p-4 shadow-[0_12px_40px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/6 md:p-5"
+          >
             <div>
               <ChoiceLabel>터미널 선택</ChoiceLabel>
               <div className="grid grid-cols-2 gap-2">
@@ -410,7 +414,6 @@ export default function HomePage({
               </div>
             </div>
           </div>
-          <HomePromiseStrip />
         </div>
       </section>
 

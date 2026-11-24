@@ -662,7 +662,7 @@ export default function ReservationCard({
         </div>
       )}
 
-      {/* 에어픽 안심케어 접수 — 예약번호를 같이 보내 달라고 안내 */}
+      {/* 안심케어 「게시한 그대로」 환불 요청 — 예약번호를 같이 보내 달라고 안내 */}
       <a
         href={COMPANY_LEGAL.kakaoChatUrl}
         target="_blank"
@@ -672,9 +672,9 @@ export default function ReservationCard({
         <span className="flex min-w-0 items-center gap-2">
           <ShieldCheck size={18} strokeWidth={2.25} className="shrink-0 text-[#c9a962]" aria-hidden />
           <span className="min-w-0">
-            <span className="block text-[14px] font-bold">문제가 생겼나요? {AIRPICK_CARE.badge} 접수</span>
+            <span className="block text-[14px] font-bold">{AIRPICK_CARE.claimCta}</span>
             <span className="block text-[12px] font-medium text-white/70">
-              카카오톡으로 예약번호 {displayReservationCode(reservation)}를 보내 주세요 · {AIRPICK_CARE.hours}
+              카카오톡으로 예약번호 {displayReservationCode(reservation)}와 사진을 보내 주세요 · {AIRPICK_CARE.hours}
             </span>
           </span>
         </span>
