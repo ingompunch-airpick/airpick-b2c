@@ -43,8 +43,17 @@ export default function DateField({
         min={min}
         max={max}
         onChange={(e) => onChange(e.target.value)}
+        /* 칸 어디를 눌러도 달력이 열리게 (기본은 오른쪽 아이콘만) */
+        onClick={(e) => {
+          const el = e.currentTarget as HTMLInputElement & { showPicker?: () => void };
+          try {
+            el.showPicker?.();
+          } catch {
+            /* 지원 안 하는 브라우저 — 기본 동작 */
+          }
+        }}
         className={cn(
-          'w-full tabular-nums outline-none transition-colors',
+          'w-full cursor-pointer tabular-nums outline-none transition-colors',
           large
             ? 'h-12 rounded-2xl bg-[#f4f5f7] px-3 text-[16px] font-semibold text-[#0f1a2e] md:h-auto md:py-3'
             : cn(
