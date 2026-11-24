@@ -1,5 +1,6 @@
 import { Clock } from 'lucide-react';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import PickerPopover, { usePickerDismiss } from './PickerPopover';
 import { cn } from '../utils/cn';
 
 function normalizeTime(raw: string): string {
@@ -16,6 +17,12 @@ function parse(value: string): { h: number; m: number } {
   return { h: Number.isFinite(h) ? h! : 10, m: Number.isFinite(m) ? m! : 0 };
 }
 
+function hourLabel(h: number): string {
+  const ampm = h < 12 ? '오전' : '오후';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${ampm} ${h12}시`;
+}
+
 /** 10:00 → 오전 10:00 / 15:30 → 오후 3:30 */
 export function formatKoreanTime(value: string): string {
   if (!value) return '시간 선택';
@@ -25,13 +32,12 @@ export function formatKoreanTime(value: string): string {
   return `${ampm} ${h12}:${String(m).padStart(2, '0')}`;
 }
 
-const HOURS_12 = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const MINUTES = [0, 10, 20, 30, 40, 50];
 
 /**
- * 시간 선택 — 칸 어디를 눌러도 열림.
- * PC: 칸 아래 드롭다운 / 모바일: 아래에서 올라오는 시트.
- * 오전·오후 → 시 → 분 순서로 고르면 바로 반영, 분을 고르면 닫힘.
+ * 시간 선택 — 칸 어디를 눌러도 열림. 왼쪽 「시」(오전 12시~오후 11시) · 오른쪽 「분」(10분 단위) 두 줄 목록.
+ * 시를 고르면 반영, 분을 고르면 반영하고 닫힘.
  */
 export default function TimeField({
   label,
@@ -53,36 +59,25 @@ export default function TimeField({
   const large = size === 'large';
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const hourListRef = useRef<HTMLUListElement>(null);
   const { h, m } = parse(value);
-  const pm = h >= 12;
-  const h12 = h % 12 === 0 ? 12 : h % 12;
+  const close = useCallback(() => setOpen(false), []);
+  usePickerDismiss(open, close, wrapRef);
 
+  // 열릴 때 선택된 시가 보이도록 스크롤
   useEffect(() => {
     if (!open) return;
-    const onDown = (e: MouseEvent | TouchEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('mousedown', onDown);
-    document.addEventListener('touchstart', onDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDown);
-      document.removeEventListener('touchstart', onDown);
-      document.removeEventListener('keydown', onKey);
-    };
+    const el = hourListRef.current?.querySelector<HTMLElement>('[aria-selected="true"]');
+    el?.scrollIntoView({ block: 'center' });
   }, [open]);
 
-  const emit = (hour24: number, minute: number) =>
-    onChange(`${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
-  const to24 = (hour12: number, isPm: boolean) => (hour12 % 12) + (isPm ? 12 : 0);
+  const emit = (hour: number, minute: number) =>
+    onChange(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
 
-  const chip = (selected: boolean) =>
+  const item = (selected: boolean) =>
     cn(
-      'rounded-xl py-2.5 text-[15px] font-semibold tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a962]',
-      selected ? 'bg-[#0f1a2e] text-white' : 'bg-[#f4f5f7] text-[#0f1a2e] hover:bg-[#e8eaee]'
+      'w-full rounded-lg px-3 py-2 text-left text-[15px] font-semibold tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a962]',
+      selected ? 'bg-[#0f1a2e] text-white' : 'text-[#0f1a2e] hover:bg-[#f4f5f7]'
     );
 
   return (
@@ -118,84 +113,53 @@ export default function TimeField({
         )}
       >
         <span>{formatKoreanTime(value)}</span>
-        <Clock size={large ? 18 : 16} strokeWidth={2} className="shrink-0 text-[#0f1a2e]/70" aria-hidden />
+        <Clock size={large ? 18 : 16} strokeWidth={2} className="shrink-0 text-[#0f1a2e]/60" aria-hidden />
       </button>
 
       {open ? (
-        <>
-          {/* 모바일 배경 */}
-          <div className="fixed inset-0 z-[95] bg-black/30 md:hidden" aria-hidden onClick={() => setOpen(false)} />
-          <div
-            id={panelId}
-            role="dialog"
-            aria-label={`${label} 선택`}
-            className={cn(
-              'z-[96] bg-white p-4 shadow-[0_16px_48px_rgba(15,26,46,0.18)] ring-1 ring-[#0f1a2e]/10',
-              'fixed inset-x-0 bottom-0 rounded-t-3xl pb-[max(1rem,env(safe-area-inset-bottom))]',
-              'md:absolute md:inset-x-auto md:bottom-auto md:left-0 md:top-full md:mt-2 md:w-[22rem] md:rounded-2xl md:pb-4'
-            )}
-          >
-            <div className="mb-3 flex items-center justify-between md:hidden">
-              <p className="text-[16px] font-bold text-[#0f1a2e]">{label}</p>
-              <p className="text-[15px] font-bold tabular-nums text-[#b8954a]">{formatKoreanTime(value)}</p>
+        <PickerPopover id={panelId} label={label} summary={formatKoreanTime(value)} onClose={close} widthClass="md:w-[16rem]">
+          <div className="grid grid-cols-[1.4fr_1fr] gap-2">
+            <div>
+              <p className="px-1 pb-1 text-[12px] font-bold text-[#0f1a2e]/45">시</p>
+              <ul ref={hourListRef} role="listbox" aria-label="시" className="max-h-60 space-y-0.5 overflow-y-auto pr-1">
+                {HOURS.map((hour) => (
+                  <li key={hour}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={h === hour}
+                      onClick={() => emit(hour, m)}
+                      className={item(h === hour)}
+                    >
+                      {hourLabel(hour)}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              {[false, true].map((isPm) => (
-                <button
-                  key={String(isPm)}
-                  type="button"
-                  aria-pressed={pm === isPm}
-                  onClick={() => emit(to24(h12, isPm), m)}
-                  className={chip(pm === isPm)}
-                >
-                  {isPm ? '오후' : '오전'}
-                </button>
-              ))}
+            <div>
+              <p className="px-1 pb-1 text-[12px] font-bold text-[#0f1a2e]/45">분</p>
+              <ul role="listbox" aria-label="분" className="space-y-0.5">
+                {MINUTES.map((minute) => (
+                  <li key={minute}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={m === minute}
+                      onClick={() => {
+                        emit(h, minute);
+                        close();
+                      }}
+                      className={item(m === minute)}
+                    >
+                      {String(minute).padStart(2, '0')}분
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            <p className="mb-1.5 mt-3 text-[12px] font-bold text-[#0f1a2e]/50">시</p>
-            <div className="grid grid-cols-6 gap-1.5">
-              {HOURS_12.map((hour) => (
-                <button
-                  key={hour}
-                  type="button"
-                  aria-pressed={h12 === hour}
-                  onClick={() => emit(to24(hour, pm), m)}
-                  className={chip(h12 === hour)}
-                >
-                  {hour}
-                </button>
-              ))}
-            </div>
-
-            <p className="mb-1.5 mt-3 text-[12px] font-bold text-[#0f1a2e]/50">분</p>
-            <div className="grid grid-cols-6 gap-1.5">
-              {MINUTES.map((minute) => (
-                <button
-                  key={minute}
-                  type="button"
-                  aria-pressed={m === minute}
-                  onClick={() => {
-                    emit(h, minute);
-                    setOpen(false);
-                  }}
-                  className={chip(m === minute)}
-                >
-                  {String(minute).padStart(2, '0')}
-                </button>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="mt-4 w-full rounded-xl bg-[#c9a962] py-3 text-[15px] font-bold text-[#0a1628]"
-            >
-              {formatKoreanTime(value)}로 선택
-            </button>
           </div>
-        </>
+        </PickerPopover>
       ) : null}
     </div>
   );

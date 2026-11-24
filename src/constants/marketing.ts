@@ -352,7 +352,7 @@ export const AIRPICK_CARE = {
     {
       id: 'verified',
       title: '확인된 업체만',
-      short: '서류·현장 확인',
+      short: '사업자·보험·주차장·CCTV 확인',
       body: '사업자·주차장·보험·CCTV를 서류와 현장 방문으로 확인한 업체만 소개해요. 입점 뒤에도 6개월마다 다시 확인해요.',
     },
     {

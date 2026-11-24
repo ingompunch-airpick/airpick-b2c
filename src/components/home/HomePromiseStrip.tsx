@@ -14,8 +14,7 @@ export default function HomePromiseStrip() {
     >
       <div className="flex items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] font-bold tracking-[0.2em] text-[#b8954a]">AIRPICK PROMISE</p>
-          <h2 id="home-promise-title" className="mt-0.5 flex items-center gap-1.5 text-[17px] font-bold text-[#0f1a2e] md:text-[19px]">
+          <h2 id="home-promise-title" className="flex items-center gap-1.5 text-[17px] font-bold text-[#0f1a2e] md:text-[19px]">
             <img src="/brand-mark-gold.png?v=10" alt="" width={20} height={20} className="h-5 w-5 shrink-0 object-contain" draggable={false} />
             {AIRPICK_CARE.name}
           </h2>

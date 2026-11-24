@@ -1324,9 +1324,6 @@ export default function BookingModal({
               onChange={(arrivalDate) => setSearch((prev) => ({ ...prev, arrivalDate }))}
             />
           </div>
-          <p className="text-[11px] font-medium leading-relaxed text-muted">
-            {APP_CONFIG.bookingWindowNotice}
-          </p>
           <div className="grid grid-cols-2 gap-2">
             <TimeField
               label="맡기는 시간"

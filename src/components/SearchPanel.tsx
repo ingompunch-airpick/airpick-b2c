@@ -4,7 +4,6 @@ import TimeField from './TimeField';
 import TerminalFields from './TerminalFields';
 import type { BookingSearch, Terminal } from '../types';
 import { cn } from '../utils/cn';
-import { APP_CONFIG } from '../constants/appConfig';
 import { formatDateDisplay, todayYmd } from '../utils/dates';
 import { maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
 import { getParkingDayCount } from '../utils/pricing';
@@ -115,9 +114,6 @@ export default function SearchPanel({
           onChange={(arrivalDate) => onChange({ ...search, arrivalDate })}
         />
       </div>
-      <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/50">
-        {APP_CONFIG.bookingWindowShort}
-      </p>
 
       <div className="mt-2 grid grid-cols-2 gap-2">
         <TimeField

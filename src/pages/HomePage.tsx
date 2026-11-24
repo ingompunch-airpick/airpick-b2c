@@ -36,7 +36,6 @@ import {
   comparePartnerRelativeOrder,
   type PricedCompany,
 } from '../utils/compareSort';
-import { APP_CONFIG } from '../constants/appConfig';
 import { formatStayPhrase, todayYmd } from '../utils/dates';
 import { maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
 import { displayCompanyName } from '../utils/display';
@@ -313,7 +312,7 @@ export default function HomePage({
         <HomeBrandHero searchTargetId="home-search" />
 
         <div
-          className="relative z-10 mx-auto -mt-14 max-w-lg px-4 md:max-w-3xl"
+          className="relative z-10 mx-auto -mt-14 max-w-lg px-4 md:max-w-3xl lg:max-w-5xl"
         >
           {/* 약속(안심케어)을 먼저 보여 주고 바로 아래 검색 카드 (대표 결정 11-24) */}
           <HomePromiseStrip />
@@ -389,9 +388,6 @@ export default function HomePage({
                     onChange={(arrivalDate) => onSearchChange({ ...search, arrivalDate })}
                   />
                 </div>
-                <p className="mt-2 text-[11px] font-medium leading-snug text-[#0f1a2e]/50">
-                  {APP_CONFIG.bookingWindowShort}
-                </p>
               </div>
               <div>
                 <ChoiceLabel>시간</ChoiceLabel>
@@ -417,7 +413,7 @@ export default function HomePage({
         </div>
       </section>
 
-      <section className="mx-auto mt-8 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4 md:max-w-3xl">
+      <section className="mx-auto mt-8 max-w-lg scroll-mt-[calc(var(--app-header-h,60px)+0.75rem)] px-4 md:max-w-3xl lg:max-w-5xl">
         <SiteNoticeBanner />
         {noticeReservation ? (
           <button
@@ -520,13 +516,13 @@ export default function HomePage({
           </>
         )}
       </section>
-      <div className="mx-auto mt-12 max-w-lg px-4 md:max-w-3xl">
+      <div className="mx-auto mt-12 max-w-lg px-4 md:max-w-3xl lg:max-w-5xl">
         <HomeHowItWorks />
       </div>
-      <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
+      <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl lg:max-w-5xl">
         <HomeYoutubeLive />
       </div>
-      <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl">
+      <div className="mx-auto mt-10 max-w-lg px-4 md:max-w-3xl lg:max-w-5xl">
         <HomeFaq />
       </div>
       {/* 홈 사업자·약관 푸터는 index.html #pg-legal-footer (React 밖) — PG 봇용 */}
@@ -744,7 +740,7 @@ function PriceList({
   const lotLabel = isIndoor ? PARKING_LABEL_INDOOR : PARKING_LABEL_OUTDOOR;
 
   return (
-    <div className="grid items-stretch gap-3 md:grid-cols-2">
+    <div className="grid items-stretch gap-3 md:grid-cols-2 lg:grid-cols-3">
       {items.map(({ company, price, listPrice, soldOut }) => {
         const badge = productBadge(company.id, lowestId, reviewedId);
         const snapshot = reviews[company.id];
