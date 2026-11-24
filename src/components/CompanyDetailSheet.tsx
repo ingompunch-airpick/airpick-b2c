@@ -1,4 +1,4 @@
-import { Car, Clock, KeyRound, MapPin, Phone, Receipt, Shield, ShieldCheck, Star, X } from 'lucide-react';
+import { Car, Clock, KeyRound, MapPin, Phone, Receipt, Shield, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AffiliatePrice from './AffiliatePrice';
 import AirportSavingsLine from './AirportSavingsLine';
@@ -513,7 +513,7 @@ export default function CompanyDetailSheet({
           {/* 에어픽 안심케어 — 입점 업체 전부 적용 */}
           <section className="mt-4 rounded-2xl bg-[#0f1a2e] p-4 text-white" aria-label={AIRPICK_CARE.name}>
             <p className="flex items-center gap-1.5 text-[14px] font-bold">
-              <ShieldCheck size={17} strokeWidth={2.5} className="text-[#c9a962]" aria-hidden />
+              <img src="/brand-mark-gold.png?v=10" alt="" width={18} height={18} className="h-[18px] w-[18px] shrink-0 object-contain" draggable={false} />
               {AIRPICK_CARE.name} 적용
             </p>
             <ul className="mt-2 space-y-1 text-[13px] font-medium leading-relaxed text-white/80">

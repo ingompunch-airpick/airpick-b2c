@@ -1,4 +1,4 @@
-import { Check, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Check, ChevronRight } from 'lucide-react';
 import { AIRPICK_CARE } from '../../constants/marketing';
 import { trackCtaClick } from '../../lib/analytics';
 
@@ -16,7 +16,7 @@ export default function HomePromiseStrip() {
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-[#b8954a]">AIRPICK PROMISE</p>
           <h2 id="home-promise-title" className="mt-0.5 flex items-center gap-1.5 text-[17px] font-bold text-[#0f1a2e] md:text-[19px]">
-            <ShieldCheck size={19} strokeWidth={2.25} className="text-[#b8954a]" aria-hidden />
+            <img src="/brand-mark-gold.png?v=10" alt="" width={20} height={20} className="h-5 w-5 shrink-0 object-contain" draggable={false} />
             {AIRPICK_CARE.name}
           </h2>
         </div>
