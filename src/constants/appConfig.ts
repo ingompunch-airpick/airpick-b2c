@@ -32,10 +32,10 @@ export const APP_CONFIG = {
     lateRefundRatio: 0.5,
   },
   /**
-   * 결제 노출. off=일반 예약만. test/live는 작업 3.
-   * 채널은 포트원→토스만 (이니시스·KPN 폐기 예정).
+   * 결제 노출. off=안 보임 / test=`?payreview=1` 세션만(카드사 심사) / live=모든 손님.
+   * 채널은 포트원→토스페이먼츠만. 판단은 lib/paymentMode.ts.
    */
-  paymentMode: 'off' as 'off' | 'test' | 'live',
+  paymentMode: 'test' as 'off' | 'test' | 'live',
   /** 인트로 상단 통계 문구 — 작업 5 */
   introStatText: '인천공항 사설 주차대행만 300곳이 넘어요. 어디에 맡기시나요?',
 } as const;

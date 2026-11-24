@@ -1,47 +1,88 @@
 import SiteFooter from '../components/SiteFooter';
-import { Check } from 'lucide-react';
+import { AlertCircle, Check } from 'lucide-react';
+import { isTestPaymentMode, readPaySummary } from '../lib/paymentMode';
+
+function readRedirectError(): { code: string; message: string } | null {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code) return null;
+    return { code, message: params.get('message') || '결제가 완료되지 않았습니다.' };
+  } catch {
+    return null;
+  }
+}
 
 export default function PaymentCompletePage({
   paymentId,
   onGoHome,
-  onGoMy,
 }: {
   paymentId: string | null;
   onGoHome: () => void;
-  onGoMy: () => void;
+  onGoMy?: () => void;
 }) {
+  const failure = readRedirectError();
+  const summary = readPaySummary(paymentId);
+  const ok = Boolean(paymentId) && !failure;
+
   return (
     <div className="mx-auto flex min-h-[70dvh] max-w-lg flex-col px-5 pb-24 pt-8">
       <div className="flex flex-1 flex-col items-center text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
-          <Check size={32} className="text-emerald-600" strokeWidth={2.5} aria-hidden />
+        <div
+          className={
+            ok
+              ? 'flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15'
+              : 'flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/15'
+          }
+        >
+          {ok ? (
+            <Check size={32} className="text-emerald-600" strokeWidth={2.5} aria-hidden />
+          ) : (
+            <AlertCircle size={32} className="text-rose-600" strokeWidth={2.5} aria-hidden />
+          )}
         </div>
-        <h1 className="mt-5 text-2xl font-bold text-ink">결제가 완료되었습니다</h1>
-        <p className="mt-2 text-[15px] font-medium text-muted">
-          포트원 결제 결과를 확인했습니다. PG 심사용 테스트 결제입니다.
-        </p>
-        {paymentId ? (
+        <h1 className="mt-5 text-2xl font-bold text-ink">
+          {ok ? '결제가 완료되었습니다' : '결제가 완료되지 않았습니다'}
+        </h1>
+        {failure ? (
+          <p className="mt-2 text-[15px] font-medium text-muted">{failure.message}</p>
+        ) : null}
+
+        {ok && summary ? (
+          <dl className="mt-6 w-full space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
+            <div className="flex items-start justify-between gap-4">
+              <dt className="text-[13px] font-semibold text-muted">상품</dt>
+              <dd className="text-right text-sm font-bold text-ink">{summary.orderName}</dd>
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <dt className="text-[13px] font-semibold text-muted">일정</dt>
+              <dd className="text-right text-sm font-bold text-ink tabular-nums">{summary.schedule}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 border-t border-[#0f1a2e]/10 pt-2.5">
+              <dt className="text-[13px] font-semibold text-muted">결제 금액</dt>
+              <dd className="text-base font-bold text-ink tabular-nums">{summary.amount.toLocaleString()}원</dd>
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <dt className="text-[13px] font-semibold text-muted">결제번호</dt>
+              <dd className="break-all text-right text-[12px] font-semibold text-ink tabular-nums">{paymentId}</dd>
+            </div>
+          </dl>
+        ) : ok ? (
           <p className="mt-4 w-full break-all rounded-2xl bg-[#f4f5f7] px-4 py-3 text-left text-[13px] font-semibold text-ink">
-            <span className="block text-[12px] font-bold text-muted">paymentId</span>
+            <span className="block text-[12px] font-bold text-muted">결제번호</span>
             <span className="mt-1 block tabular-nums">{paymentId}</span>
           </p>
-        ) : (
-          <p className="mt-4 text-[14px] font-semibold text-rose-600">
-            paymentId를 받지 못했습니다. 결제창에서 다시 시도해 주세요.
-          </p>
-        )}
+        ) : null}
+
+        {ok && isTestPaymentMode() ? (
+          <p className="mt-3 text-[12px] font-medium text-muted">테스트 결제입니다. 실제로 청구되지 않습니다.</p>
+        ) : null}
+
         <div className="mt-8 grid w-full gap-2">
           <button
             type="button"
-            onClick={onGoMy}
-            className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white"
-          >
-            내 예약 보기
-          </button>
-          <button
-            type="button"
             onClick={onGoHome}
-            className="w-full py-2 text-[14px] font-semibold text-muted"
+            className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white"
           >
             홈으로
           </button>

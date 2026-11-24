@@ -82,12 +82,8 @@ import {
   socialLoginErrorMessage,
   type SocialProviderId,
 } from '../lib/socialAuth';
-import {
-  isPortoneEnabled,
-  portoneCustomerEmail,
-  requestPortoneCardPayment,
-  type PortoneChannel,
-} from '../lib/portonePayment';
+import { portoneCustomerEmail, requestPortoneCardPayment } from '../lib/portonePayment';
+import { isPaymentStepVisible, isTestPaymentMode, savePaySummary } from '../lib/paymentMode';
 
 const FIELD_CLASS =
   'w-full rounded-lg border border-[#d8dee8] bg-white px-3 py-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
@@ -236,8 +232,9 @@ export default function BookingModal({
   const [editSchedule, setEditSchedule] = useState(false);
   const [showOptionalNotes, setShowOptionalNotes] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [payingChannel, setPayingChannel] = useState<PortoneChannel | null>(null);
-  const portoneOn = isPortoneEnabled();
+  const [paying, setPaying] = useState(false);
+  const [refundAgreed, setRefundAgreed] = useState(false);
+  const paymentStepOn = isPaymentStepVisible();
   const [error, setError] = useState('');
   const [soldOut, setSoldOut] = useState(false);
   const [soldOutDetail, setSoldOutDetail] = useState('');
@@ -518,13 +515,17 @@ export default function BookingModal({
   const backToForm = () => {
     persistDraft(false);
     setConfirming(false);
-    setPayingChannel(null);
+    setPaying(false);
     setError('');
   };
 
-  // TODO(온라인 결제): PG 심사용. 상품 결제는 `/pay/{reservationId}` + 대기 점유, 실패 시 자동취소 금지.
-  const payWithPortone = async (channel: PortoneChannel) => {
-    if (payingChannel || loading) return;
+  // TODO(온라인 결제): 지금은 PG 심사용(예약 생성 안 함). 실결제는 `/pay/{reservationId}` + 대기 점유 + 서버 검증.
+  const payWithPortone = async () => {
+    if (paying || loading) return;
+    if (!refundAgreed) {
+      setError('취소·환불 규정에 동의해 주세요.');
+      return;
+    }
     const fullName = form.userName.trim();
     const phoneNumber = form.phone.trim();
     if (!fullName || !phoneValid) {
@@ -532,26 +533,36 @@ export default function BookingModal({
       return;
     }
     const amount = memberPreview ? payableTotal : breakdown.total;
-    setPayingChannel(channel);
+    const companyLabel = displayCompanyName(company.name);
+    const orderName = `${companyLabel} 주차대행 ${formatStayPhrase(breakdown.days)}`;
+    setPaying(true);
     setError('');
     try {
       const { auth } = await import('../firebase');
       const memberEmail = auth.currentUser?.email ?? null;
       const { paymentId } = await requestPortoneCardPayment({
-        channel,
         totalAmount: amount,
+        orderName,
+        onBeforeRequest: (id) =>
+          savePaySummary({
+            paymentId: id,
+            orderName,
+            amount,
+            companyName: companyLabel,
+            schedule: `${formatDateDisplay(search.departureDate)} ${search.departureTime} → ${formatDateDisplay(search.arrivalDate)} ${search.arrivalTime}`,
+          }),
         fullName,
         phoneNumber,
         email: portoneCustomerEmail({ memberEmail, phone: phoneNumber }),
       });
       window.location.assign(`/payment/complete?paymentId=${encodeURIComponent(paymentId)}`);
     } catch (err) {
-      console.error('[portone]', channel, err);
+      console.error('[portone]', err);
       const message = err instanceof Error ? err.message : '결제에 실패했습니다.';
       window.alert(message);
       setError(message);
     } finally {
-      setPayingChannel(null);
+      setPaying(false);
     }
   };
 
@@ -1069,6 +1080,53 @@ export default function BookingModal({
               className="pt-1 text-right"
             />
           </dl>
+          {paymentStepOn ? (
+            <section aria-labelledby="booking-pay-title" className="mt-4 rounded-2xl p-4 ring-1 ring-[#0f1a2e]/10">
+              <h3 id="booking-pay-title" className="text-[15px] font-bold text-ink">
+                결제
+              </h3>
+              <div className="mt-2 flex items-center justify-between gap-4">
+                <span className="text-[13px] font-semibold text-muted">결제 금액</span>
+                <span className="text-lg font-bold text-ink tabular-nums">{shownPayable.toLocaleString()}원</span>
+              </div>
+              <ul className="mt-3 space-y-1 rounded-xl bg-[#f4f5f7] px-3 py-2.5 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/80">
+                <li>· 맡기는 시각 {APP_CONFIG.refund.fullRefundHours}시간 전까지 취소: 전액 환불</li>
+                <li>
+                  · {APP_CONFIG.refund.fullRefundHours}시간 전부터 맡기는 시각 전까지:{' '}
+                  {Math.round(APP_CONFIG.refund.lateRefundRatio * 100)}% 환불
+                </li>
+                <li>· 맡기는 시각 이후(노쇼 포함): 환불 불가</li>
+                <li>· {APP_CONFIG.bookingWindowNotice}</li>
+              </ul>
+              <label className="mt-3 flex cursor-pointer items-start gap-2 text-[13px] font-semibold text-ink">
+                <input
+                  type="checkbox"
+                  checked={refundAgreed}
+                  onChange={(e) => setRefundAgreed(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#0f1a2e]"
+                />
+                <span>
+                  [필수] 취소·환불 규정을 확인했습니다.{' '}
+                  <a href="/refund/" target="_blank" rel="noopener" className="text-brand underline-offset-2 hover:underline">
+                    전문 보기
+                  </a>
+                </span>
+              </label>
+              <button
+                type="button"
+                disabled={!refundAgreed || paying || loading || authBusy}
+                onClick={() => void payWithPortone()}
+                className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white transition-opacity disabled:opacity-40"
+              >
+                {paying ? '결제창 여는 중…' : `카드 결제 · ${shownPayable.toLocaleString()}원`}
+              </button>
+              {isTestPaymentMode() ? (
+                <p className="mt-2 text-center text-[11px] font-medium text-muted">
+                  테스트 결제입니다. 실제로 청구되지 않습니다.
+                </p>
+              ) : null}
+            </section>
+          ) : null}
           {memberPreview && pointSpendCap >= POINT_STEP_WON ? (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f4f5f7] px-4 py-3">
               <div>
@@ -1180,29 +1238,6 @@ export default function BookingModal({
             수정
           </button>
 
-          {portoneOn ? (
-            <div className="mt-6 space-y-2 border-t border-[#0f1a2e]/10 pt-4">
-              <p className="text-center text-[12px] font-semibold text-muted">
-                테스트용 · PG 심사 전용 (손님은 위 접수를 이용해 주세요)
-              </p>
-              <button
-                type="button"
-                disabled={loading || authBusy || payingChannel != null}
-                onClick={() => void payWithPortone('inicis')}
-                className="w-full rounded-xl bg-[#f4f5f7] py-2.5 text-[14px] font-bold text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10 disabled:opacity-60"
-              >
-                {payingChannel === 'inicis' ? '결제창 여는 중…' : 'KG이니시스 카드결제 (테스트)'}
-              </button>
-              <button
-                type="button"
-                disabled={loading || authBusy || payingChannel != null}
-                onClick={() => void payWithPortone('kpn')}
-                className="w-full rounded-xl bg-[#f4f5f7] py-2.5 text-[14px] font-bold text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10 disabled:opacity-60"
-              >
-                {payingChannel === 'kpn' ? '결제창 여는 중…' : 'KPN 카드결제 (테스트)'}
-              </button>
-            </div>
-          ) : null}
           {error ? <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{error}</p> : null}
         </div>
       </div>

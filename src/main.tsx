@@ -5,6 +5,7 @@ import './index.css';
 import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { installGlobalErrorReporting, setErrorReportContext } from './lib/errorReport.ts';
+import { rememberPaymentReviewFlag } from './lib/paymentMode.ts';
 import AdminReviewsPage from './pages/AdminReviewsPage.tsx';
 import DirectionsPage from './pages/DirectionsPage.tsx';
 import ReceiptPage from './pages/ReceiptPage.tsx';
@@ -19,6 +20,7 @@ function isDirectionsPath(pathname: string): boolean {
 }
 
 installGlobalErrorReporting();
+rememberPaymentReviewFlag();
 setErrorReportContext({ screen: window.location.pathname || '/' });
 
 if (import.meta.env.PROD) {

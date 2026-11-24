@@ -1,24 +1,18 @@
 import * as PortOne from '@portone/browser-sdk/v2';
 
-export type PortoneChannel = 'inicis' | 'kpn';
-
-const ORDER_NAME = '에어픽 공항주차 예약';
+/** 결제 채널: 포트원 → 토스페이먼츠만 (이니시스·KPN 폐기) */
+const DEFAULT_ORDER_NAME = '에어픽 공항주차 예약';
 
 export function isPortoneEnabled(): boolean {
   if (import.meta.env.VITE_PORTONE_ENABLED !== 'true') return false;
   return Boolean(
     import.meta.env.VITE_PORTONE_STORE_ID?.trim() &&
-      import.meta.env.VITE_PORTONE_CHANNEL_KEY_INICIS?.trim() &&
-      import.meta.env.VITE_PORTONE_CHANNEL_KEY_KPN?.trim()
+      import.meta.env.VITE_PORTONE_CHANNEL_KEY_TOSS?.trim()
   );
 }
 
-function channelKey(channel: PortoneChannel): string {
-  const key =
-    channel === 'inicis'
-      ? import.meta.env.VITE_PORTONE_CHANNEL_KEY_INICIS
-      : import.meta.env.VITE_PORTONE_CHANNEL_KEY_KPN;
-  const trimmed = key?.trim() ?? '';
+function channelKey(): string {
+  const trimmed = import.meta.env.VITE_PORTONE_CHANNEL_KEY_TOSS?.trim() ?? '';
   if (!trimmed) throw new Error('PortOne 채널키가 없습니다.');
   return trimmed;
 }
@@ -29,7 +23,7 @@ function storeId(): string {
   return id;
 }
 
-/** 이니시스 필수 이메일 — 회원 이메일이 없으면 심사용 플레이스홀더 */
+/** 결제창 구매자 이메일 — 회원 이메일이 없으면 플레이스홀더 */
 export function portoneCustomerEmail(opts: {
   memberEmail?: string | null;
   phone: string;
@@ -40,10 +34,7 @@ export function portoneCustomerEmail(opts: {
   return `guest+${digits}@airpick.kr`;
 }
 
-/**
- * KPN은 paymentId에 영문·숫자만 허용 (하이픈 등 특수문자 불가).
- * 이니시스와 공통으로 안전한 형태를 쓴다.
- */
+/** paymentId는 영문·숫자만 (PG 공통으로 안전한 형태) */
 export function newPortonePaymentId(): string {
   return `order${Date.now()}${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -60,8 +51,11 @@ export function paymentCompleteUrl(paymentId: string): string {
  */
 
 export async function requestPortoneCardPayment(opts: {
-  channel: PortoneChannel;
   totalAmount: number;
+  /** 결제창·카드 명세에 보이는 상품명 */
+  orderName?: string;
+  /** 결제창 열기 직전(모바일 리다이렉트 대비 요약 저장용) */
+  onBeforeRequest?: (paymentId: string) => void;
   fullName: string;
   phoneNumber: string;
   email: string;
@@ -71,12 +65,13 @@ export async function requestPortoneCardPayment(opts: {
 
   const paymentId = newPortonePaymentId();
   const redirectUrl = paymentCompleteUrl(paymentId);
+  opts.onBeforeRequest?.(paymentId);
 
   const response = await PortOne.requestPayment({
     storeId: storeId(),
-    channelKey: channelKey(opts.channel),
+    channelKey: channelKey(),
     paymentId,
-    orderName: ORDER_NAME,
+    orderName: opts.orderName?.trim() || DEFAULT_ORDER_NAME,
     totalAmount: amount,
     currency: 'CURRENCY_KRW',
     payMethod: 'CARD',
