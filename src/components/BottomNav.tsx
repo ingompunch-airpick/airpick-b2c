@@ -10,7 +10,7 @@ import {
 import { pathFromTab } from '../utils/appPath';
 import { cn } from '../utils/cn';
 
-const tabs: { id: AppTab; label: string; icon: typeof Home }[] = [
+export const APP_NAV_TABS: { id: AppTab; label: string; icon: typeof Home }[] = [
   { id: 'home', label: HOME_TAB_LABEL, icon: Home },
   { id: 'esim', label: ESIM_TAB_LABEL, icon: Smartphone },
   { id: 'my', label: MY_TAB_LABEL, icon: ClipboardList },
@@ -48,7 +48,7 @@ export default function BottomNav({
   return (
     <nav
       ref={navRef}
-      className="fixed bottom-0 left-0 right-0 z-[90] border-t border-neutral-200/90 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 left-0 right-0 z-[90] md:hidden border-t border-neutral-200/90 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]"
     >
       <div
         className={cn(
@@ -56,7 +56,7 @@ export default function BottomNav({
           wide ? 'max-w-lg md:max-w-6xl' : 'max-w-lg'
         )}
       >
-        {tabs.map(({ id, label, icon: Icon }) => {
+        {APP_NAV_TABS.map(({ id, label, icon: Icon }) => {
           const isActive = active === id;
           const soon = isSoonTab(id);
           const href = pathFromTab(id);

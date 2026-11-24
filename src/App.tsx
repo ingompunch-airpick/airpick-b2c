@@ -33,6 +33,8 @@ import {
 } from './lib/socialAuth';
 import {
   trackCtaClick,
+  trackParkingDetailView,
+  trackScheduleInput,
   trackParkingBookComplete,
   trackParkingBookStart,
   trackTabView,
@@ -171,6 +173,13 @@ export default function App() {
   useEffect(() => {
     if (menuOpen) consumeReturnToMenu();
   }, [menuOpen]);
+
+  const detailCompanyId = partnerDetail?.company.id;
+  useEffect(() => {
+    if (!partnerDetail) return;
+    trackParkingDetailView(partnerDetail.company.id, partnerDetail.company.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailCompanyId]);
 
   useEffect(() => subscribeMember(() => setLoggedIn(Boolean(readMember()))), []);
 
@@ -425,6 +434,13 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  /** 손님이 일정·조건을 바꿀 때 — 퍼널 「일정 입력」 기록 */
+  const changeSearch = (next: BookingSearch) => {
+    const fields = (Object.keys(next) as (keyof BookingSearch)[]).filter((k) => next[k] !== search[k]);
+    if (fields.length) trackScheduleInput(String(fields[0]));
+    setSearch(next);
+  };
+
   const leavePaymentComplete = (next: AppTab) => {
     setPaymentCompleteOpen(false);
     setPaymentCompleteId(null);
@@ -436,7 +452,7 @@ export default function App() {
       return (
         <HomePage
           search={search}
-          onSearchChange={setSearch}
+          onSearchChange={changeSearch}
           companies={companies}
           loading={loading}
           lastReservationId={lastReservationId}
@@ -455,7 +471,7 @@ export default function App() {
       return (
         <ComparePage
           search={search}
-          onSearchChange={(next) => setSearch(next)}
+          onSearchChange={changeSearch}
           companies={companies}
           onBookOnAirpick={(company, price) => setPartnerDetail({ company, price })}
         />
@@ -513,6 +529,8 @@ export default function App() {
           loggedIn={loggedIn}
           onOpenAccount={() => leavePaymentComplete('my')}
           onOpenMenu={() => setMenuOpen(true)}
+          activeTab={tab}
+          onTabChange={(next) => leavePaymentComplete(next)}
         />
         <main>
           <Suspense fallback={null}>
@@ -540,6 +558,11 @@ export default function App() {
         loggedIn={loggedIn}
         onOpenAccount={() => setTab('my')}
         onOpenMenu={() => setMenuOpen(true)}
+        activeTab={tab}
+        onTabChange={(next) => {
+          if (bookingTarget) setBookingTarget(null);
+          setTab(next);
+        }}
       />
       <main>
         {loading && (tab === 'home' || tab === 'compare') ? (

@@ -4,6 +4,8 @@ import BrandLogo from './BrandLogo';
 import { readMember, subscribeMember } from '../lib/memberSession';
 import { subscribePointBalance } from '../lib/points';
 import { cn } from '../utils/cn';
+import type { AppTab } from '../types';
+import { APP_NAV_TABS } from './BottomNav';
 
 /** 앱 공통 — 네이비 스티키 헤더 (홈·탭 동일) */
 export default function Header({
@@ -11,7 +13,12 @@ export default function Header({
   onOpenAccount,
   loggedIn = false,
   wide = false,
+  activeTab,
+  onTabChange,
 }: {
+  /** PC(md+) 상단 메뉴 — 모바일은 하단 탭 */
+  activeTab?: AppTab;
+  onTabChange?: (tab: AppTab) => void;
   onOpenMenu?: () => void;
   onOpenAccount?: () => void;
   loggedIn?: boolean;
@@ -57,10 +64,34 @@ export default function Header({
       <div
         className={cn(
           'mx-auto flex items-center justify-between px-4 py-3 md:py-3.5',
-          wide ? 'max-w-6xl md:px-10 lg:px-12' : 'max-w-lg'
+          wide ? 'max-w-6xl md:px-10 lg:px-12' : onTabChange ? 'max-w-lg md:max-w-3xl' : 'max-w-lg'
         )}
       >
         <BrandLogo variant="premium" />
+        {onTabChange ? (
+          <nav aria-label="주요 메뉴" className="hidden items-center gap-1 md:flex">
+            {APP_NAV_TABS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => onTabChange(t.id)}
+                aria-current={activeTab === t.id ? 'page' : undefined}
+                className={cn(
+                  'rounded-full px-4 py-2 text-[15px] font-semibold transition-colors',
+                  activeTab === t.id ? 'bg-white/12 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'
+                )}
+              >
+                {t.label}
+              </button>
+            ))}
+            <a
+              href="/guides/"
+              className="rounded-full px-4 py-2 text-[15px] font-semibold text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              이용 가이드
+            </a>
+          </nav>
+        ) : null}
         <div className="flex items-center">
           <button
             type="button"

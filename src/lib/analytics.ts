@@ -189,3 +189,19 @@ export function trackParkingBookComplete(companyId: string, companyName: string)
     company_name: companyName.slice(0, 100),
   });
 }
+
+/** 퍼널 2단계 — 손님이 일정·조건을 직접 바꿈 (세션당 1회) */
+let scheduleInputTracked = false;
+export function trackScheduleInput(field: string): void {
+  if (scheduleInputTracked) return;
+  scheduleInputTracked = true;
+  track('parking_schedule_input', { field });
+}
+
+/** 퍼널 4단계 — 업체 상세 열기 */
+export function trackParkingDetailView(companyId: string, companyName: string): void {
+  track('parking_detail_view', {
+    company_id: companyId,
+    company_name: companyName.slice(0, 100),
+  });
+}

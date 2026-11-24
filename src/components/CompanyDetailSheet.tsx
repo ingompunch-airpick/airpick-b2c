@@ -25,7 +25,7 @@ import {
   parkingTypeLabel,
 } from '../utils/parkingType';
 import { valetHandoffBadge, valetHandoffTitle } from '../utils/parkingProducts';
-import { getParkingDayCount } from '../utils/pricing';
+import { getParkingDayCount, getPriceBreakdown } from '../utils/pricing';
 import { resolveCompanyUsageSteps } from '../utils/companyUsageGuide';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
 import { displayCoverageLimitText } from '../utils/insurance';
@@ -220,6 +220,77 @@ function ParkingLotCard({ lot }: { lot: CompanyParkingLot }) {
         </div>
       ) : null}
     </div>
+  );
+}
+
+/** 요금 구성 — 기본·추가일·할증을 나눠 「왜 이 금액인지」 보여 준다. 명세 합이 총액과 다르면 총액만. */
+function PriceBreakdownCard({
+  company,
+  search,
+  affiliateDiscountWon,
+}: {
+  company: Company;
+  search: BookingSearch;
+  affiliateDiscountWon: number;
+}) {
+  const b = getPriceBreakdown(
+    company,
+    search.departureDate,
+    search.arrivalDate,
+    search.isIndoor,
+    search.terminal === 'T2',
+    search.departureTime,
+    search.arrivalTime
+  );
+  const rows: { label: string; detail?: string; won: number; always?: boolean }[] = [
+    { label: `기본 요금 (${b.baseDays}일)`, won: b.basePrice, always: true },
+    { label: `추가 ${b.extraDays}일`, won: b.extraAmount },
+    {
+      label: '야간 할증',
+      detail: b.nightDetails.length ? b.nightDetails.join(' · ') : undefined,
+      won: b.nightSurcharge,
+      always: true,
+    },
+    { label: '2터미널 할증', won: b.t2Surcharge },
+    { label: '혼잡 시간 할증', won: b.peakSurcharge },
+  ];
+  const sum = rows.reduce((acc, r) => acc + r.won, 0);
+  const consistent = Math.round(sum) === Math.round(b.total);
+  const discount = Math.min(Math.max(0, affiliateDiscountWon), b.total);
+  const won = (n: number) => `${Math.round(n).toLocaleString()}원`;
+
+  return (
+    <section className="mt-4 rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10" aria-label="요금 구성">
+      <p className="text-xs font-bold text-brand">요금 구성 · {formatStayPhrase(b.days)}</p>
+      {consistent ? (
+        <ul className="mt-2.5 space-y-1.5">
+          {rows
+            .filter((r) => r.always || r.won > 0)
+            .map((r) => (
+              <li key={r.label} className="flex items-start justify-between gap-3 text-[14px]">
+                <span className="font-medium text-ink/75">
+                  {r.label}
+                  {r.detail ? <span className="ml-1 text-[12px] text-muted">({r.detail})</span> : null}
+                </span>
+                <span className="shrink-0 font-semibold tabular-nums text-ink">{won(r.won)}</span>
+              </li>
+            ))}
+        </ul>
+      ) : null}
+      {discount > 0 ? (
+        <div className="mt-1.5 flex items-center justify-between gap-3 text-[14px]">
+          <span className="font-medium text-ink/75">제휴 할인</span>
+          <span className="font-semibold tabular-nums text-emerald-700">−{won(discount)}</span>
+        </div>
+      ) : null}
+      <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-[#0f1a2e]/10 pt-2.5">
+        <span className="text-[14px] font-bold text-ink">총액</span>
+        <span className="text-[17px] font-bold tabular-nums text-ink">{won(b.total - discount)}</span>
+      </div>
+      <p className="mt-2 text-[12px] font-medium leading-relaxed text-muted">
+        발렛(대면 인계) 등 선택한 옵션 요금은 예약 화면 합계에 더해 보여 드려요.
+      </p>
+    </section>
   );
 }
 
@@ -434,6 +505,8 @@ export default function CompanyDetailSheet({
               ) : null}
             </ul>
           </section>
+
+          <PriceBreakdownCard company={company} search={search} affiliateDiscountWon={affiliateDiscountWon} />
 
           <section className="mt-4 space-y-3 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <p className="text-xs font-bold text-brand">이용 방법</p>

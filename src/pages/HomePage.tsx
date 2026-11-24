@@ -352,7 +352,13 @@ export default function HomePage({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <ChoiceLabel>날짜</ChoiceLabel>
+                <div className="flex items-start justify-between gap-2">
+                  <ChoiceLabel>날짜</ChoiceLabel>
+                  {/* 총 주차일수 — 날짜 잘못 고르는 실수 방지 */}
+                  <span className="mb-2 rounded-full bg-[#0f1a2e] px-2.5 py-0.5 text-[12px] font-bold tabular-nums text-white">
+                    {formatStayPhrase(getParkingDayCount(search.departureDate, search.arrivalDate))}
+                  </span>
+                </div>
                 <div className="space-y-2">
                   <DateField
                     tone="premium"
