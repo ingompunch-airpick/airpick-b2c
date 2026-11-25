@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { consumeOverlayPop, resetOverlayStack, useBackToClose } from './lib/backStack';
+import { DEFAULT_CANCEL_CUTOFF_HOURS } from './utils/reservationCancel';
 import {
   ComparePageSkeleton,
   EsimPageSkeleton,
@@ -601,6 +602,18 @@ export default function App() {
           onChange={(next) => leavePaymentComplete(next)}
           onPrefetchTab={prefetchAppTab}
         />
+        {/* 결제 완료 화면에서도 ≡ 메뉴가 열리게 (전에는 메뉴 창을 그리지 않아 눌러도 반응 없었음) */}
+        <Suspense fallback={null}>
+          {menuOpen && (
+            <AppMenuSheet
+              onClose={() => setMenuOpen(false)}
+              onGoTab={(next) => {
+                setMenuOpen(false);
+                leavePaymentComplete(next);
+              }}
+            />
+          )}
+        </Suspense>
       </div>
     );
   }
@@ -710,8 +723,8 @@ export default function App() {
           <ParkingGuidePage
             onBack={() => setCancelGuideOpen(false)}
             title="취소·변경 안내"
-            headline="입고 전까지 앱에서 취소"
-            lede="시간을 지난 취소와 일정 변경은 예약 카드의 업체 문의로 주차장에 연락합니다."
+            headline={`입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 앱에서 취소`}
+            lede={`${DEFAULT_CANCEL_CUTOFF_HOURS}시간이 지난 뒤 취소와 일정 변경은 예약 카드의 「업체 문의」로 주차장에 연락합니다.`}
             steps={cancelGuideSteps()}
           />
         )}

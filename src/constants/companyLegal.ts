@@ -64,7 +64,7 @@ export const AIRPICK_AVAILABILITY_NOTE =
 
 /** 메타·OG용 짧은 보조 (확정 요금·최저가 단정 금지) */
 export const AIRPICK_DEFINITION_META =
-  '사업자·보험·주차장을 확인한 인천공항 사설 주차대행만 비교·예약. 1·2터미널, 야외 3일 4만 원·실내 3일 5만 원부터(업체·옵션별 상이). 당일 예약 가능, 입고 24시간 전까지 무료 취소.';
+  '에어픽은 사업자·보험·주차장을 확인한 인천공항 사설 주차대행만 비교·예약합니다. 1·2터미널, 야외 3일 4만 원·실내 3일 5만 원부터(업체·옵션별 상이). 당일 예약 가능, 입고 24시간 전까지 무료 취소.';
 
 /** 홈 document.title · index.html title 과 동일하게 유지. 화면 로고와는 별개 */
 export const AIRPICK_HOME_DOCUMENT_TITLE = '에어픽 공항주차 | 인천공항 주차대행·발렛 비교·예약 (1·2터미널)';
