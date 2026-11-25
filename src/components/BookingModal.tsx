@@ -234,7 +234,6 @@ export default function BookingModal({
   const [showOptionalNotes, setShowOptionalNotes] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [refundAgreed, setRefundAgreed] = useState(false);
   const paymentStepOn = isPaymentStepVisible();
   const [error, setError] = useState('');
   const [soldOut, setSoldOut] = useState(false);
@@ -523,10 +522,6 @@ export default function BookingModal({
   // TODO(온라인 결제): 지금은 PG 심사용(예약 생성 안 함). 실결제는 `/pay/{reservationId}` + 대기 점유 + 서버 검증.
   const payWithPortone = async () => {
     if (paying || loading) return;
-    if (!refundAgreed) {
-      setError('취소·환불 규정에 동의해 주세요.');
-      return;
-    }
     const fullName = form.userName.trim();
     const phoneNumber = form.phone.trim();
     if (!fullName || !phoneValid) {
@@ -1101,23 +1096,15 @@ export default function BookingModal({
                 <li>· 맡기는 시각 이후(노쇼 포함): 환불 불가</li>
                 <li>· {APP_CONFIG.bookingWindowNotice}</li>
               </ul>
-              <label className="mt-3 flex cursor-pointer items-start gap-2 text-[13px] font-semibold text-ink">
-                <input
-                  type="checkbox"
-                  checked={refundAgreed}
-                  onChange={(e) => setRefundAgreed(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#0f1a2e]"
-                />
-                <span>
-                  [필수] 취소·환불 규정을 확인했습니다.{' '}
-                  <a href="/refund/" target="_blank" rel="noopener" className="text-brand underline-offset-2 hover:underline">
-                    전문 보기
-                  </a>
-                </span>
-              </label>
+              <p className="mt-3 text-[12px] font-medium leading-relaxed text-muted">
+                결제하면 위 취소·환불 규정에 동의한 것으로 봅니다.{' '}
+                <a href="/refund/" target="_blank" rel="noopener" className="font-semibold text-brand underline-offset-2 hover:underline">
+                  전문 보기
+                </a>
+              </p>
               <button
                 type="button"
-                disabled={!refundAgreed || paying || loading || authBusy}
+                disabled={paying || loading || authBusy}
                 onClick={() => void payWithPortone()}
                 className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white transition-opacity disabled:opacity-40"
               >
