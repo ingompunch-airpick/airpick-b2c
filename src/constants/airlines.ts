@@ -119,3 +119,60 @@ function topicParticle(word: string): string {
   if (code < 0 || code > 11171) return '은';
   return code % 28 === 0 ? '는' : '은';
 }
+
+/** 항공사 → 편명 앞 2글자(IATA). 편명 오타·항공사 선택 실수를 알려 주는 용도 */
+const AIRLINE_IATA: Record<string, string> = {
+  대한항공: 'KE',
+  아시아나항공: 'OZ',
+  진에어: 'LJ',
+  제주항공: '7C',
+  티웨이항공: 'TW',
+  에어부산: 'BX',
+  에어서울: 'RS',
+  이스타항공: 'ZE',
+  에어프레미아: 'YP',
+  베트남항공: 'VN',
+  싱가포르항공: 'SQ',
+  일본항공: 'JL',
+  전일본항공: 'NH',
+  중국국제항공: 'CA',
+  중국동방항공: 'MU',
+  중국남방항공: 'CZ',
+  태국항공: 'TG',
+  캐세이퍼시픽: 'CX',
+  홍콩항공: 'HX',
+  에바항공: 'BR',
+  중화항공: 'CI',
+  필리핀항공: 'PR',
+  세부퍼시픽: '5J',
+  말레이시아항공: 'MH',
+  가루다인도네시아: 'GA',
+  카타르항공: 'QR',
+  에미레이트항공: 'EK',
+  에티하드항공: 'EY',
+  터키항공: 'TK',
+  델타항공: 'DL',
+  유나이티드항공: 'UA',
+  아메리칸항공: 'AA',
+  에어캐나다: 'AC',
+  에어프랑스: 'AF',
+  루프트한자: 'LH',
+  영국항공: 'BA',
+};
+
+/**
+ * 편명 확인 안내 (막지는 않음). 공동운항편은 다른 코드일 수 있어 안내만 한다.
+ * 문제가 없으면 null.
+ */
+export function flightNumberHint(airlineName: string, flight: string): string | null {
+  const f = String(flight || '').trim().toUpperCase().replace(/\s+/g, '');
+  if (!f) return null;
+  if (!/^[A-Z0-9]{2}\d{1,4}[A-Z]?$/.test(f)) {
+    return '편명은 영문 2글자 + 숫자예요. 예: KE701';
+  }
+  const code = AIRLINE_IATA[airlineName.trim()];
+  if (code && !f.startsWith(code)) {
+    return `${airlineName.trim()} 편명 예: ${code}123. 항공사나 편명을 확인해 주세요. 공동운항편이면 항공권에 적힌 편명 그대로 두세요.`;
+  }
+  return null;
+}

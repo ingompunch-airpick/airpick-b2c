@@ -19,7 +19,7 @@ import {
   bookingPolicyMessage,
   checkBookingPolicy,
 } from '../utils/bookingPolicy';
-import { bookingWindowMessage, checkBookingWindow } from '../utils/bookingWindow';
+import { bookingWindowMessage, checkBookingTimes, checkBookingWindow } from '../utils/bookingWindow';
 import {
   getReservationCheckInPhotos,
   getReservationCheckOutPhotos,
@@ -335,6 +335,8 @@ export async function submitReservation(
   heardFrom?: string
 ): Promise<{ id: string; bookingNo: string }> {
   await ensureAnonymousAuth();
+  const timeCheck = checkBookingTimes(search);
+  if (!timeCheck.ok) throw new Error(timeCheck.message);
   await assertBookingAllowed(companyId, search.departureDate, search.arrivalDate);
   await assertHourlyCapacityAvailable(
     companyId,

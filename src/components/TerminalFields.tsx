@@ -60,7 +60,7 @@ export default function TerminalFields({
         </div>
       </fieldset>
       <p className="text-[11px] font-medium leading-snug text-muted">
-        대한항공·아시아나(2026.1.14~)는 제2터미널. 항공권 터미널과 맞춰 주세요.
+        대한항공·아시아나·진에어·에어부산·에어서울은 제2터미널, 제주항공·티웨이 등은 제1터미널. 항공권 터미널과 맞춰 주세요.
       </p>
 
       <label htmlFor={diffId} className="flex items-center gap-2 pt-0.5">

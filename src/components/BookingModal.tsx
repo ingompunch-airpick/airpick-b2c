@@ -31,11 +31,13 @@ import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
 import {
   bookingWindowMessage,
+  checkBookingTimes,
   checkBookingWindow,
   maxArrivalYmd,
   maxDepartureYmd,
 } from '../utils/bookingWindow';
 import { APP_CONFIG } from '../constants/appConfig';
+import { flightNumberHint } from '../constants/airlines';
 import { formatDateDisplay, formatStayPhrase, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
 import { getPriceBreakdown, withAffiliateDiscount } from '../utils/pricing';
@@ -292,7 +294,12 @@ export default function BookingModal({
   const phoneValid = isValidMobilePhone(form.phone);
   const carNumberValid = isLikelyCarNumber(form.carNumber);
 
+  const timeCheck = checkBookingTimes(search);
+  /** 입고까지 24시간 미만 — 예약 즉시 무료 취소 기간이 지난 상태 */
+  const insideCancelWindow = timeCheck.ok && timeCheck.hoursUntilCheckIn < DEFAULT_CANCEL_CUTOFF_HOURS;
+
   const canSubmit =
+    timeCheck.ok &&
     form.userName.trim() &&
     phoneValid &&
     form.carModel.trim() &&
@@ -502,6 +509,10 @@ export default function BookingModal({
 
   const openConfirm = (e?: React.FormEvent) => {
     e?.preventDefault();
+    if (!timeCheck.ok) {
+      setError(timeCheck.message);
+      return;
+    }
     if (!canSubmit) {
       setError('필수 항목을 확인해 주세요.');
       return;
@@ -521,6 +532,16 @@ export default function BookingModal({
   // TODO(온라인 결제): 지금은 PG 심사용(예약 생성 안 함). 실결제는 `/pay/{reservationId}` + 대기 점유 + 서버 검증.
   const payWithPortone = async () => {
     if (paying || loading) return;
+    const payWindow = checkBookingWindow(search.departureDate, search.arrivalDate);
+    if (!payWindow.allowed) {
+      setError(bookingWindowMessage(payWindow));
+      return;
+    }
+    const payTimeCheck = checkBookingTimes(search);
+    if (!payTimeCheck.ok) {
+      setError(payTimeCheck.message);
+      return;
+    }
     const fullName = form.userName.trim();
     const phoneNumber = form.phone.trim();
     if (!fullName || !phoneValid) {
@@ -597,6 +618,11 @@ export default function BookingModal({
       const windowCheck = checkBookingWindow(payload.departureDate, payload.arrivalDate);
       if (!windowCheck.allowed) {
         setError(bookingWindowMessage(windowCheck));
+        return;
+      }
+      const placeTimeCheck = checkBookingTimes(payload);
+      if (!placeTimeCheck.ok) {
+        setError(placeTimeCheck.message);
         return;
       }
 
@@ -1012,8 +1038,10 @@ export default function BookingModal({
                 <span className="text-lg font-bold text-ink tabular-nums">{shownPayable.toLocaleString()}원</span>
               </div>
               <ul className="mt-3 space-y-1 rounded-xl bg-[#f4f5f7] px-3 py-2.5 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/80">
-                <li>· 맡기는 시각 {APP_CONFIG.refund.fullRefundHours}시간 전까지 취소: 전액 환불</li>
-                <li>
+                <li className={insideCancelWindow ? '' : 'font-bold text-ink'}>
+                  · 맡기는 시각 {APP_CONFIG.refund.fullRefundHours}시간 전까지 취소: 전액 환불
+                </li>
+                <li className={insideCancelWindow ? 'font-bold text-ink' : ''}>
                   · {APP_CONFIG.refund.fullRefundHours}시간 전부터 맡기는 시각 전까지:{' '}
                   {Math.round(APP_CONFIG.refund.lateRefundRatio * 100)}% 환불
                 </li>
@@ -1406,13 +1434,18 @@ export default function BookingModal({
           className="mt-1.5 text-right"
         />
         <p className="mt-1.5 text-[11px] font-medium text-muted">
-          {PRICE_INCLUSION.bookingLine} · 입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전 무료 취소
+          {PRICE_INCLUSION.bookingLine}
+          {insideCancelWindow ? '' : ` · 입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전 무료 취소`}
         </p>
       </div>
     </div>
   );
 
-  const cancelNote = (
+  const cancelNote = !timeCheck.ok ? (
+    <p role="alert" className="text-center text-[13px] font-semibold text-rose-600">
+      {timeCheck.message}
+    </p>
+  ) : insideCancelWindow ? null : (
     <p className="text-center text-[13px] font-semibold text-emerald-700">
       입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
     </p>
@@ -1527,10 +1560,15 @@ export default function BookingModal({
                       <span className="mb-1.5 block text-[13px] font-bold text-ink">가는 편명 *</span>
                       <input
                         value={form.departureFlight}
-                        onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase())}
+                        onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase().replace(/\s+/g, ''))}
                         placeholder="KE701"
                         className={FIELD_CLASS}
                       />
+                      {flightNumberHint(form.departureAirline, form.departureFlight) ? (
+                        <span className="mt-1 block text-[12px] font-semibold leading-snug text-amber-800">
+                          {flightNumberHint(form.departureAirline, form.departureFlight)}
+                        </span>
+                      ) : null}
                     </label>
                   </div>
                 </div>
@@ -1549,10 +1587,15 @@ export default function BookingModal({
                       <span className="mb-1.5 block text-[13px] font-bold text-ink">오는 편명 *</span>
                       <input
                         value={form.arrivalFlight}
-                        onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase())}
+                        onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase().replace(/\s+/g, ''))}
                         placeholder="KE702"
                         className={FIELD_CLASS}
                       />
+                      {flightNumberHint(form.arrivalAirline, form.arrivalFlight) ? (
+                        <span className="mt-1 block text-[12px] font-semibold leading-snug text-amber-800">
+                          {flightNumberHint(form.arrivalAirline, form.arrivalFlight)}
+                        </span>
+                      ) : null}
                     </label>
                   </div>
                   <p className="mt-1.5 text-[12px] font-medium text-muted">

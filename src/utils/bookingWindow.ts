@@ -78,3 +78,37 @@ export function bookingWindowMessage(
       return '찾는 날은 맡기는 날 이후로 선택해 주세요.';
   }
 }
+
+export type BookingTimeCheck =
+  | { ok: true; hoursUntilCheckIn: number }
+  | { ok: false; reason: 'pastTime' | 'timeOrder'; message: string };
+
+/**
+ * 시각까지 본 확인 — 날짜만 보는 checkBookingWindow로는
+ * 「오늘 10시(이미 지남)」나 「같은 날 찾는 시간이 맡기는 시간보다 이름」을 못 걸러서 추가.
+ * 한국 시간 기준.
+ */
+export function checkBookingTimes(
+  search: { departureDate: string; departureTime: string; arrivalDate: string; arrivalTime: string },
+  now: Date = new Date()
+): BookingTimeCheck {
+  const toKst = (ymd: string, hm: string): Date | null => {
+    const d = String(ymd || '').trim().slice(0, 10);
+    const t = String(hm || '').trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || !/^\d{2}:\d{2}$/.test(t)) return null;
+    const dt = new Date(`${d}T${t}:00+09:00`);
+    return Number.isNaN(dt.getTime()) ? null : dt;
+  };
+  const dep = toKst(search.departureDate, search.departureTime);
+  const arr = toKst(search.arrivalDate, search.arrivalTime);
+  if (!dep || !arr) {
+    return { ok: false, reason: 'timeOrder', message: '맡기는 날짜·시간과 찾는 날짜·시간을 골라 주세요.' };
+  }
+  if (dep.getTime() <= now.getTime()) {
+    return { ok: false, reason: 'pastTime', message: '맡기는 시간이 이미 지났어요. 시간을 다시 골라 주세요.' };
+  }
+  if (arr.getTime() <= dep.getTime()) {
+    return { ok: false, reason: 'timeOrder', message: '찾는 시간은 맡기는 시간 이후로 골라 주세요.' };
+  }
+  return { ok: true, hoursUntilCheckIn: (dep.getTime() - now.getTime()) / 3_600_000 };
+}
