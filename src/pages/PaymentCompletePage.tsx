@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import SiteFooter from '../components/SiteFooter';
+import { clearBookingDraft } from '../lib/bookingDraft';
 import { AlertCircle, Check } from 'lucide-react';
 import { isTestPaymentMode, readPaySummary } from '../lib/paymentMode';
 
@@ -24,6 +26,11 @@ export default function PaymentCompletePage({
   const failure = readRedirectError();
   const summary = readPaySummary(paymentId);
   const ok = Boolean(paymentId) && !failure;
+
+  // 결제가 끝나면 예약 작성 임시저장을 지운다 — 안 지우면 홈으로 돌아갔을 때 확인 화면이 다시 열린다
+  useEffect(() => {
+    if (ok) clearBookingDraft();
+  }, [ok]);
 
   return (
     <div className="mx-auto flex min-h-[70dvh] max-w-lg flex-col px-5 pb-24 pt-8">
