@@ -577,7 +577,8 @@ export default function BookingModal({
         phoneNumber,
         email: portoneCustomerEmail({ memberEmail, phone: phoneNumber }),
       });
-      window.location.assign(`/payment/complete?paymentId=${encodeURIComponent(paymentId)}`);
+      // replace: 결제 완료 뒤 뒤로가기로 결제 직전 화면(같은 결제 버튼)이 다시 나오지 않게
+      window.location.replace(`/payment/complete?paymentId=${encodeURIComponent(paymentId)}`);
     } catch (err) {
       console.error('[portone]', err);
       const message = err instanceof Error ? err.message : '결제에 실패했습니다.';

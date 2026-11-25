@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '../utils/cn';
+import { useBackToClose } from '../lib/backStack';
 
 /**
  * 날짜·시간 선택 공통 껍데기.
@@ -7,6 +8,8 @@ import { cn } from '../utils/cn';
  * 바깥 클릭·Esc로 닫힘.
  */
 export function usePickerDismiss(open: boolean, onClose: () => void, wrapRef: React.RefObject<HTMLElement | null>) {
+  // 폰에서 시트가 열린 채 뒤로가기 → 시트만 닫기
+  useBackToClose(open, onClose);
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent | TouchEvent) => {

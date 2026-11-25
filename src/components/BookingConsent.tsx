@@ -1,3 +1,4 @@
+import { useBackToClose } from '../lib/backStack';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 import {
@@ -107,6 +108,7 @@ export default function BookingConsent({
   providerName?: string;
 }) {
   const [sheet, setSheet] = useState<SheetKey | null>(null);
+  useBackToClose(sheet !== null, () => setSheet(null));
   const parkingServiceTerms = buildParkingServiceTerms(providerName);
   const thirdPartyPrivacy = buildThirdPartyPrivacyConsent(providerName);
   const partnerLabel = providerName?.trim() || '제휴업체';
@@ -175,15 +177,15 @@ export default function BookingConsent({
       </p>
       <p className="text-[11px] font-medium leading-relaxed text-muted">
         전문:{' '}
-        <a href="/terms/" className="font-bold text-brand underline-offset-2 hover:underline">
+        <a href="/terms/" target="_blank" rel="noopener" className="font-bold text-brand underline-offset-2 hover:underline">
           이용약관
         </a>
         {' · '}
-        <a href="/privacy/" className="font-bold text-brand underline-offset-2 hover:underline">
+        <a href="/privacy/" target="_blank" rel="noopener" className="font-bold text-brand underline-offset-2 hover:underline">
           개인정보처리방침
         </a>
         {' · '}
-        <a href="/refund/" className="font-bold text-brand underline-offset-2 hover:underline">
+        <a href="/refund/" target="_blank" rel="noopener" className="font-bold text-brand underline-offset-2 hover:underline">
           취소·환불 정책
         </a>
       </p>

@@ -523,7 +523,7 @@ export default function CompanyDetailSheet({
                   <li key={item.id}>· {item.title}</li>
                 ))}
             </ul>
-            <a href={AIRPICK_CARE.href} className="mt-2 inline-block text-[13px] font-bold text-[#e3c987] underline underline-offset-2">
+            <a href={AIRPICK_CARE.href} target="_blank" rel="noopener" className="mt-2 inline-block text-[13px] font-bold text-[#e3c987] underline underline-offset-2">
               안심케어 자세히 보기
             </a>
           </section>

@@ -1,3 +1,4 @@
+import { useBackToClose } from '../lib/backStack';
 import { Camera, Headphones, MapPin, Phone, ShieldCheck, Star, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { RESERVATION_STEPS, AIRPICK_TRACKING_UPSELL, AIRPICK_CARE } from '../constants/marketing';
@@ -236,6 +237,7 @@ export default function ReservationCard({
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState('');
   const [reviewOpen, setReviewOpen] = useState(false);
+  useBackToClose(reviewOpen, () => setReviewOpen(false));
   const autoReviewOpenedRef = useRef(false);
 
   const canWriteReview =

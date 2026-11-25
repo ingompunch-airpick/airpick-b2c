@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { consumeOverlayPop, resetOverlayStack, useBackToClose } from './lib/backStack';
 import {
   ComparePageSkeleton,
   EsimPageSkeleton,
@@ -132,36 +133,6 @@ export default function App() {
   const [bookingTarget, setBookingTarget] = useState<{ company: Company; price: number } | null>(
     null
   );
-  /**
-   * 업체 상세·예약 창을 열면 뒤로가기 한 칸을 만들어 둔다.
-   * 안 그러면 뒤로가기를 누를 때 창이 닫히는 대신 사이트를 떠나 버린다.
-   */
-  const overlayOpen = Boolean(partnerDetail || bookingTarget);
-  const overlayClosedByBack = useRef(false);
-  useEffect(() => {
-    if (!overlayOpen) return;
-    try {
-      window.history.pushState({ ...(window.history.state || {}), airpickOverlay: true }, '', window.location.href);
-    } catch {
-      return;
-    }
-    const onPop = () => {
-      overlayClosedByBack.current = true;
-      setPartnerDetail(null);
-      setBookingTarget(null);
-    };
-    window.addEventListener('popstate', onPop);
-    return () => {
-      window.removeEventListener('popstate', onPop);
-      if (overlayClosedByBack.current) {
-        overlayClosedByBack.current = false;
-        return;
-      }
-      // X로 닫았으면 만들어 둔 한 칸을 되돌린다 (탭 이동 등으로 이미 바뀌었으면 건드리지 않음)
-      if (window.history.state?.airpickOverlay) window.history.back();
-    };
-  }, [overlayOpen]);
-
   const [lastReservationId, setLastReservationId] = useState<string | null>(null);
   const [reviewReservationId, setReviewReservationId] = useState<string | null>(() =>
     readReviewReservationId()
@@ -176,6 +147,40 @@ export default function App() {
   const [esimGuideOpen, setEsimGuideOpen] = useState(false);
   const [parkingGuideOpen, setParkingGuideOpen] = useState(false);
   const [cancelGuideOpen, setCancelGuideOpen] = useState(false);
+
+  // 창이 열려 있을 때 뒤로가기 = 맨 위 창 닫기 (사이트를 떠나지 않게)
+  useBackToClose(Boolean(partnerDetail), () => setPartnerDetail(null));
+  useBackToClose(Boolean(bookingTarget), () => setBookingTarget(null));
+  useBackToClose(menuOpen, () => setMenuOpen(false));
+  useBackToClose(supportOpen, () => setSupportOpen(false));
+  useBackToClose(esimGuideOpen, () => setEsimGuideOpen(false));
+  useBackToClose(parkingGuideOpen, () => setParkingGuideOpen(false));
+  useBackToClose(cancelGuideOpen, () => setCancelGuideOpen(false));
+
+  /**
+   * 결제 완료 후 뒤로가기로 예전 화면이 브라우저 캐시에서 그대로 살아나면
+   * 예약·결제 창이 열린 채 보일 수 있다 → 닫고 처음 화면으로.
+   */
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (!e.persisted) return;
+      const readPaid = () => {
+        try {
+          const v = Boolean(sessionStorage.getItem('airpick.paidDone'));
+          sessionStorage.removeItem('airpick.paidDone');
+          return v;
+        } catch {
+          return false;
+        }
+      };
+      if (!readPaid()) return;
+      resetOverlayStack();
+      setBookingTarget(null);
+      setPartnerDetail(null);
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
   const { offer: affiliateOffer } = useAffiliateOffer();
   const affiliateDiscountWon = affiliateOffer?.customerDiscountWon ?? 0;
 
@@ -438,6 +443,8 @@ export default function App() {
     }
 
     const onPopState = () => {
+      // 창 닫기용 뒤로가기면 탭·주소 처리는 건너뛴다
+      if (consumeOverlayPop()) return;
       const current = window.location.pathname;
       const currentSearch = window.location.search;
       if (isSeoDocumentPath(current)) {
@@ -475,6 +482,16 @@ export default function App() {
     setPaymentCompleteOpen(false);
     setPaymentCompleteId(null);
     setTab(next, 'replace');
+  };
+
+  /** 결제 실패 → 임시저장된 예약 내용으로 예약 창을 다시 연다 */
+  const retryPaymentFromDraft = () => {
+    const draft = readBookingDraft();
+    const company = draft ? companies.find((item) => item.id === draft.companyId) : undefined;
+    leavePaymentComplete('home');
+    if (!draft || !company) return;
+    setSearch(draft.search);
+    setBookingTarget({ company, price: 0 });
   };
 
   const page = useMemo(() => {
@@ -568,6 +585,7 @@ export default function App() {
               paymentId={paymentCompleteId ?? readPaymentIdFromLocation()}
               onGoHome={() => leavePaymentComplete('home')}
               onGoMy={() => leavePaymentComplete('my')}
+              onRetry={readBookingDraft() ? retryPaymentFromDraft : undefined}
             />
           </Suspense>
         </main>
@@ -646,7 +664,9 @@ export default function App() {
             onBrowseOtherCompanies={() => {
               setBookingTarget(null);
               setPartnerDetail(null);
-              setTab('compare');
+              // 비교 목록은 홈에 있다 ('compare' 탭 주소는 홈으로 돌아가 버려서 쓰지 않음)
+              setTab('home');
+              window.setTimeout(() => document.getElementById('home-search')?.scrollIntoView({ block: 'start' }), 50);
             }}
             onSuccess={(id) => {
               trackParkingBookComplete(bookingTarget.company.id, bookingTarget.company.name);

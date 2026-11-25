@@ -18,10 +18,13 @@ function readRedirectError(): { code: string; message: string } | null {
 export default function PaymentCompletePage({
   paymentId,
   onGoHome,
+  onRetry,
 }: {
   paymentId: string | null;
   onGoHome: () => void;
   onGoMy?: () => void;
+  /** 결제 실패 시 — 입력해 둔 예약 화면으로 돌아가 다시 결제 */
+  onRetry?: () => void;
 }) {
   const failure = readRedirectError();
   const summary = readPaySummary(paymentId);
@@ -29,8 +32,15 @@ export default function PaymentCompletePage({
 
   // 결제가 끝나면 예약 작성 임시저장을 지운다 — 안 지우면 홈으로 돌아갔을 때 확인 화면이 다시 열린다
   useEffect(() => {
-    if (ok) clearBookingDraft();
-  }, [ok]);
+    if (ok) {
+      clearBookingDraft();
+      try {
+        sessionStorage.setItem('airpick.paidDone', paymentId || '1');
+      } catch {
+        /* 무시 */
+      }
+    }
+  }, [ok, paymentId]);
 
   return (
     <div className="mx-auto flex min-h-[70dvh] max-w-lg flex-col px-5 pb-24 pt-8">
@@ -86,10 +96,23 @@ export default function PaymentCompletePage({
         ) : null}
 
         <div className="mt-8 grid w-full gap-2">
+          {!ok && onRetry ? (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white"
+            >
+              입력한 예약으로 다시 결제하기
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onGoHome}
-            className="w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white"
+            className={
+              !ok && onRetry
+                ? 'w-full rounded-xl bg-[#f4f5f7] py-3 text-[15px] font-bold text-[#0f1a2e]'
+                : 'w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white'
+            }
           >
             홈으로
           </button>
