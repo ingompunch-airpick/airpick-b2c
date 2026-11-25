@@ -1020,7 +1020,9 @@ export default function BookingModal({
             이 내용이 맞나요?
           </h2>
           <p className="mt-1.5 text-sm font-medium text-muted">
-            {memberPreview
+            {paymentStepOn
+              ? '확인 후 결제하면 예약이 접수됩니다. 내 예약에서 바로 볼 수 있습니다.'
+              : memberPreview
               ? '맞으면 이 금액으로 접수합니다. 내 예약에서 바로 볼 수 있습니다.'
               : '카카오로 접수하면 출고 후 포인트가 적립됩니다. 비회원으로도 접수할 수 있습니다.'}
           </p>
