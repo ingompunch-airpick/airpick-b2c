@@ -528,6 +528,10 @@ export default function BookingModal({
       setError('결제에는 예약자 이름과 휴대폰 번호가 필요합니다.');
       return;
     }
+    if (!memberPreview && !/^\d{4}$/.test(form.reservationPassword.trim())) {
+      setError('비회원 비밀번호 4자리를 입력해 주세요.');
+      return;
+    }
     const amount = memberPreview ? payableTotal : breakdown.total;
     const companyLabel = displayCompanyName(company.name);
     const productLabel = /주차대행|발렛/.test(companyLabel) ? companyLabel : `${companyLabel} 주차대행`;
@@ -999,6 +1003,45 @@ export default function BookingModal({
   if (confirming) {
     const guestPayable = breakdown.total;
     const shownPayable = memberPreview ? payableTotal : guestPayable;
+    const paymentSection = (
+            <section aria-labelledby="booking-pay-title" className="mt-5 rounded-2xl p-4 ring-1 ring-[#0f1a2e]/10">
+              <h3 id="booking-pay-title" className="text-[15px] font-bold text-ink">
+                결제
+              </h3>
+              <div className="mt-2 flex items-center justify-between gap-4">
+                <span className="text-[13px] font-semibold text-muted">결제 금액</span>
+                <span className="text-lg font-bold text-ink tabular-nums">{shownPayable.toLocaleString()}원</span>
+              </div>
+              <ul className="mt-3 space-y-1 rounded-xl bg-[#f4f5f7] px-3 py-2.5 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/80">
+                <li>· 맡기는 시각 {APP_CONFIG.refund.fullRefundHours}시간 전까지 취소: 전액 환불</li>
+                <li>
+                  · {APP_CONFIG.refund.fullRefundHours}시간 전부터 맡기는 시각 전까지:{' '}
+                  {Math.round(APP_CONFIG.refund.lateRefundRatio * 100)}% 환불
+                </li>
+                <li>· 맡기는 시각 이후(노쇼 포함): 환불 불가</li>
+                <li>· {APP_CONFIG.bookingWindowNotice}</li>
+              </ul>
+              <p className="mt-3 text-[12px] font-medium leading-relaxed text-muted">
+                결제하면 위 취소·환불 규정에 동의한 것으로 봅니다.{' '}
+                <a href="/refund/" target="_blank" rel="noopener" className="font-semibold text-brand underline-offset-2 hover:underline">
+                  전문 보기
+                </a>
+              </p>
+              <button
+                type="button"
+                disabled={paying || loading || authBusy}
+                onClick={() => void payWithPortone()}
+                className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white transition-opacity disabled:opacity-40"
+              >
+                {paying ? '결제창 여는 중…' : `${shownPayable.toLocaleString()}원 결제하기`}
+              </button>
+              {isTestPaymentMode() ? (
+                <p className="mt-2 text-center text-[11px] font-medium text-muted">
+                  테스트 결제입니다. 실제로 청구되지 않습니다.
+                </p>
+              ) : null}
+            </section>
+    );
     return (
       <div className={bookingShell}>
         <div
@@ -1079,45 +1122,6 @@ export default function BookingModal({
               className="pt-1 text-right"
             />
           </dl>
-          {paymentStepOn ? (
-            <section aria-labelledby="booking-pay-title" className="mt-4 rounded-2xl p-4 ring-1 ring-[#0f1a2e]/10">
-              <h3 id="booking-pay-title" className="text-[15px] font-bold text-ink">
-                결제
-              </h3>
-              <div className="mt-2 flex items-center justify-between gap-4">
-                <span className="text-[13px] font-semibold text-muted">결제 금액</span>
-                <span className="text-lg font-bold text-ink tabular-nums">{shownPayable.toLocaleString()}원</span>
-              </div>
-              <ul className="mt-3 space-y-1 rounded-xl bg-[#f4f5f7] px-3 py-2.5 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/80">
-                <li>· 맡기는 시각 {APP_CONFIG.refund.fullRefundHours}시간 전까지 취소: 전액 환불</li>
-                <li>
-                  · {APP_CONFIG.refund.fullRefundHours}시간 전부터 맡기는 시각 전까지:{' '}
-                  {Math.round(APP_CONFIG.refund.lateRefundRatio * 100)}% 환불
-                </li>
-                <li>· 맡기는 시각 이후(노쇼 포함): 환불 불가</li>
-                <li>· {APP_CONFIG.bookingWindowNotice}</li>
-              </ul>
-              <p className="mt-3 text-[12px] font-medium leading-relaxed text-muted">
-                결제하면 위 취소·환불 규정에 동의한 것으로 봅니다.{' '}
-                <a href="/refund/" target="_blank" rel="noopener" className="font-semibold text-brand underline-offset-2 hover:underline">
-                  전문 보기
-                </a>
-              </p>
-              <button
-                type="button"
-                disabled={paying || loading || authBusy}
-                onClick={() => void payWithPortone()}
-                className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white transition-opacity disabled:opacity-40"
-              >
-                {paying ? '결제창 여는 중…' : `${shownPayable.toLocaleString()}원 결제하기`}
-              </button>
-              {isTestPaymentMode() ? (
-                <p className="mt-2 text-center text-[11px] font-medium text-muted">
-                  테스트 결제입니다. 실제로 청구되지 않습니다.
-                </p>
-              ) : null}
-            </section>
-          ) : null}
           {memberPreview && pointSpendCap >= POINT_STEP_WON ? (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f4f5f7] px-4 py-3">
               <div>
@@ -1153,6 +1157,9 @@ export default function BookingModal({
           ) : null}
 
           {memberPreview ? (
+            paymentStepOn ? (
+              paymentSection
+            ) : (
             <button
               type="button"
               disabled={loading || authBusy}
@@ -1165,6 +1172,7 @@ export default function BookingModal({
                   ? `포인트 ${pointSpendWon.toLocaleString()}원 빼고 접수`
                   : '이 금액으로 접수'}
             </button>
+            )
           ) : (
             <>
               <button
@@ -1183,7 +1191,7 @@ export default function BookingModal({
                   onClick={() => setGuestMode(true)}
                   className="mt-2 w-full rounded-xl bg-[#f4f5f7] py-3 text-[15px] font-bold text-[#0f1a2e] disabled:opacity-60"
                 >
-                  비회원으로 접수
+                  {paymentStepOn ? '비회원으로 결제' : '비회원으로 접수'}
                 </button>
               ) : (
               <>
@@ -1209,6 +1217,9 @@ export default function BookingModal({
                   비회원 조회·취소에 사용합니다.
                 </span>
               </label>
+              {paymentStepOn ? (
+                paymentSection
+              ) : (
               <button
                 type="button"
                 disabled={loading || authBusy}
@@ -1217,6 +1228,7 @@ export default function BookingModal({
               >
                 {loading && !authBusy ? '접수 중…' : `비회원 접수 · ${guestPayable.toLocaleString()}원`}
               </button>
+              )}
               </>
               )}
             </>
