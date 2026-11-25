@@ -285,3 +285,12 @@ html.has-dock .app-dock {
 .app-dock a { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 999px;
   background: var(--ink); color: #fff; font-size: 16px; font-weight: 700; text-decoration: none; }
 .app-dock a.sub { flex: 0 0 auto; padding: 0 20px; background: #f1f3f6; color: var(--ink); }
+
+/* 약관·개인정보·환불 같은 문서형 페이지 — 띠 배경 없이 촘촘하게 */
+.doc .section { padding: 24px 0; }
+.doc .section:nth-of-type(even) { background: none; box-shadow: none; clip-path: none; }
+.doc .section + .section { border-top: 1px solid var(--border); }
+.doc .section h2 { margin-bottom: 12px; font-size: 20px; }
+.doc .section .card { padding: 18px 20px; }
+.doc .section > p, .doc .section > div > p { font-size: 15px; line-height: 1.75; }
+.doc .legal-footer { margin-top: 32px; }
