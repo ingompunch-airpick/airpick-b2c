@@ -39,6 +39,10 @@ jobs:
       - name: Build
         env:
           VITE_NAVER_MAP_NCP_KEY_ID: ${{ secrets.VITE_NAVER_MAP_NCP_KEY_ID }}
+          # 포트원 결제 — 상점 ID·채널 키는 브라우저 번들에 그대로 노출되는 공개값 (시크릿 키 아님)
+          VITE_PORTONE_ENABLED: 'true'
+          VITE_PORTONE_STORE_ID: store-010b2a7d-5680-414d-916f-a2119bebde6e
+          VITE_PORTONE_CHANNEL_KEY_TOSS: channel-key-048e205a-6a44-4c31-b746-717b4881eff7
         run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
