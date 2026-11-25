@@ -1121,7 +1121,7 @@ export default function BookingModal({
                 onClick={() => void payWithPortone()}
                 className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-[16px] font-bold text-white transition-opacity disabled:opacity-40"
               >
-                {paying ? '결제창 여는 중…' : `카드 결제 · ${shownPayable.toLocaleString()}원`}
+                {paying ? '결제창 여는 중…' : `${shownPayable.toLocaleString()}원 결제하기`}
               </button>
               {isTestPaymentMode() ? (
                 <p className="mt-2 text-center text-[11px] font-medium text-muted">
