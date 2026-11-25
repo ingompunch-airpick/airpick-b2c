@@ -16,7 +16,6 @@ import TerminalFields from './TerminalFields';
 import TimeField from './TimeField';
 import AirlineSelect from './AirlineSelect';
 import type { BookingSearch, Company, Terminal } from '../types';
-import { suggestedIcnTerminalForAirline } from '../constants/airlines';
 import { displayCompanyName } from '../utils/display';
 import {
   ensureAnonymousAuth,
@@ -1534,19 +1533,6 @@ export default function BookingModal({
                       />
                     </label>
                   </div>
-                  {(() => {
-                    const suggested = suggestedIcnTerminalForAirline(
-                      form.departureAirline,
-                      search.departureDate
-                    );
-                    if (!suggested || suggested === search.terminal) return null;
-                    return (
-                      <p className="mt-2 text-[12px] font-semibold leading-snug text-amber-800">
-                        선택한 항공사 기준으로는 제{suggested === 'T2' ? '2' : '1'}터미널입니다. 위
-                        출국 터미널을 맞춰 주세요.
-                      </p>
-                    );
-                  })()}
                 </div>
                 <div>
                   <p className="mb-2 text-[13px] font-bold text-muted">귀국</p>
@@ -1556,7 +1542,7 @@ export default function BookingModal({
                       required
                       value={form.arrivalAirline}
                       referenceDateYmd={search.arrivalDate}
-                      currentTerminal={search.terminal}
+                      currentTerminal={search.arrivalTerminal ?? search.terminal}
                       onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
                     />
                     <label className="block">

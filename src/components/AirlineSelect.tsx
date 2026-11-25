@@ -87,7 +87,7 @@ export default function AirlineSelect({
         />
       )}
       {terminalHint ? (
-        <p className="mt-1.5 text-[11px] font-medium leading-snug text-[#0f1a2e]/75">{terminalHint}</p>
+        <p className="mt-1.5 text-[12px] font-semibold leading-snug text-amber-800">{terminalHint}</p>
       ) : null}
     </div>
   );
