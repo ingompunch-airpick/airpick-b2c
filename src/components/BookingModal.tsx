@@ -1396,7 +1396,7 @@ export default function BookingModal({
       ) : null}
       <div className="mt-3 border-t border-[#0f1a2e]/8 pt-3">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-[13px] font-semibold text-muted">온라인 결제 준비 중</span>
+          <span className="text-[13px] font-semibold text-muted">{paymentStepOn ? '결제 금액' : '온라인 결제 준비 중'}</span>
           <span className="text-[15px] font-bold tabular-nums text-ink">
             {payableTotal.toLocaleString()}원
           </span>
@@ -1521,6 +1521,7 @@ export default function BookingModal({
                       required
                       value={form.departureAirline}
                       referenceDateYmd={search.departureDate}
+                      currentTerminal={search.terminal}
                       onChange={(departureAirline) => setFormField('departureAirline', departureAirline)}
                     />
                     <label className="block">
@@ -1555,6 +1556,7 @@ export default function BookingModal({
                       required
                       value={form.arrivalAirline}
                       referenceDateYmd={search.arrivalDate}
+                      currentTerminal={search.terminal}
                       onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
                     />
                     <label className="block">

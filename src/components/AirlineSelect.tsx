@@ -4,7 +4,9 @@ import {
   AIRLINE_OPTIONS,
   icnTerminalHintForAirline,
   isKnownAirlineName,
+  suggestedIcnTerminalForAirline,
 } from '../constants/airlines';
+import type { Terminal } from '../types';
 import { cn } from '../utils/cn';
 
 const SELECT_CLASS =
@@ -19,12 +21,15 @@ export default function AirlineSelect({
   required = false,
   /** YYYY-MM-DD — 아시아나 T2 이전일 판단용 (출국일) */
   referenceDateYmd,
+  /** 지금 고른 터미널 — 항공사 터미널과 같으면 안내를 숨긴다 */
+  currentTerminal,
 }: {
   label: string;
   value: string;
   onChange: (name: string) => void;
   required?: boolean;
   referenceDateYmd?: string;
+  currentTerminal?: Terminal;
 }) {
   const isCustomValue = !!value && !isKnownAirlineName(value);
   const [otherMode, setOtherMode] = useState(isCustomValue);
@@ -35,7 +40,11 @@ export default function AirlineSelect({
 
   const showCustomInput = otherMode || isCustomValue;
   const selectValue = showCustomInput ? AIRLINE_OTHER_NAME : value;
-  const terminalHint = !showCustomInput ? icnTerminalHintForAirline(value, referenceDateYmd) : null;
+  const suggestedTerminal = !showCustomInput ? suggestedIcnTerminalForAirline(value, referenceDateYmd) : null;
+  const terminalHint =
+    !showCustomInput && !(currentTerminal && suggestedTerminal === currentTerminal)
+      ? icnTerminalHintForAirline(value, referenceDateYmd)
+      : null;
 
   return (
     <div className="block">
