@@ -231,7 +231,8 @@ export default function BookingModal({
   const [heardFromOther, setHeardFromOther] = useState('');
   const [confirming, setConfirming] = useState(() => draftFor(company.id)?.confirmed === true);
   const [guestMode, setGuestMode] = useState(false);
-  const [editSchedule, setEditSchedule] = useState(false);
+  /** 일정이 이미 지난 시간이면 일정 수정 칸을 열어 둔다 */
+  const [editSchedule, setEditSchedule] = useState(() => !checkBookingTimes(search).ok);
   const [showOptionalNotes, setShowOptionalNotes] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ComparePageSkeleton,
   EsimPageSkeleton,
@@ -132,6 +132,36 @@ export default function App() {
   const [bookingTarget, setBookingTarget] = useState<{ company: Company; price: number } | null>(
     null
   );
+  /**
+   * 업체 상세·예약 창을 열면 뒤로가기 한 칸을 만들어 둔다.
+   * 안 그러면 뒤로가기를 누를 때 창이 닫히는 대신 사이트를 떠나 버린다.
+   */
+  const overlayOpen = Boolean(partnerDetail || bookingTarget);
+  const overlayClosedByBack = useRef(false);
+  useEffect(() => {
+    if (!overlayOpen) return;
+    try {
+      window.history.pushState({ ...(window.history.state || {}), airpickOverlay: true }, '', window.location.href);
+    } catch {
+      return;
+    }
+    const onPop = () => {
+      overlayClosedByBack.current = true;
+      setPartnerDetail(null);
+      setBookingTarget(null);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      if (overlayClosedByBack.current) {
+        overlayClosedByBack.current = false;
+        return;
+      }
+      // X로 닫았으면 만들어 둔 한 칸을 되돌린다 (탭 이동 등으로 이미 바뀌었으면 건드리지 않음)
+      if (window.history.state?.airpickOverlay) window.history.back();
+    };
+  }, [overlayOpen]);
+
   const [lastReservationId, setLastReservationId] = useState<string | null>(null);
   const [reviewReservationId, setReviewReservationId] = useState<string | null>(() =>
     readReviewReservationId()

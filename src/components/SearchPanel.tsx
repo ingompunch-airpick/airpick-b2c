@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import DateField from './DateField';
 import TimeField from './TimeField';
+import { checkBookingTimes } from '../utils/bookingWindow';
 import TerminalFields from './TerminalFields';
 import type { BookingSearch, Terminal } from '../types';
 import { cn } from '../utils/cn';
@@ -129,6 +130,12 @@ export default function SearchPanel({
           onChange={(arrivalTime) => onChange({ ...search, arrivalTime })}
         />
       </div>
+      {(() => {
+        const tc = checkBookingTimes(search);
+        return tc.ok ? null : (
+          <p role="alert" className="mt-1.5 text-[12px] font-semibold text-rose-600">{tc.message}</p>
+        );
+      })()}
 
       <div className="mt-2">
         <TerminalFields

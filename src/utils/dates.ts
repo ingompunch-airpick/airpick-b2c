@@ -25,6 +25,8 @@ export function formatStayPhrase(days: number): string {
 
 export function defaultBookingSearch() {
   const start = new Date();
+  // 기본 맡기는 시간이 10:00이라, 오늘 10시가 지났으면 내일로 잡는다 (지난 시간 예약 방지)
+  if (start.getHours() >= 10) start.setDate(start.getDate() + 1);
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
   return {

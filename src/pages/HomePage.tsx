@@ -26,6 +26,7 @@ import { PRICE_INCLUSION } from '../constants/marketing';
 import SiteNoticeBanner from '../components/SiteNoticeBanner';
 import HomeYoutubeLive from '../components/home/HomeYoutubeLive';
 import TimeField from '../components/TimeField';
+import { checkBookingTimes } from '../utils/bookingWindow';
 import { pickupPin } from '../data/pickupPins';
 import { readMember, subscribeMember } from '../lib/memberSession';
 import { listParkingCompareCompanies } from '../lib/parkingCompare';
@@ -407,6 +408,12 @@ export default function HomePage({
                     onChange={(arrivalTime) => onSearchChange({ ...search, arrivalTime })}
                   />
                 </div>
+                {(() => {
+                  const tc = checkBookingTimes(search);
+                  return tc.ok ? null : (
+                    <p role="alert" className="mt-1.5 text-[12px] font-semibold text-rose-600">{tc.message}</p>
+                  );
+                })()}
               </div>
             </div>
           </div>
