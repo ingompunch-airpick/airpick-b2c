@@ -40,24 +40,28 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
             <br />
             서비스명: {COMPANY_LEGAL.serviceName}
             <br />
-            대표: {COMPANY_LEGAL.representative}
+            대표자: {COMPANY_LEGAL.representative}
             <br />
             사업자등록번호: {COMPANY_LEGAL.registrationNumber}
-            {COMPANY_LEGAL.mailOrderNumber
-              ? ` | 통신판매업 신고: ${COMPANY_LEGAL.mailOrderNumber}`
-              : ''}
             <br />
+            {COMPANY_LEGAL.mailOrderNumber ? (
+              <>
+                통신판매업 신고번호: {COMPANY_LEGAL.mailOrderNumber}
+                <br />
+              </>
+            ) : null}
             주소: {COMPANY_LEGAL.address}
             <br />
-            고객센터:{' '}
+            전화번호:{' '}
             {tel ? (
               <a href={tel} className="text-mkt-brand underline-offset-2 hover:underline">
                 {phoneLabel}
               </a>
             ) : (
               phoneLabel
-            )}{' '}
-            | 이메일:{' '}
+            )}
+            <br />
+            이메일:{' '}
             <a
               href={`mailto:${COMPANY_LEGAL.email}`}
               className="text-mkt-brand underline-offset-2 hover:underline"
@@ -66,6 +70,12 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
             </a>
             <br />
             호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-mkt-muted">
+            판매 상품: 인천공항 주차대행 예약(중개) · 요금은{' '}
+            <a href="/pricing/" className="text-mkt-brand underline-offset-2 hover:underline">
+              요금 안내
+            </a>
           </p>
           <p className="mt-3 text-xs leading-relaxed text-mkt-muted">{FOOTER_INTERMEDIARY_NOTICE}</p>
         </div>

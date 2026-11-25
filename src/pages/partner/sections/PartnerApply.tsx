@@ -6,6 +6,14 @@ import { buildTelHref, formatPhoneDisplay } from '../../../utils/contact';
 
 type Status = 'idle' | 'loading' | 'ok' | 'error';
 
+/** /verified/ 기준과 같은 순서 */
+const APPLY_STEPS = [
+  '입점 상담 신청',
+  '서류 확인 (사업자·보험)',
+  '현장 확인 (주차장·CCTV)',
+  '업체 계정 발급 · 비교 노출 시작',
+] as const;
+
 function digitsPhone(v: string): string {
   return v.replace(/\D/g, '');
 }
@@ -139,8 +147,19 @@ export function PartnerApply() {
           </FadeIn>
 
           <FadeIn delay={0.1} className="flex flex-col gap-4">
-            <Card className="flex flex-1 flex-col justify-center gap-4">
-              <p className="text-sm font-semibold text-mkt-ink">바로 연락</p>
+            <Card className="flex flex-1 flex-col gap-4">
+              <p className="text-sm font-semibold text-mkt-ink">입점 절차</p>
+              <ol className="space-y-2 text-sm text-mkt-muted">
+                {APPLY_STEPS.map((step, i) => (
+                  <li key={step} className="flex gap-2">
+                    <span className="font-bold text-mkt-brand">{i + 1}</span>
+                    {step}
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-2 border-t border-mkt-border pt-4 text-sm font-semibold text-mkt-ink">
+                바로 연락
+              </p>
               <Button
                 href={tel}
                 variant="secondary"

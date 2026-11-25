@@ -61,24 +61,28 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         <br />
         서비스명: {COMPANY_LEGAL.serviceName}
         <br />
-        대표: {COMPANY_LEGAL.representative}
+        대표자: {COMPANY_LEGAL.representative}
         <br />
         사업자등록번호: {COMPANY_LEGAL.registrationNumber}
-        {COMPANY_LEGAL.mailOrderNumber ? (
-          <> | 통신판매업 신고: {COMPANY_LEGAL.mailOrderNumber}</>
-        ) : null}
         <br />
+        {COMPANY_LEGAL.mailOrderNumber ? (
+          <>
+            통신판매업 신고번호: {COMPANY_LEGAL.mailOrderNumber}
+            <br />
+          </>
+        ) : null}
         주소: {COMPANY_LEGAL.address}
         <br />
-        고객센터:{' '}
+        전화번호:{' '}
         {tel ? (
           <a href={tel} className="text-brand underline-offset-2 hover:underline">
             {phoneLabel}
           </a>
         ) : (
           phoneLabel
-        )}{' '}
-        | 이메일:{' '}
+        )}
+        <br />
+        이메일:{' '}
         <a
           href={`mailto:${COMPANY_LEGAL.email}`}
           className="text-brand underline-offset-2 hover:underline"
@@ -87,6 +91,13 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         </a>
         <br />
         호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
+      </p>
+
+      <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
+        판매 상품: 인천공항 주차대행 예약(중개) · 요금은{' '}
+        <a href="/pricing/" className="text-brand underline-offset-2 hover:underline">
+          요금 안내
+        </a>
       </p>
 
       <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">

@@ -43,7 +43,7 @@ export function PartnerKakao() {
 
           <FadeIn delay={0.08} className="lg:col-span-7">
             <DeviceFrame
-              variant="phone"
+              variant="phoneNatural"
               className="mx-auto max-w-[300px]"
               label="① 카카오 알림톡"
             >
@@ -76,12 +76,19 @@ export function PartnerKakao() {
 
 function AlimtalkPreview() {
   return (
-    <div className="flex h-full flex-col bg-[#9eabb8]">
+    <div className="flex flex-col bg-[#9eabb8]">
       <div className="flex items-center justify-between bg-[#fee500] px-3 py-2.5">
         <p className="text-[13px] font-bold text-[#191919]">알림톡 도착</p>
         <span className="text-[10px] font-semibold text-[#191919]/70">Kakao</span>
       </div>
-      <div className="flex flex-1 flex-col justify-center p-3">
+      <div className="flex flex-col gap-2 px-3 pb-5 pt-4">
+        <p className="mx-auto rounded-full bg-black/10 px-3 py-0.5 text-[10px] text-white">오늘</p>
+        <div className="flex items-center gap-2">
+          <span className="flex size-7 items-center justify-center rounded-full bg-[#0b1f3a] text-[10px] font-bold text-[#e8c547]">
+            A
+          </span>
+          <span className="text-[11px] font-semibold text-[#191919]/80">에어픽</span>
+        </div>
         <div className="overflow-hidden rounded-2xl bg-white shadow-md">
           <div className="border-b border-neutral-100 px-4 pb-3 pt-4">
             <p className="text-[11px] text-neutral-400">예약접수 완료</p>
@@ -123,7 +130,7 @@ function ElegantReceiptCard() {
         <h3 className="mt-4 text-[20px] font-bold tracking-tight">예약 접수 확인증</h3>
         <p className="mt-2 text-[11px] text-white/50">가유 주차대행 · No. demo</p>
         <p className="mt-4 flex flex-wrap items-center gap-1.5 text-[12px]">
-          <span className="text-white/75">인천공항 · T1</span>
+          <span className="text-white/75">인천공항 · T2</span>
           <span className="text-[#e8c547]">→</span>
           <span className="font-semibold">Osaka</span>
           <span className="text-white/40">KE</span>
@@ -148,8 +155,8 @@ function ElegantReceiptCard() {
             <MiniCell label="출차예정" value="26.07.23 10:00" />
           </div>
           <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
-            <MiniCell label="출국편" value="T1 · KE101" />
-            <MiniCell label="귀국편" value="T1 · KE101" />
+            <MiniCell label="출국편" value="T2 · KE101" />
+            <MiniCell label="귀국편" value="T2 · KE101" />
           </div>
           <div className="border-b border-neutral-100 px-3.5 py-3">
             <p className="text-[9px] text-neutral-400">고객 연락처</p>

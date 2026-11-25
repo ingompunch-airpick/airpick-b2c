@@ -8,7 +8,7 @@ const MILESTONES = [
   'eSIM / USIM',
   '여행자보험',
   '공항 서비스',
-  '국내 최대 공항 플랫폼',
+  '공항 이용 통합 플랫폼',
 ] as const;
 
 export function PartnerTimeline() {

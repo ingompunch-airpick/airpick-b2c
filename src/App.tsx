@@ -579,7 +579,7 @@ export default function App() {
     return (
       <div className="min-h-dvh bg-white text-ink">
         <Header
-          wide={false}
+          wide
           loggedIn={loggedIn}
           onOpenAccount={() => leavePaymentComplete('my')}
           onOpenMenu={() => setMenuOpen(true)}

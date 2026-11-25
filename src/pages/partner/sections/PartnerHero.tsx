@@ -30,12 +30,10 @@ export function PartnerHero() {
           </FadeIn>
           <FadeIn delay={0.16}>
             <p className="mt-6 max-w-md text-base font-semibold leading-relaxed text-mkt-ink md:text-lg">
-              업체 경쟁률은 늘어나서 광고도 힘들어집니다.
+              업체가 늘수록 광고 경쟁도 치열해집니다.
             </p>
             <p className="mt-3 max-w-md text-sm font-bold tracking-tight text-mkt-ink md:text-base">
-              2022년 40개
-              <span className="mx-1.5 text-mkt-brand">→</span>
-              2026년 200개+α
+              인천공항 사설 주차대행만 300곳이 넘습니다.
             </p>
           </FadeIn>
           <FadeIn delay={0.24}>

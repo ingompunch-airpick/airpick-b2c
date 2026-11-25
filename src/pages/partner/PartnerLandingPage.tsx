@@ -8,7 +8,6 @@ import { PartnerBenefits } from './sections/PartnerBenefits';
 import { PartnerHero } from './sections/PartnerHero';
 import { PartnerKakao } from './sections/PartnerKakao';
 import { PartnerProblem } from './sections/PartnerProblem';
-import { PartnerReviews } from './sections/PartnerReviews';
 import { PartnerTimeline } from './sections/PartnerTimeline';
 import { PartnerTrust } from './sections/PartnerTrust';
 import { PartnerVision } from './sections/PartnerVision';
@@ -38,7 +37,6 @@ export default function PartnerLandingPage() {
         <PartnerBenefits />
         <PartnerApp />
         <PartnerKakao />
-        <PartnerReviews />
         <PartnerDivider />
         <PartnerTrust />
         <PartnerTimeline />
