@@ -530,7 +530,8 @@ export default function BookingModal({
     }
     const amount = memberPreview ? payableTotal : breakdown.total;
     const companyLabel = displayCompanyName(company.name);
-    const orderName = `${companyLabel} 주차대행 ${formatStayPhrase(breakdown.days)}`;
+    const productLabel = /주차대행|발렛/.test(companyLabel) ? companyLabel : `${companyLabel} 주차대행`;
+    const orderName = productLabel;
     setPaying(true);
     setError('');
     try {
