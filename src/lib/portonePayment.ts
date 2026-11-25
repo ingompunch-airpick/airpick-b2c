@@ -27,11 +27,11 @@ function storeId(): string {
 export function portoneCustomerEmail(opts: {
   memberEmail?: string | null;
   phone: string;
-}): string {
+}): string | undefined {
+  // 토스 결제창은 이메일이 선택 항목 — 실제 회원 이메일만 넘긴다 (가짜 주소 채우지 않음)
   const fromMember = opts.memberEmail?.trim();
   if (fromMember && fromMember.includes('@')) return fromMember;
-  const digits = opts.phone.replace(/\D/g, '').slice(-11) || 'guest';
-  return `guest+${digits}@airpick.kr`;
+  return undefined;
 }
 
 /** paymentId는 영문·숫자만 (PG 공통으로 안전한 형태) */
@@ -58,7 +58,7 @@ export async function requestPortoneCardPayment(opts: {
   onBeforeRequest?: (paymentId: string) => void;
   fullName: string;
   phoneNumber: string;
-  email: string;
+  email?: string;
 }): Promise<{ paymentId: string }> {
   const amount = Math.round(Number(opts.totalAmount) || 0);
   if (amount <= 0) throw new Error('결제 금액이 올바르지 않습니다.');
@@ -79,7 +79,7 @@ export async function requestPortoneCardPayment(opts: {
     customer: {
       fullName: opts.fullName.trim(),
       phoneNumber: opts.phoneNumber.trim(),
-      email: opts.email.trim(),
+      ...(opts.email?.trim() ? { email: opts.email.trim() } : {}),
     },
   });
 
