@@ -87,6 +87,8 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         </a>
         <br />
         개인정보 보호책임자: {COMPANY_LEGAL.privacyOfficer}
+        <br />
+        호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
       </p>
 
       <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
