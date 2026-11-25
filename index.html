@@ -220,7 +220,7 @@
             },
             "contactPoint": {
               "@type": "ContactPoint",
-              "telephone": "+82-10-2556-5746",
+              "telephone": "+82-507-1328-5746",
               "contactType": "customer service",
               "availableLanguage": [
                 "ko"
@@ -388,6 +388,37 @@
         ]
       }
     </script>
+    <style>
+      /* 홈 하단 사업자 정보 (React 밖 — PG 검사 봇용). 홈 본문과 같은 폭·배경으로 이어지게 */
+      #pg-legal-footer {
+        box-sizing: border-box;
+        width: 100%;
+        background: #f4f6f8;
+        padding: 0 0 calc(5.5rem + env(safe-area-inset-bottom));
+        font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        font-size: 12px;
+        line-height: 1.7;
+        color: #6b7280;
+      }
+      #pg-legal-footer > .pg-legal-inner {
+        box-sizing: border-box;
+        max-width: 32rem;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 0;
+        border-top: 1px solid #e5e7eb;
+      }
+      #pg-legal-footer a { color: #374151; }
+      #pg-legal-footer p { margin: 0 0 0.5rem; }
+      #pg-legal-footer p:last-child { margin: 0; }
+      #pg-legal-footer .pg-legal-links { margin-bottom: 0.75rem; font-weight: 600; }
+      @media (min-width: 768px) {
+        #pg-legal-footer { padding-bottom: 2.5rem; }
+        #pg-legal-footer > .pg-legal-inner { max-width: 48rem; }
+      }
+      @media (min-width: 1024px) {
+        #pg-legal-footer > .pg-legal-inner { max-width: 64rem; }
+      }
+    </style>
   </head>
   <body>
     <div id="root">
@@ -515,7 +546,7 @@
             주소: 인천광역시 영종구 자연대로 29, 20층 2017호(중산동, 더스텔라)<br />
             고객센터: <a href="tel:050713285746">0507-1328-5746</a> | 이메일:
             <a href="mailto:ingompunch@gmail.com">ingompunch@gmail.com</a><br />
-            개인정보 보호책임자: 김인원 · 대표 · 010-2556-5746
+            개인정보 보호책임자: 김인원 · 대표 · ingompunch@gmail.com
           </p>
           <p>
             에어픽은 통신판매중개자로서 주차대행 서비스의 거래 당사자가 아니며,
@@ -529,23 +560,9 @@
       PG·헤드리스 검사용: React가 #root 를 교체해도 이 블록은 남는다.
       라벨·링크 문구는 포트원 사전점검 키워드에 맞춤.
     -->
-    <footer
-      id="pg-legal-footer"
-      style="
-        box-sizing: border-box;
-        width: 100%;
-        max-width: 42rem;
-        margin: 0 auto;
-        padding: 1.25rem 1rem 5.5rem;
-        font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-        font-size: 12px;
-        line-height: 1.7;
-        color: #374151;
-        background: #fff;
-        border-top: 1px solid #e5e7eb;
-      "
-    >
-      <p style="margin: 0 0 0.75rem">
+    <footer id="pg-legal-footer">
+      <div class="pg-legal-inner">
+      <p class="pg-legal-links">
         <a href="/terms/">이용약관</a>
         ·
         <a href="/privacy/"><strong>개인정보처리방침</strong></a>
@@ -554,7 +571,7 @@
         ·
         <a href="/pricing/">요금 안내</a>
       </p>
-      <p style="margin: 0 0 0.5rem">
+      <p>
         상호: 에어픽 공항주차<br />
         서비스명: 에어픽<br />
         대표자: 김인원<br />
@@ -563,17 +580,18 @@
         주소: 인천광역시 영종구 자연대로 29, 20층 2017호(중산동, 더스텔라)<br />
         전화번호: <a href="tel:050713285746">0507-1328-5746</a><br />
         이메일: <a href="mailto:ingompunch@gmail.com">ingompunch@gmail.com</a><br />
-        개인정보 보호책임자: 김인원 · 대표 · 010-2556-5746
+        개인정보 보호책임자: 김인원 · 대표 · ingompunch@gmail.com
       </p>
-      <p style="margin: 0 0 0.5rem">
+      <p>
         판매 상품: 인천공항 주차대행 예약(중개) · 예: 4일 45,000원~ (일정·업체별 상이)
       </p>
-      <p style="margin: 0 0 0.5rem">
+      <p>
         에어픽은 통신판매중개자로서 주차대행 서비스의 거래 당사자가 아니며, 입점업체가 제공하는
         서비스의 이행 및 책임은 해당 입점업체에 있습니다. 취소·환불은
         <a href="/refund/">취소·환불 정책</a>을 따릅니다.
       </p>
-      <p style="margin: 0">© 에어픽 공항주차. All rights reserved.</p>
+      <p>© 에어픽 공항주차. All rights reserved.</p>
+      </div>
     </footer>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -157,6 +157,12 @@ export default function App() {
   useBackToClose(parkingGuideOpen, () => setParkingGuideOpen(false));
   useBackToClose(cancelGuideOpen, () => setCancelGuideOpen(false));
 
+  // index.html 의 사업자 정보 푸터(React 밖)는 홈에서만 — 다른 탭은 SiteFooter가 있어 두 번 나오지 않게
+  useEffect(() => {
+    const el = document.getElementById('pg-legal-footer');
+    if (el) el.hidden = !(tab === 'home' && !paymentCompleteOpen && !showBrandIntro);
+  }, [tab, paymentCompleteOpen, showBrandIntro]);
+
   /**
    * 결제 완료 후 뒤로가기로 예전 화면이 브라우저 캐시에서 그대로 살아나면
    * 예약·결제 창이 열린 채 보일 수 있다 → 닫고 처음 화면으로.

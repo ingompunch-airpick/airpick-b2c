@@ -306,7 +306,7 @@ export default function HomePage({
   };
 
   return (
-    <div className="bg-[#f4f6f8] pb-[calc(8rem+env(safe-area-inset-bottom))]">
+    <div className="bg-[#f4f6f8] pb-12">
       <section className="relative">
         {/* SEO: index.html 프리렌더와 같은 H1 — 앱이 뜬 뒤에도 페이지 제목 유지 */}
         <h1 className="sr-only">인천공항 주차대행, 보험 확인된 업체만 비교하세요</h1>
