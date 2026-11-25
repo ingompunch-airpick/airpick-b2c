@@ -65,7 +65,7 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
               {COMPANY_LEGAL.email}
             </a>
             <br />
-            개인정보 보호책임자: {COMPANY_LEGAL.privacyOfficer}
+            호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
           </p>
           <p className="mt-3 text-xs leading-relaxed text-mkt-muted">{FOOTER_INTERMEDIARY_NOTICE}</p>
         </div>

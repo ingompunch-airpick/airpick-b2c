@@ -86,8 +86,6 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
           {COMPANY_LEGAL.email}
         </a>
         <br />
-        개인정보 보호책임자: {COMPANY_LEGAL.privacyOfficer}
-        <br />
         호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
       </p>
 
