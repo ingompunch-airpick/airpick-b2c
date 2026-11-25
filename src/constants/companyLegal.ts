@@ -13,7 +13,7 @@ export const COMPANY_LEGAL = {
   /** 고객센터 유선(스마트콜) */
   phone: '050713285746',
   /** 개인정보 보호책임자 한 줄 (초안) */
-  privacyOfficer: '김인원 · 대표 · 010-2556-5746',
+  privacyOfficer: '김인원 · 대표 · ingompunch@gmail.com',
   /** 서비스 영역 */
   serviceArea: '인천공항',
   /** 공식 사이트 — canonical·sitemap·JSON-LD 와 동일 (유니코드 www) */
