@@ -316,6 +316,8 @@ export default function App() {
   /** 카카오 로그인 같은 창 복귀 — 예약 창·입력값을 다시 연다 */
   useEffect(() => {
     if (loading || companies.length === 0) return;
+    // 결제 완료 화면에선 예약 창을 다시 열지 않는다 (결제 확인 중에 화면을 빼앗던 문제)
+    if (isPaymentCompletePath(normalizePathname(window.location.pathname))) return;
     const draft = readBookingDraft();
     const redirectPending = hasKakaoRedirectPending();
     if (!draft && !redirectPending) return;

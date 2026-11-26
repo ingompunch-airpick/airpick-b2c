@@ -392,7 +392,8 @@ export default function CompanyDetailSheet({
   const usageSteps = resolveCompanyUsageSteps(company);
 
   const pickupId =
-    search.isIndoor || search.pickupPointId === 'depart' || search.faceToFace
+    // 인계 방식은 업체가 등록한 상품대로 (실내라고 대면으로 고정하지 않음)
+    search.pickupPointId === 'depart' || search.faceToFace
       ? 'depart'
       : 'short';
   const pin = pickupPin(search.terminal, pickupId);

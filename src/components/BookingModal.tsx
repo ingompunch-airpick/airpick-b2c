@@ -641,6 +641,7 @@ export default function BookingModal({
         reservationId,
         bookingNo,
       });
+      clearBookingDraft();
       window.location.replace(`/payment/complete?paymentId=${encodeURIComponent(`points_${reservationId}`)}`);
       return;
     }
@@ -657,6 +658,8 @@ export default function BookingModal({
       buyerEmail: email,
     };
     savePaySummary(summary);
+    // 예약은 이미 만들어졌다 — 임시저장을 지워야 완료 화면·새로고침에서 예약 창이 다시 열리지 않는다
+    clearBookingDraft();
     await requestPortoneCardPayment({
       paymentId: prepared.paymentId,
       totalAmount: prepared.amount,
@@ -1373,7 +1376,8 @@ export default function BookingModal({
   }
 
   const pickupId =
-    search.isIndoor || search.pickupPointId === 'depart' || search.faceToFace
+    // 인계 방식은 업체가 등록한 상품대로 (실내라고 대면으로 고정하지 않음)
+    search.pickupPointId === 'depart' || search.faceToFace
       ? 'depart'
       : 'short';
   const pin = pickupPin(search.terminal, pickupId);
