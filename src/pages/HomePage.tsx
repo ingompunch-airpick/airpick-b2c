@@ -543,9 +543,8 @@ function priceCompanies(
   affiliateDiscountWon: number
 ) {
   const partners = listParkingCompareCompanies(companies).filter((company) => {
+    // 실내·야외 모두 업체가 등록한 상품(대면·비대면) 그대로 보여 준다 — 업체마다 운영 방식이 다르다
     const face = companyIsFaceHandoff(company, search);
-    /** 실내는 대면 상품만 */
-    if (search.isIndoor && !face) return false;
     return face || findParkingProduct(company, search, false) != null;
   });
 
