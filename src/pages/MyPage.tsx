@@ -32,6 +32,7 @@ import { subscribeCompanies } from '../lib/companies';
 import {
   cancelReservation,
   fetchReservationById,
+  fetchReviewTarget,
   lookupReservations,
   PASSWORD_RATE_LIMIT_MESSAGE,
   PasswordRateLimitedError,
@@ -503,7 +504,10 @@ export default function MyPage({
       setError('');
       setReviewLinkHint('');
       try {
-        const target = await fetchReservationById(reviewReservationId);
+        // 다른 브라우저(카카오톡 안 등)에서 열면 문서 직접 읽기는 막혀 있다 → 가린 정보로 후기 카드만 띄운다
+        const target =
+          (await fetchReservationById(reviewReservationId)) ??
+          (await fetchReviewTarget(reviewReservationId));
         if (cancelled) return;
         if (!target) {
           setReviewLinkHint('예약을 찾지 못했습니다. 아래에서 차량번호와 비밀번호로 조회해 주세요.');

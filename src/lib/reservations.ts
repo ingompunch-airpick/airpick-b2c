@@ -138,12 +138,14 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
 }
 
 /**
- * 같은 밀리초에 두 건이 들어오면 문서가 덮어써지므로 임의 접미사를 붙인다.
- * (추측으로 남의 예약 문서를 여는 것도 어려워진다.)
+ * 예약 문서 ID — 시각 + 추측 불가 난수(16자).
+ * 같은 밀리초 덮어쓰기와, 시각으로 남의 예약 ID를 맞히는 것을 막는다.
  */
 export function createReservationId(): string {
-  const suffix = Math.random().toString(36).slice(2, 6);
-  return `res_${Date.now()}${suffix}`;
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  const rand = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  return `res_${Date.now()}_${rand}`;
 }
 
 /** bookingNo 중복 시 재시도. 조회 권한이 없으면 생성만 하고 통과한다. */
@@ -192,11 +194,33 @@ export async function assertBookingAllowed(
   }
 }
 
+/**
+ * 예약 문서 직접 읽기 — 이 브라우저에서 예약했거나(같은 익명 계정) 카카오로 연결된 본인만 열린다.
+ * 다른 기기·브라우저면 권한이 없으므로 null (차량번호·비밀번호 조회로 연다).
+ */
 export async function fetchReservationById(id: string): Promise<Reservation | null> {
   await ensureAnonymousAuth();
-  const snap = await getDoc(doc(db, 'reservations', id));
-  if (!snap.exists()) return null;
-  return normalizeReservation(snap.id, snap.data() as Record<string, unknown>);
+  try {
+    const snap = await getDoc(doc(db, 'reservations', id));
+    if (!snap.exists()) return null;
+    return normalizeReservation(snap.id, snap.data() as Record<string, unknown>);
+  } catch (err) {
+    if ((err as { code?: string })?.code === 'permission-denied') return null;
+    throw err;
+  }
+}
+
+/**
+ * 출고 알림톡 후기 링크용 — 가린 정보(이름·차량번호 일부)만 받아 후기 카드를 띄운다.
+ * 후기 저장은 비밀번호(또는 카카오 본인)로 서버에서 확인한다.
+ */
+export async function fetchReviewTarget(id: string): Promise<Reservation | null> {
+  const res = await fetch(`/api/reservation-review?id=${encodeURIComponent(id)}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`review_target_${res.status}`);
+  const body = (await res.json()) as { reservation?: Record<string, unknown> };
+  if (!body.reservation) return null;
+  return normalizeReservation(id, body.reservation);
 }
 
 /** B2B 상태·사진 변경을 MY 화면에 실시간 반영 */
