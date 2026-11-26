@@ -139,12 +139,6 @@ export default function HomePage({
   const [justBooked, setJustBooked] = useState<Reservation | null | undefined>(null);
   const today = todayYmd();
 
-  useEffect(() => {
-    if (!search.isIndoor) return;
-    if (search.pickupPointId === 'depart' && search.faceToFace) return;
-    onSearchChange({ ...search, pickupPointId: 'depart', faceToFace: true });
-  }, [onSearchChange, search]);
-
   useEffect(
     () =>
       subscribeMember(() => {
@@ -264,7 +258,8 @@ export default function HomePage({
   const applyPastStay = (reservation: Reservation) => {
     const terminal: Terminal = reservation.departureTerminal === 'T2' ? 'T2' : 'T1';
     const indoor = Boolean(reservation.isIndoor);
-    const face = indoor ? true : Boolean(reservation.faceToFace);
+    // 인계 방식은 지난 예약 그대로 (실내라고 대면으로 고정하지 않음)
+    const face = Boolean(reservation.faceToFace);
     onSearchChange({
       ...search,
       terminal,
@@ -288,12 +283,8 @@ export default function HomePage({
 
   const setLot = (indoor: boolean) => {
     if (indoor) {
-      onSearchChange({
-        ...search,
-        isIndoor: true,
-        pickupPointId: 'depart',
-        faceToFace: true,
-      });
+      // 대면·비대면은 업체를 고를 때 그 업체 상품대로 정한다
+      onSearchChange({ ...search, isIndoor: true });
       return;
     }
     onSearchChange({ ...search, isIndoor: false });
