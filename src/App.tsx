@@ -74,6 +74,7 @@ import { isAirpickPartner } from './utils/compareSort';
 import { useAffiliateOffer } from './context/AffiliateContext';
 import { prefetchAppTab } from './utils/prefetchTabs';
 import { setErrorReportContext } from './lib/errorReport';
+import { hasPayTestFlag } from './lib/paymentMode';
 
 const ComparePage = lazy(() => import('./pages/ComparePage'));
 const EsimPage = lazy(() => import('./pages/EsimPage'));
@@ -272,7 +273,12 @@ export default function App() {
     const start = () => {
       if (cancelled) return;
       unsub = subscribeCompanies((list) => {
-        setCompanies(list.filter((c) => c.id !== 'airpick' && c.id !== 'air25' && c.id !== 'demo'));
+        // demo 는 내부 실결제 시험(?paytest=1)에서만 보인다
+        setCompanies(
+          list.filter(
+            (c) => c.id !== 'airpick' && c.id !== 'air25' && (c.id !== 'demo' || hasPayTestFlag())
+          )
+        );
         setLoading(false);
       });
     };
@@ -591,7 +597,10 @@ export default function App() {
             <PaymentCompletePage
               paymentId={paymentCompleteId ?? readPaymentIdFromLocation()}
               onGoHome={() => leavePaymentComplete('home')}
-              onGoMy={() => leavePaymentComplete('my')}
+              onGoMy={(rid) => {
+                if (rid) setLastReservationId(rid);
+                leavePaymentComplete('my');
+              }}
               onRetry={readBookingDraft() ? retryPaymentFromDraft : undefined}
             />
           </Suspense>

@@ -52,6 +52,8 @@ export function paymentCompleteUrl(paymentId: string): string {
 
 export async function requestPortoneCardPayment(opts: {
   totalAmount: number;
+  /** 실결제: 서버가 만든 결제번호 (없으면 심사용으로 새로 만든다) */
+  paymentId?: string;
   /** 결제창·카드 명세에 보이는 상품명 */
   orderName?: string;
   /** 결제창 열기 직전(모바일 리다이렉트 대비 요약 저장용) */
@@ -63,7 +65,7 @@ export async function requestPortoneCardPayment(opts: {
   const amount = Math.round(Number(opts.totalAmount) || 0);
   if (amount <= 0) throw new Error('결제 금액이 올바르지 않습니다.');
 
-  const paymentId = newPortonePaymentId();
+  const paymentId = opts.paymentId?.trim() || newPortonePaymentId();
   const redirectUrl = paymentCompleteUrl(paymentId);
   opts.onBeforeRequest?.(paymentId);
 

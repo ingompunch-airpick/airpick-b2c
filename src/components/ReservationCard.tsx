@@ -20,7 +20,9 @@ import { hasAirpickTrackingAccess } from '../utils/reservationSource';
 import {
   formatFreeCancelUntilLine,
   getCancelEligibility,
+  parseCheckInDate,
 } from '../utils/reservationCancel';
+import { calcRefund, formatRefundLine } from '../utils/refundPolicy';
 import { isReservationReviewable } from '../lib/reviews';
 import { handoffPlaceLine, pickupNaverMapUrl } from '../data/pickupPins';
 import { itchaHandoffPlace } from '../data/itchaPickup';
@@ -273,10 +275,21 @@ export default function ReservationCard({
   const showParkedDetail = statusStep >= 2;
   const locationPending = !parkingDisplay && statusStep < 1;
   const paymentLabel =
-    !reservation.paymentMethod || reservation.paymentMethod === 'unpaid'
-      ? '현장 결제'
-      : reservation.paymentMethod;
+    reservation.paymentStatus === 'paid'
+      ? '결제 완료'
+      : reservation.paymentStatus === 'awaiting'
+        ? '결제 대기'
+        : !reservation.paymentMethod || reservation.paymentMethod === 'unpaid'
+          ? '현장 결제'
+          : reservation.paymentMethod;
   const freeCancelLine = formatFreeCancelUntilLine(reservation);
+  // 결제한 예약: 지금 취소하면 얼마 환불되는지 (환불 규정 계산)
+  const paidRefundLine = (() => {
+    if (reservation.paymentStatus !== 'paid' || !reservation.paidWon) return null;
+    const checkIn = parseCheckInDate(reservation);
+    if (!checkIn) return null;
+    return formatRefundLine(calcRefund({ checkIn, paidWon: reservation.paidWon, cancelAt: new Date() }));
+  })();
 
   if (reservation.status === 'cancelled') {
     const dep = reservation.departureDate.slice(5).replace('-', '.');
@@ -287,6 +300,13 @@ export default function ReservationCard({
           취소됨 · {displayCompanyName(reservation.companyName)} · {dep}–{arr} ·{' '}
           {reservation.totalPrice.toLocaleString()}원
         </p>
+        {typeof reservation.refundWon === 'number' && reservation.paidWon ? (
+          <p className="mt-1 text-[12px] font-semibold text-[#0f1a2e]/60">
+            {reservation.refundWon > 0
+              ? `${reservation.refundWon.toLocaleString()}원 환불 (카드사에 따라 반영까지 며칠 걸릴 수 있어요)`
+              : '환불 없음'}
+          </p>
+        ) : null}
       </article>
     );
   }
@@ -618,6 +638,9 @@ export default function ReservationCard({
                   <XCircle size={16} className="text-rose-500" strokeWidth={2.25} />
                   <p className="text-sm font-bold text-ink">예약을 취소할까요?</p>
                 </div>
+                {paidRefundLine ? (
+                  <p className="mt-1.5 text-[12px] font-bold leading-relaxed text-ink">{paidRefundLine}</p>
+                ) : null}
                 <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-muted">
                   취소 후에는 되돌릴 수 없습니다. 예약 비밀번호 4자리를 입력해 주세요.
                 </p>

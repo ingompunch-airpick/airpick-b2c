@@ -2,6 +2,9 @@ import { APP_CONFIG } from '../constants/appConfig';
 import { isPortoneEnabled } from './portonePayment';
 
 const REVIEW_FLAG_KEY = 'airpick.payreview';
+const PAYTEST_FLAG_KEY = 'airpick.paytest';
+/** test 모드 실결제 시험 업체 (B2B Functions PAYMENT_TEST_COMPANY_IDS 와 같게) */
+export const PAYMENT_TEST_COMPANY_IDS = ['demo'];
 const SUMMARY_KEY = 'airpick.paySummary';
 
 /**
@@ -13,6 +16,9 @@ export function rememberPaymentReviewFlag(): void {
     const v = new URLSearchParams(window.location.search).get('payreview');
     if (v === '1') sessionStorage.setItem(REVIEW_FLAG_KEY, '1');
     else if (v === '0') sessionStorage.removeItem(REVIEW_FLAG_KEY);
+    const t = new URLSearchParams(window.location.search).get('paytest');
+    if (t === '1') sessionStorage.setItem(PAYTEST_FLAG_KEY, '1');
+    else if (t === '0') sessionStorage.removeItem(PAYTEST_FLAG_KEY);
   } catch {
     /* storage 차단 환경 — 무시 */
   }
@@ -36,7 +42,29 @@ export function isPaymentStepVisible(): boolean {
   if (!isPortoneEnabled()) return false;
   const mode = APP_CONFIG.paymentMode;
   if (mode === 'live') return true;
-  if (mode === 'test') return hasReviewFlag();
+  if (mode === 'test') return hasReviewFlag() || hasPayTestFlag();
+  return false;
+}
+
+/** `?paytest=1` — 내부 실결제 시험(테스트 채널 + demo 업체) */
+export function hasPayTestFlag(): boolean {
+  try {
+    if (new URLSearchParams(window.location.search).get('paytest') === '1') return true;
+    return sessionStorage.getItem(PAYTEST_FLAG_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 실제 예약 + 서버 결제 확인 흐름을 쓰는지.
+ * live: 모든 업체 / test: `?paytest=1` + demo 업체만 / 그 외(심사용 `?payreview=1`)는 예약 없이 결제창만.
+ */
+export function isLivePaymentFlow(companyId: string): boolean {
+  if (!isPortoneEnabled()) return false;
+  const mode = APP_CONFIG.paymentMode;
+  if (mode === 'live') return true;
+  if (mode === 'test') return hasPayTestFlag() && PAYMENT_TEST_COMPANY_IDS.includes(companyId);
   return false;
 }
 
@@ -51,6 +79,12 @@ export interface PaySummary {
   amount: number;
   companyName: string;
   schedule: string;
+  /** 실결제 흐름 — 확인·재시도용 */
+  reservationId?: string;
+  bookingNo?: string;
+  buyerName?: string;
+  buyerPhone?: string;
+  buyerEmail?: string;
 }
 
 export function savePaySummary(summary: PaySummary): void {

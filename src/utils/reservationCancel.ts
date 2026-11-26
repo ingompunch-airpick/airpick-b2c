@@ -50,6 +50,17 @@ export function getCancelEligibility(
   const checkIn = parseCheckInDate(reservation);
   if (!checkIn) return { cancellable: true };
 
+  // 결제한 예약 — 맡기는 시각 전까지 취소 가능(24시간 전 100%, 그 뒤 50% 환불)
+  if (reservation.paymentStatus === 'paid' || reservation.paymentStatus === 'awaiting') {
+    if (now >= checkIn) {
+      return {
+        cancellable: false,
+        reason: '맡기는 시각이 지나 앱에서 취소할 수 없어요. 카카오 채널로 문의해 주세요',
+      };
+    }
+    return { cancellable: true };
+  }
+
   const cutoffHours = getCancelCutoffHours();
   const deadline = new Date(checkIn.getTime() - cutoffHours * 60 * 60 * 1000);
   if (now > deadline) {
@@ -74,6 +85,8 @@ export function formatFreeCancelUntilLine(
   reservation: Reservation,
   now: Date = new Date()
 ): string | null {
+  // 결제한 예약은 취소 창에서 환불 금액을 보여 준다
+  if (reservation.paymentStatus === 'paid' || reservation.paymentStatus === 'awaiting') return null;
   const deadline = getCancelDeadline(reservation);
   if (!deadline) return null;
   if (now > deadline) {

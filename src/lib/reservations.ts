@@ -134,6 +134,18 @@ function normalizeReservation(id: string, data: Record<string, unknown>): Reserv
     checkedInAt: data.checkedInAt ? String(data.checkedInAt) : undefined,
     checkedOutBy: data.checkedOutBy ? String(data.checkedOutBy) : undefined,
     checkedOutAt: data.checkedOutAt ? String(data.checkedOutAt) : undefined,
+    paymentStatus:
+      typeof (data.payment as { status?: unknown } | undefined)?.status === 'string'
+        ? String((data.payment as { status: string }).status)
+        : undefined,
+    paidWon:
+      typeof (data.payment as { amount?: unknown } | undefined)?.amount === 'number'
+        ? Number((data.payment as { amount: number }).amount)
+        : undefined,
+    refundWon:
+      typeof (data.paymentRefund as { won?: unknown } | undefined)?.won === 'number'
+        ? Number((data.paymentRefund as { won: number }).won)
+        : undefined,
   };
 }
 
@@ -293,7 +305,11 @@ export async function lookupReservations(
  * 고객 셀프 취소 — 서버(Cloud Function)에서 비밀번호를 검증한 뒤
  * status: cancelled 로 변경한다.
  */
-export async function cancelReservation(id: string, password: string): Promise<void> {
+/** 결제한 예약이면 환불 금액(원)을 돌려준다 */
+export async function cancelReservation(
+  id: string,
+  password: string
+): Promise<{ refundWon: number; refundRatio?: number }> {
   const pw = password.trim();
   if (!/^\d{4}$/.test(pw)) {
     throw new Error('예약 비밀번호 4자리를 확인해 주세요.');
@@ -304,7 +320,14 @@ export async function cancelReservation(id: string, password: string): Promise<v
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id, password: pw }),
   });
-  if (res.ok) return;
+  if (res.ok) {
+    try {
+      const out = (await res.json()) as { refundWon?: number; refundRatio?: number };
+      return { refundWon: Math.max(0, Number(out.refundWon) || 0), refundRatio: out.refundRatio };
+    } catch {
+      return { refundWon: 0 };
+    }
+  }
 
   let error = '';
   try {
@@ -354,7 +377,7 @@ export async function submitReservation(
   /** 손님이 고른 주차 상품. 비대면 추가요금이 있으면 같이 남긴다 */
   parkingProduct?: { id: string; dropFee: number },
   /** listPrice=표시 합계. signupCouponWon은 폐지된 첫 예약 할인(옛 예약만) */
-  pricingMeta?: { listPrice: number; signupCouponWon?: number },
+  pricingMeta?: { listPrice: number; signupCouponWon?: number; payOnline?: boolean },
   /** 「에어픽을 어떻게 알게 되셨나요?」(선택) */
   heardFrom?: string
 ): Promise<{ id: string; bookingNo: string }> {
@@ -403,6 +426,8 @@ export async function submitReservation(
     createdBy: RESERVATION_CREATED_BY.AIRPICK_B2C,
     receiptToken: createReceiptToken(),
     paymentMethod: 'unpaid',
+    // 온라인 결제로 접수 — 서버가 결제 대기(15분)로 잡고 결제 확인 뒤 확정한다
+    ...(pricingMeta?.payOnline ? { paymentRequested: true } : {}),
     isIndoor: search.isIndoor,
     scratchPhotos: { synced: false },
     departureFlight: form.departureFlight.trim(),

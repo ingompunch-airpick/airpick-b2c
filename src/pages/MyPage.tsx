@@ -429,9 +429,13 @@ export default function MyPage({
   const reviewDeepLinkHandledRef = useRef<string | null>(null);
 
   const handleCancel = async (reservation: Reservation, password: string) => {
-    await cancelReservation(reservation.id, password);
+    const result = await cancelReservation(reservation.id, password);
     const markCancelled = (prev: Reservation[]) =>
-      prev.map((r) => (r.id === reservation.id ? { ...r, status: 'cancelled' } : r));
+      prev.map((r) =>
+        r.id === reservation.id
+          ? { ...r, status: 'cancelled', ...(result.refundWon > 0 ? { refundWon: result.refundWon } : {}) }
+          : r
+      );
     setReservations(markCancelled);
     setGuestReservations(markCancelled);
     if (getRecentReservation()?.id === reservation.id) clearRecentReservation();

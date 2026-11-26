@@ -377,6 +377,13 @@
         }
       },
       {
+        "source": "/api/payment",
+        "function": {
+          "functionId": "reservationPayment",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "/api/reservation-cancel",
         "function": {
           "functionId": "cancelReservation",

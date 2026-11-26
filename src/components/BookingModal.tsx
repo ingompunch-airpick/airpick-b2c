@@ -85,7 +85,13 @@ import {
 } from '../lib/socialAuth';
 import { portoneCustomerEmail, requestPortoneCardPayment } from '../lib/portonePayment';
 import { PRICE_INCLUSION } from '../constants/marketing';
-import { isPaymentStepVisible, isTestPaymentMode, savePaySummary } from '../lib/paymentMode';
+import {
+  isLivePaymentFlow,
+  isPaymentStepVisible,
+  isTestPaymentMode,
+  savePaySummary,
+} from '../lib/paymentMode';
+import { prepareReservationPayment } from '../lib/reservationPayment';
 
 const FIELD_CLASS =
   'w-full rounded-lg border border-[#d8dee8] bg-white px-3 py-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
@@ -236,6 +242,8 @@ export default function BookingModal({
   const [showOptionalNotes, setShowOptionalNotes] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
+  /** 실결제 — 이미 만든 결제 대기 예약 (재결제 시 재사용) */
+  const onlineReservationRef = useRef<{ id: string; bookingNo: string } | null>(null);
   const paymentStepOn = isPaymentStepVisible();
   const [error, setError] = useState('');
   const [soldOut, setSoldOut] = useState(false);
@@ -553,6 +561,27 @@ export default function BookingModal({
       setError('비회원 비밀번호 4자리를 입력해 주세요.');
       return;
     }
+    if (isLivePaymentFlow(company.id)) {
+      // 결제창을 닫았다 다시 누르면 같은 예약(15분 안)으로 다시 결제 — 예약을 또 만들지 않는다
+      const held = onlineReservationRef.current;
+      if (held) {
+        setPaying(true);
+        setError('');
+        try {
+          await startOnlinePayment(held.id, held.bookingNo);
+        } catch (payErr) {
+          const message = payErr instanceof Error ? payErr.message : '결제에 실패했습니다.';
+          if (/다시 예약|마감|취소된/.test(message)) onlineReservationRef.current = null;
+          setError(message);
+          window.alert(message);
+        } finally {
+          setPaying(false);
+        }
+        return;
+      }
+      await placeReservation(Boolean(memberPreview), { payOnline: true });
+      return;
+    }
     const amount = memberPreview ? payableTotal : breakdown.total;
     const companyLabel = displayCompanyName(company.name);
     const productLabel = /주차대행|발렛/.test(companyLabel) ? companyLabel : `${companyLabel} 주차대행`;
@@ -589,7 +618,57 @@ export default function BookingModal({
     }
   };
 
-  const placeReservation = async (asMember: boolean) => {
+  /**
+   * 실결제 — 예약(결제 대기 15분)이 만들어진 뒤 서버가 정한 금액으로 결제창을 연다.
+   * 결제 확인·확정은 완료 화면과 서버(웹훅)가 한다.
+   */
+  const startOnlinePayment = async (reservationId: string, bookingNo: string) => {
+    const companyLabel = displayCompanyName(company.name);
+    const orderName = /주차대행|발렛/.test(companyLabel) ? companyLabel : `${companyLabel} 주차대행`;
+    const schedule = `${formatDateDisplay(search.departureDate)} ${search.departureTime} → ${formatDateDisplay(search.arrivalDate)} ${search.arrivalTime}`;
+    const fullName = form.userName.trim();
+    const phoneNumber = form.phone.trim();
+    const { auth } = await import('../firebase');
+    const email = portoneCustomerEmail({ memberEmail: auth.currentUser?.email ?? null, phone: phoneNumber });
+    const prepared = await prepareReservationPayment(reservationId);
+    if ('paid' in prepared) {
+      savePaySummary({
+        paymentId: `points_${reservationId}`,
+        orderName,
+        amount: 0,
+        companyName: companyLabel,
+        schedule,
+        reservationId,
+        bookingNo,
+      });
+      window.location.replace(`/payment/complete?paymentId=${encodeURIComponent(`points_${reservationId}`)}`);
+      return;
+    }
+    const summary = {
+      paymentId: prepared.paymentId,
+      orderName,
+      amount: prepared.amount,
+      companyName: companyLabel,
+      schedule,
+      reservationId,
+      bookingNo,
+      buyerName: fullName,
+      buyerPhone: phoneNumber,
+      buyerEmail: email,
+    };
+    savePaySummary(summary);
+    await requestPortoneCardPayment({
+      paymentId: prepared.paymentId,
+      totalAmount: prepared.amount,
+      orderName,
+      fullName,
+      phoneNumber,
+      email,
+    });
+    window.location.replace(`/payment/complete?paymentId=${encodeURIComponent(prepared.paymentId)}`);
+  };
+
+  const placeReservation = async (asMember: boolean, opts: { payOnline?: boolean } = {}) => {
     if (submittingRef.current) return;
 
     let password = form.reservationPassword.trim();
@@ -679,6 +758,7 @@ export default function BookingModal({
         parkingProduct ? { id: parkingProduct.id, dropFee } : undefined,
         {
           listPrice: breakdown.total,
+          ...(opts.payOnline ? { payOnline: true } : {}),
         }
       );
       trackAppointmentScheduled();
@@ -711,6 +791,22 @@ export default function BookingModal({
         }
       } else if (marketingTouched && marketingOptIn) {
         resultLine = formatMarketingResultLine(true, new Date().toISOString());
+      }
+      if (opts.payOnline) {
+        // 결제창 → 완료 화면에서 확정. 실패해도 15분 안엔 같은 예약으로 다시 결제할 수 있다
+        onlineReservationRef.current = { id, bookingNo };
+        setPaying(true);
+        try {
+          await startOnlinePayment(id, bookingNo);
+        } catch (payErr) {
+          const message = payErr instanceof Error ? payErr.message : '결제에 실패했습니다.';
+          if (/다시 예약|마감|취소된/.test(message)) onlineReservationRef.current = null;
+          setError(message);
+          window.alert(message);
+        } finally {
+          setPaying(false);
+        }
+        return;
       }
       clearBookingDraft();
       pendingPointSpendRef.current = spend;

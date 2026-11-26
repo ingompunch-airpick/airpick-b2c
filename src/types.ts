@@ -232,6 +232,12 @@ export interface Reservation {
   /** B2B 출고 완료 담당 */
   checkedOutBy?: string;
   checkedOutAt?: string;
+  /** 온라인 결제 — awaiting(결제 대기) · paid · refunded · partial_refunded · expired */
+  paymentStatus?: string;
+  /** 실제 결제한 금액(원) */
+  paidWon?: number;
+  /** 환불한 금액(원) */
+  refundWon?: number;
 }
 
 export type ReservationLookupMode = 'carNumber' | 'phone' | 'bookingNo';
