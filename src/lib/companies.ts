@@ -134,8 +134,8 @@ export async function fetchCompanyBookingPolicy(
     hourlyCapEnabled: data.hourlyCapEnabled === true,
     maxCarsPerHour:
       typeof data.maxCarsPerHour === 'number'
-        ? Math.max(0, Math.min(99, Math.floor(data.maxCarsPerHour)))
-        : Math.max(0, Math.min(99, Math.floor(Number(data.maxCarsPerHour) || 0))),
+        ? Math.max(0, Math.min(999, Math.floor(data.maxCarsPerHour)))
+        : Math.max(0, Math.min(999, Math.floor(Number(data.maxCarsPerHour) || 0))),
   };
 }
 

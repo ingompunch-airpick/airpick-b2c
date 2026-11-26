@@ -100,7 +100,7 @@ export interface Company {
   sameDayBookingBlocked?: boolean;
   /** true일 때만 시간당 입고 한도 적용 (B2B 설정, 기본 OFF) */
   hourlyCapEnabled?: boolean;
-  /** 시간당 최대 대수 1–99. hourlyCapEnabled일 때만 */
+  /** 시간당 최대 대수 1–999. hourlyCapEnabled일 때만 */
   maxCarsPerHour?: number;
   sharesParkingLocation?: boolean;
   sharesPhotos?: boolean;
