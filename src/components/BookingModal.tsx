@@ -1625,11 +1625,11 @@ export default function BookingModal({
                   ) : null}
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-[13px] font-bold text-ink">제조사 · 모델 *</span>
+                  <span className="mb-1.5 block text-[13px] font-bold text-ink">모델 *</span>
                   <input
                     value={form.carModel}
                     onChange={(e) => setFormField('carModel', e.target.value)}
-                    placeholder="현대 그랜저"
+                    placeholder="예) 그랜저"
                     className={FIELD_CLASS}
                   />
                 </label>

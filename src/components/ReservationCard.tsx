@@ -664,23 +664,20 @@ export default function ReservationCard({
         </div>
       )}
 
-      {/* 안심케어 「게시한 그대로」 환불 요청 — 예약번호를 같이 보내 달라고 안내 */}
-      <a
-        href={COMPANY_LEGAL.kakaoChatUrl}
-        target="_blank"
-        rel="noopener"
-        className="mt-4 flex items-center justify-between gap-2 rounded-2xl bg-[#0f1a2e] px-4 py-3 text-white"
-      >
-        <span className="flex min-w-0 items-center gap-2">
-          <ShieldCheck size={18} strokeWidth={2.25} className="shrink-0 text-[#c9a962]" aria-hidden />
-          <span className="min-w-0">
-            <span className="block text-[14px] font-bold">{AIRPICK_CARE.claimCta}</span>
-            <span className="block text-[12px] font-medium text-white/70">
-              카카오톡으로 예약번호 {displayReservationCode(reservation)}와 사진을 보내 주세요 · {AIRPICK_CARE.hours}
-            </span>
+      {/* 안심케어 — 입고 뒤에만, 작은 한 줄로 (업체를 의심하게 만드는 큰 배너는 쓰지 않는다) */}
+      {showParkedDetail ? (
+        <a
+          href={COMPANY_LEGAL.kakaoChatUrl}
+          target="_blank"
+          rel="noopener"
+          className="mt-4 flex items-center justify-center gap-1.5 text-[12px] font-medium text-[#0f1a2e]/55 hover:text-[#0f1a2e]"
+        >
+          <ShieldCheck size={14} strokeWidth={2.25} className="shrink-0 text-[#c9a962]" aria-hidden />
+          <span>
+            {AIRPICK_CARE.name} 적용 · {AIRPICK_CARE.claimCta}
           </span>
-        </span>
-      </a>
+        </a>
+      ) : null}
 
       {reviewOpen && onSubmitReview && (
         <ReviewWriteModal
