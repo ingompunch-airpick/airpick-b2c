@@ -1591,9 +1591,10 @@ export default function BookingModal({
         role="dialog"
         aria-modal="true"
         aria-label="예약"
-        className="flex h-full min-h-0 w-full max-w-lg flex-col md:max-w-5xl md:flex-row md:gap-5 md:px-5 md:py-4"
+        // PC: 창 전체가 한 덩어리로 스크롤 — 마우스가 오른쪽 요약 위에 있어도 입력칸이 같이 움직인다
+        className="flex h-full min-h-0 w-full max-w-lg flex-col md:max-w-5xl md:flex-row md:items-start md:gap-5 md:overflow-y-auto md:overscroll-contain md:px-5 md:py-4"
       >
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col md:min-h-full">
           <div className="flex shrink-0 justify-end px-3 pt-1 md:px-0">
             <button
               type="button"
@@ -1609,7 +1610,7 @@ export default function BookingModal({
             id="booking-form"
             ref={formRef}
             onSubmit={openConfirm}
-            className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-4 md:px-0"
+            className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 pb-4 md:flex-none md:overflow-visible md:px-0"
           >
             <div className="md:hidden">{summaryCard}</div>
 
@@ -1793,7 +1794,7 @@ export default function BookingModal({
           </div>
         </div>
 
-        <aside className="hidden min-h-0 w-[20rem] shrink-0 flex-col overflow-y-auto md:flex lg:w-[22rem]">
+        <aside className="hidden w-[20rem] shrink-0 flex-col md:sticky md:top-0 md:flex lg:w-[22rem]">
           <div className="space-y-3 pt-10 pb-4">
             {summaryCard}
             {cancelNote}
