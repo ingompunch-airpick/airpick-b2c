@@ -33,7 +33,7 @@ export default function SupportPage({
         <h1 className="text-base font-bold text-ink">{title}</h1>
       </header>
 
-      <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto px-4 py-5 pb-8">
+      <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto px-4 pt-5 pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <section className="rounded-3xl bg-gradient-to-br from-sky-tint to-sky-soft p-5 shadow-[0_4px_16px_rgba(49,130,246,0.1)]">
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/15">

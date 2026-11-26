@@ -586,7 +586,7 @@ export default function App() {
           activeTab={tab}
           onTabChange={(next) => leavePaymentComplete(next)}
         />
-        <main>
+        <main className="app-main">
           <Suspense fallback={null}>
             <PaymentCompletePage
               paymentId={paymentCompleteId ?? readPaymentIdFromLocation()}
@@ -631,13 +631,13 @@ export default function App() {
           setTab(next);
         }}
       />
-      <main>
+      <main className="app-main">
         {loading && (tab === 'home' || tab === 'compare') ? (
           tab === 'home' ? <HomePageSkeleton /> : <ComparePageSkeleton />
         ) : homeTone ? (
           <Suspense fallback={pageFallback}>{page}</Suspense>
         ) : (
-          <div className="mx-auto max-w-lg px-4 pt-1 pb-24">
+          <div className="mx-auto max-w-lg px-4 pt-1 pb-6">
             <Suspense fallback={pageFallback}>{page}</Suspense>
             <SiteFooter tone="default" />
           </div>

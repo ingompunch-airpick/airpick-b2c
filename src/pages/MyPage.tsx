@@ -996,7 +996,7 @@ export default function MyPage({
             <div className="rounded-[20px] bg-[#f4f5f7] px-4 py-8 text-center">
               <p className="text-[15px] font-semibold text-[#0f1a2e]">일치하는 예약이 없습니다</p>
               <p className="mt-1 text-[14px] font-medium text-[#0f1a2e]/55">
-                차량번호(또는 연락처)와 예약 비밀번호 4자리를 확인해 주세요
+                입력한 차량번호·연락처·예약번호와 예약 비밀번호 4자리를 확인해 주세요
               </p>
               <button
                 type="button"
@@ -1113,7 +1113,7 @@ export default function MyPage({
       ) : null}
 
       {marketingResultLine ? (
-        <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
           <button
             type="button"
             className="absolute inset-0 bg-[#0f1a2e]/50"
@@ -1124,7 +1124,7 @@ export default function MyPage({
             role="dialog"
             aria-modal="true"
             aria-labelledby={marketingResultTitleId}
-            className="relative z-10 w-full max-w-lg rounded-t-3xl bg-white px-5 py-5 shadow-xl sm:rounded-3xl"
+            className="relative z-10 w-full max-w-lg rounded-t-3xl bg-white px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl sm:rounded-3xl"
           >
             <div className="mb-3 flex items-start justify-between gap-3">
               <h3 id={marketingResultTitleId} className="text-base font-bold text-[#0f1a2e]">

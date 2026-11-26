@@ -50,7 +50,7 @@ function ConsentSheet({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
       <button
         type="button"
         className="absolute inset-0 bg-sky-deep/50"
@@ -61,7 +61,7 @@ function ConsentSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative z-10 flex max-h-[80vh] w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl"
+        className="relative z-10 flex max-h-[85dvh] w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl"
       >
         <div className="flex items-start justify-between gap-3 border-b border-sky-border/60 px-5 py-4">
           <h3 id={titleId} className="text-base font-bold text-ink">
@@ -75,7 +75,7 @@ function ConsentSheet({
             <X size={18} className="text-muted" />
           </button>
         </div>
-        <div className="overflow-y-auto px-5 py-4 text-[13px] leading-relaxed text-muted">
+        <div className="overflow-y-auto px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-[13px] leading-relaxed text-muted">
           {children}
         </div>
         <div className="border-t border-sky-border/60 p-4">

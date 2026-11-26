@@ -142,3 +142,12 @@
     background: #fff !important;
   }
 }
+
+/*
+ * 화면 맞춤 공통 규칙 (모든 폰) — docs/mobile-layout-rules.md
+ * - 본문(main)은 하단 탭 높이(--app-tab-h, 홈 인디케이터 포함)만큼 아래 여백을 둔다.
+ *   PC(md 이상)는 하단 탭이 숨겨져 높이가 0이 된다.
+ */
+.app-main {
+  padding-bottom: var(--app-tab-h, 0px);
+}

@@ -1,30 +1,34 @@
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 import type { ReservationLookupMode } from '../types';
-import { cn } from '../utils/cn';
+import { isBookingNoQuery } from '../utils/bookingNo';
 
-const modes: { id: ReservationLookupMode; label: string; placeholder: string }[] = [
-  { id: 'carNumber', label: '차량번호', placeholder: '예: 12가 1234' },
-  { id: 'phone', label: '연락처', placeholder: '010-1234-5678' },
-  { id: 'bookingNo', label: '예약번호', placeholder: '예: AP-0324-A7K2' },
-];
+/**
+ * 입력값으로 조회 기준을 고른다 — 탭을 잘못 골라(연락처 탭에 차량번호 등) 못 찾는 일을 막는다.
+ * 예약번호(AP-…) → 숫자만 9~11자리(0으로 시작) → 연락처 → 그 밖(한글 포함 등) → 차량번호
+ */
+function detectLookupMode(raw: string): ReservationLookupMode {
+  const value = raw.trim();
+  if (isBookingNoQuery(value) || /^AP-?/i.test(value)) return 'bookingNo';
+  const digits = value.replace(/[\s-]/g, '');
+  if (/^0\d{8,10}$/.test(digits)) return 'phone';
+  return 'carNumber';
+}
 
 export default function ReservationLookupForm({
   onLookup,
   loading,
-  initialMode,
   initialValue,
 }: {
   onLookup: (mode: ReservationLookupMode, value: string, password: string) => void;
   loading?: boolean;
+  /** 예전 호출부 호환 — 이제 입력값으로 자동 판단 */
   initialMode?: ReservationLookupMode;
   initialValue?: string;
 }) {
-  const [mode, setMode] = useState<ReservationLookupMode>(initialMode ?? 'carNumber');
   const [value, setValue] = useState(initialValue ?? '');
   const [password, setPassword] = useState('');
 
-  const active = modes.find((m) => m.id === mode)!;
   const canSubmit = value.trim() !== '' && /^\d{4}$/.test(password.trim());
 
   return (
@@ -34,44 +38,12 @@ export default function ReservationLookupForm({
         <span className="text-sm font-bold text-ink">예약 조회</span>
       </div>
 
-      <fieldset className="mb-3">
-        <legend className="sr-only">조회 기준</legend>
-        <div className="flex gap-1.5 sm:gap-2">
-          {modes.map(({ id, label }) => {
-            const selected = mode === id;
-            return (
-              <label
-                key={id}
-                htmlFor={`lookup-mode-${id}`}
-                className={cn(
-                  'flex-1 cursor-pointer rounded-xl px-1 py-2.5 text-center text-[11px] font-bold transition-colors sm:text-xs',
-                  selected
-                    ? 'bg-[#0f1a2e] text-white shadow-sm'
-                    : 'bg-white text-muted ring-1 ring-[#0f1a2e]/12'
-                )}
-              >
-                <input
-                  id={`lookup-mode-${id}`}
-                  type="radio"
-                  name="lookup-mode"
-                  value={id}
-                  checked={selected}
-                  onChange={() => setMode(id)}
-                  className="sr-only"
-                />
-                {label}
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
-
       <label className="block">
-        <span className="mb-1 block text-xs font-bold text-muted">{active.label}</span>
+        <span className="mb-1 block text-xs font-bold text-muted">차량번호 · 연락처 · 예약번호 중 하나</span>
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={active.placeholder}
+          placeholder="예: 12가 1234 또는 010-1234-5678"
           className="w-full rounded-xl border border-[#0f1a2e]/12 bg-white px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-[#0f1a2e]"
         />
       </label>
@@ -93,7 +65,7 @@ export default function ReservationLookupForm({
       <button
         type="button"
         disabled={loading || !canSubmit}
-        onClick={() => onLookup(mode, value, password)}
+        onClick={() => onLookup(detectLookupMode(value), value, password)}
         className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#1a2740] disabled:opacity-60"
       >
         {loading ? '조회 중…' : '예약 조회하기'}
