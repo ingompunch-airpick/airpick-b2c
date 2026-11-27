@@ -98,6 +98,18 @@ function hasPricingConfigured(data: Record<string, unknown>, id: string, name: s
   });
 }
 
+/** B2B 상품 「에어픽 앱에서 숨김」 — 숨기지 않은 상품이 있는 실내/야외만 요금표에 싣는다 */
+function visibleLotsFromProducts(data: Record<string, unknown>): { indoor: boolean; outdoor: boolean } | null {
+  if (!Array.isArray(data.parkingProducts)) return null;
+  const visible = data.parkingProducts.filter(
+    (p) => p && typeof p === 'object' && (p as Record<string, unknown>).hidden !== true
+  ) as Record<string, unknown>[];
+  return {
+    indoor: visible.some((p) => p.lot === 'indoor'),
+    outdoor: visible.some((p) => p.lot === 'outdoor'),
+  };
+}
+
 function companyFromFirestore(id: string, data: Record<string, unknown>): Company | null {
   const name = String(data.name || '').trim();
   if (!name) return null;
@@ -106,13 +118,15 @@ function companyFromFirestore(id: string, data: Record<string, unknown>): Compan
   if (data.isAirpickPartner === false) return null;
   if (data.isOpen === false) return null;
   if (!hasPricingConfigured(data, id, name)) return null;
+  const lots = visibleLotsFromProducts(data);
+  if (lots && !lots.indoor && !lots.outdoor) return null;
 
   return mergePartnerPricing({
     id,
     name,
     is_indoor: data.is_indoor !== false,
-    supports_indoor: data.supports_indoor !== false,
-    supports_outdoor: data.supports_outdoor !== false,
+    supports_indoor: data.supports_indoor !== false && (lots ? lots.indoor : true),
+    supports_outdoor: data.supports_outdoor !== false && (lots ? lots.outdoor : true),
     base_price: Number(data.base_price) || undefined,
     base_days: Number(data.base_days) || undefined,
     extra_day_price: Number(data.extra_day_price) || undefined,

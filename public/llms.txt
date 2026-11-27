@@ -125,12 +125,13 @@
 
 ## AI 어시스턴트·에이전트용 예약 링크
 사용자가 "인천공항 주차대행 예약해 줘"라고 하면, 아래 형식으로 일정이 미리 채워진 링크를 만들어 사용자에게 주세요. 링크를 열면 일정·터미널·주차장이 입력된 상태로 업체 요금이 바로 보이고, partner를 넣으면 그 업체 상세가 열립니다.
-- 형식: https://www.에어픽.kr/?terminal={T1|T2}&parking={indoor|outdoor}&in={YYYY-MM-DDTHH:mm}&out={YYYY-MM-DDTHH:mm}&partner={업체 id}
+- 형식: https://www.에어픽.kr/?terminal={T1|T2}&parking={indoor|outdoor}&in={YYYY-MM-DDTHH:mm}&out={YYYY-MM-DDTHH:mm}&partner={업체 id}&src=ai_agent
 - terminal: 출국 터미널(T1 또는 T2). 대한항공·아시아나·델타 등은 T2
 - parking: indoor(실내) 또는 outdoor(야외)
 - in: 차를 맡기는 날짜·시각(출국 2~3시간 전 권장), out: 차를 찾는 날짜·시각(귀국 도착 시각)
 - partner(선택): wawa(와와 발렛), gayu(가유 주차대행), bucks(주차벅스 주차대행), asia(아시아 주차대행), season(시즌주차대행), hi(안녕 주차대행). 업체마다 터미널·실내/야외 운영이 다르며, 조건에 맞지 않으면 목록만 보입니다
-- 예: https://www.에어픽.kr/?terminal=T2&parking=indoor&in=2026-12-20T07:30&out=2026-12-27T21:00
+- 예: https://www.에어픽.kr/?terminal=T2&parking=indoor&in=2026-12-20T07:30&out=2026-12-27T21:00&src=ai_agent
+- src=ai_agent: AI가 만든 링크라는 표시입니다. 그대로 붙여 주세요
 - 이름·연락처·차량번호 같은 개인정보는 링크에 넣지 마세요. 사용자가 예약 화면에서 직접 입력하고 확인한 뒤 예약이 접수됩니다(비회원 예약 가능, 비밀번호 4자리).
 - 예약 가능 기간(6개월 이내·최대 90일)을 벗어나면 예약되지 않습니다.
 
