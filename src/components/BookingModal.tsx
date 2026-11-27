@@ -38,7 +38,9 @@ import {
   maxDepartureYmd,
 } from '../utils/bookingWindow';
 import { APP_CONFIG } from '../constants/appConfig';
-import { flightNumberHint } from '../constants/airlines';
+import { airlineNameForIata, flightNumberHint, suggestedIcnTerminalForAirline } from '../constants/airlines';
+import ItineraryAutofill, { type ItineraryApply } from './ItineraryAutofill';
+import { minusMinutes } from '../utils/itinerarySchedule';
 import { formatDateDisplay, formatStayPhrase, todayYmd } from '../utils/dates';
 import { cn } from '../utils/cn';
 import { getPriceBreakdown, withAffiliateDiscount } from '../utils/pricing';
@@ -497,6 +499,41 @@ export default function BookingModal({
       ...prev,
       arrivalTerminal: prev.terminal === 'T1' ? 'T2' : 'T1',
     }));
+  };
+
+  /** 항공권·일정표 사진에서 읽은 항공편으로 일정·터미널·항공편 칸을 채운다 */
+  const applyItinerary = ({ outbound, inbound, offsetMinutes }: ItineraryApply) => {
+    const nameOf = (f: NonNullable<ItineraryApply['outbound']>) =>
+      airlineNameForIata(f.airlineCode) || f.airlineName || f.airlineCode;
+    const outName = outbound ? nameOf(outbound) : '';
+    const inName = inbound ? nameOf(inbound) : '';
+    setForm((prev) => ({
+      ...prev,
+      ...(outbound ? { departureAirline: outName, departureFlight: outbound.flightNumber } : {}),
+      ...(inbound ? { arrivalAirline: inName, arrivalFlight: inbound.flightNumber } : {}),
+    }));
+
+    const next: BookingSearch = { ...search };
+    if (outbound) {
+      const drop = minusMinutes(outbound.date, outbound.time, offsetMinutes);
+      next.departureDate = drop.date;
+      next.departureTime = drop.time;
+      const t = outbound.terminal ?? suggestedIcnTerminalForAirline(outName, outbound.date);
+      if (t) next.terminal = t;
+    }
+    if (inbound) {
+      next.arrivalDate = inbound.date;
+      next.arrivalTime = inbound.time;
+    }
+    const inboundTerminal = inbound
+      ? (inbound.terminal ?? suggestedIcnTerminalForAirline(inName, inbound.date))
+      : null;
+    const arrival = inboundTerminal ?? (differentArrivalTerminal ? (search.arrivalTerminal ?? next.terminal) : next.terminal);
+    next.arrivalTerminal = arrival;
+    setSearch(next);
+    setDifferentArrivalTerminal(arrival !== next.terminal);
+    // 바뀐 일정을 바로 볼 수 있게 일정 칸을 연다
+    setEditSchedule(true);
   };
 
   const bookingSearch = (): BookingSearch => ({
@@ -1655,6 +1692,7 @@ export default function BookingModal({
             <section className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/8">
               <SectionHead>여행 정보</SectionHead>
               <div className="space-y-3">
+                <ItineraryAutofill onApply={applyItinerary} />
                 <div>
                   <p className="mb-2 text-[14px] font-bold text-muted">출국</p>
                   <div className="grid grid-cols-2 gap-2">

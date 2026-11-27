@@ -160,6 +160,16 @@ const AIRLINE_IATA: Record<string, string> = {
   영국항공: 'BA',
 };
 
+/** 편명 앞 2글자 → 목록에 있는 항공사 이름. 없으면 null */
+export function airlineNameForIata(code: string): string | null {
+  const c = String(code || '').trim().toUpperCase();
+  if (!c) return null;
+  for (const [name, iata] of Object.entries(AIRLINE_IATA)) {
+    if (iata === c) return name;
+  }
+  return null;
+}
+
 /**
  * 편명 확인 안내 (막지는 않음). 공동운항편은 다른 코드일 수 있어 안내만 한다.
  * 문제가 없으면 null.
