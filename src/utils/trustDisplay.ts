@@ -70,6 +70,8 @@ export function shouldShowPhotosBadge(company: Company): boolean {
 
 export function shouldShowInsuranceBadge(company: Company): boolean {
   if (company.sharesInsurance === false) return false;
+  // 업체가 적은 보험 만기가 지나면 「보험」 배지를 내린다 (상세에는 「갱신 확인 중」)
+  if (company.verificationView?.insuranceExpired) return false;
   return !!displayInsuranceLabel(company);
 }
 

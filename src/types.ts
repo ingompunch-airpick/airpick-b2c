@@ -1,3 +1,5 @@
+import type { CompanyVerificationView } from './utils/verification';
+
 export interface CompanyInsurance {
   enrolled: boolean;
   provider?: string;
@@ -8,6 +10,9 @@ export interface CompanyInsurance {
   coverageLimitWon?: number;
   /** 보험증권 이미지·PDF URL (손님 상세에서 확인) */
   certificateUrl?: string;
+  /** 보험기간 YYYY-MM-DD (B2B 입력) */
+  periodStart?: string;
+  periodEnd?: string;
   updatedAt?: string;
 }
 
@@ -109,6 +114,8 @@ export interface Company {
   insurance?: CompanyInsurance;
   /** B2B 업로드 — 사업자등록증·주차장 계약서 */
   verificationDocuments?: CompanyVerificationDocuments;
+  /** 본사 「에어픽 확인」 — 지금 내용과 맞는 확인만 (lib/companies 에서 계산) */
+  verificationView?: CompanyVerificationView;
   /** @deprecated insurance.enrolled 사용 */
   hasInsurance?: boolean;
   /** @deprecated insurance.provider 사용 */

@@ -1,4 +1,4 @@
-import { Building2, ExternalLink, FileText, ShieldCheck } from 'lucide-react';
+import { Building2, Cctv, ExternalLink, FileText, MapPin, ShieldAlert, ShieldCheck } from 'lucide-react';
 import type { Company } from '../types';
 import { displayCoverageLimitText, INSURANCE_DISCLAIMER } from '../utils/insurance';
 import { displayInsuranceLabel } from '../utils/trust';
@@ -9,12 +9,15 @@ import {
   hasParkingContractDocument,
 } from '../utils/verificationDocuments';
 import { cn } from '../utils/cn';
+import { formatDotDate } from '../utils/verification';
 
 function DocumentRow({
   icon: Icon,
   title,
   detail,
   extra,
+  checkedOn,
+  tone = 'ok',
   href,
   linkLabel,
 }: {
@@ -22,17 +25,35 @@ function DocumentRow({
   title: string;
   detail?: string;
   extra?: string;
+  /** 본사 확인일 YYYY-MM-DD — 있으면 「에어픽 확인 · 날짜」 */
+  checkedOn?: string;
+  tone?: 'ok' | 'wait';
   href?: string;
-  linkLabel: string;
+  linkLabel?: string;
 }) {
   return (
     <div className="rounded-xl bg-white/80 px-3.5 py-3 ring-1 ring-sky-border/50">
       <div className="flex items-start gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10">
-          <Icon size={16} className="text-emerald-600" strokeWidth={2.25} aria-hidden />
+        <div
+          className={cn(
+            'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+            tone === 'ok' ? 'bg-emerald-500/10' : 'bg-amber-500/10'
+          )}
+        >
+          <Icon
+            size={16}
+            className={tone === 'ok' ? 'text-emerald-600' : 'text-amber-600'}
+            strokeWidth={2.25}
+            aria-hidden
+          />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold text-ink">{title}</p>
+          {checkedOn ? (
+            <p className="mt-0.5 text-[13px] font-bold text-emerald-700">
+              에어픽 확인 · {formatDotDate(checkedOn)}
+            </p>
+          ) : null}
           {detail ? (
             <p className="mt-0.5 text-[13px] font-semibold text-muted">{detail}</p>
           ) : null}
@@ -41,7 +62,7 @@ function DocumentRow({
           ) : null}
         </div>
       </div>
-      {href ? (
+      {href && linkLabel ? (
         <a
           href={href}
           target="_blank"
@@ -64,7 +85,10 @@ export default function CompanyVerificationDocuments({
   company: Company;
   className?: string;
 }) {
-  if (!companyHasVerificationDocuments(company)) return null;
+  const view = company.verificationView;
+  const hasRecords = !!view?.hasRecords;
+  const insuranceExpired = !!view?.insuranceExpired;
+  if (!companyHasVerificationDocuments(company) && !insuranceExpired && !hasRecords) return null;
 
   const businessUrl = company.verificationDocuments?.businessRegistrationUrl?.trim();
   const contractUrl = company.verificationDocuments?.parkingContractUrl?.trim();
@@ -72,6 +96,13 @@ export default function CompanyVerificationDocuments({
   const productName = company.insurance?.productName?.trim();
   const certificateUrl = company.insurance?.certificateUrl?.trim();
   const coverageLimitText = displayCoverageLimitText(company);
+  const periodStart = view?.insurancePeriodStart;
+  const periodEnd = view?.insurancePeriodEnd;
+  const periodText =
+    periodStart || periodEnd
+      ? `보험기간 ${formatDotDate(periodStart) || '—'} ~ ${formatDotDate(periodEnd) || '—'}`
+      : undefined;
+  const insuranceExtra = [coverageLimitText, periodText].filter(Boolean).join(' · ') || undefined;
 
   return (
     <section
@@ -83,7 +114,9 @@ export default function CompanyVerificationDocuments({
     >
       <p className="text-[13px] font-bold text-brand">에어픽 입점 확인</p>
       <p className="mt-0.5 text-[13px] font-semibold text-muted">
-        사업자·주차장 계약·보험 서류를 에어픽이 확인했습니다.
+        {hasRecords
+          ? '에어픽이 직접 확인한 항목과 확인한 날짜예요.'
+          : '입점할 때 에어픽이 사업자·보험 서류를 확인했어요.'}
       </p>
 
       <div className="mt-3 space-y-2">
@@ -91,6 +124,7 @@ export default function CompanyVerificationDocuments({
           <DocumentRow
             icon={Building2}
             title="사업자등록증"
+            checkedOn={view?.business}
             href={businessUrl}
             linkLabel="사업자등록증 보기"
           />
@@ -105,19 +139,50 @@ export default function CompanyVerificationDocuments({
           />
         ) : null}
 
-        {hasInsuranceCertificate(company) && insuranceLabel ? (
+        {insuranceExpired ? (
+          <DocumentRow
+            icon={ShieldAlert}
+            tone="wait"
+            title="보험 갱신 확인 중"
+            detail={
+              periodEnd
+                ? `등록된 보험기간이 ${formatDotDate(periodEnd)}에 끝났어요. 새 증권을 확인하고 있어요.`
+                : '새 증권을 확인하고 있어요.'
+            }
+            extra="예약 전에 업체에 보험 갱신 여부를 물어보세요."
+          />
+        ) : hasInsuranceCertificate(company) && insuranceLabel ? (
           <DocumentRow
             icon={ShieldCheck}
             title="보험 가입 확인"
             detail={insuranceLabel}
-            extra={coverageLimitText}
+            extra={insuranceExtra}
+            checkedOn={view?.insurance?.verifiedOn}
             href={certificateUrl}
             linkLabel="보험증권 보기"
           />
         ) : null}
+
+        {view?.parking ? (
+          <DocumentRow
+            icon={MapPin}
+            title="주차장 확인"
+            detail="등록된 주차장 주소와 현장을 확인했어요."
+            checkedOn={view.parking}
+          />
+        ) : null}
+
+        {view?.cctv ? (
+          <DocumentRow
+            icon={Cctv}
+            title="CCTV 운영 확인"
+            detail="주차장 CCTV가 운영되는 것을 확인했어요."
+            checkedOn={view.cctv}
+          />
+        ) : null}
       </div>
 
-      {hasInsuranceCertificate(company) ? (
+      {!insuranceExpired && hasInsuranceCertificate(company) ? (
         <p className="mt-2.5 rounded-lg bg-white/80 px-3 py-2 text-[13px] font-medium leading-relaxed text-muted ring-1 ring-sky-border/50">
           사고 발생 시{' '}
           <span className="font-bold text-ink">

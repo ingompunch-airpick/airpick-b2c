@@ -1,3 +1,4 @@
+import { normalizeIsoDate } from './verification';
 import type { Company, CompanyInsurance, Reservation } from '../types';
 import { formatCoverageLimitDisplay } from './coverageLimitDisplay';
 
@@ -62,6 +63,8 @@ function parseInsuranceObject(raw: Record<string, unknown>): CompanyInsurance | 
       const s = url ? String(url).trim() : '';
       return s || undefined;
     })(),
+    periodStart: normalizeIsoDate(raw.periodStart) || undefined,
+    periodEnd: normalizeIsoDate(raw.periodEnd) || undefined,
     updatedAt: raw.updatedAt ? String(raw.updatedAt) : undefined,
   };
 }

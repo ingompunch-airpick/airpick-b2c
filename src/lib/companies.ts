@@ -7,6 +7,7 @@ import { parseInsuranceFromFirestore } from '../utils/insurance';
 import { parseParkingProducts } from '../utils/parkingProducts';
 import { mergePartnerPricing } from '../utils/pricing';
 import { parseVerificationDocuments } from '../utils/verificationDocuments';
+import { parseVerificationView } from '../utils/verification';
 import {
   parseCompanyPickupLocation,
   parsePartnerHomepageUsageSteps,
@@ -111,6 +112,7 @@ function normalizeCompany(id: string, data: Record<string, unknown>): Company | 
       : undefined,
     insurance,
     verificationDocuments: parseVerificationDocuments(data),
+    verificationView: parseVerificationView(data),
     hasInsurance: insurance?.enrolled,
     insuranceProvider: insurance?.provider,
     insuranceLimit: insurance?.coverageLimitWon,
