@@ -13,6 +13,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const dataPath = path.join(root, 'data/partners/pages.json');
 const reviewsPath = path.join(root, 'data/partners/reviews.generated.json');
+/** npm run pricing 이 Firestore 입점·요금·보험·확인 기록으로 만든 파일 — 있으면 6곳 전부 페이지를 만든다 */
+const profilesPath = path.join(root, 'data/partners/profiles.generated.json');
 const outRoot = path.join(root, 'public/partners');
 
 /** 고객 본문용 — 정의문 대신 */
@@ -48,6 +50,135 @@ function lotLabel(p) {
 function terminalsLabel(p) {
   const t = Array.isArray(p.terminals) ? p.terminals.filter(Boolean) : [];
   return t.length ? t.join(' · ') : '1터미널 · 2터미널';
+}
+
+function won(n) {
+  return `${Math.round(Number(n) || 0).toLocaleString('ko-KR')}원`;
+}
+
+function dotDate(ymd) {
+  return ymd ? String(ymd).replace(/-/g, '.') : '';
+}
+
+const STAY_LABEL = { 2: '1박 2일', 3: '2박 3일', 5: '4박 5일', 7: '6박 7일' };
+
+/** 요금 예시 표 — 앱과 같은 계산(npm run pricing). 기준일·출발 시각을 같이 적는다 */
+function pricingSectionHtml(p, meta) {
+  const ex = Array.isArray(p.examples) ? p.examples : [];
+  if (!ex.length) return '';
+  const days = [...new Set(ex.map((e) => e.days))].sort((a, b) => a - b);
+  const keys = [...new Set(ex.map((e) => `${e.terminal}|${e.parking}`))].sort((a, b) => a.localeCompare(b, 'ko'));
+  const rows = keys
+    .map((key) => {
+      const [terminal, parking] = key.split('|');
+      const cells = days
+        .map((d) => {
+          const hit = ex.find((e) => e.terminal === terminal && e.parking === parking && e.days === d);
+          return `<td>${hit ? won(hit.total) : '—'}</td>`;
+        })
+        .join('');
+      return `<tr><th scope="row">${esc(terminal === 'T1' ? '1터미널' : '2터미널')} · ${esc(parking)}</th>${cells}</tr>`;
+    })
+    .join('\n            ');
+  const head = days.map((d) => `<th scope="col">${esc(STAY_LABEL[d] || `${d}일`)}</th>`).join('');
+  const notes = [];
+  if (p.night) {
+    notes.push(
+      `야간·새벽 할증: ${esc(p.night.start)}~${esc(p.night.end)}에 맡기거나 찾으면 각각 +${won(p.night.price)}`
+    );
+  }
+  if (p.t2Surcharge) notes.push(`2터미널 할증: +${won(p.t2Surcharge)} (예약당 1번, 위 표에 포함)`);
+  const h = p.handoff || {};
+  const handoffBits = [
+    h.curbT1 ? `1터미널 +${won(h.curbT1)}` : '',
+    h.curbT2 ? `2터미널 +${won(h.curbT2)}` : '',
+  ].filter(Boolean);
+  if (handoffBits.length) notes.push(`출국장 인계(Curbside) 선택 시: ${handoffBits.join(' · ')} (위 표에는 미포함)`);
+  return `
+      <section class="section" id="pricing">
+        <h2>요금 예시</h2>
+        <p class="answer"><strong>${esc(p.name)} 1박 2일 기준 ${won(Math.min(...ex.filter((e) => e.days === days[0]).map((e) => e.total)))}부터</strong> (기준일 ${esc(dotDate(meta.asOf))})</p>
+        <div class="card table-scroll">
+          <table class="pricing-table">
+            <caption>${esc(dotDate(meta.startYmd))} ${esc(meta.sampleTime)}에 맡기고 같은 시각에 찾는 기준 총액</caption>
+            <thead><tr><th scope="col">터미널 · 보관</th>${head}</tr></thead>
+            <tbody>
+            ${rows}
+            </tbody>
+          </table>
+        </div>
+        ${notes.length ? `<ul>${notes.map((n) => `<li>${n}</li>`).join('')}</ul>` : ''}
+        <p class="note">일정·시간·터미널에 따라 달라져요. 예약 화면에 나오는 금액이 기준이에요.</p>
+      </section>`;
+}
+
+/** 에어픽 확인 — 본사가 직접 본 항목과 날짜. 기록이 없으면 입점 서류 확인만 */
+function verificationSectionHtml(p) {
+  const v = p.verification || {};
+  const ins = p.insurance;
+  const row = (label, day, detail) =>
+    `<tr><th scope="row">${esc(label)}</th><td>${
+      day ? `에어픽 확인 · ${esc(dotDate(day))}` : '확인 예정'
+    }${detail ? `<br /><span class="note">${detail}</span>` : ''}</td></tr>`;
+  const insuranceDetail = p.insuranceExpired
+    ? `등록된 보험기간이 ${esc(dotDate(ins?.periodEnd))}에 끝나 갱신을 확인하고 있어요.`
+    : ins
+      ? esc(
+          [
+            [ins.provider, ins.productName].filter(Boolean).join(' · '),
+            ins.coverageLimitText,
+            ins.periodStart || ins.periodEnd ? `보험기간 ${dotDate(ins.periodStart)} ~ ${dotDate(ins.periodEnd)}` : '',
+          ]
+            .filter(Boolean)
+            .join(' / ')
+        )
+      : '';
+  const lots = Array.isArray(p.lots) ? p.lots : [];
+  const lotDetail = lots.length
+    ? lots.map((l) => `${l.type === 'indoor' ? '실내' : '야외'} ${esc(l.address)}`).join('<br />')
+    : '';
+  if (!v.hasRecords) {
+    return `
+      <section class="section" id="verified">
+        <h2>에어픽 확인</h2>
+        <p>입점할 때 사업자등록증과 보험 서류를 받아 확인했어요.</p>
+        <table>
+          <tbody>
+            <tr><th scope="row">보험</th><td>${insuranceDetail || '서류 확인'}</td></tr>
+            ${lotDetail ? `<tr><th scope="row">주차장</th><td>${lotDetail}</td></tr>` : ''}
+          </tbody>
+        </table>
+        <p class="note">확인 기준은 <a href="/verified/">에어픽 업체 확인 기준</a>에서 볼 수 있어요.</p>
+      </section>`;
+  }
+  return `
+      <section class="section" id="verified">
+        <h2>에어픽 확인</h2>
+        <p>에어픽이 직접 본 항목과 확인한 날짜예요. 업체가 서류·주소·보험을 바꾸면 다시 확인하기 전까지 표시가 내려가요.</p>
+        <table>
+          <tbody>
+            ${row('사업자등록', v.business)}
+            ${row('보험', p.insuranceExpired ? null : v.insurance, insuranceDetail)}
+            ${row('주차장', v.parking, lotDetail)}
+            ${row('CCTV 운영', v.cctv)}
+          </tbody>
+        </table>
+        <p class="note">확인 기준은 <a href="/verified/">에어픽 업체 확인 기준</a>에서 볼 수 있어요.</p>
+      </section>`;
+}
+
+function cancelSectionHtml(p) {
+  const c = p.cancel || { freeHours: 24, lateRefundPercent: 50 };
+  return `
+      <section class="section" id="cancel">
+        <h2>취소·환불</h2>
+        <ul>
+          <li>맡기기 ${Number(c.freeHours)}시간 전까지: <strong>무료 취소</strong></li>
+          <li>그 뒤 맡기기 전까지: <strong>${Number(c.lateRefundPercent)}% 환불</strong></li>
+          <li>맡긴 뒤: 환불 불가</li>
+        </ul>
+        <p class="note">자세한 기준은 <a href="/refund/">취소·환불 정책</a>을 봐 주세요.</p>
+      </section>`;
 }
 
 function pageChrome(title) {
@@ -210,7 +341,7 @@ function reviewTableRowHtml(bundle) {
             </tr>`;
 }
 
-function renderPartner(p, reviewsByCompany) {
+function renderPartner(p, reviewsByCompany, meta = {}) {
   const id = String(p.id || '').trim();
   const name = String(p.name || '').trim();
   if (!id || !name) {
@@ -226,15 +357,22 @@ function renderPartner(p, reviewsByCompany) {
     p.description?.trim() ||
     `${name}${particle} 에어픽에서 비교·예약할 수 있는 인천공항 주차대행이에요. 일정 넣고 요금·보험을 확인해 보세요.`;
   const h1 = `${name} · 인천공항 주차대행`;
+  const firstExample = Array.isArray(p.examples) && p.examples.length
+    ? Math.min(...p.examples.filter((e) => e.days === Math.min(...p.examples.map((x) => x.days))).map((e) => e.total))
+    : null;
   const directAnswer =
     p.answer?.trim() ||
-    `${name}${particle} 에어픽 입점 업체예요. 일정 넣어 예약하면, 맡긴 뒤 위치·사진·보험을 앱에서 볼 수 있어요.`;
+    (firstExample
+      ? `${name}${particle} 에어픽에서 예약할 수 있는 인천공항 주차대행이에요. ${lotLabel(p)} 보관, 1박 2일 ${won(firstExample)}부터예요.`
+      : `${name}${particle} 에어픽 입점 업체예요. 일정 넣어 예약하면, 맡긴 뒤 위치·사진·보험을 앱에서 볼 수 있어요.`);
+  const bookHref = `/?partner=${encodeURIComponent(id)}&src=partner_page`;
+  const photo = (Array.isArray(p.images) && p.images[0]) || p.imageUrl?.trim() || '';
   const prototypeNote = p.isPrototype
     ? `<p class="note">이 페이지는 공개용 초안이에요. 입점 정보가 바뀌면 바로 반영됩니다.</p>`
     : '';
 
-  const imageHtml = p.imageUrl?.trim()
-    ? `<p><img src="${esc(p.imageUrl.trim())}" alt="${esc(p.imageAlt || name + ' 주차장')}" width="800" height="450" style="max-width:100%;height:auto;border-radius:1rem" loading="lazy" /></p>`
+  const imageHtml = photo
+    ? `<p><img src="${esc(photo)}" alt="${esc(p.imageAlt || name + ' 주차장')}" width="800" height="450" style="max-width:100%;height:auto;border-radius:1rem" loading="lazy" /></p>`
     : '';
 
   const localBusiness = {
@@ -243,7 +381,8 @@ function renderPartner(p, reviewsByCompany) {
     name,
     url,
     description: `${name} — 에어픽 입점 인천공항 주차대행·발렛`,
-    image: p.imageUrl?.trim() || 'https://www.에어픽.kr/icon-512.png',
+    image: photo || 'https://www.에어픽.kr/icon-512.png',
+    ...(p.phone ? { telephone: String(p.phone) } : {}),
     // 도로명 미공개 — 가짜 streetAddress 넣지 않음. 지역·서비스권만 명시
     address: {
       '@type': 'PostalAddress',
@@ -257,6 +396,23 @@ function renderPartner(p, reviewsByCompany) {
     },
     parentOrganization: { '@id': 'https://www.에어픽.kr/#organization' },
   };
+
+  if (Array.isArray(p.examples) && p.examples.length) {
+    const totals = p.examples.map((e) => Number(e.total)).filter((n) => n > 0);
+    localBusiness.makesOffer = {
+      '@type': 'Offer',
+      name: `${name} 인천공항 주차대행`,
+      priceCurrency: 'KRW',
+      priceSpecification: {
+        '@type': 'PriceSpecification',
+        priceCurrency: 'KRW',
+        minPrice: Math.min(...totals),
+        maxPrice: Math.max(...totals),
+        description: `기준일 ${meta.asOf || ''} · 1박 2일~6박 7일 · 1·2터미널 · 앱 예약 화면 금액 기준`,
+      },
+      url: `https://www.에어픽.kr${bookHref}`,
+    };
+  }
 
   if (reviewBundle) {
     localBusiness.aggregateRating = {
@@ -355,12 +511,11 @@ ${JSON.stringify(graph, null, 2)}
         <h1>${esc(h1)}</h1>
         <p class="answer"><strong>${esc(directAnswer)}</strong></p>
         <p>
-          ${esc(name)}${particle} 에어픽에서 예약할 수 있는 인천공항 주차대행이에요.
-          요금은 출국·귀국 일정·터미널·실내/야외에 따라 달라지니,
-          <strong>일정을 넣은 뒤</strong> 비교 화면에서 확인하고 예약해 주세요.
+          요금은 출국·귀국 일정·터미널·실내/야외에 따라 달라져요.
+          아래 요금 예시를 보고, <strong>일정을 넣어</strong> 정확한 금액으로 예약해 주세요.
         </p>
         ${prototypeNote}
-        <a class="cta" href="/">일정 넣고 비교·예약</a>
+        <a class="cta" href="${esc(bookHref)}">${esc(name)} 예약하기</a>
         <a class="cta secondary" href="/partners/">다른 입점 업체</a>
       </header>
 
@@ -378,17 +533,37 @@ ${JSON.stringify(graph, null, 2)}
               <td>${esc(terminalsLabel(p))}</td>
             </tr>
             <tr>
-              <th scope="row">위치·거리</th>
-              <td>${esc(p.distanceNote || p.addressNote || '비교 화면·앱에서 확인')}</td>
+              <th scope="row">주차장</th>
+              <td>${
+                Array.isArray(p.lots) && p.lots.length
+                  ? p.lots.map((l) => `${l.type === 'indoor' ? '실내' : '야외'} · ${esc(l.address)}`).join('<br />')
+                  : esc(p.distanceNote || p.addressNote || '비교 화면·앱에서 확인')
+              }</td>
             </tr>
             <tr>
-              <th scope="row">보험 안내</th>
-              <td>${esc(p.insuranceNote || '앱 업체 상세·예약 카드에서 확인')}</td>
-            </tr>${reviewTableRowHtml(reviewBundle)}
+              <th scope="row">보험</th>
+              <td>${
+                p.insuranceExpired
+                  ? '보험 갱신 확인 중'
+                  : p.insurance
+                    ? esc([p.insurance.provider, p.insurance.coverageLimitText].filter(Boolean).join(' · '))
+                    : esc(p.insuranceNote || '앱 업체 상세·예약 카드에서 확인')
+              }</td>
+            </tr>${
+              p.phone
+                ? `
+            <tr>
+              <th scope="row">업체 전화</th>
+              <td><a href="tel:${esc(String(p.phone).replace(/[^0-9]/g, ''))}">${esc(String(p.phone).replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3'))}</a></td>
+            </tr>`
+                : ''
+            }${reviewTableRowHtml(reviewBundle)}
           </tbody>
         </table>
-        <p class="note">이 페이지에 확정 요금은 적어 두지 않아요. 최신 요금·보장은 비교·예약 화면을 기준으로 해 주세요.</p>
       </section>
+${pricingSectionHtml(p, meta)}
+${verificationSectionHtml(p)}
+${cancelSectionHtml(p)}
 ${reviewsSectionHtml(reviewBundle)}
       <section class="section">
         <h2>에어픽에서 예약하면</h2>
@@ -397,7 +572,8 @@ ${reviewsSectionHtml(reviewBundle)}
           <li>맡긴 뒤 <strong>주차 위치·입고 사진·보험 안내</strong>를 예약 탭에서 볼 수 있어요</li>
           <li>온라인 결제(카드·간편결제)를 준비 중이며, 오픈 전까지는 현장에서 결제합니다.</li>
         </ul>
-        <a class="cta" href="/">주차대행 비교 열기</a>
+        <a class="cta" href="${esc(bookHref)}">${esc(name)} 예약하기</a>
+        <a class="cta secondary" href="/">다른 업체와 비교</a>
       </section>
 
       <section class="section">
@@ -473,9 +649,11 @@ function renderHub(partners, reviewsByCompany) {
       const reviewBit = bundle
         ? ` · ${starsLabel(bundle.averageRating)}(${bundle.reviewCount})`
         : ` · ${NEW_PARTNER_REVIEW_NOTE}`;
+      const ex = Array.isArray(p.examples) ? p.examples.filter((e) => e.days === 2) : [];
+      const priceBit = ex.length ? ` · 1박 2일 ${won(Math.min(...ex.map((e) => e.total)))}부터` : '';
       return `<li>
           <a href="/partners/${esc(p.id)}/"><strong>${esc(p.name)}</strong></a>
-          — ${esc(lot)} · ${esc(terminalsLabel(p))}${esc(reviewBit)}
+          — ${esc(lot)} · ${esc(terminalsLabel(p))}${esc(priceBit)}${esc(reviewBit)}
         </li>`;
     })
     .join('\n        ');
@@ -530,7 +708,8 @@ ${JSON.stringify(graph, null, 2)}
       <section class="section">
         <h2>알아두면 좋아요</h2>
         <ul>
-          <li>확정 요금·가짜 별점은 이 페이지에 박아 두지 않아요. 실이용 후기만 보여 드립니다.</li>
+          <li>요금은 업체별 페이지에 기준일과 함께 예시로 적어 두었어요. 예약 화면 금액이 기준이에요.</li>
+          <li>별점·후기는 에어픽에서 이용을 마친 고객이 쓴 것만 보여 드려요.</li>
           <li>요금은 일정·터미널·실내/야외를 넣은 뒤 비교 화면에서 확인해 주세요.</li>
           <li>현장 입고·출고는 예약하신 업체, 앱·예약 조회는 에어픽 고객센터로 문의해 주세요.</li>
         </ul>
@@ -566,11 +745,39 @@ async function loadReviewsByCompany() {
   }
 }
 
-async function main() {
+/** profiles.generated.json(입점 6곳 자동) + pages.json(문구 덮어쓰기) */
+async function loadPartners() {
   const raw = await readFile(dataPath, 'utf8');
-  const { partners } = JSON.parse(raw);
+  const manual = JSON.parse(raw).partners || [];
+  const byId = new Map(manual.map((p) => [String(p.id || '').trim(), p]));
+  let profiles = null;
+  try {
+    profiles = JSON.parse(await readFile(profilesPath, 'utf8'));
+  } catch {
+    console.warn('[partners] profiles.generated.json 없음 — pages.json 업체만 만듦 (npm run pricing 먼저)');
+  }
+  if (!profiles?.partners?.length) return { partners: manual, meta: {} };
+  const partners = profiles.partners.map((pr) => {
+    const override = byId.get(pr.id) || {};
+    return {
+      ...pr,
+      terminals: ['1터미널', '2터미널'],
+      // pages.json 은 문구만 덮어쓴다 (요금·보험·확인은 Firestore 값)
+      ...(override.description ? { description: override.description } : {}),
+      ...(override.answer ? { answer: override.answer } : {}),
+      ...(override.imageAlt ? { imageAlt: override.imageAlt } : {}),
+    };
+  });
+  return {
+    partners,
+    meta: { asOf: profiles.asOf, startYmd: profiles.startYmd, sampleTime: profiles.sampleTime || '10:00' },
+  };
+}
+
+async function main() {
+  const { partners, meta } = await loadPartners();
   if (!Array.isArray(partners) || partners.length === 0) {
-    throw new Error('data/partners/pages.json: partners[] 가 비어 있습니다.');
+    throw new Error('입점 업체가 없습니다 (profiles.generated.json · pages.json).');
   }
 
   const reviewsByCompany = await loadReviewsByCompany();
@@ -582,7 +789,7 @@ async function main() {
     const id = String(partner.id || '').trim();
     const dir = path.join(outRoot, id);
     await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, 'index.html'), renderPartner(partner, reviewsByCompany), 'utf8');
+    await writeFile(path.join(dir, 'index.html'), renderPartner(partner, reviewsByCompany, meta), 'utf8');
     const bundle = resolveReviewBundle(partner, reviewsByCompany);
     console.log(
       bundle

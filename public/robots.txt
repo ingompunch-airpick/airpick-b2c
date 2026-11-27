@@ -78,4 +78,5 @@ Disallow: /my
 Disallow: /r/
 Disallow: /admin
 
-Sitemap: https://www.에어픽.kr/sitemap.xml
+# www.에어픽.kr 의 퓨니코드 표기 (같은 주소)
+Sitemap: https://www.xn--oh5b1bw17d.kr/sitemap.xml

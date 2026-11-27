@@ -45,6 +45,11 @@ jobs:
           VITE_PORTONE_CHANNEL_KEY_TOSS: channel-key-048e205a-6a44-4c31-b746-717b4881eff7
         run: npm run build
 
+      # 배포 전 라이브 사이트맵을 저장해 두고, 배포 후 바뀐 URL만 IndexNow 로 알린다 (실패해도 배포는 계속)
+      - name: Save live sitemap for IndexNow
+        continue-on-error: true
+        run: node scripts/indexnow.mjs --save-live /tmp/sitemap-before.json
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
@@ -52,3 +57,7 @@ jobs:
           projectId: airpick-reservation
           channelId: live
           target: airpick-b2c
+
+      - name: IndexNow (changed URLs only)
+        continue-on-error: true
+        run: node scripts/indexnow.mjs --changed /tmp/sitemap-before.json ${{ github.event_name != 'schedule' && '--fallback-all' || '' }}

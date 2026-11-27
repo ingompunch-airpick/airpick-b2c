@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run sync:airlines && vite",
-    "build": "npm run guides && npm run faq && npm run partners:sync && npm run partners && npm run pricing && npm run sitemap && npm run sync:airlines && tsc -b && vite build",
+    "build": "npm run guides && npm run faq && npm run pricing && npm run partners:sync && npm run partners && npm run sitemap && npm run sync:airlines && tsc -b && vite build",
     "lint": "tsc -b --noEmit",
     "guides": "node scripts/generate-guides.mjs",
     "guides:preview": "AIRPICK_GUIDES_INCLUDE_DRAFT=1 npm run guides",

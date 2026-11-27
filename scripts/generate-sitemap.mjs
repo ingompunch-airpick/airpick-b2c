@@ -19,6 +19,11 @@ const partnersPath = path.join(root, 'data/partners/pages.json');
 const guidesPath = path.join(root, 'data/guides/pages.json');
 const outPath = path.join(root, 'public/sitemap.xml');
 
+/** 사이트맵 규격상 URL은 ASCII여야 해서 호스트를 퓨니코드로 (www.에어픽.kr → www.xn--oh5b1bw17d.kr). 같은 주소다. */
+function asciiUrl(url) {
+  return new URL(url).href;
+}
+
 const EXCLUDE_PREFIXES = ['/my', '/r/', '/admin', '/api/'];
 
 function todayYmd() {
@@ -99,6 +104,18 @@ async function main() {
         if (id) partnerPaths.push(`/partners/${id}/`);
       }
     }
+    // npm run pricing 이 만든 입점 업체 전체 목록
+    try {
+      const profiles = JSON.parse(
+        await readFile(path.join(root, 'data/partners/profiles.generated.json'), 'utf8')
+      );
+      for (const p of profiles.partners || []) {
+        const id = String(p?.id || '').trim();
+        if (id && !partnerPaths.includes(`/partners/${id}/`)) partnerPaths.push(`/partners/${id}/`);
+      }
+    } catch {
+      /* 없으면 pages.json 만 */
+    }
     for (const pathname of partnerPaths) {
       if (seen.has(pathname)) continue;
       seen.add(pathname);
@@ -149,7 +166,7 @@ async function main() {
   const body = entries
     .map(
       (e) => `  <url>
-    <loc>${escapeXml(e.loc)}</loc>
+    <loc>${escapeXml(asciiUrl(e.loc))}</loc>
     <lastmod>${escapeXml(e.lastmod)}</lastmod>
     <changefreq>${escapeXml(e.changefreq)}</changefreq>
     <priority>${escapeXml(e.priority)}</priority>

@@ -84,13 +84,22 @@ function buildCompanySnapshot(reviews) {
   };
 }
 
+/** pages.json + profiles.generated.json(입점 업체 자동 목록) */
 async function loadPartnerIds() {
-  const raw = await readFile(pagesPath, 'utf8');
-  const { partners } = JSON.parse(raw);
-  if (!Array.isArray(partners)) return [];
-  return partners
-    .map((p) => String(p?.id || '').trim())
-    .filter(Boolean);
+  const ids = new Set();
+  try {
+    const { partners } = JSON.parse(await readFile(pagesPath, 'utf8'));
+    for (const p of partners || []) if (p?.id) ids.add(String(p.id).trim());
+  } catch {
+    /* 없음 */
+  }
+  try {
+    const profiles = JSON.parse(await readFile(path.join(root, 'data/partners/profiles.generated.json'), 'utf8'));
+    for (const p of profiles.partners || []) if (p?.id) ids.add(String(p.id).trim());
+  } catch {
+    /* npm run pricing 전 */
+  }
+  return [...ids].filter(Boolean);
 }
 
 async function main() {

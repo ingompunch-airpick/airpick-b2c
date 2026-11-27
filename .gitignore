@@ -43,3 +43,4 @@ android/capacitor-cordova-android-plugins/
 *.jks
 *.keystore
 keystore.properties
+data/partners/profiles.generated.json

@@ -20,6 +20,9 @@ import {
   mergePartnerPricing,
 } from '../src/utils/pricing';
 import { LEGAL_SITE_FOOTER_HTML } from './legal-site-footer.mjs';
+import { parseVerificationView } from '../src/utils/verification';
+import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../src/utils/reservationCancel';
+import { APP_CONFIG } from '../src/constants/appConfig';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -27,6 +30,9 @@ const cachePath = path.join(root, 'data/partners/pricing-companies.generated.jso
 const outDir = path.join(root, 'public/pricing');
 const outHtml = path.join(outDir, 'index.html');
 const llmsPath = path.join(root, 'public/llms.txt');
+/** 업체 상세 공개 페이지(/partners/{id}/)용 — generate-partners.mjs 가 읽는다 */
+const profilesPath = path.join(root, 'data/partners/profiles.generated.json');
+const PROFILE_DAYS = [2, 3, 5, 7] as const;
 
 const LLMS_START = '<!-- pricing:auto:start -->';
 const LLMS_END = '<!-- pricing:auto:end -->';
@@ -273,6 +279,69 @@ ${bodyRows}
       </section>`;
 }
 
+/** </script> 조기 종료 방지 */
+function jsonLdForScript(data: unknown): string {
+  return JSON.stringify(data, null, 2).replace(/</g, '\\u003c');
+}
+
+/**
+ * 요금표와 같은 숫자를 Offer 로 — AI·검색이 표를 읽지 않아도 업체별 가격을 알 수 있게.
+ * offeredBy 는 업체 상세 페이지(/partners/{id}/)의 LocalBusiness @id 와 같다.
+ */
+function pricingJsonLd(opts: { asOf: string; startYmd: string; companies: Company[]; cells: Cell[] }) {
+  const { asOf, startYmd, companies, cells } = opts;
+  const pageUrl = 'https://www.에어픽.kr/pricing/';
+  const catalogs = companies
+    .map((c) => {
+      const rows = cells.filter((cell) => cell.partnerId === c.id && cell.total > 0);
+      if (!rows.length) return null;
+      const name = displayCompanyName(c.name);
+      const business = { '@id': `https://www.에어픽.kr/partners/${c.id}/#business`, name };
+      return {
+        '@type': 'OfferCatalog',
+        name: `${name} 인천공항 주차대행 요금`,
+        itemListElement: rows.map((row) => ({
+          '@type': 'Offer',
+          name: `${name} · ${row.terminal === 'T1' ? '1터미널' : '2터미널'} · ${row.parking} · ${formatStayPhrase(row.days)}`,
+          description: `${formatDisplayYmd(row.departureDate)} ${SAMPLE_TIME} 출국 ~ ${formatDisplayYmd(row.arrivalDate)} ${SAMPLE_TIME} 귀국 기준 예상 요금(기준일 ${asOf})`,
+          price: row.total,
+          priceCurrency: 'KRW',
+          url: `https://www.에어픽.kr/partners/${c.id}/`,
+          offeredBy: business,
+          itemOffered: {
+            '@type': 'Service',
+            name: `인천공항 주차대행 (${row.parking} 보관)`,
+            serviceType: '공항 주차대행',
+            areaServed: { '@type': 'Airport', name: '인천국제공항', iataCode: 'ICN' },
+          },
+        })),
+      };
+    })
+    .filter(Boolean);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        name: '요금 안내',
+        url: pageUrl,
+        dateModified: asOf,
+        isPartOf: { '@id': 'https://www.에어픽.kr/#website' },
+        about: { '@id': 'https://www.에어픽.kr/#organization' },
+        mainEntity: { '@id': `${pageUrl}#catalog` },
+        inLanguage: 'ko-KR',
+      },
+      {
+        '@type': 'OfferCatalog',
+        '@id': `${pageUrl}#catalog`,
+        name: `에어픽 입점 주차대행 요금표 (${formatDisplayYmd(startYmd)} 출국 기준)`,
+        itemListElement: catalogs,
+      },
+    ],
+  };
+}
+
 function buildHtml(opts: {
   asOf: string;
   startYmd: string;
@@ -335,16 +404,7 @@ function buildHtml(opts: {
       }
     </style>
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "요금 안내",
-        "url": "https://www.에어픽.kr/pricing/",
-        "dateModified": ${JSON.stringify(asOf)},
-        "isPartOf": { "@id": "https://www.에어픽.kr/#website" },
-        "about": { "@id": "https://www.에어픽.kr/#organization" },
-        "inLanguage": "ko-KR"
-      }
+${jsonLdForScript(pricingJsonLd({ asOf, startYmd, companies, cells }))}
     </script>
   </head>
   <body>
@@ -494,11 +554,25 @@ async function patchLlms(block: string): Promise<void> {
   await writeFile(llmsPath, raw.replace(/\n{3,}/g, '\n\n'), 'utf8');
 }
 
+/** 마지막으로 읽은 Firestore 원본 — 업체 상세 페이지용 */
+const rawById = new Map<string, Record<string, unknown>>();
+
 async function fetchCompaniesFromFirestore(): Promise<Company[]> {
+  // 개발용: Firestore 대신 업체 문서 덤프(JSON {id: data})로 돌려 보기
+  const dumpPath = process.env.AIRPICK_COMPANIES_DUMP;
+  if (dumpPath) {
+    const dump = JSON.parse(await readFile(dumpPath, 'utf8')) as Record<string, Record<string, unknown>>;
+    for (const [id, data] of Object.entries(dump)) rawById.set(id, data);
+    return [...rawById.entries()]
+      .map(([id, data]) => companyFromFirestore(id, data))
+      .filter((c): c is Company => c !== null)
+      .sort((a, b) => displayCompanyName(a.name).localeCompare(displayCompanyName(b.name), 'ko'));
+  }
   const app = initializeApp(firebaseConfig);
   try {
     await signInAnonymously(getAuth(app));
     const snap = await getDocs(collection(getFirestore(app), 'companies'));
+    for (const d of snap.docs) rawById.set(d.id, d.data() as Record<string, unknown>);
     const list = snap.docs
       .map((d) => companyFromFirestore(d.id, d.data() as Record<string, unknown>))
       .filter((c): c is Company => c !== null)
@@ -552,6 +626,122 @@ async function loadCompaniesFromCache(): Promise<Company[]> {
     .sort((a, b) => displayCompanyName(a.name).localeCompare(displayCompanyName(b.name), 'ko'));
 }
 
+function str(v: unknown): string {
+  return String(v ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function numOrNull(v: unknown): number | null {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/** 주차장 — 종류·이름·주소 (좌표·사진은 넣지 않음) */
+function lotsOf(data: Record<string, unknown>) {
+  const out: { type: 'indoor' | 'outdoor'; name: string; address: string }[] = [];
+  if (Array.isArray(data.parkingLots)) {
+    for (const row of data.parkingLots as Record<string, unknown>[]) {
+      if (!row || typeof row !== 'object') continue;
+      const type = row.type === 'outdoor' ? 'outdoor' : row.type === 'indoor' ? 'indoor' : null;
+      const address = str(row.parkingAddress || row.customerAddress || row.parkingLotAddress);
+      if (type && address) out.push({ type, name: str(row.name), address });
+    }
+  }
+  if (!out.length) {
+    const i = str(data.indoorParkingAddress);
+    const o = str(data.outdoorParkingAddress);
+    if (i) out.push({ type: 'indoor', name: '실내', address: i });
+    if (o) out.push({ type: 'outdoor', name: '야외', address: o });
+  }
+  return out;
+}
+
+/** 업체 상세 공개 페이지 데이터 — 요금은 앱과 같은 calculatePrice, 확인 표시는 손님 앱과 같은 규칙 */
+function buildProfiles(companies: Company[], startYmd: string, asOf: string) {
+  return companies.map((c) => {
+    const data = rawById.get(c.id) || {};
+    const view = parseVerificationView(data, asOf);
+    const ins = (data.insurance && typeof data.insurance === 'object' ? data.insurance : {}) as Record<
+      string,
+      unknown
+    >;
+    const lots = lotsOf(data);
+    const modes: { indoor: boolean; parking: '실내' | '야외' }[] = [];
+    if (c.supports_outdoor !== false) modes.push({ indoor: false, parking: '야외' });
+    if (c.supports_indoor !== false) modes.push({ indoor: true, parking: '실내' });
+    const examples: { terminal: 'T1' | 'T2'; parking: '실내' | '야외'; days: number; total: number }[] = [];
+    for (const terminal of ['T1', 'T2'] as const) {
+      for (const mode of modes) {
+        for (const days of PROFILE_DAYS) {
+          examples.push({
+            terminal,
+            parking: mode.parking,
+            days,
+            total: calculatePrice(
+              c,
+              startYmd,
+              endDateForStay(startYmd, days),
+              mode.indoor,
+              terminal === 'T2',
+              SAMPLE_TIME,
+              SAMPLE_TIME,
+              false
+            ),
+          });
+        }
+      }
+    }
+    const handoff = {
+      curbT1: numOrNull(data.valetFeeT1),
+      curbT2: numOrNull(data.valetFeeT2),
+      dropT1: numOrNull(data.dropFeeT1),
+      dropT2: numOrNull(data.dropFeeT2),
+    };
+    const images = (Array.isArray(data.image_urls) ? data.image_urls : [data.image_url])
+      .map((u) => str(u))
+      // 실제 업체 사진만 (스톡 사진 등 외부 이미지는 빼기)
+      .filter((u) => u.startsWith('https://firebasestorage.googleapis.com/'))
+      .slice(0, 3);
+    return {
+      id: c.id,
+      name: displayCompanyName(c.name),
+      phone: str(data.phone) || null,
+      supportsIndoor: c.supports_indoor !== false,
+      supportsOutdoor: c.supports_outdoor !== false,
+      lots,
+      images,
+      insurance:
+        ins.enrolled === true
+          ? {
+              provider: str(ins.provider) || null,
+              productName: str(ins.productName) || null,
+              coverageLimitText: str(ins.coverageLimitText) || null,
+              periodStart: view.insurancePeriodStart || null,
+              periodEnd: view.insurancePeriodEnd || null,
+            }
+          : null,
+      insuranceExpired: view.insuranceExpired,
+      verification: {
+        hasRecords: view.hasRecords,
+        business: view.business || null,
+        insurance: view.insurance?.verifiedOn || null,
+        parking: view.parking || null,
+        cctv: view.cctv || null,
+      },
+      night:
+        c.surchargePrice && c.surchargeStartTime && c.surchargeEndTime
+          ? { start: c.surchargeStartTime, end: c.surchargeEndTime, price: Number(c.surchargePrice) }
+          : null,
+      t2Surcharge: numOrNull(c.t2Surcharge),
+      handoff,
+      cancel: {
+        freeHours: DEFAULT_CANCEL_CUTOFF_HOURS,
+        lateRefundPercent: Math.round(APP_CONFIG.refund.lateRefundRatio * 100),
+      },
+      examples,
+    };
+  });
+}
+
 async function main() {
   let companies: Company[];
   try {
@@ -576,6 +766,21 @@ async function main() {
   await mkdir(outDir, { recursive: true });
   await writeFile(outHtml, buildHtml({ asOf, startYmd, companies, cells }), 'utf8');
   await patchLlms(buildLlmsBlock({ asOf, startYmd, companies, cells }));
+
+  // Firestore에서 새로 읽었을 때만 업체 상세 데이터를 갱신 (캐시로 돌 때는 지난 파일 유지)
+  if (rawById.size) {
+    const profiles = buildProfiles(companies, startYmd, asOf);
+    await writeFile(
+      profilesPath,
+      JSON.stringify(
+        { generatedAt: new Date().toISOString(), asOf, startYmd, sampleTime: SAMPLE_TIME, partners: profiles },
+        null,
+        2
+      ) + '\n',
+      'utf8'
+    );
+    console.log(`[pricing] wrote ${path.relative(root, profilesPath)} (${profiles.length} profile(s))`);
+  }
 
   console.log(
     `[pricing] wrote /pricing/ + llms (${companies.length} partner(s): ${companies
