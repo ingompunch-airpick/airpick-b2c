@@ -22,13 +22,13 @@ export default function AirportSavingsLine({
       <p
         className={cn(
           'font-bold tabular-nums text-[#b8923a]',
-          compact ? 'text-[13px]' : 'text-[14px]'
+          compact ? 'text-[14px]' : 'text-[14px]'
         )}
       >
         인천공항 주차장 대비 약 {savings.toLocaleString()}원
       </p>
       {compact ? null : (
-        <p className="mt-0.5 text-[11px] font-medium text-[#0f1a2e]/45">
+        <p className="mt-0.5 text-[13px] font-medium text-[#0f1a2e]/45">
           참고 · 공식 요금표 · {AIRPORT_PARKING_RATES.asOf}
         </p>
       )}

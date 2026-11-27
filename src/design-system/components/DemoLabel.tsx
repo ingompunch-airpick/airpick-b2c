@@ -10,7 +10,7 @@ export function DemoLabel({ label = 'Demo UI', className }: DemoLabelProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-md border border-dashed border-mkt-border bg-mkt-sub/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-mkt-muted',
+        'inline-flex items-center rounded-md border border-dashed border-mkt-border bg-mkt-sub/80 px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wider text-mkt-muted',
         className
       )}
     >

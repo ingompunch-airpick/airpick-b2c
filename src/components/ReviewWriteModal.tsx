@@ -75,10 +75,10 @@ export default function ReviewWriteModal({
       <div className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-sky-bg p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl sm:rounded-3xl">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-bold text-brand">업체 후기</p>
+            <p className="text-[13px] font-bold text-brand">업체 후기</p>
             <h2 className="mt-1 text-lg font-bold text-ink">{companyName}</h2>
-            <p className="mt-1 text-xs font-medium text-muted">출고 완료 예약에 대한 후기입니다</p>
-            <p className="mt-1 text-[11px] font-medium text-muted-light">
+            <p className="mt-1 text-[13px] font-medium text-muted">출고 완료 예약에 대한 후기입니다</p>
+            <p className="mt-1 text-[13px] font-medium text-muted-light">
               공개 시 이름·차량번호는 일부만 표시됩니다 (예: 김*수 · 31소34**)
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function ReviewWriteModal({
         </div>
 
         <div className="mt-4">
-          <p className="text-xs font-bold text-muted">별점</p>
+          <p className="text-[13px] font-bold text-muted">별점</p>
           <div className="mt-2 flex items-center gap-1">
             {Array.from({ length: 5 }, (_, i) => {
               const value = i + 1;
@@ -118,7 +118,7 @@ export default function ReviewWriteModal({
         </div>
 
         <label className="mt-4 block">
-          <span className="text-xs font-bold text-muted">한 줄 후기 (선택)</span>
+          <span className="text-[13px] font-bold text-muted">한 줄 후기 (선택)</span>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value.slice(0, 200))}
@@ -126,13 +126,13 @@ export default function ReviewWriteModal({
             placeholder="이용 경험을 짧게 남겨 주세요"
             className="mt-1.5 w-full resize-none rounded-2xl border border-sky-border bg-white px-3.5 py-3 text-sm text-ink outline-none focus:border-brand"
           />
-          <span className="mt-1 block text-right text-[10px] font-medium text-muted-light">
+          <span className="mt-1 block text-right text-[13px] font-medium text-muted-light">
             {body.length}/200
           </span>
         </label>
 
         <div className="mt-3">
-          <p className="text-xs font-bold text-muted">사진 (선택 · 최대 {MAX_PHOTOS}장)</p>
+          <p className="text-[13px] font-bold text-muted">사진 (선택 · 최대 {MAX_PHOTOS}장)</p>
           <div className="mt-1.5 flex flex-wrap gap-2">
             {photos.map((src, index) => (
               <div key={`${index}_${src.slice(0, 24)}`} className="relative h-20 w-20 overflow-hidden rounded-xl ring-1 ring-sky-border">
@@ -154,7 +154,7 @@ export default function ReviewWriteModal({
                 className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-sky-border bg-white text-muted"
               >
                 <ImagePlus size={20} strokeWidth={2} />
-                <span className="text-[10px] font-bold">추가</span>
+                <span className="text-[13px] font-bold">추가</span>
               </button>
             ) : null}
           </div>
@@ -173,7 +173,7 @@ export default function ReviewWriteModal({
 
         {requirePassword ? (
           <label className="mt-3 block">
-            <span className="text-xs font-bold text-muted">예약 비밀번호 4자리</span>
+            <span className="text-[13px] font-bold text-muted">예약 비밀번호 4자리</span>
             <input
               type="password"
               inputMode="numeric"
@@ -187,7 +187,7 @@ export default function ReviewWriteModal({
           </label>
         ) : null}
 
-        {error && <p className="mt-3 text-xs font-semibold text-rose-600">{error}</p>}
+        {error && <p className="mt-3 text-[13px] font-semibold text-rose-600">{error}</p>}
 
         <button
           type="button"

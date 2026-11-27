@@ -23,7 +23,7 @@ function DocLink({ href, children }: { href: string; children: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-1 inline-flex items-center gap-1 text-[13px] font-bold text-brand"
+      className="mt-1 inline-flex items-center gap-1 text-[14px] font-bold text-brand"
     >
       <ExternalLink size={12} strokeWidth={2.25} />
       {children}
@@ -90,7 +90,7 @@ export default function BookingPartnerSummary({
           {tel && company.phone ? (
             <a
               href={tel}
-              className="mt-1 flex w-fit items-center gap-1 text-[13px] font-bold text-brand"
+              className="mt-1 flex w-fit items-center gap-1 text-[14px] font-bold text-brand"
             >
               <Phone size={12} strokeWidth={2.25} />
               {formatPhoneDisplay(company.phone)}
@@ -102,7 +102,7 @@ export default function BookingPartnerSummary({
       <button
         type="button"
         onClick={() => setDetailsOpen((v) => !v)}
-        className="mt-2 inline-flex items-center gap-0.5 text-[13px] font-bold text-brand"
+        className="mt-2 inline-flex items-center gap-0.5 text-[14px] font-bold text-brand"
       >
         업체 정보 보기
         <ChevronDown
@@ -113,7 +113,7 @@ export default function BookingPartnerSummary({
 
       {detailsOpen ? (
         <div className="mt-3 space-y-2 border-t border-sky-border/60 pt-3">
-          <dl className="space-y-1.5 text-[13px]">
+          <dl className="space-y-1.5 text-[14px]">
             <div className="flex justify-between gap-3">
               <dt className="font-semibold text-muted">상호</dt>
               <dd className="font-bold text-ink text-right">{name}</dd>
@@ -144,12 +144,12 @@ export default function BookingPartnerSummary({
           <ul className="space-y-2.5">
             {checks[0]?.ok ? (
               <li>
-                <p className="flex items-center gap-1 text-[13px] font-bold text-ink">
+                <p className="flex items-center gap-1 text-[14px] font-bold text-ink">
                   <Check size={12} className="text-emerald-600" strokeWidth={3} />
                   사업자 확인
                 </p>
                 {company.representative ? (
-                  <p className="mt-0.5 pl-4 text-[13px] font-semibold text-muted">
+                  <p className="mt-0.5 pl-4 text-[14px] font-semibold text-muted">
                     대표 {company.representative}
                   </p>
                 ) : null}
@@ -162,7 +162,7 @@ export default function BookingPartnerSummary({
             ) : null}
             {checks[2]?.ok ? (
               <li>
-                <p className="flex items-center gap-1 text-[13px] font-bold text-ink">
+                <p className="flex items-center gap-1 text-[14px] font-bold text-ink">
                   <Check size={12} className="text-emerald-600" strokeWidth={3} />
                   주차장 확인
                 </p>
@@ -175,17 +175,17 @@ export default function BookingPartnerSummary({
             ) : null}
             {checks[1]?.ok && insuranceLine ? (
               <li>
-                <p className="flex items-center gap-1 text-[13px] font-bold text-ink">
+                <p className="flex items-center gap-1 text-[14px] font-bold text-ink">
                   <Check size={12} className="text-emerald-600" strokeWidth={3} />
                   보험
                 </p>
-                <p className="mt-0.5 pl-4 text-[13px] font-semibold text-muted">{insuranceLine}</p>
+                <p className="mt-0.5 pl-4 text-[14px] font-semibold text-muted">{insuranceLine}</p>
                 {certificateUrl ? (
                   <span className="block pl-4">
                     <DocLink href={certificateUrl}>보험증권 보기</DocLink>
                   </span>
                 ) : null}
-                <p className="mt-1 pl-4 text-[13px] font-medium leading-relaxed text-muted">
+                <p className="mt-1 pl-4 text-[14px] font-medium leading-relaxed text-muted">
                   {INSURANCE_DISCLAIMER}
                 </p>
               </li>

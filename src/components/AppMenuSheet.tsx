@@ -76,7 +76,7 @@ export default function AppMenuSheet({
                     : 'rounded-[20px] border border-[#e5e7eb] bg-[#f8fafc] p-4 text-left text-[#0f1a2e] transition active:scale-[0.98]'
                 }
               >
-                <span className="block text-[12px] font-semibold opacity-70">{item.caption}</span>
+                <span className="block text-[13px] font-semibold opacity-70">{item.caption}</span>
                 <span className="mt-4 block text-[16px] font-bold tracking-tight">{item.label}</span>
               </button>
             ))}
@@ -84,7 +84,7 @@ export default function AppMenuSheet({
 
           {SITE_NAV_SECTIONS.map((section) => (
             <div key={section.id} className="px-5 pt-6">
-              <p className="mb-1 text-[12px] font-bold text-[#9ca3af]">{section.title}</p>
+              <p className="mb-1 text-[13px] font-bold text-[#9ca3af]">{section.title}</p>
               <ul>
                 {section.items.map((item) => (
                   <li key={item.href} className="border-b border-[#f1f3f6] last:border-b-0">
@@ -111,9 +111,9 @@ export default function AppMenuSheet({
               }}
               className="block w-full rounded-[20px] bg-gradient-to-br from-[#0f1a2e] to-[#1d2b47] p-5 text-left text-white transition active:scale-[0.99]"
             >
-              <span className="block text-[12px] font-bold text-[#d9b866]">{SITE_NAV_JOIN.caption}</span>
+              <span className="block text-[13px] font-bold text-[#d9b866]">{SITE_NAV_JOIN.caption}</span>
               <span className="mt-1.5 block text-[18px] font-bold tracking-tight">{SITE_NAV_JOIN.title}</span>
-              <span className="mt-1 block text-[13px] text-white/70">{SITE_NAV_JOIN.body}</span>
+              <span className="mt-1 block text-[14px] text-white/70">{SITE_NAV_JOIN.body}</span>
               <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[14px] font-bold text-[#0f1a2e]">
                 {SITE_NAV_JOIN.cta}
                 <ArrowRight size={16} aria-hidden />
@@ -121,7 +121,7 @@ export default function AppMenuSheet({
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-x-4 gap-y-2 px-5 pt-6 text-[12px] text-[#9ca3af]">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 px-5 pt-6 text-[13px] text-[#9ca3af]">
             {SITE_NAV_LEGAL.map((item) => (
               <button
                 key={item.href}

@@ -48,7 +48,7 @@ export default function AirlineSelect({
 
   return (
     <div className="block">
-      <span className="mb-1 block text-xs font-bold text-muted">
+      <span className="mb-1 block text-[13px] font-bold text-muted">
         {label}
         {required ? ' *' : ''}
       </span>
@@ -87,7 +87,7 @@ export default function AirlineSelect({
         />
       )}
       {terminalHint ? (
-        <p className="mt-1.5 text-[12px] font-semibold leading-snug text-amber-800">{terminalHint}</p>
+        <p className="mt-1.5 text-[13px] font-semibold leading-snug text-amber-800">{terminalHint}</p>
       ) : null}
     </div>
   );

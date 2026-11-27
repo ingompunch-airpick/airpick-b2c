@@ -34,32 +34,32 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
               <Building2 size={20} className="text-brand" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs font-bold text-brand">{COMPANY_LEGAL.name} 운영</p>
+              <p className="text-[13px] font-bold text-brand">{COMPANY_LEGAL.name} 운영</p>
               <p className="text-sm font-bold text-ink">{COMPANY_LEGAL.serviceName}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{AIRPICK_CUSTOMER_PITCH}</p>
-          <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
+          <p className="mt-3 text-[13px] font-medium leading-relaxed text-muted">{AIRPICK_CUSTOMER_PITCH}</p>
+          <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
             확인된 업체만 비교·예약하고, 맡긴 뒤에는 위치·사진·보험을 예약 탭에서 볼 수 있어요.
           </p>
           <a
             href={COMPANY_LEGAL.siteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex text-xs font-bold text-brand underline-offset-2 hover:underline"
+            className="mt-3 inline-flex text-[13px] font-bold text-brand underline-offset-2 hover:underline"
           >
             공식 사이트 {COMPANY_LEGAL.siteUrlDisplay}
           </a>
           <div className="mt-3 flex flex-wrap gap-2">
             <a
               href="/"
-              className="rounded-full bg-brand px-3 py-1.5 text-[11px] font-bold text-white"
+              className="rounded-full bg-brand px-3 py-1.5 text-[13px] font-bold text-white"
             >
               주차대행 비교·예약
             </a>
             <a
               href="/faq/"
-              className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-brand ring-1 ring-brand/25"
+              className="rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-brand ring-1 ring-brand/25"
             >
               FAQ
             </a>
@@ -71,7 +71,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
             {AIRPICK_SERVICES.map((service) => (
               <li key={service.id} className="rounded-2xl bg-sky-soft px-4 py-3 ring-1 ring-sky-border/60">
                 <p className="text-sm font-bold text-ink">{service.title}</p>
-                <p className="mt-1 text-xs font-medium leading-relaxed text-muted">{service.body}</p>
+                <p className="mt-1 text-[13px] font-medium leading-relaxed text-muted">{service.body}</p>
               </li>
             ))}
           </ul>
@@ -82,7 +82,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
         </Section>
 
         <Section title="고객센터 · 공식 채널">
-          <dl className="space-y-2.5 rounded-2xl bg-sky-soft px-4 py-3.5 text-xs ring-1 ring-sky-border/60">
+          <dl className="space-y-2.5 rounded-2xl bg-sky-soft px-4 py-3.5 text-[13px] ring-1 ring-sky-border/60">
             <div className="flex items-start gap-2.5">
               <Phone size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2} />
               <div>
@@ -130,7 +130,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
         </Section>
 
         <Section title="사업자 정보">
-          <dl className="space-y-1.5 rounded-2xl bg-sky-soft px-4 py-3.5 text-xs font-medium text-ink ring-1 ring-sky-border/60">
+          <dl className="space-y-1.5 rounded-2xl bg-sky-soft px-4 py-3.5 text-[13px] font-medium text-ink ring-1 ring-sky-border/60">
             <InfoRow label="브랜드" value={COMPANY_LEGAL.serviceName} />
             <InfoRow label="상호" value={COMPANY_LEGAL.name} />
             <InfoRow label="서비스명" value={COMPANY_LEGAL.serviceName} />
@@ -158,7 +158,7 @@ export default function AboutPage({ onBack }: { onBack: () => void }) {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-5">
-      <h2 className="mb-2 px-0.5 text-[11px] font-bold text-brand">{title}</h2>
+      <h2 className="mb-2 px-0.5 text-[13px] font-bold text-brand">{title}</h2>
       {children}
     </section>
   );
@@ -182,7 +182,7 @@ function CompareBlock({
       }
     >
       <p className={`text-sm font-bold ${accent ? 'text-brand' : 'text-ink'}`}>{title}</p>
-      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-xs font-medium leading-relaxed text-muted">
+      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-[13px] font-medium leading-relaxed text-muted">
         {points.map((point) => (
           <li key={point}>{point}</li>
         ))}

@@ -35,7 +35,7 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
           <p className="mt-2 text-sm leading-relaxed text-mkt-muted">
             인천공항 주차대행 비교·예약 플랫폼. 신뢰를 기준으로 입점 업체를 선별합니다.
           </p>
-          <p className="mt-4 text-xs leading-relaxed text-mkt-muted">
+          <p className="mt-4 text-[13px] leading-relaxed text-mkt-muted">
             상호: {COMPANY_LEGAL.name}
             <br />
             서비스명: {COMPANY_LEGAL.serviceName}
@@ -71,13 +71,13 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
             <br />
             호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
           </p>
-          <p className="mt-3 text-xs leading-relaxed text-mkt-muted">
+          <p className="mt-3 text-[13px] leading-relaxed text-mkt-muted">
             판매 상품: 인천공항 주차대행 예약(중개) · 요금은{' '}
             <a href="/pricing/" className="text-mkt-brand underline-offset-2 hover:underline">
               요금 안내
             </a>
           </p>
-          <p className="mt-3 text-xs leading-relaxed text-mkt-muted">{FOOTER_INTERMEDIARY_NOTICE}</p>
+          <p className="mt-3 text-[13px] leading-relaxed text-mkt-muted">{FOOTER_INTERMEDIARY_NOTICE}</p>
         </div>
         <nav aria-label="푸터" className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-mkt-muted">
           {links.map((l) => (
@@ -88,7 +88,7 @@ export function MarketingFooter({ links = DEFAULT_LINKS }: MarketingFooterProps)
         </nav>
       </Container>
       <Container className="mt-10 border-t border-mkt-border pt-6">
-        <p className="text-xs text-mkt-muted">
+        <p className="text-[13px] text-mkt-muted">
           © {year} {COMPANY_LEGAL.name}. All rights reserved.
         </p>
       </Container>

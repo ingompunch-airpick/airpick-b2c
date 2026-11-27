@@ -42,7 +42,7 @@ export default function HomeTrustStats({ partnerCount }: { partnerCount: number 
           <p className="text-[1.4rem] font-bold tabular-nums tracking-tight text-[#0f1a2e] sm:text-[1.5rem] md:text-[1.85rem]">
             {item.value}
           </p>
-          <p className="mt-1 text-[11px] font-semibold leading-snug text-[#0f1a2e]/45 sm:text-[12px] md:text-[13px]">
+          <p className="mt-1 text-[13px] font-semibold leading-snug text-[#0f1a2e]/45 sm:text-[13px] md:text-[14px]">
             {item.label}
           </p>
         </div>

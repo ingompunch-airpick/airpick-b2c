@@ -62,14 +62,14 @@ function ReviewItem({ review }: { review: CompanyReview }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-[12px] font-semibold text-ink">{identity || '익명'}</p>
+              <p className="text-[13px] font-semibold text-ink">{identity || '익명'}</p>
               {SHOW_PUBLIC_REVIEW_DATES ? (
-                <p className="mt-0.5 text-[10px] font-medium text-muted-light">
+                <p className="mt-0.5 text-[13px] font-medium text-muted-light">
                   {formatReviewDate(review.createdAt)}
                 </p>
               ) : null}
             </div>
-            <span className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+            <span className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-amber-500 px-1.5 py-0.5 text-[12px] font-bold text-white">
               <Star size={10} className="fill-white text-white" aria-hidden />
               {review.rating}
             </span>
@@ -80,7 +80,7 @@ function ReviewItem({ review }: { review: CompanyReview }) {
           {review.body?.trim() ? (
             <p className="mt-1.5 text-sm leading-relaxed text-ink">{review.body.trim()}</p>
           ) : null}
-          <p className="mt-2 text-[10px] font-semibold text-muted">주차대행</p>
+          <p className="mt-2 text-[13px] font-semibold text-muted">주차대행</p>
         </div>
         {photos.length > 0 ? (
           <div
@@ -192,7 +192,7 @@ function ParkingLotCard({ lot }: { lot: CompanyParkingLot }) {
       <div className="flex items-start gap-2">
         <MapPin size={16} className="mt-0.5 shrink-0 text-brand" strokeWidth={2.25} />
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-bold text-brand">
+          <p className="text-[13px] font-bold text-brand">
             {lot.name || `${typeLabel} 주차장`}
           </p>
           {lot.parkingAddress?.trim() ? (
@@ -200,7 +200,7 @@ function ParkingLotCard({ lot }: { lot: CompanyParkingLot }) {
               {lot.parkingAddress.trim()}
             </p>
           ) : (
-            <p className="mt-0.5 text-xs font-medium text-muted">주소 미등록</p>
+            <p className="mt-0.5 text-[13px] font-medium text-muted">주소 미등록</p>
           )}
         </div>
       </div>
@@ -216,7 +216,7 @@ function ParkingLotCard({ lot }: { lot: CompanyParkingLot }) {
       ) : null}
       {lot.photos?.length ? (
         <div className="mt-2.5">
-          <p className="mb-1.5 text-[10px] font-bold text-muted">주차장 사진</p>
+          <p className="mb-1.5 text-[13px] font-bold text-muted">주차장 사진</p>
           <LotPhotoStrip photos={lot.photos} />
         </div>
       ) : null}
@@ -262,7 +262,7 @@ function PriceBreakdownCard({
 
   return (
     <section className="mt-4 rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10" aria-label="요금 구성">
-      <p className="text-xs font-bold text-brand">요금 구성 · {formatStayPhrase(b.days)}</p>
+      <p className="text-[13px] font-bold text-brand">요금 구성 · {formatStayPhrase(b.days)}</p>
       {consistent ? (
         <ul className="mt-2.5 space-y-1.5">
           {rows
@@ -271,7 +271,7 @@ function PriceBreakdownCard({
               <li key={r.label} className="flex items-start justify-between gap-3 text-[14px]">
                 <span className="font-medium text-ink/75">
                   {r.label}
-                  {r.detail ? <span className="ml-1 text-[12px] text-muted">({r.detail})</span> : null}
+                  {r.detail ? <span className="ml-1 text-[13px] text-muted">({r.detail})</span> : null}
                 </span>
                 <span className="shrink-0 font-semibold tabular-nums text-ink">{won(r.won)}</span>
               </li>
@@ -288,7 +288,7 @@ function PriceBreakdownCard({
         <span className="text-[14px] font-bold text-ink">총액</span>
         <span className="text-[17px] font-bold tabular-nums text-ink">{won(b.total - discount)}</span>
       </div>
-      <p className="mt-2 text-[12px] font-medium leading-relaxed text-muted">
+      <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
         발렛(대면 인계) 등 선택한 옵션 요금은 예약 화면 합계에 더해 보여 드려요.
       </p>
     </section>
@@ -424,7 +424,7 @@ export default function CompanyDetailSheet({
         aria-label="닫기"
         onClick={onClose}
       />
-      <div className="relative z-10 flex max-h-full w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl">
+      <div className="relative z-10 flex max-h-full w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl lg:max-w-5xl">
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-sky-border/50 px-5 py-4">
           <div className="flex min-w-0 gap-3">
             {thumbSrc ? (
@@ -438,10 +438,10 @@ export default function CompanyDetailSheet({
             />
             ) : null}
             <div className="min-w-0">
-              <p className="text-xs font-bold text-brand">에어픽 입점 · 주차대행</p>
+              <p className="text-[13px] font-bold text-brand">에어픽 입점 · 주차대행</p>
               <h2 className="text-lg font-bold text-ink">{name}</h2>
               {!reviewsLoading && reviewCount > 0 && reviewAverage != null ? (
-                <div className="mt-1 flex items-center gap-1.5 text-[12px] font-semibold text-muted">
+                <div className="mt-1 flex items-center gap-1.5 text-[13px] font-semibold text-muted">
                   <Star size={13} className="fill-amber-400 text-amber-400" aria-hidden />
                   <span className="tabular-nums text-ink">{reviewAverage.toFixed(1)}</span>
                   <span>·</span>
@@ -460,13 +460,15 @@ export default function CompanyDetailSheet({
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        {/* PC(lg↑): 왼쪽 정보 스크롤 · 오른쪽 금액·예약 고정 */}
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 lg:px-6 lg:py-5">
           <section className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-bold text-brand">이 상품</p>
+              <p className="text-[13px] font-bold text-brand">이 상품</p>
               <span
                 className={cn(
-                  'rounded-full px-2.5 py-0.5 text-[11px] font-bold',
+                  'rounded-full px-2.5 py-0.5 text-[12px] font-bold',
                   meetHandoff
                     ? 'bg-emerald-100 text-emerald-700'
                     : 'bg-amber-100 text-amber-800'
@@ -498,11 +500,6 @@ export default function CompanyDetailSheet({
                 title={PRICE_INCLUSION.detailTitle}
                 detail={PRICE_INCLUSION.detailBody}
               />
-              <FactIconRow
-                icon={Clock}
-                title="예약 가능 기간"
-                detail={APP_CONFIG.bookingWindowNotice}
-              />
               {nightLine ? (
                 <FactIconRow icon={Clock} title="야간·새벽 할증" detail={nightLine} />
               ) : null}
@@ -517,29 +514,29 @@ export default function CompanyDetailSheet({
               <img src="/brand-mark-gold.png?v=10" alt="" width={18} height={18} className="h-[18px] w-[18px] shrink-0 object-contain" draggable={false} />
               {AIRPICK_CARE.name} 적용
             </p>
-            <ul className="mt-2 space-y-1 text-[13px] font-medium leading-relaxed text-white/80">
+            <ul className="mt-2 space-y-1 text-[14px] font-medium leading-relaxed text-white/80">
               {AIRPICK_CARE.items
                 .filter((item) => item.id !== 'verified')
                 .map((item) => (
                   <li key={item.id}>· {item.title}</li>
                 ))}
             </ul>
-            <a href={AIRPICK_CARE.href} target="_blank" rel="noopener" className="mt-2 inline-block text-[13px] font-bold text-[#e3c987] underline underline-offset-2">
+            <a href={AIRPICK_CARE.href} target="_blank" rel="noopener" className="mt-2 inline-block text-[14px] font-bold text-[#e3c987] underline underline-offset-2">
               안심케어 자세히 보기
             </a>
           </section>
 
           <section className="mt-4 space-y-3 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
-            <p className="text-xs font-bold text-brand">이용 방법</p>
+            <p className="text-[13px] font-bold text-brand">이용 방법</p>
             <ol className="space-y-3">
               {usageSteps.map((step, index) => (
                 <li key={`${step.title}_${index}`} className="flex gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-white">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-[12px] font-bold text-white">
                     {index + 1}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-bold text-ink">{step.title}</p>
-                    <p className="mt-0.5 text-[13px] font-medium leading-relaxed text-muted">
+                    <p className="mt-0.5 text-[14px] font-medium leading-relaxed text-muted">
                       {step.body}
                     </p>
                     {step.mediaSrc ? (
@@ -559,14 +556,14 @@ export default function CompanyDetailSheet({
             </ol>
             {company.pickupLocation?.trim() &&
             !(company.usageSteps && company.usageSteps.length > 0) ? (
-              <p className="text-[11px] font-medium leading-relaxed text-muted">
+              <p className="text-[13px] font-medium leading-relaxed text-muted">
                 인계 · {company.pickupLocation.trim()}
               </p>
             ) : null}
           </section>
 
           <section className="mt-4 space-y-2 rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
-            <p className="text-xs font-bold text-brand">업체 정보</p>
+            <p className="text-[13px] font-bold text-brand">업체 정보</p>
             <InfoRow label="터미널" value={terminals} />
             {parkingTypes ? <InfoRow label="주차" value={parkingTypes} /> : null}
             {telHref ? (
@@ -589,7 +586,7 @@ export default function CompanyDetailSheet({
                 </a>
               </div>
             ) : (
-              <p className="text-xs font-medium leading-relaxed text-muted">
+              <p className="text-[13px] font-medium leading-relaxed text-muted">
                 업체 연락처가 아직 등록되지 않았습니다. 예약 후 안내되거나, 에어픽 고객센터로 문의해
                 주세요.
               </p>
@@ -602,7 +599,7 @@ export default function CompanyDetailSheet({
 
           {parkingLots.length > 0 ? (
             <section className="mt-4 space-y-2">
-              <p className="text-xs font-bold text-brand">주차장 위치</p>
+              <p className="text-[13px] font-bold text-brand">주차장 위치</p>
               {parkingLots.map((lot) => (
                 <ParkingLotCard key={lot.id} lot={lot} />
               ))}
@@ -610,20 +607,20 @@ export default function CompanyDetailSheet({
           ) : null}
 
           <section className="mt-4">
-            <p className="text-xs font-bold text-brand">
+            <p className="text-[13px] font-bold text-brand">
               {reviewSnapshot && reviewSnapshot.count > 0
                 ? `평점과 실후기 ${reviewSnapshot.count}건`
                 : '실후기'}
             </p>
             <div className="mt-2 space-y-2">
               {reviewsLoading ? (
-                <p className="rounded-xl bg-sky-bg py-6 text-center text-xs font-medium text-muted">
+                <p className="rounded-xl bg-sky-bg py-6 text-center text-[13px] font-medium text-muted">
                   후기 불러오는 중…
                 </p>
               ) : reviews.length > 0 ? (
                 reviews.map((review) => <ReviewItem key={review.id} review={review} />)
               ) : (
-                <div className="rounded-xl bg-sky-bg px-4 py-6 text-center text-xs leading-relaxed text-muted ring-1 ring-sky-border/50">
+                <div className="rounded-xl bg-sky-bg px-4 py-6 text-center text-[13px] leading-relaxed text-muted ring-1 ring-sky-border/50">
                   <p className="font-semibold text-ink">신규 입점</p>
                   <p className="mt-2">
                     에어픽은 이용 고객의 실후기만 표시합니다.
@@ -637,21 +634,21 @@ export default function CompanyDetailSheet({
           </section>
         </div>
 
-        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:flex lg:w-80 lg:flex-col lg:justify-end lg:border-l lg:border-t-0 lg:px-6 lg:py-6 lg:rounded-br-3xl">
           <div className="mb-3 flex flex-wrap gap-1.5">
-            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[11px] font-bold text-ink ring-1 ring-sky-border/60">
+            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[12px] font-bold text-ink ring-1 ring-sky-border/60">
               {transferTitle}
             </span>
-            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[11px] font-bold text-ink ring-1 ring-sky-border/60">
+            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[12px] font-bold text-ink ring-1 ring-sky-border/60">
               {lotLabel}
             </span>
-            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[11px] font-bold text-ink ring-1 ring-sky-border/60">
+            <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[12px] font-bold text-ink ring-1 ring-sky-border/60">
               키 맡김
             </span>
           </div>
           <div className="mb-3 flex items-end justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold text-muted">총 {stay}{isPaymentStepVisible() ? '' : ' · 현장 결제'}</p>
+              <p className="text-[13px] font-semibold text-muted">총 {stay}{isPaymentStepVisible() ? '' : ' · 현장 결제'}</p>
               <AffiliatePrice
                 price={price}
                 affiliateDiscountWon={affiliateDiscountWon}
@@ -673,7 +670,7 @@ export default function CompanyDetailSheet({
             {telHref ? (
               <a
                 href={telHref}
-                className="inline-flex shrink-0 items-center gap-1 rounded-xl px-2 py-2 text-[12px] font-bold text-brand"
+                className="inline-flex shrink-0 items-center gap-1 rounded-xl px-2 py-2 text-[13px] font-bold text-brand"
                 onClick={() =>
                   trackOutboundClick({
                     category: 'phone',
@@ -695,6 +692,7 @@ export default function CompanyDetailSheet({
           >
             예약하기
           </button>
+        </div>
         </div>
       </div>
     </div>

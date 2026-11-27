@@ -86,7 +86,7 @@ export default function TimeField({
         htmlFor={buttonId}
         className={cn(
           'block',
-          large ? 'mb-1.5 text-[13px] font-medium text-[#0f1a2e]/55 md:mb-1' : 'mb-1 text-[11px] font-bold',
+          large ? 'mb-1.5 text-[14px] font-medium text-[#0f1a2e]/55 md:mb-1' : 'mb-1 text-[13px] font-bold',
           !large && (premium ? 'text-[#0f1a2e]/50' : 'text-muted')
         )}
       >
@@ -120,7 +120,7 @@ export default function TimeField({
         <PickerPopover id={panelId} label={label} summary={formatKoreanTime(value)} onClose={close} widthClass="md:w-[16rem]">
           <div className="grid grid-cols-[1.4fr_1fr] gap-2">
             <div>
-              <p className="px-1 pb-1 text-[12px] font-bold text-[#0f1a2e]/45">시</p>
+              <p className="px-1 pb-1 text-[13px] font-bold text-[#0f1a2e]/45">시</p>
               <ul ref={hourListRef} role="listbox" aria-label="시" className="max-h-60 space-y-0.5 overflow-y-auto pr-1">
                 {HOURS.map((hour) => (
                   <li key={hour}>
@@ -138,7 +138,7 @@ export default function TimeField({
               </ul>
             </div>
             <div>
-              <p className="px-1 pb-1 text-[12px] font-bold text-[#0f1a2e]/45">분</p>
+              <p className="px-1 pb-1 text-[13px] font-bold text-[#0f1a2e]/45">분</p>
               <ul role="listbox" aria-label="분" className="space-y-0.5">
                 {MINUTES.map((minute) => (
                   <li key={minute}>

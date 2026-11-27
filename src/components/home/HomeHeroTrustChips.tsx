@@ -7,7 +7,7 @@ export default function HomeHeroTrustChips() {
       {HOME_HERO_TRUST_CHIPS.map((label) => (
         <li
           key={label}
-          className="rounded-full border border-[#c9a962]/35 bg-[#c9a962]/10 px-3 py-1.5 text-[12px] font-bold tracking-wide text-[#e8d5a8] md:text-[13px]"
+          className="rounded-full border border-[#c9a962]/35 bg-[#c9a962]/10 px-3 py-1.5 text-[13px] font-bold tracking-wide text-[#e8d5a8] md:text-[14px]"
         >
           {label}
         </li>

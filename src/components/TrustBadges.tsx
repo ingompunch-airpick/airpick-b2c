@@ -34,7 +34,7 @@ export default function TrustBadges({
     <p
       className={cn(
         'font-medium leading-snug text-[#0f1a2e]/45',
-        size === 'sm' ? 'text-[11px]' : 'text-[12px]'
+        size === 'sm' ? 'text-[13px]' : 'text-[13px]'
       )}
     >
       {parts.join(' · ')}

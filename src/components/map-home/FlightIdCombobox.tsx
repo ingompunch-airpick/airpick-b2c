@@ -167,11 +167,11 @@ export default function FlightIdCombobox({
           className="absolute z-20 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-sky-border bg-white py-1 shadow-lg ring-1 ring-black/5"
         >
           {loading ? (
-            <li className="px-3 py-2.5 text-[12px] font-medium text-muted">검색 중…</li>
+            <li className="px-3 py-2.5 text-[13px] font-medium text-muted">검색 중…</li>
           ) : searchError ? (
-            <li className="px-3 py-2.5 text-[12px] font-medium text-amber-700">{searchError}</li>
+            <li className="px-3 py-2.5 text-[13px] font-medium text-amber-700">{searchError}</li>
           ) : flights.length === 0 ? (
-            <li className="px-3 py-2.5 text-[12px] font-medium text-muted">{emptyLabel}</li>
+            <li className="px-3 py-2.5 text-[13px] font-medium text-muted">{emptyLabel}</li>
           ) : (
             flights.map((f, idx) => (
               <li
@@ -188,18 +188,18 @@ export default function FlightIdCombobox({
                     idx === activeIndex ? 'bg-sky-soft' : 'hover:bg-sky-soft/70'
                   )}
                 >
-                  <span className="text-[13px] font-bold text-ink">
+                  <span className="text-[14px] font-bold text-ink">
                     {formatFlightOption(f, direction)}
                   </span>
                   {f.airline ? (
-                    <span className="text-[10px] font-medium text-muted">{f.airline}</span>
+                    <span className="text-[13px] font-medium text-muted">{f.airline}</span>
                   ) : null}
                 </button>
               </li>
             ))
           )}
           {!loading && truncated && flights.length > 0 ? (
-            <li className="border-t border-sky-border/50 px-3 py-2 text-[10px] font-medium text-muted">
+            <li className="border-t border-sky-border/50 px-3 py-2 text-[13px] font-medium text-muted">
               편명을 더 입력하면 목록을 좁힐 수 있어요.
             </li>
           ) : null}
@@ -207,7 +207,7 @@ export default function FlightIdCombobox({
       ) : null}
 
       {!dateYmd && open && query.length >= MIN_QUERY_LEN ? (
-        <p className="mt-1 text-[10px] font-medium text-muted">{needDateLabel}</p>
+        <p className="mt-1 text-[13px] font-medium text-muted">{needDateLabel}</p>
       ) : null}
     </div>
   );

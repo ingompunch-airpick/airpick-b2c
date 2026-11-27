@@ -22,7 +22,7 @@ export default function HomePromiseStrip() {
         <a
           href={AIRPICK_CARE.href}
           onClick={() => trackCtaClick('care_detail', 'home_promise')}
-          className="inline-flex shrink-0 items-center text-[13px] font-semibold text-[#0f1a2e]/60 hover:text-[#0f1a2e]"
+          className="inline-flex shrink-0 items-center text-[14px] font-semibold text-[#0f1a2e]/60 hover:text-[#0f1a2e]"
         >
           자세히
           <ChevronRight size={15} aria-hidden />
@@ -31,12 +31,12 @@ export default function HomePromiseStrip() {
 
       <ul className="mt-3 grid grid-cols-3 gap-2 md:gap-3">
         {AIRPICK_CARE.items.map((item) => (
-          <li key={item.id} className="rounded-2xl bg-[#f4f5f7] p-3 md:p-4">
+          <li key={item.id} className="rounded-2xl bg-[#f4f5f7] p-2.5 md:p-4">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0f1a2e] md:h-7 md:w-7">
               <Check size={14} strokeWidth={3} className="text-[#c9a962]" aria-hidden />
             </span>
-            <p className="mt-2 text-[14px] font-bold leading-snug text-[#0f1a2e] md:text-[16px]">{item.title}</p>
-            <p className="mt-0.5 text-[12px] font-medium leading-snug text-[#0f1a2e]/60 md:text-[14px]">{item.short}</p>
+            <p className="mt-2 break-keep text-[14px] font-bold leading-snug text-[#0f1a2e] md:text-[16px]">{item.title}</p>
+            <p className="mt-0.5 break-keep text-[13px] font-medium leading-snug text-[#0f1a2e]/60 md:text-[14px]">{item.short}</p>
           </li>
         ))}
       </ul>

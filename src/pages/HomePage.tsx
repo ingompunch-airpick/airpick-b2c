@@ -402,7 +402,7 @@ export default function HomePage({
                 {(() => {
                   const tc = checkBookingTimes(search);
                   return tc.ok ? null : (
-                    <p role="alert" className="mt-1.5 text-[12px] font-semibold text-rose-600">{tc.message}</p>
+                    <p role="alert" className="mt-1.5 text-[13px] font-semibold text-rose-600">{tc.message}</p>
                   );
                 })()}
               </div>
@@ -446,7 +446,7 @@ export default function HomePage({
                       type="button"
                       onClick={() => setListSort(option.id)}
                       className={cn(
-                        'rounded-full px-3.5 py-1.5 text-[13px] font-bold transition',
+                        'rounded-full px-3.5 py-1.5 text-[14px] font-bold transition',
                         on
                           ? 'bg-[#0f1a2e] text-white'
                           : 'bg-[#f4f5f7] text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/8'
@@ -788,7 +788,7 @@ function PriceList({
                   aria-hidden
                 >
                   <SquareParking size={28} strokeWidth={1.75} />
-                  <span className="text-[12px] font-semibold tracking-wide">사진 준비 중</span>
+                  <span className="text-[13px] font-semibold tracking-wide">사진 준비 중</span>
                 </div>
               )}
             </div>
@@ -902,7 +902,7 @@ function PriceList({
                       <p className="text-[22px] font-bold tabular-nums text-[#0f1a2e]">
                         {price.toLocaleString()}원
                       </p>
-                      <p className="mt-0.5 text-[13px] font-semibold text-[#0f1a2e]/55">
+                      <p className="mt-0.5 text-[14px] font-semibold text-[#0f1a2e]/55">
                         {stayLabel} · 총액 ({PRICE_INCLUSION.cardSuffix})
                       </p>
                       <AirportSavingsLine

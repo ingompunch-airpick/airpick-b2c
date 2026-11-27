@@ -14,7 +14,7 @@ export default function HomeTrustCriteria() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-2 border-b border-[#0f1a2e]/10 pb-3 md:pb-4">
         <div>
-          <p className="text-[12px] font-bold tracking-[0.14em] text-[#c9a962]">
+          <p className="text-[13px] font-bold tracking-[0.14em] text-[#c9a962]">
             {HOME_TRUST_CRITERIA.eyebrow}
           </p>
           <h2 className="mt-1 text-[1.35rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.55rem]">

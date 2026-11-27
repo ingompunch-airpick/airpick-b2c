@@ -74,7 +74,7 @@ export default function BottomNav({
                 onChange(id);
               }}
               className={cn(
-                'flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[10px] font-semibold leading-tight transition-colors',
+                'flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[12px] font-semibold leading-tight transition-colors',
                 isActive
                   ? 'text-[#0f1a2e]'
                   : soon
@@ -85,7 +85,7 @@ export default function BottomNav({
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
               <span className="max-w-full truncate text-center">{label}</span>
               {soon ? (
-                <span className="text-[9px] font-bold tracking-wide text-muted-light">Soon</span>
+                <span className="text-[11px] font-bold tracking-wide text-muted-light">Soon</span>
               ) : null}
             </a>
           );

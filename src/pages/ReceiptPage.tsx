@@ -86,9 +86,9 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
     <div className="min-h-dvh bg-neutral-100 px-4 py-6 print:bg-white print:p-0">
       <div className="receipt-sheet mx-auto max-w-lg bg-white p-6 shadow-md print:max-w-none print:shadow-none">
         <div className="border-b-2 border-neutral-800 pb-4 text-center">
-          <p className="text-xs font-semibold tracking-wide text-neutral-500">차량보관증</p>
+          <p className="text-[13px] font-semibold tracking-wide text-neutral-500">차량보관증</p>
           <h1 className="mt-1 text-xl font-bold text-neutral-900">{receipt.companyName}</h1>
-          <p className="mt-1 text-xs text-neutral-500">NO. {receiptNo}</p>
+          <p className="mt-1 text-[13px] text-neutral-500">NO. {receiptNo}</p>
         </div>
 
         <table className="mt-4 w-full border-collapse text-sm">
@@ -130,7 +130,7 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
           </tbody>
         </table>
 
-        <div className="mt-6 border-t border-neutral-200 pt-4 text-[10px] leading-relaxed text-neutral-600">
+        <div className="mt-6 border-t border-neutral-200 pt-4 text-[13px] leading-relaxed text-neutral-600">
           <p className="font-bold text-neutral-800">주차대행서비스 표준약관 (요약)</p>
           <ul className="mt-2 list-disc space-y-1 pl-4">
             <li>서비스 제공은 차량 인도 시점에 종료됩니다.</li>
@@ -160,7 +160,7 @@ export default function ReceiptPage({ reservationId }: { reservationId: string }
 function Row({ label, value, bold = false }: { label: string; value: string; bold?: boolean }) {
   return (
     <tr className="border-b border-neutral-200">
-      <th className="w-[32%] bg-neutral-50 px-3 py-2.5 text-left text-xs font-bold text-neutral-700">
+      <th className="w-[32%] bg-neutral-50 px-3 py-2.5 text-left text-[13px] font-bold text-neutral-700">
         {label}
       </th>
       <td

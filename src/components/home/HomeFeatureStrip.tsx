@@ -17,7 +17,7 @@ export default function HomeFeatureStrip() {
         return (
           <li
             key={item.id}
-            className="flex items-center justify-center gap-1.5 rounded-xl bg-white px-2 py-2.5 text-[13px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/8 md:text-[14px]"
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-white px-2 py-2.5 text-[14px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/8 md:text-[14px]"
           >
             <Icon size={16} strokeWidth={2.25} className="shrink-0 text-[#b8954a]" aria-hidden />
             {item.label}

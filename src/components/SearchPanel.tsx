@@ -51,12 +51,12 @@ export default function SearchPanel({
       <div className="rounded-2xl bg-neutral-50 px-4 py-3.5 shadow-[0_2px_12px_rgba(15,26,46,0.06)] ring-1 ring-[#0f1a2e]/10">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold tracking-wide text-[#0f1a2e]">주차 요금 기준</p>
+            <p className="text-[13px] font-bold tracking-wide text-[#0f1a2e]">주차 요금 기준</p>
             <p className="mt-0.5 text-[14px] font-bold leading-snug text-ink">
               {formatDateDisplay(search.departureDate)} {search.departureTime} →{' '}
               {formatDateDisplay(search.arrivalDate)} {search.arrivalTime}
             </p>
-            <p className="mt-0.5 text-[11px] font-medium text-muted">
+            <p className="mt-0.5 text-[13px] font-medium text-muted">
               {days}일 · {formatTerminalSummary(search.terminal, arrivalTerminal)} ·{' '}
               {search.isIndoor ? parkingTypeLabel(true) : parkingTypeLabel(false)}
             </p>
@@ -64,7 +64,7 @@ export default function SearchPanel({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="shrink-0 rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15"
+            className="shrink-0 rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15"
           >
             수정
           </button>
@@ -76,12 +76,12 @@ export default function SearchPanel({
   return (
     <div className="rounded-2xl bg-neutral-50 p-4 shadow-[0_2px_12px_rgba(15,26,46,0.06)] ring-1 ring-[#0f1a2e]/10">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-bold tracking-wide text-[#0f1a2e]">주차 요금 기준</p>
+        <p className="text-[13px] font-bold tracking-wide text-[#0f1a2e]">주차 요금 기준</p>
         {defaultCollapsed ? (
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg px-2 py-1 text-[11px] font-bold text-muted"
+            className="rounded-lg px-2 py-1 text-[12px] font-bold text-muted"
           >
             접기
           </button>
@@ -133,7 +133,7 @@ export default function SearchPanel({
       {(() => {
         const tc = checkBookingTimes(search);
         return tc.ok ? null : (
-          <p role="alert" className="mt-1.5 text-[12px] font-semibold text-rose-600">{tc.message}</p>
+          <p role="alert" className="mt-1.5 text-[13px] font-semibold text-rose-600">{tc.message}</p>
         );
       })()}
 
@@ -164,7 +164,7 @@ export default function SearchPanel({
                 key={id}
                 htmlFor={id}
                 className={cn(
-                  'cursor-pointer rounded-xl py-2 text-center text-xs font-bold transition-colors',
+                  'cursor-pointer rounded-xl py-2 text-center text-[13px] font-bold transition-colors',
                   selected ? 'bg-[#0f1a2e] text-white' : 'bg-white text-muted'
                 )}
               >
@@ -184,12 +184,12 @@ export default function SearchPanel({
         </div>
       </fieldset>
 
-      <p className="mt-2 text-center text-[11px] font-semibold text-muted">
+      <p className="mt-2 text-center text-[13px] font-semibold text-muted">
         총 <span className="font-bold text-[#0f1a2e]">{days}일</span> · {search.departureTime} →{' '}
         {search.arrivalTime} · {formatTerminalSummary(search.terminal, arrivalTerminal)} ·{' '}
         {search.isIndoor ? parkingTypeLabel(true) : parkingTypeLabel(false)}
       </p>
-      <p className="mt-1 text-center text-[10px] font-medium text-muted-light">
+      <p className="mt-1 text-center text-[13px] font-medium text-muted-light">
         맡기는·찾는 시간 기준 야간 할증 포함
       </p>
     </div>

@@ -68,7 +68,7 @@ function StatusTimeline({ status }: { status: string }) {
   const step = getStatusStep(status);
   if (step < 0) {
     return (
-      <p className="text-xs font-semibold text-rose-500">{getStatusLabel(status)}</p>
+      <p className="text-[13px] font-semibold text-rose-500">{getStatusLabel(status)}</p>
     );
   }
 
@@ -90,7 +90,7 @@ function StatusTimeline({ status }: { status: string }) {
               />
               <span
                 className={cn(
-                  'text-[9px] font-semibold',
+                  'text-[12px] font-semibold',
                   i < step ? 'text-[#0f1a2e]' : i === step ? 'font-bold text-[#0f1a2e]' : 'text-muted-light'
                 )}
               >
@@ -157,7 +157,7 @@ function PhotoStrip({
 }) {
   if (!photos?.length) {
     return (
-      <p className="text-xs font-medium leading-relaxed text-muted">{emptyLabel}</p>
+      <p className="text-[13px] font-medium leading-relaxed text-muted">{emptyLabel}</p>
     );
   }
 
@@ -301,7 +301,7 @@ export default function ReservationCard({
           {reservation.totalPrice.toLocaleString()}원
         </p>
         {typeof reservation.refundWon === 'number' && reservation.paidWon ? (
-          <p className="mt-1 text-[12px] font-semibold text-[#0f1a2e]/60">
+          <p className="mt-1 text-[13px] font-semibold text-[#0f1a2e]/60">
             {reservation.refundWon > 0
               ? `${reservation.refundWon.toLocaleString()}원 환불 (카드사에 따라 반영까지 며칠 걸릴 수 있어요)`
               : '환불 없음'}
@@ -319,23 +319,23 @@ export default function ReservationCard({
       <article className="rounded-3xl bg-neutral-50 p-5 shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <span className="inline-flex rounded-full bg-[#0f1a2e]/[0.06] px-2.5 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
+            <span className="inline-flex rounded-full bg-[#0f1a2e]/[0.06] px-2.5 py-0.5 text-[12px] font-bold text-[#0f1a2e]">
               {statusLabel}
             </span>
             <h3 className="mt-2 text-base font-bold text-ink">
               {displayCompanyName(reservation.companyName)}
             </h3>
             {showVehicle ? (
-              <p className="mt-0.5 text-xs font-medium text-muted">
+              <p className="mt-0.5 text-[13px] font-medium text-muted">
                 {reservation.carNumber} · {reservation.carModel}
               </p>
             ) : null}
           </div>
         </div>
-        <p className="mt-2 text-xs font-medium text-muted">{formatSchedule(reservation)}</p>
+        <p className="mt-2 text-[13px] font-medium text-muted">{formatSchedule(reservation)}</p>
         <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
           {reservation.totalPrice.toLocaleString()}원
-          <span className="ml-2 text-[13px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
+          <span className="ml-2 text-[14px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
         </p>
 
         {trackingAccess ? (
@@ -346,7 +346,7 @@ export default function ReservationCard({
                   <div>
                     <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
                     {parkingDisplay.detail ? (
-                      <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
+                      <p className="mt-0.5 text-[13px] font-medium text-muted">{parkingDisplay.detail}</p>
                     ) : null}
                   </div>
                   <ParkingMapPinPreview
@@ -357,7 +357,7 @@ export default function ReservationCard({
                     distanceLabel={undefined}
                   />
                   <div>
-                    <p className="mb-1.5 text-[11px] font-bold text-muted">위치 · 주차장 사진</p>
+                    <p className="mb-1.5 text-[13px] font-bold text-muted">위치 · 주차장 사진</p>
                     <PhotoStrip
                       photos={parkingDisplay.lotPhotos}
                       size="md"
@@ -366,7 +366,7 @@ export default function ReservationCard({
                   </div>
                 </div>
               ) : (
-                <p className="text-xs font-medium leading-relaxed text-muted">
+                <p className="text-[13px] font-medium leading-relaxed text-muted">
                   주차 위치 정보가 없습니다.
                 </p>
               )}
@@ -378,7 +378,7 @@ export default function ReservationCard({
         ) : null}
 
         {reservation.hasReview === true && isReservationReviewable(reservation.status) ? (
-          <p className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-xs font-bold text-amber-700 ring-1 ring-amber-100">
+          <p className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-[13px] font-bold text-amber-700 ring-1 ring-amber-100">
             <Star size={14} className="fill-amber-400 text-amber-400" strokeWidth={2} />
             후기 작성 완료
           </p>
@@ -389,7 +389,7 @@ export default function ReservationCard({
             <button
               type="button"
               onClick={() => setReviewOpen(true)}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-2.5 text-xs font-bold text-white"
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-2.5 text-[13px] font-bold text-white"
             >
               <Star size={14} strokeWidth={2.25} />
               후기 작성
@@ -417,24 +417,24 @@ export default function ReservationCard({
     <article className="rounded-3xl bg-neutral-50 p-5 shadow-[0_2px_8px_rgba(15,26,46,0.05)] ring-1 ring-[#0f1a2e]/8">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <span className="inline-flex rounded-full bg-[#0f1a2e]/[0.06] px-2.5 py-0.5 text-[11px] font-bold text-[#0f1a2e]">
+          <span className="inline-flex rounded-full bg-[#0f1a2e]/[0.06] px-2.5 py-0.5 text-[12px] font-bold text-[#0f1a2e]">
             {statusLabel}
           </span>
           <h3 className="mt-2 text-base font-bold text-ink">
             {displayCompanyName(reservation.companyName)}
           </h3>
           {showVehicle ? (
-            <p className="mt-0.5 text-xs font-medium text-muted">
+            <p className="mt-0.5 text-[13px] font-medium text-muted">
               {reservation.carNumber} · {reservation.carModel}
             </p>
           ) : null}
         </div>
-        <p className="max-w-[9.5rem] shrink-0 break-all text-right font-mono text-[11px] font-bold tracking-wide text-ink">
+        <p className="max-w-[9.5rem] shrink-0 break-all text-right font-mono text-[13px] font-bold tracking-wide text-ink">
           {displayReservationCode(reservation)}
         </p>
       </div>
 
-      <p className="mt-2 text-xs font-medium text-muted">{formatSchedule(reservation)}</p>
+      <p className="mt-2 text-[13px] font-medium text-muted">{formatSchedule(reservation)}</p>
       <PickupPlaceLink
         faceToFace={reservation.faceToFace === true}
         terminal={reservation.departureTerminal}
@@ -446,15 +446,15 @@ export default function ReservationCard({
           ) || company?.pickupLocation
         }
       />
-      <p className="mt-1.5 text-[13px] font-semibold leading-snug text-[#0f1a2e]/70">
+      <p className="mt-1.5 text-[14px] font-semibold leading-snug text-[#0f1a2e]/70">
         귀국 후 착륙하면 업체로 전화 주세요. 출고 장소를 안내해 드려요
       </p>
       <p className="mt-1 text-lg font-bold text-[#0f1a2e] tabular-nums">
         {reservation.totalPrice.toLocaleString()}원
-        <span className="ml-2 text-[13px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
+        <span className="ml-2 text-[14px] font-semibold text-[#0f1a2e]/55">{paymentLabel}</span>
       </p>
       {(reservation.pointSpentWon ?? 0) > 0 ? (
-        <p className="mt-0.5 text-right text-[12px] font-semibold text-gold">
+        <p className="mt-0.5 text-right text-[13px] font-semibold text-gold">
           포인트 {reservation.pointSpentWon?.toLocaleString()}원 사용
         </p>
       ) : null}
@@ -464,10 +464,10 @@ export default function ReservationCard({
       {(checkInStaffLine || checkOutStaffLine) && (
         <div className="mt-2 space-y-0.5">
           {checkInStaffLine ? (
-            <p className="text-[12px] font-semibold text-ink">{checkInStaffLine}</p>
+            <p className="text-[13px] font-semibold text-ink">{checkInStaffLine}</p>
           ) : null}
           {checkOutStaffLine ? (
-            <p className="text-[12px] font-semibold text-ink">{checkOutStaffLine}</p>
+            <p className="text-[13px] font-semibold text-ink">{checkOutStaffLine}</p>
           ) : null}
         </div>
       )}
@@ -482,7 +482,7 @@ export default function ReservationCard({
                   <div>
                     <p className="text-sm font-semibold leading-relaxed text-ink">{parkingDisplay.title}</p>
                     {parkingDisplay.detail && (
-                      <p className="mt-0.5 text-xs font-medium text-muted">{parkingDisplay.detail}</p>
+                      <p className="mt-0.5 text-[13px] font-medium text-muted">{parkingDisplay.detail}</p>
                     )}
                   </div>
 
@@ -495,7 +495,7 @@ export default function ReservationCard({
                   />
 
                   <div>
-                    <p className="mb-1.5 text-[11px] font-bold text-muted">위치 · 주차장 사진</p>
+                    <p className="mb-1.5 text-[13px] font-bold text-muted">위치 · 주차장 사진</p>
                     <PhotoStrip
                       photos={parkingDisplay.lotPhotos}
                       size="md"
@@ -504,7 +504,7 @@ export default function ReservationCard({
                   </div>
                 </div>
               ) : (
-                <p className="text-xs font-medium leading-relaxed text-muted">
+                <p className="text-[13px] font-medium leading-relaxed text-muted">
                   {locationPending
                     ? '입고 후 주차장 위치가 등록되면 이곳에서 확인할 수 있습니다.'
                     : '주차 위치 정보를 준비 중입니다.'}
@@ -520,7 +520,7 @@ export default function ReservationCard({
             </TrustBlock>
           </>
           ) : (
-            <p className="rounded-2xl bg-white px-4 py-3 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10">
+            <p className="rounded-2xl bg-white px-4 py-3 text-[14px] font-medium leading-relaxed text-[#0f1a2e]/70 ring-1 ring-[#0f1a2e]/10">
               입고 후 주차장 위치와 사진이 여기에 올라옵니다.
             </p>
           )
@@ -537,7 +537,7 @@ export default function ReservationCard({
             ) : (
               <TrustBlock icon={ShieldCheck} title="보험">
                 {insuranceDisplay.status === 'unknown' ? (
-                  <p className="text-xs font-medium leading-relaxed text-muted">
+                  <p className="text-[13px] font-medium leading-relaxed text-muted">
                     업체 보험 가입 정보가 등록되면 이곳에서 확인할 수 있습니다.
                   </p>
                 ) : (
@@ -548,14 +548,14 @@ export default function ReservationCard({
         ) : (
           <div className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10">
             <p className="text-sm font-bold text-ink">{AIRPICK_TRACKING_UPSELL.title}</p>
-            <p className="mt-1.5 text-xs font-medium leading-relaxed text-muted">
+            <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-muted">
               {AIRPICK_TRACKING_UPSELL.body}
             </p>
             {onBookAirpick && (
               <button
                 type="button"
                 onClick={onBookAirpick}
-                className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-2.5 text-xs font-bold text-white"
+                className="mt-3 w-full rounded-xl bg-[#0f1a2e] py-2.5 text-[13px] font-bold text-white"
               >
                 {AIRPICK_TRACKING_UPSELL.cta}
               </button>
@@ -567,25 +567,25 @@ export default function ReservationCard({
           {buildTelHref(company?.phone) ? (
             <a
               href={buildTelHref(company?.phone)}
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#0f1a2e]/[0.06] py-3 text-xs font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12 transition-colors hover:bg-neutral-50"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#0f1a2e]/[0.06] py-3 text-[13px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12 transition-colors hover:bg-neutral-50"
             >
               <Phone size={14} strokeWidth={2.25} />
               {displayCompanyName(reservation.companyName)} ·{' '}
               {formatPhoneDisplay(company!.phone!)}
             </a>
           ) : (
-            <p className="text-xs font-medium leading-relaxed text-muted">
+            <p className="text-[13px] font-medium leading-relaxed text-muted">
               업체 연락처가 등록되면 이곳에서 전화 문의할 수 있습니다.
             </p>
           )}
-          <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted-light">
+          <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted-light">
             입·출고 시간, 차량 상태, 입고 후 변경·취소는 주차장(업체)으로 연락해 주세요.
           </p>
         </TrustBlock>
       </div>
 
       {reservation.hasReview === true && isReservationReviewable(reservation.status) && (
-        <p className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-xs font-bold text-amber-700 ring-1 ring-amber-100">
+        <p className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-[13px] font-bold text-amber-700 ring-1 ring-amber-100">
           <Star size={14} className="fill-amber-400 text-amber-400" strokeWidth={2} />
           후기 작성 완료
         </p>
@@ -596,7 +596,7 @@ export default function ReservationCard({
           <button
             type="button"
             onClick={() => setReviewOpen(true)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-2.5 text-xs font-bold text-white"
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0f1a2e] py-2.5 text-[13px] font-bold text-white"
           >
             <Star size={14} strokeWidth={2.25} />
             후기 작성
@@ -612,14 +612,14 @@ export default function ReservationCard({
           {freeCancelLine ? (
             <p
               className={cn(
-                'mb-2 text-center text-[12px] font-semibold leading-relaxed',
+                'mb-2 text-center text-[13px] font-semibold leading-relaxed',
                 cancelEligibility.cancellable ? 'text-[#0f1a2e]/70' : 'text-muted'
               )}
             >
               {freeCancelLine}
             </p>
           ) : !cancelEligibility.cancellable && cancelEligibility.reason ? (
-            <p className="mb-2 text-center text-[12px] font-semibold leading-relaxed text-muted">
+            <p className="mb-2 text-center text-[13px] font-semibold leading-relaxed text-muted">
               {cancelEligibility.reason}
             </p>
           ) : null}
@@ -628,7 +628,7 @@ export default function ReservationCard({
               <button
                 type="button"
                 onClick={() => setCancelOpen(true)}
-                className="w-full rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/10 transition-colors hover:text-rose-500"
+                className="w-full rounded-xl bg-white py-2.5 text-[13px] font-bold text-muted ring-1 ring-[#0f1a2e]/10 transition-colors hover:text-rose-500"
               >
                 예약 취소
               </button>
@@ -639,13 +639,13 @@ export default function ReservationCard({
                   <p className="text-sm font-bold text-ink">예약을 취소할까요?</p>
                 </div>
                 {paidRefundLine ? (
-                  <p className="mt-1.5 text-[12px] font-bold leading-relaxed text-ink">{paidRefundLine}</p>
+                  <p className="mt-1.5 text-[13px] font-bold leading-relaxed text-ink">{paidRefundLine}</p>
                 ) : null}
-                <p className="mt-1.5 text-[11px] font-medium leading-relaxed text-muted">
+                <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-muted">
                   취소 후에는 되돌릴 수 없습니다. 예약 비밀번호 4자리를 입력해 주세요.
                 </p>
                 <label className="mt-3 block">
-                  <span className="mb-1.5 block text-[11px] font-bold text-ink">예약 비밀번호</span>
+                  <span className="mb-1.5 block text-[13px] font-bold text-ink">예약 비밀번호</span>
                   <input
                     type="password"
                     inputMode="numeric"
@@ -658,7 +658,7 @@ export default function ReservationCard({
                   />
                 </label>
                 {cancelError && (
-                  <p className="mt-2 text-[11px] font-semibold text-rose-600">{cancelError}</p>
+                  <p className="mt-2 text-[13px] font-semibold text-rose-600">{cancelError}</p>
                 )}
                 <div className="mt-3 flex gap-2">
                   <button
@@ -668,7 +668,7 @@ export default function ReservationCard({
                       setCancelPw('');
                       setCancelError('');
                     }}
-                    className="flex-1 rounded-xl bg-white py-2.5 text-xs font-bold text-muted ring-1 ring-[#0f1a2e]/12"
+                    className="flex-1 rounded-xl bg-white py-2.5 text-[13px] font-bold text-muted ring-1 ring-[#0f1a2e]/12"
                   >
                     닫기
                   </button>
@@ -676,7 +676,7 @@ export default function ReservationCard({
                     type="button"
                     disabled={cancelLoading || !/^\d{4}$/.test(cancelPw)}
                     onClick={handleCancel}
-                    className="flex-1 rounded-xl bg-rose-500 py-2.5 text-xs font-bold text-white transition-colors hover:bg-rose-600 disabled:opacity-60"
+                    className="flex-1 rounded-xl bg-rose-500 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-rose-600 disabled:opacity-60"
                   >
                     {cancelLoading ? '취소 중…' : '예약 취소 확정'}
                   </button>
@@ -693,7 +693,7 @@ export default function ReservationCard({
           href={COMPANY_LEGAL.kakaoChatUrl}
           target="_blank"
           rel="noopener"
-          className="mt-4 flex items-center justify-center gap-1.5 text-[12px] font-medium text-[#0f1a2e]/55 hover:text-[#0f1a2e]"
+          className="mt-4 flex items-center justify-center gap-1.5 text-[13px] font-medium text-[#0f1a2e]/55 hover:text-[#0f1a2e]"
         >
           <ShieldCheck size={14} strokeWidth={2.25} className="shrink-0 text-[#c9a962]" aria-hidden />
           <span>

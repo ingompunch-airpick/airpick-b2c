@@ -57,7 +57,7 @@ export default function SiteNoticeBanner({
           {SITE_NOTICE.body.trim() ? (
             <p
               className={cn(
-                'text-[13px] font-semibold leading-relaxed text-amber-950/75',
+                'text-[14px] font-semibold leading-relaxed text-amber-950/75',
                 SITE_NOTICE.title.trim() && 'mt-1.5'
               )}
             >

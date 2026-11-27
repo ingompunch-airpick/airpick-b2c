@@ -157,13 +157,13 @@ export default function DepartureGuideMap({
     <div className={cn('overflow-hidden rounded-xl ring-1 ring-sky-border', className)}>
       <div className="relative h-44 w-full bg-sky-tint">
         {status === 'loading' ? (
-          <div className="absolute inset-0 z-10 flex items-center justify-center text-[11px] font-medium text-muted">
+          <div className="absolute inset-0 z-10 flex items-center justify-center text-[13px] font-medium text-muted">
             지도 불러오는 중…
           </div>
         ) : null}
         <div ref={containerRef} className="h-full w-full" role="presentation" />
       </div>
-      <p className="border-t border-sky-border/60 bg-sky-soft/40 px-3 py-1.5 text-[10px] font-medium leading-relaxed text-muted">
+      <p className="border-t border-sky-border/60 bg-sky-soft/40 px-3 py-1.5 text-[13px] font-medium leading-relaxed text-muted">
         {reassure} 핀은 대략 위치 · 현장 표지판 우선.
       </p>
     </div>

@@ -16,9 +16,9 @@ export default function PriceBreakdownCard({
   return (
     <div className="rounded-2xl bg-[#f4f5f7] p-4">
       <div className="mb-2 border-b border-sky-border/60 pb-2">
-        <span className="text-[13px] font-bold text-brand">요금 명세</span>
+        <span className="text-[14px] font-bold text-brand">요금 명세</span>
       </div>
-      <div className="space-y-1.5 text-[13px]">
+      <div className="space-y-1.5 text-[14px]">
         <div className="flex justify-between gap-3 font-semibold text-ink">
           <span>{parkingTypeLabel(breakdown.isIndoor)} 주차</span>
           <span className="shrink-0 tabular-nums">{breakdown.basePrice.toLocaleString()}원</span>
@@ -36,7 +36,7 @@ export default function PriceBreakdownCard({
             <span>
               야간·새벽 할증
               {breakdown.nightDetails.length > 0 && (
-                <span className="block text-[13px] font-medium text-muted">
+                <span className="block text-[14px] font-medium text-muted">
                   {breakdown.nightDetails.join(' · ')}
                 </span>
               )}

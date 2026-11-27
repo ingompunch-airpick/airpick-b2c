@@ -39,7 +39,7 @@ export default function ValetPartnerList({
                 {item.price.toLocaleString()}원~
               </p>
             </div>
-            <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium text-muted">
+            <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-medium text-muted">
               {item.rating != null && item.reviewCount > 0 ? (
                 <span className="inline-flex items-center gap-0.5">
                   <Star size={11} className="fill-amber-400 text-amber-400" />
@@ -57,7 +57,7 @@ export default function ValetPartnerList({
             <button
               type="button"
               onClick={() => onReserve(item.id)}
-              className="mt-2 w-full rounded-xl bg-brand py-2 text-xs font-bold text-white transition hover:bg-brand-dark"
+              className="mt-2 w-full rounded-xl bg-brand py-2 text-[13px] font-bold text-white transition hover:bg-brand-dark"
             >
               예약하기
             </button>

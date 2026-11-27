@@ -65,7 +65,7 @@ export default function HomeCategoryCard({
             <div className="min-w-0 pt-1">
               <span
                 className={cn(
-                  'text-xs font-bold tracking-wide',
+                  'text-[13px] font-bold tracking-wide',
                   featured ? 'text-white/90' : 'text-brand'
                 )}
               >
@@ -88,7 +88,7 @@ export default function HomeCategoryCard({
             <span
               key={item}
               className={cn(
-                'rounded-lg px-2.5 py-1 text-[11px] font-bold',
+                'rounded-lg px-2.5 py-1 text-[12px] font-bold',
                 featured
                   ? 'bg-white/15 text-white ring-1 ring-white/20'
                   : 'bg-brand-soft text-ink ring-1 ring-sky-border/40'

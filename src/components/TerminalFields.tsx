@@ -30,7 +30,7 @@ export default function TerminalFields({
   return (
     <div className="space-y-2">
       <fieldset>
-        <legend className="text-[11px] font-bold text-muted">출국 터미널</legend>
+        <legend className="text-[13px] font-bold text-muted">출국 터미널</legend>
         <div className="mt-1 grid grid-cols-2 gap-2">
           {TERMINALS.map((t) => {
             const id = `${depName}-${t}`;
@@ -40,7 +40,7 @@ export default function TerminalFields({
                 key={t}
                 htmlFor={id}
                 className={cn(
-                  'cursor-pointer rounded-xl py-2 text-center text-xs font-bold transition-colors',
+                  'cursor-pointer rounded-xl py-2 text-center text-[13px] font-bold transition-colors',
                   selected ? 'bg-[#0f1a2e] text-white' : inactiveClassName
                 )}
               >
@@ -59,7 +59,7 @@ export default function TerminalFields({
           })}
         </div>
       </fieldset>
-      <p className="text-[11px] font-medium leading-snug text-muted">
+      <p className="text-[13px] font-medium leading-snug text-muted">
         대한항공·아시아나·진에어·에어부산·에어서울은 제2터미널, 제주항공·티웨이 등은 제1터미널. 항공권 터미널과 맞춰 주세요.
       </p>
 
@@ -71,12 +71,12 @@ export default function TerminalFields({
           onChange={(e) => onDifferentArrivalChange(e.target.checked)}
           className="h-4 w-4 rounded border-[#0f1a2e]/20 text-[#0f1a2e]"
         />
-        <span className="text-[11px] font-semibold text-muted">귀국 터미널이 다릅니다</span>
+        <span className="text-[13px] font-semibold text-muted">귀국 터미널이 다릅니다</span>
       </label>
 
       {differentArrival ? (
         <fieldset>
-          <legend className="text-[11px] font-bold text-muted">귀국 터미널</legend>
+          <legend className="text-[13px] font-bold text-muted">귀국 터미널</legend>
           <div className="mt-1 grid grid-cols-2 gap-2">
             {TERMINALS.map((t) => {
               const id = `${arrName}-${t}`;
@@ -86,7 +86,7 @@ export default function TerminalFields({
                   key={t}
                   htmlFor={id}
                   className={cn(
-                    'cursor-pointer rounded-xl py-2 text-center text-xs font-bold transition-colors',
+                    'cursor-pointer rounded-xl py-2 text-center text-[13px] font-bold transition-colors',
                     selected ? 'bg-[#0f1a2e] text-white' : inactiveClassName
                   )}
                 >

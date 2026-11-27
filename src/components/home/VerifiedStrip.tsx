@@ -15,15 +15,15 @@ export default function VerifiedStrip({ partnerCount }: { partnerCount: number }
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[10px] font-bold tracking-[0.14em] text-[#c9a962]">
+          <p className="text-[13px] font-bold tracking-[0.14em] text-[#c9a962]">
             {AIRPICK_VERIFIED.label}
           </p>
-          <p className="mt-1 text-[13px] font-semibold leading-snug text-white/95">
+          <p className="mt-1 text-[14px] font-semibold leading-snug text-white/95">
             {AIRPICK_VERIFIED.homeLine}
           </p>
-          <p className="mt-1 text-[11px] font-medium text-white/55">{meta}</p>
+          <p className="mt-1 text-[13px] font-medium text-white/55">{meta}</p>
         </div>
-        <span className="inline-flex shrink-0 items-center gap-0.5 pt-0.5 text-[11px] font-bold text-[#c9a962]">
+        <span className="inline-flex shrink-0 items-center gap-0.5 pt-0.5 text-[13px] font-bold text-[#c9a962]">
           {AIRPICK_VERIFIED.criteriaCta}
           <ChevronRight size={14} strokeWidth={2.5} aria-hidden />
         </span>

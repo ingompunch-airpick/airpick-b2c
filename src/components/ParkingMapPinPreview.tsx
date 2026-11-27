@@ -132,12 +132,12 @@ export default function ParkingMapPinPreview({
             />
           )}
           {status === 'loading' ? (
-            <p className="border-t border-sky-border/50 px-3 py-2 text-[11px] font-medium text-muted">
+            <p className="border-t border-sky-border/50 px-3 py-2 text-[13px] font-medium text-muted">
               지도 불러오는 중…
             </p>
           ) : null}
           {status === 'error' ? (
-            <p className="border-t border-sky-border/50 px-3 py-2 text-[11px] font-medium text-muted">
+            <p className="border-t border-sky-border/50 px-3 py-2 text-[13px] font-medium text-muted">
               지도를 탭하면 네이버 지도에서 확인할 수 있어요.
             </p>
           ) : null}
@@ -145,7 +145,7 @@ export default function ParkingMapPinPreview({
       ) : null}
 
       {distanceLabel ? (
-        <p className="flex items-center gap-1.5 text-xs font-semibold text-ink">
+        <p className="flex items-center gap-1.5 text-[13px] font-semibold text-ink">
           <MapPin size={13} className="shrink-0 text-brand" strokeWidth={2.25} />
           {distanceLabel}
         </p>
@@ -156,7 +156,7 @@ export default function ParkingMapPinPreview({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand underline-offset-2 hover:underline"
+          className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand underline-offset-2 hover:underline"
         >
           <ExternalLink size={12} strokeWidth={2.25} />
           네이버 지도 앱에서 열기

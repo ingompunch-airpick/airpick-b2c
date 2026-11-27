@@ -34,10 +34,10 @@ function DocumentRow({
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold text-ink">{title}</p>
           {detail ? (
-            <p className="mt-0.5 text-[11px] font-semibold text-muted">{detail}</p>
+            <p className="mt-0.5 text-[13px] font-semibold text-muted">{detail}</p>
           ) : null}
           {extra ? (
-            <p className="mt-1 text-[12px] font-semibold leading-snug text-ink">{extra}</p>
+            <p className="mt-1 text-[13px] font-semibold leading-snug text-ink">{extra}</p>
           ) : null}
         </div>
       </div>
@@ -46,7 +46,7 @@ function DocumentRow({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2.5 flex items-center justify-center gap-1.5 rounded-xl bg-white py-2.5 text-xs font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
+          className="mt-2.5 flex items-center justify-center gap-1.5 rounded-xl bg-white py-2.5 text-[13px] font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
         >
           <ExternalLink size={14} strokeWidth={2.25} />
           {linkLabel}
@@ -81,8 +81,8 @@ export default function CompanyVerificationDocuments({
       )}
       aria-label="에어픽 입점 확인"
     >
-      <p className="text-xs font-bold text-brand">에어픽 입점 확인</p>
-      <p className="mt-0.5 text-[11px] font-semibold text-muted">
+      <p className="text-[13px] font-bold text-brand">에어픽 입점 확인</p>
+      <p className="mt-0.5 text-[13px] font-semibold text-muted">
         사업자·주차장 계약·보험 서류를 에어픽이 확인했습니다.
       </p>
 
@@ -118,7 +118,7 @@ export default function CompanyVerificationDocuments({
       </div>
 
       {hasInsuranceCertificate(company) ? (
-        <p className="mt-2.5 rounded-lg bg-white/80 px-3 py-2 text-[10px] font-medium leading-relaxed text-muted ring-1 ring-sky-border/50">
+        <p className="mt-2.5 rounded-lg bg-white/80 px-3 py-2 text-[13px] font-medium leading-relaxed text-muted ring-1 ring-sky-border/50">
           사고 발생 시{' '}
           <span className="font-bold text-ink">
             {productName || insuranceLabel || '가입 보험'}

@@ -205,12 +205,12 @@ export default function TripHomeHub({
       <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_28px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/10">
         <div className="flex items-start justify-between gap-3 border-b border-[#0f1a2e]/8 px-4 py-3.5">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold tracking-wide text-[#0f1a2e]/45">여행 일정</p>
+            <p className="text-[13px] font-bold tracking-wide text-[#0f1a2e]/45">여행 일정</p>
             <p className="mt-0.5 text-[15px] font-bold text-[#0f1a2e]">
               {formatDateDisplay(departureDate)} {departureTime} → {formatDateDisplay(arrivalDate)}{' '}
               {arrivalTime}
             </p>
-            <p className="mt-0.5 text-[12px] font-medium text-[#0f1a2e]/50">
+            <p className="mt-0.5 text-[13px] font-medium text-[#0f1a2e]/50">
               출국 {terminal}
               {arrivalTerminal !== terminal ? ` · 입국 ${arrivalTerminal}` : ''} · {days}일
             </p>
@@ -218,7 +218,7 @@ export default function TripHomeHub({
           <button
             type="button"
             onClick={() => setStep('input')}
-            className="shrink-0 rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15"
+            className="shrink-0 rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-[#0f1a2e] ring-1 ring-[#0f1a2e]/15"
           >
             수정
           </button>
@@ -227,15 +227,15 @@ export default function TripHomeHub({
         <div className="space-y-3 px-4 py-4">
           <article className="rounded-xl bg-[#0f1a2e]/[0.04] px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/10">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[13px] font-bold text-[#0f1a2e]">{HOME_NEXT_PREP.parking.title}</p>
-              <span className="rounded-full bg-[#0f1a2e] px-2 py-0.5 text-[10px] font-bold text-white">
+              <p className="text-[14px] font-bold text-[#0f1a2e]">{HOME_NEXT_PREP.parking.title}</p>
+              <span className="rounded-full bg-[#0f1a2e] px-2 py-0.5 text-[12px] font-bold text-white">
                 1
               </span>
             </div>
-            <p className="mt-1 text-[12px] font-semibold text-[#0f1a2e]">
+            <p className="mt-1 text-[13px] font-semibold text-[#0f1a2e]">
               인천공항 {terminal} · {days}일
             </p>
-            <p className="mt-0.5 text-[11px] font-medium text-[#0f1a2e]/50">
+            <p className="mt-0.5 text-[13px] font-medium text-[#0f1a2e]/50">
               {HOME_NEXT_PREP.parking.benefit}
             </p>
             <button
@@ -250,13 +250,13 @@ export default function TripHomeHub({
           {!APP_TAB_SOON.esim ? (
             <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/10">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-bold text-[#0f1a2e]">{HOME_NEXT_PREP.esim.title}</p>
-                <span className="rounded-full bg-[#c9a962]/20 px-2 py-0.5 text-[10px] font-bold text-[#9a7b3c]">
+                <p className="text-[14px] font-bold text-[#0f1a2e]">{HOME_NEXT_PREP.esim.title}</p>
+                <span className="rounded-full bg-[#c9a962]/20 px-2 py-0.5 text-[12px] font-bold text-[#9a7b3c]">
                   2
                 </span>
               </div>
-              <p className="mt-1 text-[12px] font-semibold text-[#0f1a2e]">{days}일</p>
-              <p className="mt-0.5 text-[11px] font-medium text-[#0f1a2e]/50">{HOME_NEXT_PREP.esim.body}</p>
+              <p className="mt-1 text-[13px] font-semibold text-[#0f1a2e]">{days}일</p>
+              <p className="mt-0.5 text-[13px] font-medium text-[#0f1a2e]/50">{HOME_NEXT_PREP.esim.body}</p>
               <button
                 type="button"
                 onClick={goEsim}
@@ -269,8 +269,8 @@ export default function TripHomeHub({
 
           <article className="rounded-xl bg-white px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/10">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[13px] font-bold text-[#0f1a2e]">출발시각</p>
-              <span className="rounded-full bg-neutral-50 px-2 py-0.5 text-[10px] font-bold text-[#0f1a2e]/45">
+              <p className="text-[14px] font-bold text-[#0f1a2e]">출발시각</p>
+              <span className="rounded-full bg-neutral-50 px-2 py-0.5 text-[12px] font-bold text-[#0f1a2e]/45">
                 {APP_TAB_SOON.esim ? '2' : '3'}
               </span>
             </div>
@@ -280,17 +280,17 @@ export default function TripHomeHub({
                 <p className="text-[22px] font-bold tracking-tight text-ink">
                   집 → {leavePlan.plan.leaveByHm} 출발 추천
                 </p>
-                <p className="mt-1 text-[11px] font-medium text-muted">
+                <p className="mt-1 text-[13px] font-medium text-muted">
                   차 맡기기 {leavePlan.plan.arriveHm} 기준 · 주차대행 경로 · 이동 약{' '}
                   {leavePlan.plan.travelMinutes}분
                 </p>
                 {peakAdvisory ? (
-                  <p className="mt-2 text-[11px] font-medium leading-relaxed text-amber-800">
+                  <p className="mt-2 text-[13px] font-medium leading-relaxed text-amber-800">
                     {HOME_PEAK_ADVISORY}
                   </p>
                 ) : null}
                 <details className="group mt-2.5">
-                  <summary className="flex cursor-pointer list-none items-center gap-1 text-[11px] font-bold text-[#9a7b3c] [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center gap-1 text-[13px] font-bold text-[#9a7b3c] [&::-webkit-details-marker]:hidden">
                     어떻게 계산했나요?
                     <ChevronDown
                       size={14}
@@ -298,7 +298,7 @@ export default function TripHomeHub({
                       aria-hidden
                     />
                   </summary>
-                  <dl className="mt-2 space-y-1.5 border-t border-[#0f1a2e]/10 pt-2 text-[11px]">
+                  <dl className="mt-2 space-y-1.5 border-t border-[#0f1a2e]/10 pt-2 text-[13px]">
                     <div className="flex justify-between gap-3">
                       <dt className="text-muted">차 맡기기 (공항 도착)</dt>
                       <dd className="font-bold text-ink">{leavePlan.plan.arriveHm}</dd>
@@ -312,17 +312,17 @@ export default function TripHomeHub({
                       <dd className="font-bold text-ink">미포함</dd>
                     </div>
                   </dl>
-                  <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
+                  <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
                     {HOME_VALET_MODE_NOTE}
                   </p>
-                  <p className="mt-1 text-[10px] font-medium leading-relaxed text-muted">
+                  <p className="mt-1 text-[13px] font-medium leading-relaxed text-muted">
                     {HOME_LEAVE_DISCLAIMER}
                   </p>
                 </details>
               </div>
             ) : (
               <div className="mt-2 space-y-2">
-                <p className="text-[11px] font-medium text-muted">
+                <p className="text-[13px] font-medium text-muted">
                   집 주소를 넣으면 추천 출발 시각을 계산해요.
                 </p>
                 <input
@@ -337,7 +337,7 @@ export default function TripHomeHub({
                   className="w-full rounded-xl bg-neutral-50 px-3 py-2.5 text-sm font-semibold text-ink outline-none ring-1 ring-[#0f1a2e]/12 placeholder:font-medium placeholder:text-muted focus:ring-2 focus:ring-[#0f1a2e]/25"
                 />
                 {etaError ? (
-                  <p className="text-[10px] font-medium text-amber-700">{etaError}</p>
+                  <p className="text-[13px] font-medium text-amber-700">{etaError}</p>
                 ) : null}
                 {showTravelFallback ? (
                   <div className="flex flex-wrap gap-1.5">
@@ -352,7 +352,7 @@ export default function TripHomeHub({
                           setEtaError(null);
                         }}
                         className={cn(
-                          'rounded-full px-3 py-1.5 text-[11px] font-bold',
+                          'rounded-full px-3 py-1.5 text-[13px] font-bold',
                           travelMinutes === m && travelSource === 'manual'
                             ? 'bg-[#0f1a2e] text-white'
                             : 'bg-neutral-50 text-muted ring-1 ring-[#0f1a2e]/12'
@@ -372,7 +372,7 @@ export default function TripHomeHub({
                   {etaLoading ? HOME_CALCULATING : '출발 시각 계산하기'}
                 </button>
                 {leavePlan?.error ? (
-                  <p className="text-[10px] font-medium text-amber-700">{leavePlan.error}</p>
+                  <p className="text-[13px] font-medium text-amber-700">{leavePlan.error}</p>
                 ) : null}
               </div>
             )}
@@ -386,8 +386,8 @@ export default function TripHomeHub({
     <section className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_28px_rgba(15,26,46,0.08)] ring-1 ring-[#0f1a2e]/10">
       <form onSubmit={continueToResult} className="space-y-3.5 px-4 pb-4 pt-4">
         <div>
-          <p className="text-[10px] font-bold tracking-wide text-[#0f1a2e]/45">여행 일정</p>
-          <p className="mt-0.5 text-[12px] font-semibold text-[#0f1a2e]">
+          <p className="text-[13px] font-bold tracking-wide text-[#0f1a2e]/45">여행 일정</p>
+          <p className="mt-0.5 text-[13px] font-semibold text-[#0f1a2e]">
             주차·이심 준비에 쓸 출국·귀국 일정이에요
           </p>
         </div>
@@ -414,7 +414,7 @@ export default function TripHomeHub({
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-bold text-[#0f1a2e]/50">출국 터미널</p>
+          <p className="mb-1.5 text-[13px] font-bold text-[#0f1a2e]/50">출국 터미널</p>
           <div className="flex gap-2">
             {(['T1', 'T2'] as const).map((t) => (
               <button
@@ -425,7 +425,7 @@ export default function TripHomeHub({
                   setArrivalTerminal((prev) => (prev === terminal ? t : prev));
                 }}
                 className={cn(
-                  'flex-1 rounded-xl py-2.5 text-[13px] font-bold transition',
+                  'flex-1 rounded-xl py-2.5 text-[14px] font-bold transition',
                   terminal === t
                     ? 'bg-[#0f1a2e] text-white'
                     : 'bg-neutral-50 text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12'
@@ -455,7 +455,7 @@ export default function TripHomeHub({
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-bold text-[#0f1a2e]/50">입국 터미널</p>
+          <p className="mb-1.5 text-[13px] font-bold text-[#0f1a2e]/50">입국 터미널</p>
           <div className="flex gap-2">
             {(['T1', 'T2'] as const).map((t) => (
               <button
@@ -463,7 +463,7 @@ export default function TripHomeHub({
                 type="button"
                 onClick={() => setArrivalTerminal(t)}
                 className={cn(
-                  'flex-1 rounded-xl py-2.5 text-[13px] font-bold transition',
+                  'flex-1 rounded-xl py-2.5 text-[14px] font-bold transition',
                   arrivalTerminal === t
                     ? 'bg-[#0f1a2e] text-white'
                     : 'bg-neutral-50 text-[#0f1a2e] ring-1 ring-[#0f1a2e]/12'
@@ -475,12 +475,12 @@ export default function TripHomeHub({
           </div>
         </div>
 
-        <p className="text-[10px] font-medium text-[#0f1a2e]/45">
+        <p className="text-[13px] font-medium text-[#0f1a2e]/45">
           맡기는·찾는 시간으로 야간 할증을 반영합니다. 항공편은 예약 단계에서 입력해요.
         </p>
 
         {formError ? (
-          <p className="text-[11px] font-medium leading-relaxed text-amber-700">{formError}</p>
+          <p className="text-[13px] font-medium leading-relaxed text-amber-700">{formError}</p>
         ) : null}
 
         <button

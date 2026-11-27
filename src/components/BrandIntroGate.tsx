@@ -177,7 +177,7 @@ export default function BrandIntroGate({
             <span className="block md:inline">{BRAND_INTRO.titleLead}</span>{' '}
             <strong className="block font-extrabold md:inline">{BRAND_INTRO.titleRest}</strong>
           </h1>
-          <p className="mt-3 text-[12px] font-bold tracking-[0.35em] text-white/95 md:mt-4 md:text-[16px]">
+          <p className="mt-3 text-[13px] font-bold tracking-[0.35em] text-white/95 md:mt-4 md:text-[16px]">
             {BRAND_INTRO.subtitleEn}
           </p>
 

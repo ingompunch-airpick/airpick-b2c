@@ -51,7 +51,7 @@ export default function HomeWhyAirpick() {
 
       {/* 해결 — 왜 에어픽 */}
       <div className="mt-10 border-t border-[#c9a962]/35 pt-8 md:mt-12 md:pt-10">
-        <p className="text-[12px] font-bold tracking-[0.14em] text-[#c9a962]">
+        <p className="text-[13px] font-bold tracking-[0.14em] text-[#c9a962]">
           {HOME_WHY_AIRPICK.eyebrow}
         </p>
         <h2 className="mt-1 text-[1.35rem] font-bold leading-snug tracking-tight text-[#0f1a2e] md:text-[1.55rem]">
@@ -86,14 +86,14 @@ export default function HomeWhyAirpick() {
                       {HOME_HERO_TRUST_CHIPS.map((chip) => (
                         <li
                           key={chip}
-                          className="rounded-full border border-[#c9a962]/30 bg-white px-2.5 py-1 text-[11px] font-bold tracking-wide text-[#9a7b3c] md:text-[12px]"
+                          className="rounded-full border border-[#c9a962]/30 bg-white px-2.5 py-1 text-[12px] font-bold tracking-wide text-[#9a7b3c] md:text-[12px]"
                         >
                           {chip}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-2 text-[12px] font-bold tracking-[0.08em] text-[#9a7b3c]">
+                    <p className="mt-2 text-[13px] font-bold tracking-[0.08em] text-[#9a7b3c]">
                       {item.evidence}
                     </p>
                   )}

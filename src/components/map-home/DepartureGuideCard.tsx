@@ -74,7 +74,7 @@ function CongestionLevelBadge({ level }: { level: CongestionLevel }) {
   return (
     <span
       className={cn(
-        'inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ring-1',
+        'inline-flex rounded-full px-2 py-0.5 text-[12px] font-bold ring-1',
         congestionLevelTone(level)
       )}
     >
@@ -433,7 +433,7 @@ export default function DepartureGuideCard({
             }}
           />
           <label className="block">
-            <span className="mb-1 block text-[11px] font-bold text-muted">항공편명</span>
+            <span className="mb-1 block text-[13px] font-bold text-muted">항공편명</span>
             <FlightIdCombobox
               value={flightId}
               onChange={(next) => {
@@ -458,7 +458,7 @@ export default function DepartureGuideCard({
         </div>
 
         <div>
-          <p className="mb-1.5 text-[10px] font-bold text-muted">출발지</p>
+          <p className="mb-1.5 text-[13px] font-bold text-muted">출발지</p>
           <input
             value={homeAddress}
             onChange={(e) => {
@@ -471,28 +471,28 @@ export default function DepartureGuideCard({
             className="w-full rounded-xl bg-sky-soft/90 px-3 py-2.5 text-sm font-semibold text-ink outline-none ring-1 ring-sky-border/70 placeholder:font-medium placeholder:text-muted focus:ring-2 focus:ring-brand/35"
           />
           {travelSource === 'naver' && travelMinutes != null ? (
-            <p className="mt-1.5 text-[11px] font-bold text-brand">
+            <p className="mt-1.5 text-[13px] font-bold text-brand">
               {leaveDriveLabel(parking)} 약 {travelMinutes}분
               {travelGoalLabel ? ` · ${travelGoalLabel}` : ''}
             </p>
           ) : (
-            <p className="mt-1 text-[10px] font-medium text-muted">
+            <p className="mt-1 text-[13px] font-medium text-muted">
               계산 시 자동차 길찾기로 반영합니다.
             </p>
           )}
           {etaError ? (
-            <p className="mt-1 text-[10px] font-medium text-amber-700">{etaError}</p>
+            <p className="mt-1 text-[13px] font-medium text-amber-700">{etaError}</p>
           ) : null}
           {showTravelFallback ? (
             <div className="mt-2">
-              <p className="mb-1.5 text-[10px] font-bold text-muted">이동 시간 직접 선택</p>
+              <p className="mb-1.5 text-[13px] font-bold text-muted">이동 시간 직접 선택</p>
               <div className="flex flex-wrap items-center gap-1.5">
                 {TRAVEL_FALLBACK_PRESETS.map((m) => (
                   <button
                     key={m}
                     type="button"
                     onClick={() => selectManualTravel(m)}
-                    className={`rounded-full px-3 py-1.5 text-[11px] font-bold transition ${
+                    className={`rounded-full px-3 py-1.5 text-[13px] font-bold transition ${
                       travelMinutes === m && travelSource === 'manual'
                         ? 'bg-ink text-white'
                         : 'bg-white text-muted ring-1 ring-sky-border/60'
@@ -507,7 +507,7 @@ export default function DepartureGuideCard({
         </div>
 
         <div>
-          <p className="mb-1.5 text-[10px] font-bold text-muted">주차</p>
+          <p className="mb-1.5 text-[13px] font-bold text-muted">주차</p>
           <div className="flex flex-wrap items-center gap-1.5">
             {PARKING_MODES.map((m) => (
               <button
@@ -521,7 +521,7 @@ export default function DepartureGuideCard({
                   setFlight(null);
                   setAirportLive(null);
                 }}
-                className={`rounded-full px-3 py-1.5 text-[11px] font-bold transition ${
+                className={`rounded-full px-3 py-1.5 text-[13px] font-bold transition ${
                   parking === m.id
                     ? 'bg-brand text-white'
                     : 'bg-sky-soft/80 text-ink ring-1 ring-sky-border/60'
@@ -543,7 +543,7 @@ export default function DepartureGuideCard({
       </form>
 
       {error ? (
-        <p className="border-t border-sky-border/50 px-4 py-3 text-[11px] font-medium leading-relaxed text-amber-700">
+        <p className="border-t border-sky-border/50 px-4 py-3 text-[13px] font-medium leading-relaxed text-amber-700">
           {error}
         </p>
       ) : null}
@@ -551,14 +551,14 @@ export default function DepartureGuideCard({
       {flight && leavePlan?.plan ? (
         <div className="border-t border-sky-border/60 bg-sky-soft/30 px-4 py-4">
           <div className="rounded-2xl bg-brand px-4 py-5 text-white shadow-[0_8px_24px_rgba(49,130,246,0.35)]">
-            <p className="text-[11px] font-bold opacity-90">
+            <p className="text-[13px] font-bold opacity-90">
               {HOME_RESULT_EYEBROW_MODE(parkingModeLabel)}
             </p>
             <p className="mt-1 text-[2.5rem] font-bold leading-none tracking-tight">
               {leavePlan.plan.leaveByHm}
             </p>
             {leavePlan.arrive.departureHm ? (
-              <p className="mt-3 text-[12px] font-semibold leading-snug text-white/90">
+              <p className="mt-3 text-[13px] font-semibold leading-snug text-white/90">
                 {HOME_RESULT_SUMMARY_LINE({
                   flightHm: leavePlan.arrive.departureHm,
                   arriveHm: leavePlan.plan.arriveHm,
@@ -569,7 +569,7 @@ export default function DepartureGuideCard({
           </div>
 
           {leaveCompare && parking !== 'long' ? (
-            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-ink">
+            <p className="mt-3 text-[14px] font-semibold leading-relaxed text-ink">
               {HOME_TO_COMPARE_LONG_LINE(leaveCompare.longLeaveByHm)}
             </p>
           ) : null}
@@ -582,7 +582,7 @@ export default function DepartureGuideCard({
             airportLiveLoading) && (
             <div className="mt-3 space-y-2 rounded-xl bg-white px-3.5 py-3 ring-1 ring-sky-border/60">
               {flight.checkInCounter || flight.terminal || flight.terminalLabel ? (
-                <p className="text-[12px] font-semibold leading-snug text-ink">
+                <p className="text-[13px] font-semibold leading-snug text-ink">
                   {[
                     flight.checkInCounter
                       ? HOME_CHECKIN_COUNTER_LABEL(flight.checkInCounter)
@@ -597,35 +597,35 @@ export default function DepartureGuideCard({
               {parking !== 'valet' ? (
                 selectedParkingLive ? (
                   <div>
-                    <p className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-ink">
+                    <p className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
                       <span>{selectedParkingLabel}</span>
                       <CongestionLevelBadge level={selectedParkingLive.level} />
                     </p>
                     {selectedParkingBusy ? (
-                      <p className="mt-1 text-[11px] font-medium leading-relaxed text-muted">
+                      <p className="mt-1 text-[13px] font-medium leading-relaxed text-muted">
                         {HOME_LONG_PARKING_BUSY_HINT}
                       </p>
                     ) : null}
                   </div>
                 ) : airportLiveLoading ? (
-                  <p className="text-[11px] font-medium text-muted">주차장 상황 확인 중…</p>
+                  <p className="text-[13px] font-medium text-muted">주차장 상황 확인 중…</p>
                 ) : null
               ) : null}
 
               {hallLive ? (
                 <div>
-                  <p className="inline-flex flex-wrap items-center gap-1.5 text-[12px] font-semibold text-ink">
+                  <p className="inline-flex flex-wrap items-center gap-1.5 text-[13px] font-semibold text-ink">
                     <span>{formatDepartureHallLiveLine(hallLive)}</span>
                     <CongestionLevelBadge level={hallLive.level} />
                   </p>
-                  <p className="mt-1 text-[10px] font-medium leading-relaxed text-muted">
+                  <p className="mt-1 text-[13px] font-medium leading-relaxed text-muted">
                     {HOME_DEPARTURE_HALL_REF_HINT}
                   </p>
                 </div>
               ) : airportLiveLoading ? (
-                <p className="text-[11px] font-medium text-muted">출국장 대기 확인 중…</p>
+                <p className="text-[13px] font-medium text-muted">출국장 대기 확인 중…</p>
               ) : airportLive?.congestion.note ? (
-                <p className="text-[11px] font-medium leading-relaxed text-muted">
+                <p className="text-[13px] font-medium leading-relaxed text-muted">
                   {airportLive.congestion.note}
                 </p>
               ) : null}
@@ -656,16 +656,16 @@ export default function DepartureGuideCard({
           >
             {leaveCompare && parking !== 'valet' ? (
               <div className="space-y-1.5">
-                <p className="text-[12px] font-bold text-ink">{HOME_TO_COMPARE_VALET_HEAD}</p>
+                <p className="text-[13px] font-bold text-ink">{HOME_TO_COMPARE_VALET_HEAD}</p>
                 <p className="text-[18px] font-bold tracking-tight text-ink">
                   {HOME_TO_COMPARE_VALET_TIME(leaveCompare.valetLeaveByHm)}
                 </p>
-                <p className="text-[13px] font-bold text-brand">
+                <p className="text-[14px] font-bold text-brand">
                   {HOME_TO_COMPARE_SAVED(leaveCompare.savedMinutes)}
                 </p>
               </div>
             ) : (
-              <span className="block text-[13px] font-semibold leading-relaxed text-ink">
+              <span className="block text-[14px] font-semibold leading-relaxed text-ink">
                 {HOME_NEXT_PREP.parking.benefit}
               </span>
             )}
@@ -675,7 +675,7 @@ export default function DepartureGuideCard({
           </button>
 
           <details className="group mt-3 rounded-xl bg-white px-3.5 py-2.5 ring-1 ring-sky-border/60">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[12px] font-bold text-ink [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[13px] font-bold text-ink [&::-webkit-details-marker]:hidden">
               <span>어떻게 계산했나요?</span>
               <ChevronDown
                 size={16}
@@ -685,7 +685,7 @@ export default function DepartureGuideCard({
               />
             </summary>
             <div className="mt-2.5 space-y-2.5 border-t border-sky-border/50 pt-2.5">
-              <dl className="space-y-1.5 text-[12px]">
+              <dl className="space-y-1.5 text-[13px]">
                 <div className="flex justify-between gap-3">
                   <dt className="font-medium text-muted">비행기 출발</dt>
                   <dd className="font-bold text-ink">{leavePlan.arrive.departureHm}</dd>
@@ -717,7 +717,7 @@ export default function DepartureGuideCard({
                 </div>
               </dl>
               {flight.flightId ? (
-                <p className="text-[10px] font-medium text-muted">
+                <p className="text-[13px] font-medium text-muted">
                   {flight.flightId}
                   {flight.destination ? ` · ${flight.destination}행` : ''}
                   {flight.terminal || flight.terminalLabel
@@ -726,23 +726,23 @@ export default function DepartureGuideCard({
                 </p>
               ) : null}
               {parking === 'valet' ? (
-                <p className="text-[11px] font-medium leading-relaxed text-muted">
+                <p className="text-[13px] font-medium leading-relaxed text-muted">
                   {HOME_VALET_MODE_NOTE}
                 </p>
               ) : null}
               {peakAdvisory ? (
-                <p className="text-[11px] font-medium leading-relaxed text-amber-800">
+                <p className="text-[13px] font-medium leading-relaxed text-amber-800">
                   {HOME_PEAK_ADVISORY}
                 </p>
               ) : null}
-              <p className="text-[10px] font-medium leading-relaxed text-muted">
+              <p className="text-[13px] font-medium leading-relaxed text-muted">
                 {HOME_LEAVE_DISCLAIMER}
               </p>
             </div>
           </details>
         </div>
       ) : flight && leavePlan?.error ? (
-        <p className="border-t border-sky-border/50 px-4 py-3 text-[11px] font-medium leading-relaxed text-amber-700">
+        <p className="border-t border-sky-border/50 px-4 py-3 text-[13px] font-medium leading-relaxed text-amber-700">
           {leavePlan.error}
         </p>
       ) : null}

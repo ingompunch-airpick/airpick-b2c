@@ -137,15 +137,15 @@ function UpcomingReservationCard({
   return (
     <div className="mt-4 rounded-[20px] bg-[#f4f5f7] px-4 py-4">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[13px] font-medium text-[#0f1a2e]/55">다가오는 예약</p>
+        <p className="text-[14px] font-medium text-[#0f1a2e]/55">다가오는 예약</p>
         <span className="shrink-0 rounded-full bg-white px-2.5 py-0.5 text-[12px] font-semibold text-[#0f1a2e]">
           {departureDdayBadge(reservation.departureDate, reservation.arrivalDate)}
         </span>
       </div>
-      <p className="mt-1 text-[13px] font-semibold text-brand">
+      <p className="mt-1 text-[14px] font-semibold text-brand">
         {getStatusLabel(reservation.status)}
       </p>
-      <p className="mt-0.5 font-mono text-[12px] font-bold tracking-wide text-[#0f1a2e]/70">
+      <p className="mt-0.5 font-mono text-[13px] font-bold tracking-wide text-[#0f1a2e]/70">
         예약번호 {displayReservationCode(reservation)}
       </p>
       <p className="mt-0.5 text-[16px] font-bold text-[#0f1a2e]">
@@ -157,7 +157,7 @@ function UpcomingReservationCard({
         {time ? ` ${time}` : ''}
         {` · ${terminal}`}
       </p>
-      <p className="mt-0.5 text-[13px] font-medium tabular-nums text-[#0f1a2e]/55">
+      <p className="mt-0.5 text-[14px] font-medium tabular-nums text-[#0f1a2e]/55">
         귀국 {formatMmDd(reservation.arrivalDate)}
       </p>
       <button
@@ -185,7 +185,7 @@ function InfoEditButton({
       type="button"
       onPointerDown={editing ? (event) => event.preventDefault() : undefined}
       onClick={editing ? onSave : onEdit}
-      className="inline-flex items-center gap-1 rounded-full bg-[#F3E6C4] px-3 py-1.5 text-[13px] font-semibold text-[#0f1a2e]"
+      className="inline-flex items-center gap-1 rounded-full bg-[#F3E6C4] px-3 py-1.5 text-[14px] font-semibold text-[#0f1a2e]"
     >
       {editing ? '저장' : '정보 수정'}
       {editing ? null : <Pencil size={13} strokeWidth={2} />}
@@ -772,7 +772,7 @@ export default function MyPage({
               <button
                 type="button"
                 onClick={logout}
-                className="shrink-0 text-[13px] font-medium text-[#0f1a2e]/45"
+                className="shrink-0 text-[14px] font-medium text-[#0f1a2e]/45"
               >
                 로그아웃
               </button>
@@ -792,11 +792,11 @@ export default function MyPage({
             ) : null}
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="rounded-2xl bg-[#f4f5f7] px-4 py-3">
-                <p className="text-[13px] font-medium text-[#0f1a2e]/55">포인트</p>
+                <p className="text-[14px] font-medium text-[#0f1a2e]/55">포인트</p>
                 <p className="mt-1 text-[18px] font-bold tabular-nums text-[#0f1a2e]">
                   {pointBalance.toLocaleString()}원
                 </p>
-                <p className="mt-0.5 text-[12px] font-medium leading-snug text-[#0f1a2e]/55">
+                <p className="mt-0.5 text-[13px] font-medium leading-snug text-[#0f1a2e]/55">
                   {pointBalance >= POINT_STEP_WON
                     ? '다음 예약에서 5,000원 단위로 사용'
                     : '출고 완료 후 이용 금액의 5%'}
@@ -813,7 +813,7 @@ export default function MyPage({
                 }}
                 className="rounded-2xl bg-[#f4f5f7] px-4 py-3 text-left"
               >
-                <p className="text-[13px] font-medium text-[#0f1a2e]/55">진행 중</p>
+                <p className="text-[14px] font-medium text-[#0f1a2e]/55">진행 중</p>
                 <p className="mt-1 text-[18px] font-bold tabular-nums text-[#0f1a2e]">
                   {activeCount}건
                 </p>
@@ -824,7 +824,7 @@ export default function MyPage({
       ) : (
         <>
           <section className="rounded-2xl bg-[#f4f5f7] p-5">
-            <p className="text-[13px] font-medium text-gold">예약 조회</p>
+            <p className="text-[14px] font-medium text-gold">예약 조회</p>
             <h1 className="mt-1 text-[16px] font-bold leading-tight text-[#0f1a2e]">내 예약 확인</h1>
             <p className="mt-1 text-[14px] font-medium text-[#0f1a2e]/55">
               예약번호 · 차량번호 · 카카오 로그인으로 찾습니다.
@@ -867,7 +867,7 @@ export default function MyPage({
                 {authBusy ? '로그인 중…' : '카카오 로그인하고 내 예약 보기'}
               </button>
               {loginError ? (
-                <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{loginError}</p>
+                <p className="mt-2 text-center text-[14px] font-semibold text-rose-500">{loginError}</p>
               ) : null}
             </section>
           ) : (
@@ -885,19 +885,19 @@ export default function MyPage({
       !searched &&
       !member &&
       reservations.some((item) => item.id === lastReservationId) ? (
-        <p className="px-1 text-xs font-semibold text-[#0f1a2e]">
+        <p className="px-1 text-[13px] font-semibold text-[#0f1a2e]">
           방금 예약한 내역이에요
         </p>
       ) : null}
 
       {reviewLinkHint && (
-        <p className="rounded-2xl bg-[#f4f5f7] px-4 py-3 text-xs font-semibold text-[#0f1a2e]/70">
+        <p className="rounded-2xl bg-[#f4f5f7] px-4 py-3 text-[13px] font-semibold text-[#0f1a2e]/70">
           {reviewLinkHint}
         </p>
       )}
 
       {error && (
-        <p className="rounded-2xl bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-600 ring-1 ring-rose-100">
+        <p className="rounded-2xl bg-rose-50 px-4 py-3 text-[13px] font-semibold text-rose-600 ring-1 ring-rose-100">
           {error}
         </p>
       )}
@@ -908,7 +908,7 @@ export default function MyPage({
             <>
               <div className="mb-2 flex items-baseline justify-between px-1">
                 <h2 className="text-[16px] font-bold text-[#0f1a2e]">내 예약</h2>
-                <p className="text-[13px] font-medium text-[#0f1a2e]/55">{tabCount}건</p>
+                <p className="text-[14px] font-medium text-[#0f1a2e]/55">{tabCount}건</p>
               </div>
               <div className="mb-3 grid grid-cols-3 gap-1.5">
                 {(
@@ -926,7 +926,7 @@ export default function MyPage({
                       setReservationTab(tab.id);
                     }}
                     className={cn(
-                      'rounded-xl py-2 text-[13px] font-semibold',
+                      'rounded-xl py-2 text-[14px] font-semibold',
                       reservationTab === tab.id
                         ? 'bg-[#0f1a2e] text-white'
                         : 'bg-[#f4f5f7] text-[#0f1a2e]'
@@ -938,7 +938,7 @@ export default function MyPage({
               </div>
             </>
           ) : visibleReservations.length > 0 ? (
-            <p className="mb-2 px-1 text-xs font-bold text-muted">
+            <p className="mb-2 px-1 text-[13px] font-bold text-muted">
               예약 {visibleReservations.length}건
             </p>
           ) : null}
@@ -1028,7 +1028,7 @@ export default function MyPage({
                   <p className="mt-0.5 truncate text-[14px] font-semibold text-[#0f1a2e]">
                     {profileName.trim()} · {profilePhone.trim()}
                   </p>
-                  <p className="truncate text-[13px] font-medium text-[#0f1a2e]/55">
+                  <p className="truncate text-[14px] font-medium text-[#0f1a2e]/55">
                     {profileModel.trim()} · {profileCar.trim()}
                   </p>
                 </>
@@ -1077,21 +1077,21 @@ export default function MyPage({
             </div>
           ) : null}
           {bookerError ? (
-            <p className="mt-2 px-1 text-[13px] font-semibold text-rose-500">{bookerError}</p>
+            <p className="mt-2 px-1 text-[14px] font-semibold text-rose-500">{bookerError}</p>
           ) : null}
         </section>
       ) : null}
 
       {member ? (
         <section>
-          <h2 className="mb-2 px-1 text-[13px] font-medium text-[#0f1a2e]/55">알림 설정</h2>
+          <h2 className="mb-2 px-1 text-[14px] font-medium text-[#0f1a2e]/55">알림 설정</h2>
           <div className="overflow-hidden rounded-[20px] bg-[#f4f5f7]">
             <div className="flex items-center justify-between gap-3 px-4 py-3.5">
               <div className="min-w-0">
                 <p className="text-[15px] font-semibold text-[#0f1a2e]">
                   광고성 정보 수신 (문자·카카오톡)
                 </p>
-                <p className="mt-0.5 text-[12px] font-medium text-[#0f1a2e]/55">{marketingStatus}</p>
+                <p className="mt-0.5 text-[13px] font-medium text-[#0f1a2e]/55">{marketingStatus}</p>
               </div>
               <button
                 type="button"
@@ -1115,7 +1115,7 @@ export default function MyPage({
             </div>
           </div>
           {marketingError ? (
-            <p className="mt-2 px-1 text-[13px] font-semibold text-rose-500">{marketingError}</p>
+            <p className="mt-2 px-1 text-[14px] font-semibold text-rose-500">{marketingError}</p>
           ) : null}
         </section>
       ) : null}
@@ -1163,7 +1163,7 @@ export default function MyPage({
       {member ? (
         <>
           <section>
-            <h2 className="mb-2 px-1 text-[13px] font-medium text-[#0f1a2e]/55">도움말</h2>
+            <h2 className="mb-2 px-1 text-[14px] font-medium text-[#0f1a2e]/55">도움말</h2>
             <div className="overflow-hidden rounded-[20px] bg-[#f4f5f7]">
               {guideRows.map((row, index) => (
                 <div key={row.key} className={index > 0 ? 'border-t border-[#0f1a2e]/8' : undefined}>
@@ -1171,7 +1171,7 @@ export default function MyPage({
                 </div>
               ))}
             <div className="border-t border-[#0f1a2e]/8">
-              <p className="px-4 pb-1 pt-3 text-[12px] font-medium text-[#0f1a2e]/45">함께 보면 좋아요</p>
+              <p className="px-4 pb-1 pt-3 text-[13px] font-medium text-[#0f1a2e]/45">함께 보면 좋아요</p>
               {moreRows.map((row) => (
                 <GuideLink key={row.key} label={row.label} onClick={row.onClick} />
               ))}
@@ -1181,7 +1181,7 @@ export default function MyPage({
         </>
       ) : (
         <section>
-          <h2 className="mb-2 px-1 text-[13px] font-medium text-[#0f1a2e]/55">이용 가이드</h2>
+          <h2 className="mb-2 px-1 text-[14px] font-medium text-[#0f1a2e]/55">이용 가이드</h2>
           <div className="overflow-hidden rounded-[20px] bg-[#f4f5f7]">
             {guideRows.map((row, index) => (
               <div key={row.key} className={index > 0 ? 'border-t border-[#0f1a2e]/8' : undefined}>
@@ -1189,7 +1189,7 @@ export default function MyPage({
               </div>
             ))}
             <div className="border-t border-[#0f1a2e]/8">
-              <p className="px-4 pb-1 pt-3 text-[12px] font-medium text-[#0f1a2e]/45">함께 보면 좋아요</p>
+              <p className="px-4 pb-1 pt-3 text-[13px] font-medium text-[#0f1a2e]/45">함께 보면 좋아요</p>
               {moreRows.map((row) => (
                 <GuideLink key={row.key} label={row.label} onClick={row.onClick} />
               ))}

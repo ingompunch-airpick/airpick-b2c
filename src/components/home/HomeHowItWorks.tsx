@@ -11,12 +11,12 @@ export default function HomeHowItWorks() {
         <ol className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
           {HOME_HOW.steps.map((step, index) => (
             <li key={step.id} className="flex gap-3 rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/8 md:flex-col md:gap-2">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0f1a2e] text-[13px] font-bold text-white">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0f1a2e] text-[14px] font-bold text-white">
                 {index + 1}
               </span>
               <div className="min-w-0">
                 <p className="text-[15px] font-bold text-[#0f1a2e]">{step.title}</p>
-                <p className="mt-0.5 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/65">{step.body}</p>
+                <p className="mt-0.5 text-[14px] font-medium leading-relaxed text-[#0f1a2e]/65">{step.body}</p>
               </div>
             </li>
           ))}

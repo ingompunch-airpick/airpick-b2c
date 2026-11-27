@@ -56,6 +56,9 @@
     color: var(--color-ink);
     letter-spacing: -0.02em;
     -webkit-font-smoothing: antialiased;
+    /* 한글은 단어 단위로 줄바꿈(「넘/김」처럼 글자 중간에서 끊지 않게). 아주 긴 영문·숫자만 끊는다 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   button,

@@ -59,7 +59,7 @@ export default function CompanyCard({
               decoding="async"
             />
           </div>
-          <span className="line-clamp-1 text-xs font-bold text-ink">{name}</span>
+          <span className="line-clamp-1 text-[13px] font-bold text-ink">{name}</span>
           <AffiliatePrice
             price={price}
             affiliateDiscountWon={affiliateDiscountWon}
@@ -113,7 +113,7 @@ export default function CompanyCard({
                 <span className="text-lg font-bold tabular-nums text-ink">
                   {reviewSnapshot.averageRating.toFixed(1)}
                 </span>
-                <span className="text-[11px] font-medium text-muted">
+                <span className="text-[13px] font-medium text-muted">
                   실후기 {reviewSnapshot.count}
                 </span>
               </div>

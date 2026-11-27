@@ -33,7 +33,7 @@ export default function HomeYoutubeLive() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/60" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
         </span>
-        <p className="text-[12px] font-bold tracking-[0.14em] text-[#c9a962]">
+        <p className="text-[13px] font-bold tracking-[0.14em] text-[#c9a962]">
           {YOUTUBE_LIVE.eyebrow}
         </p>
       </div>

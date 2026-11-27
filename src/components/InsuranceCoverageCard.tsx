@@ -32,18 +32,18 @@ export default function InsuranceCoverageCard({
         </div>
         <div className="min-w-0 flex-1 pt-0.5">
           <p className="text-sm font-bold leading-tight text-ink">보험 가입 확인</p>
-          <p className="mt-1 text-[13px] font-bold leading-snug text-ink">{summary}</p>
+          <p className="mt-1 text-[14px] font-bold leading-snug text-ink">{summary}</p>
           {detail ? (
-            <p className="mt-0.5 text-[11px] font-semibold text-muted">{detail}</p>
+            <p className="mt-0.5 text-[13px] font-semibold text-muted">{detail}</p>
           ) : null}
           {limitText ? (
-            <p className="mt-1 text-[12px] font-semibold leading-snug text-ink">{limitText}</p>
+            <p className="mt-1 text-[13px] font-semibold leading-snug text-ink">{limitText}</p>
           ) : null}
         </div>
       </div>
 
       <div className="mt-2.5 rounded-lg bg-white/80 px-3 py-2 ring-1 ring-sky-border/50">
-        <p className="text-[10px] font-medium leading-relaxed text-muted">
+        <p className="text-[13px] font-medium leading-relaxed text-muted">
           사고 발생 시{' '}
           <span className="font-bold text-ink">{summary}</span> 보장 적용 · {INSURANCE_DISCLAIMER}
         </p>
@@ -54,7 +54,7 @@ export default function InsuranceCoverageCard({
           href={cert}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2.5 flex items-center justify-center gap-1.5 rounded-xl bg-white py-2.5 text-xs font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
+          className="mt-2.5 flex items-center justify-center gap-1.5 rounded-xl bg-white py-2.5 text-[13px] font-bold text-brand ring-1 ring-sky-border/70 transition-colors hover:bg-sky-soft"
         >
           <ExternalLink size={14} strokeWidth={2.25} />
           보험증권 보기

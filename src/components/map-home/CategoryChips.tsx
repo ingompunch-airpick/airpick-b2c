@@ -20,7 +20,7 @@ export default function CategoryChips({
               type="button"
               onClick={() => onChange(cat.id)}
               className={cn(
-                'shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition',
+                'shrink-0 rounded-full px-3.5 py-2 text-[13px] font-bold transition',
                 active
                   ? 'bg-brand text-white shadow-[0_4px_12px_rgba(49,130,246,0.35)]'
                   : soon

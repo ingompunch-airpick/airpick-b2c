@@ -39,7 +39,7 @@ export default function ReservationLookupForm({
       </div>
 
       <label className="block">
-        <span className="mb-1 block text-xs font-bold text-muted">차량번호 · 연락처 · 예약번호 중 하나</span>
+        <span className="mb-1 block text-[13px] font-bold text-muted">차량번호 · 연락처 · 예약번호 중 하나</span>
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -49,7 +49,7 @@ export default function ReservationLookupForm({
       </label>
 
       <label className="mt-2 block">
-        <span className="mb-1 block text-xs font-bold text-muted">예약 비밀번호 (4자리)</span>
+        <span className="mb-1 block text-[13px] font-bold text-muted">예약 비밀번호 (4자리)</span>
         <input
           type="password"
           inputMode="numeric"

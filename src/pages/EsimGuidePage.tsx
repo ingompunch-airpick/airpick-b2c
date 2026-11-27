@@ -25,11 +25,11 @@ export default function EsimGuidePage({ onBack }: { onBack: () => void }) {
               <BookOpen size={20} className="text-brand" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs font-bold text-brand">초보자 안내</p>
+              <p className="text-[13px] font-bold text-brand">초보자 안내</p>
               <p className="text-sm font-bold text-ink">제휴 링크 → 구매 → 개통</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
+          <p className="mt-3 text-[13px] font-medium leading-relaxed text-muted">
             에어픽은 제휴 할인 링크만 안내합니다. 구매와 개통은 각 제휴사에서 진행합니다.
           </p>
         </section>
@@ -41,7 +41,7 @@ export default function EsimGuidePage({ onBack }: { onBack: () => void }) {
               className="rounded-2xl bg-sky-soft px-4 py-4 ring-1 ring-sky-border/60"
             >
               <p className="text-sm font-bold text-ink">{step.title}</p>
-              <p className="mt-2 text-xs font-medium leading-relaxed text-muted">{step.body}</p>
+              <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">{step.body}</p>
             </li>
           ))}
         </ol>

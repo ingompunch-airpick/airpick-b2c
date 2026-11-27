@@ -63,7 +63,7 @@ export default function DraggableSheet({
         <div className="h-1 w-10 rounded-full bg-sky-border" />
         <div className="mt-3 w-full text-left">
           <h2 className="text-base font-bold text-ink">{title}</h2>
-          {subtitle ? <p className="mt-0.5 text-xs font-medium text-muted">{subtitle}</p> : null}
+          {subtitle ? <p className="mt-0.5 text-[13px] font-medium text-muted">{subtitle}</p> : null}
         </div>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">

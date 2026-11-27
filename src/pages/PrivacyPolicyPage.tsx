@@ -35,11 +35,11 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
               <Shield size={20} className="text-brand" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs font-bold text-brand">{COMPANY_LEGAL.serviceName}</p>
+              <p className="text-[13px] font-bold text-brand">{COMPANY_LEGAL.serviceName}</p>
               <p className="text-sm font-bold text-ink">개인정보 처리방침</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">
+          <p className="mt-3 text-[13px] font-medium leading-relaxed text-muted">
             {COMPANY_LEGAL.name}(이하 &quot;회사&quot;)는 {COMPANY_LEGAL.serviceName} 서비스 이용과 관련하여
             개인정보보호법에 따라 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속히 처리하기 위해
             다음과 같이 개인정보 처리방침을 수립·공개합니다.
@@ -127,10 +127,10 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
           </dl>
         </PolicySection>
 
-        <p className="mt-6 text-[10px] font-medium text-muted-light">
+        <p className="mt-6 text-[13px] font-medium text-muted-light">
           시행일: {COMPANY_LEGAL.policyEffectiveDate}
         </p>
-        <p className="mt-2 text-[10px] font-medium text-muted-light">
+        <p className="mt-2 text-[13px] font-medium text-muted-light">
           <a href="/terms/" className="text-brand underline-offset-2 hover:underline">
             이용약관
           </a>
@@ -152,7 +152,7 @@ function PolicySection({ title, children }: { title: string; children: ReactNode
   return (
     <section className="mt-5 rounded-2xl bg-sky-soft px-4 py-3.5 ring-1 ring-sky-border/60">
       <h2 className="text-sm font-bold text-ink">{title}</h2>
-      <div className="mt-2 text-xs font-medium leading-relaxed text-muted">{children}</div>
+      <div className="mt-2 text-[13px] font-medium leading-relaxed text-muted">{children}</div>
     </section>
   );
 }

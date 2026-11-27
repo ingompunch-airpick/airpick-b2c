@@ -37,12 +37,12 @@ function PartnerPromoCard({ partner }: { partner: EsimAffiliatePartner }) {
 
         <div className="relative">
           {promoOn && pct != null ? (
-            <p className="inline-flex items-center rounded-full bg-[#c9a244]/20 px-2.5 py-1 text-[11px] font-bold tracking-wide text-[#e8d5a3] ring-1 ring-[#c9a244]/35">
+            <p className="inline-flex items-center rounded-full bg-[#c9a244]/20 px-2.5 py-1 text-[12px] font-bold tracking-wide text-[#e8d5a3] ring-1 ring-[#c9a244]/35">
               에어픽 제휴 · {pct}% 할인
               {partner.promoPeriodLabel ? ` · ${partner.promoPeriodLabel}` : ''}
             </p>
           ) : (
-            <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white/80 ring-1 ring-white/15">
+            <p className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold tracking-wide text-white/80 ring-1 ring-white/15">
               에어픽 제휴 · {partner.name}
             </p>
           )}
@@ -114,7 +114,7 @@ export default function EsimPage() {
                   <Icon size={22} strokeWidth={2} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[12px] font-medium text-muted">{item.eyebrow}</p>
+                  <p className="text-[13px] font-medium text-muted">{item.eyebrow}</p>
                   <p className="mt-0.5 text-[15px] font-bold text-[#0f1a2e]">{item.title}</p>
                 </div>
               </li>
@@ -122,7 +122,7 @@ export default function EsimPage() {
           })}
         </ul>
 
-        <p className="px-2 text-center text-[11px] font-medium leading-relaxed text-muted">
+        <p className="px-2 text-center text-[13px] font-medium leading-relaxed text-muted">
           {ESIM_HUB.whyFootnote}
         </p>
       </section>
@@ -135,21 +135,21 @@ export default function EsimPage() {
               key={step.id}
               className="flex gap-3 rounded-2xl bg-neutral-50 px-3.5 py-3.5 ring-1 ring-[#0f1a2e]/8"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0f1a2e] text-[11px] font-bold text-white">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0f1a2e] text-[13px] font-bold text-white">
                 {step.id}
               </span>
               <div className="min-w-0">
-                <p className="text-[13px] font-bold text-[#0f1a2e]">{step.title}</p>
-                <p className="mt-0.5 text-[12px] font-medium leading-relaxed text-muted">{step.body}</p>
+                <p className="text-[14px] font-bold text-[#0f1a2e]">{step.title}</p>
+                <p className="mt-0.5 text-[13px] font-medium leading-relaxed text-muted">{step.body}</p>
               </div>
             </li>
           ))}
         </ol>
       </section>
 
-      <p className="px-0.5 text-[11px] font-medium leading-relaxed text-muted">{ESIM_HUB.footerNote}</p>
+      <p className="px-0.5 text-[13px] font-medium leading-relaxed text-muted">{ESIM_HUB.footerNote}</p>
 
-      <ul className="space-y-1.5 px-0.5 pb-1 text-xs font-semibold text-[#0f1a2e]">
+      <ul className="space-y-1.5 px-0.5 pb-1 text-[13px] font-semibold text-[#0f1a2e]">
         <li>
           <a href="/guides/esim-beginner/" className="underline-offset-2 hover:underline">
             해외여행 이심(eSIM), 처음이면 뭐부터?

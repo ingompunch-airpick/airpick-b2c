@@ -49,7 +49,7 @@ export default function HomeFaq() {
           );
         })}
       </div>
-      <div className="mt-3 flex items-center justify-between px-1 text-[13px] text-[#6b7a8a]">
+      <div className="mt-3 flex items-center justify-between px-1 text-[14px] text-[#6b7a8a]">
         <span>안내 기준일 {HOME_FAQ_UPDATED.replace(/-/g, '.')}</span>
         <a
           href="/faq/"

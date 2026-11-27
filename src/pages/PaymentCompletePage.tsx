@@ -170,29 +170,29 @@ export default function PaymentCompletePage({
             <dl className="mt-6 w-full space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
               {bookingNo ? (
                 <div className="flex items-start justify-between gap-4">
-                  <dt className="text-[13px] font-semibold text-muted">예약번호</dt>
+                  <dt className="text-[14px] font-semibold text-muted">예약번호</dt>
                   <dd className="text-right text-base font-bold text-ink tabular-nums">{bookingNo}</dd>
                 </div>
               ) : null}
               <div className="flex items-start justify-between gap-4">
-                <dt className="text-[13px] font-semibold text-muted">업체</dt>
+                <dt className="text-[14px] font-semibold text-muted">업체</dt>
                 <dd className="text-right text-sm font-bold text-ink">{summary.orderName}</dd>
               </div>
               <div className="flex items-start justify-between gap-4">
-                <dt className="text-[13px] font-semibold text-muted">일정</dt>
+                <dt className="text-[14px] font-semibold text-muted">일정</dt>
                 <dd className="text-right text-sm font-bold text-ink tabular-nums">{summary.schedule}</dd>
               </div>
               <div className="flex items-center justify-between gap-4 border-t border-[#0f1a2e]/10 pt-2.5">
-                <dt className="text-[13px] font-semibold text-muted">결제 금액</dt>
+                <dt className="text-[14px] font-semibold text-muted">결제 금액</dt>
                 <dd className="text-base font-bold text-ink tabular-nums">{summary.amount.toLocaleString()}원</dd>
               </div>
             </dl>
           ) : null}
 
           {ok && isTestPaymentMode() ? (
-            <p className="mt-3 text-[12px] font-medium text-muted">테스트 결제입니다. 실제로 청구되지 않습니다.</p>
+            <p className="mt-3 text-[13px] font-medium text-muted">테스트 결제입니다. 실제로 청구되지 않습니다.</p>
           ) : null}
-          {retryError ? <p className="mt-3 text-[13px] font-semibold text-rose-600">{retryError}</p> : null}
+          {retryError ? <p className="mt-3 text-[14px] font-semibold text-rose-600">{retryError}</p> : null}
 
           <div className="mt-8 grid w-full gap-2">
             {canRetry ? (
@@ -225,7 +225,7 @@ export default function PaymentCompletePage({
             ) : null}
           </div>
           {canRetry ? (
-            <p className="mt-3 text-[12px] font-medium text-muted">결제하지 않으면 15분 뒤 예약이 자동으로 취소돼요.</p>
+            <p className="mt-3 text-[13px] font-medium text-muted">결제하지 않으면 15분 뒤 예약이 자동으로 취소돼요.</p>
           ) : null}
         </div>
         <SiteFooter tone="default" />
@@ -259,31 +259,31 @@ export default function PaymentCompletePage({
         {ok && summary ? (
           <dl className="mt-6 w-full space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
             <div className="flex items-start justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">상품</dt>
+              <dt className="text-[14px] font-semibold text-muted">상품</dt>
               <dd className="text-right text-sm font-bold text-ink">{summary.orderName}</dd>
             </div>
             <div className="flex items-start justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">일정</dt>
+              <dt className="text-[14px] font-semibold text-muted">일정</dt>
               <dd className="text-right text-sm font-bold text-ink tabular-nums">{summary.schedule}</dd>
             </div>
             <div className="flex items-center justify-between gap-4 border-t border-[#0f1a2e]/10 pt-2.5">
-              <dt className="text-[13px] font-semibold text-muted">결제 금액</dt>
+              <dt className="text-[14px] font-semibold text-muted">결제 금액</dt>
               <dd className="text-base font-bold text-ink tabular-nums">{summary.amount.toLocaleString()}원</dd>
             </div>
             <div className="flex items-start justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">결제번호</dt>
-              <dd className="break-all text-right text-[12px] font-semibold text-ink tabular-nums">{paymentId}</dd>
+              <dt className="text-[14px] font-semibold text-muted">결제번호</dt>
+              <dd className="break-all text-right text-[13px] font-semibold text-ink tabular-nums">{paymentId}</dd>
             </div>
           </dl>
         ) : ok ? (
-          <p className="mt-4 w-full break-all rounded-2xl bg-[#f4f5f7] px-4 py-3 text-left text-[13px] font-semibold text-ink">
-            <span className="block text-[12px] font-bold text-muted">결제번호</span>
+          <p className="mt-4 w-full break-all rounded-2xl bg-[#f4f5f7] px-4 py-3 text-left text-[14px] font-semibold text-ink">
+            <span className="block text-[13px] font-bold text-muted">결제번호</span>
             <span className="mt-1 block tabular-nums">{paymentId}</span>
           </p>
         ) : null}
 
         {ok && isTestPaymentMode() ? (
-          <p className="mt-3 text-[12px] font-medium text-muted">테스트 결제입니다. 실제로 청구되지 않습니다.</p>
+          <p className="mt-3 text-[13px] font-medium text-muted">테스트 결제입니다. 실제로 청구되지 않습니다.</p>
         ) : null}
 
         <div className="mt-8 grid w-full gap-2">

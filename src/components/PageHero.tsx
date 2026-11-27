@@ -9,7 +9,7 @@ export default function PageHero({
 }) {
   return (
     <section className="px-1">
-      {sub ? <p className="text-xs font-semibold text-muted">{sub}</p> : null}
+      {sub ? <p className="text-[13px] font-semibold text-muted">{sub}</p> : null}
       <h1
         className={`${sub ? 'mt-1.5' : ''} text-[1.75rem] font-bold leading-[1.2] tracking-tight text-ink`}
       >

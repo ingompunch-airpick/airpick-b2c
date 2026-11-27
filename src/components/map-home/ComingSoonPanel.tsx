@@ -9,8 +9,8 @@ export default function ComingSoonPanel({ label }: { label: string }) {
   return (
     <div className="rounded-2xl bg-sky-soft px-4 py-10 text-center ring-1 ring-sky-border/50">
       <p className="text-sm font-bold text-ink">{label}</p>
-      <p className="mt-1 text-[11px] font-bold tracking-wide text-brand">Soon</p>
-      <p className="mt-2 text-xs font-medium leading-relaxed text-muted">
+      <p className="mt-1 text-[13px] font-bold tracking-wide text-brand">Soon</p>
+      <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
         곧 열릴 예정입니다.
         <br />
         {hint}

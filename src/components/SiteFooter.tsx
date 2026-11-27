@@ -20,13 +20,13 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
           : 'mt-6 border-t border-sky-border/60 px-1 pt-3 pb-2'
       }
     >
-      <p className="text-[10px] font-medium leading-relaxed text-muted">
+      <p className="text-[12px] font-medium leading-relaxed text-muted">
         {AIRPICK_DEFINITION} {AIRPICK_AVAILABILITY_NOTE}
       </p>
 
       <nav
         aria-label="약관·정책"
-        className="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-[10px] font-bold text-muted"
+        className="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-[12px] font-bold text-muted"
       >
         <a href={POLICY_PATHS.terms} className="text-brand underline-offset-2 hover:underline">
           이용약관
@@ -56,7 +56,7 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         </a>
       </nav>
 
-      <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
+      <p className="mt-2 text-[12px] font-medium leading-relaxed text-muted">
         상호: {COMPANY_LEGAL.name}
         <br />
         서비스명: {COMPANY_LEGAL.serviceName}
@@ -93,18 +93,18 @@ export default function SiteFooter({ tone = 'default' }: { tone?: 'default' | 'p
         호스팅 서비스 제공자: {COMPANY_LEGAL.hostingProvider}
       </p>
 
-      <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
+      <p className="mt-2 text-[12px] font-medium leading-relaxed text-muted">
         판매 상품: 인천공항 주차대행 예약(중개) · 요금은{' '}
         <a href="/pricing/" className="text-brand underline-offset-2 hover:underline">
           요금 안내
         </a>
       </p>
 
-      <p className="mt-2 text-[10px] font-medium leading-relaxed text-muted">
+      <p className="mt-2 text-[12px] font-medium leading-relaxed text-muted">
         {FOOTER_INTERMEDIARY_NOTICE}
       </p>
 
-      <p className="mt-2 text-[10px] font-medium text-muted-light">
+      <p className="mt-2 text-[12px] font-medium text-muted-light">
         © {COMPANY_LEGAL.name}. All rights reserved. · 고객센터 {COMPANY_LEGAL.supportHours}
       </p>
     </footer>

@@ -82,7 +82,7 @@ export default function SpotsPage() {
         ) : (
           <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-sky-tint to-sky-bg px-6 text-center">
             <p className="text-sm font-bold text-brand">{SPOTS_TAB_LABEL}</p>
-            <p className="mt-2 max-w-xs text-xs font-medium leading-relaxed text-muted">
+            <p className="mt-2 max-w-xs text-[13px] font-medium leading-relaxed text-muted">
               {category.label}은 곧 열릴 예정입니다. {PARKING_TAB_LABEL}·{ESIM_TAB_LABEL}은 아래
               탭에서 이용하세요.
             </p>
@@ -112,7 +112,7 @@ export default function SpotsPage() {
           />
         )}
 
-        <p className="mt-6 border-t border-sky-border/60 pt-4 text-[11px] font-medium leading-relaxed text-muted">
+        <p className="mt-6 border-t border-sky-border/60 pt-4 text-[13px] font-medium leading-relaxed text-muted">
           {AIRPICK_DEFINITION} {AIRPICK_AVAILABILITY_NOTE}{' '}
           <a href="/" className="font-bold text-brand underline-offset-2 hover:underline">
             {PARKING_TAB_LABEL}

@@ -18,7 +18,7 @@ export function StatChip({ label, value, className, demo = true }: StatChipProps
       )}
     >
       <div className="mb-1 flex items-center justify-between gap-2">
-        <p className="text-xs font-medium text-mkt-muted">{label}</p>
+        <p className="text-[13px] font-medium text-mkt-muted">{label}</p>
         {demo ? <DemoLabel /> : null}
       </div>
       <p className="text-lg font-bold tracking-tight text-mkt-ink">{value}</p>

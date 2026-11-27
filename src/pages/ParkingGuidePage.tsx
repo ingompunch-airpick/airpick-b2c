@@ -36,11 +36,11 @@ export default function ParkingGuidePage({
               <Car size={20} className="text-brand" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs font-bold text-brand">인천공항 주차대행</p>
+              <p className="text-[13px] font-bold text-brand">인천공항 주차대행</p>
               <p className="text-sm font-bold text-ink">{headline}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium leading-relaxed text-muted">{lede}</p>
+          <p className="mt-3 text-[13px] font-medium leading-relaxed text-muted">{lede}</p>
         </section>
 
         <ol className="mt-5 space-y-3">
@@ -50,7 +50,7 @@ export default function ParkingGuidePage({
               className="rounded-2xl bg-sky-soft px-4 py-4 ring-1 ring-sky-border/60"
             >
               <p className="text-sm font-bold text-ink">{step.title}</p>
-              <p className="mt-2 text-xs font-medium leading-relaxed text-muted">{step.body}</p>
+              <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">{step.body}</p>
             </li>
           ))}
         </ol>

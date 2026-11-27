@@ -152,11 +152,11 @@ export default function AirportMap({
         )}
       >
         <p className="text-sm font-bold text-ink">네이버 지도 키가 필요합니다</p>
-        <p className="text-xs font-medium leading-relaxed text-muted">
+        <p className="text-[13px] font-medium leading-relaxed text-muted">
           NCP에서 Maps · Dynamic Map을 켜고
           <br />
-          <code className="rounded bg-white px-1 py-0.5 text-[10px]">VITE_NAVER_MAP_NCP_KEY_ID</code>
-          를 <code className="rounded bg-white px-1 py-0.5 text-[10px]">.env</code>에 넣어 주세요.
+          <code className="rounded bg-white px-1 py-0.5 text-[12px]">VITE_NAVER_MAP_NCP_KEY_ID</code>
+          를 <code className="rounded bg-white px-1 py-0.5 text-[12px]">.env</code>에 넣어 주세요.
         </p>
       </div>
     );
@@ -171,7 +171,7 @@ export default function AirportMap({
         )}
       >
         <p className="text-sm font-bold text-ink">지도를 불러오지 못했습니다</p>
-        <p className="text-xs font-medium text-muted">
+        <p className="text-[13px] font-medium text-muted">
           NCP 도메인 등록(localhost · www.에어픽.kr)을 확인해 주세요.
         </p>
       </div>
@@ -181,7 +181,7 @@ export default function AirportMap({
   return (
     <div className={cn('relative h-full w-full bg-sky-tint', className)}>
       {status === 'loading' ? (
-        <div className="absolute inset-0 z-10 flex items-center justify-center text-xs font-medium text-muted">
+        <div className="absolute inset-0 z-10 flex items-center justify-center text-[13px] font-medium text-muted">
           네이버 지도 불러오는 중…
         </div>
       ) : null}

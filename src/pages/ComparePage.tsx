@@ -69,7 +69,7 @@ function PartnerList({
     <section className="space-y-3">
       <div className="px-1">
         <h3 className="text-sm font-bold text-ink">{title}</h3>
-        <p className="text-xs font-medium text-muted">{subtitle}</p>
+        <p className="text-[13px] font-medium text-muted">{subtitle}</p>
       </div>
       <div className="space-y-3">
         {items.map(({ company, price, soldOut }) => (
@@ -158,7 +158,7 @@ export default function ComparePage({
               ? '실내 주차를 제공하는 업체가 없습니다.'
               : '야외 주차를 제공하는 업체가 없습니다.'}
           </p>
-          <p className="text-xs">실내/야외를 바꿔 보거나, 일정을 조정해 주세요.</p>
+          <p className="text-[13px]">실내/야외를 바꿔 보거나, 일정을 조정해 주세요.</p>
         </div>
       ) : (
         <PartnerList

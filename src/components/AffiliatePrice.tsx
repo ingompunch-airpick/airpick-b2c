@@ -39,7 +39,7 @@ export default function AffiliatePrice({
         ? 'text-sm font-bold'
         : 'text-base font-bold';
   const smallCls =
-    size === 'lg' ? 'text-xs' : size === 'sm' ? 'text-[10px]' : 'text-[11px]';
+    size === 'lg' ? 'text-[13px]' : size === 'sm' ? 'text-[13px]' : 'text-[13px]';
 
   if (discount <= 0) {
     return (

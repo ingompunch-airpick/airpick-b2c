@@ -865,7 +865,7 @@ export default function BookingModal({
             {parkingTypeLabel(search.isIndoor)}
           </p>
           {soldOutDetail ? (
-            <p className="mt-2 text-[13px] font-medium text-muted">{soldOutDetail}</p>
+            <p className="mt-2 text-[14px] font-medium text-muted">{soldOutDetail}</p>
           ) : null}
           <p className="mt-4 text-sm font-bold text-ink">대안을 골라 주세요</p>
           <ul className="mt-3 space-y-2">
@@ -945,36 +945,36 @@ export default function BookingModal({
             카카오 알림톡으로 예약 내역을 보내드려요.
           </p>
           {marketingResultLine ? (
-            <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
+            <p className="mt-2 text-[14px] font-medium leading-relaxed text-muted">
               {marketingResultLine}
             </p>
           ) : null}
 
           <dl className="mt-5 space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">예약번호</dt>
+              <dt className="text-[14px] font-semibold text-muted">예약번호</dt>
               <dd className="font-mono text-sm font-bold text-ink break-all text-right">
                 {completedBookingNo || completedId}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">업체명</dt>
+              <dt className="text-[14px] font-semibold text-muted">업체명</dt>
               <dd className="text-sm font-bold text-ink text-right">
                 {displayCompanyName(company.name)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">일정</dt>
+              <dt className="text-[14px] font-semibold text-muted">일정</dt>
               <dd className="text-sm font-bold text-ink tabular-nums">
                 {formatDateDisplay(search.departureDate)} → {formatDateDisplay(search.arrivalDate)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">터미널</dt>
+              <dt className="text-[14px] font-semibold text-muted">터미널</dt>
               <dd className="text-sm font-bold text-ink">{terminalSummary}</dd>
             </div>
             <div className="flex items-start justify-between gap-4">
-              <dt className="shrink-0 text-[13px] font-semibold text-muted">인계</dt>
+              <dt className="shrink-0 text-[14px] font-semibold text-muted">인계</dt>
               <dd className="text-right text-sm font-bold text-ink">
                 {handoffPlaceLine(
                   search.faceToFace === true,
@@ -984,19 +984,19 @@ export default function BookingModal({
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">차량번호</dt>
+              <dt className="text-[14px] font-semibold text-muted">차량번호</dt>
               <dd className="text-sm font-bold text-ink">{form.carNumber}</dd>
             </div>
             {faceToFaceApplied && (
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-[13px] font-semibold text-muted">Curbside</dt>
+                <dt className="text-[14px] font-semibold text-muted">Curbside</dt>
                 <dd className="text-sm font-bold text-brand">
                   +{valetFee.toLocaleString()}원
                 </dd>
               </div>
             )}
             <div className="flex items-center justify-between gap-4 border-t border-sky-border/60 pt-2.5">
-              <dt className="text-[13px] font-semibold text-muted">결제 예정 금액</dt>
+              <dt className="text-[14px] font-semibold text-muted">결제 예정 금액</dt>
               <dd className="text-base font-bold text-brand tabular-nums">
                 {completedPayable.toLocaleString()}원
               </dd>
@@ -1005,7 +1005,7 @@ export default function BookingModal({
 
           <div className="mt-4 rounded-2xl bg-brand/5 p-4 text-left ring-1 ring-brand/15">
             <p className="text-sm font-bold text-ink">조회 방법</p>
-            <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-muted">
+            <p className="mt-1.5 text-[14px] font-medium leading-relaxed text-muted">
               {completedAsMember ? (
                 <>
                   <span className="font-bold text-ink">예약 탭</span>에서 카카오 로그인 후 내 예약을
@@ -1022,7 +1022,7 @@ export default function BookingModal({
                 </>
               )}
             </p>
-            <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-muted">
+            <p className="mt-1.5 text-[14px] font-medium leading-relaxed text-muted">
               예약번호로도 조회할 수 있어요.
             </p>
           </div>
@@ -1030,7 +1030,7 @@ export default function BookingModal({
           {!heardFromSaved ? (
             <div className="mt-4 rounded-2xl bg-[#f4f5f7] p-4 text-left">
               <p className="text-sm font-bold text-ink">에어픽을 어떻게 알게 되셨나요? (선택)</p>
-              <p className="mt-1 text-[12px] font-medium text-muted">한 번 탭하면 저장됩니다.</p>
+              <p className="mt-1 text-[13px] font-medium text-muted">한 번 탭하면 저장됩니다.</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {HEARD_FROM_OPTIONS.map((label) => (
                   <button
@@ -1056,7 +1056,7 @@ export default function BookingModal({
                       }
                     }}
                     className={cn(
-                      'rounded-full bg-white px-3 py-2 text-[12px] font-bold text-ink ring-1 ring-[#0f1a2e]/12 transition active:scale-[0.98] disabled:opacity-60',
+                      'rounded-full bg-white px-3 py-2 text-[13px] font-bold text-ink ring-1 ring-[#0f1a2e]/12 transition active:scale-[0.98] disabled:opacity-60',
                       heardFromOtherOpen && label === '기타' && 'ring-2 ring-brand'
                     )}
                   >
@@ -1090,18 +1090,18 @@ export default function BookingModal({
                         setHeardFromBusy(false);
                       }
                     }}
-                    className="shrink-0 rounded-lg bg-[#0f1a2e] px-3 py-2.5 text-[12px] font-bold text-white disabled:opacity-60"
+                    className="shrink-0 rounded-lg bg-[#0f1a2e] px-3 py-2.5 text-[13px] font-bold text-white disabled:opacity-60"
                   >
                     저장
                   </button>
                 </div>
               ) : null}
               {heardFromError ? (
-                <p className="mt-2 text-[12px] font-semibold text-rose-500">{heardFromError}</p>
+                <p className="mt-2 text-[13px] font-semibold text-rose-500">{heardFromError}</p>
               ) : null}
             </div>
           ) : (
-            <p className="mt-4 text-[13px] font-semibold text-muted">
+            <p className="mt-4 text-[14px] font-semibold text-muted">
               유입 경로 · {heardFromSaved}
             </p>
           )}
@@ -1135,10 +1135,10 @@ export default function BookingModal({
                 결제
               </h3>
               <div className="mt-2 flex items-center justify-between gap-4">
-                <span className="text-[13px] font-semibold text-muted">결제 금액</span>
+                <span className="text-[14px] font-semibold text-muted">결제 금액</span>
                 <span className="text-lg font-bold text-ink tabular-nums">{shownPayable.toLocaleString()}원</span>
               </div>
-              <ul className="mt-3 space-y-1 rounded-xl bg-[#f4f5f7] px-3 py-2.5 text-[12px] font-medium leading-relaxed text-[#0f1a2e]/80">
+              <ul className="mt-3 space-y-1 rounded-xl bg-[#f4f5f7] px-3 py-2.5 text-[13px] font-medium leading-relaxed text-[#0f1a2e]/80">
                 <li className={insideCancelWindow ? '' : 'font-bold text-ink'}>
                   · 맡기는 시각 {APP_CONFIG.refund.fullRefundHours}시간 전까지 취소: 전액 환불
                 </li>
@@ -1149,7 +1149,7 @@ export default function BookingModal({
                 <li>· 맡기는 시각 이후(노쇼 포함): 환불 불가</li>
                 <li>· {APP_CONFIG.bookingWindowNotice}</li>
               </ul>
-              <p className="mt-3 text-[12px] font-medium leading-relaxed text-muted">
+              <p className="mt-3 text-[13px] font-medium leading-relaxed text-muted">
                 결제하면 위 취소·환불 규정에 동의한 것으로 봅니다.{' '}
                 <a href="/refund/" target="_blank" rel="noopener" className="font-semibold text-brand underline-offset-2 hover:underline">
                   전문 보기
@@ -1164,7 +1164,7 @@ export default function BookingModal({
                 {paying ? '결제창 여는 중…' : `${shownPayable.toLocaleString()}원 결제하기`}
               </button>
               {isTestPaymentMode() ? (
-                <p className="mt-2 text-center text-[11px] font-medium text-muted">
+                <p className="mt-2 text-center text-[13px] font-medium text-muted">
                   테스트 결제입니다. 실제로 청구되지 않습니다.
                 </p>
               ) : null}
@@ -1196,11 +1196,11 @@ export default function BookingModal({
 
           <dl className="mt-5 space-y-2.5 rounded-2xl bg-[#f4f5f7] p-4 text-left">
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">업체</dt>
+              <dt className="text-[14px] font-semibold text-muted">업체</dt>
               <dd className="text-sm font-bold text-ink text-right">{displayCompanyName(company.name)}</dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">일정</dt>
+              <dt className="text-[14px] font-semibold text-muted">일정</dt>
               <dd className="text-sm font-bold text-ink text-right tabular-nums">
                 {formatDateDisplay(search.departureDate)} {search.departureTime}
                 {' → '}
@@ -1208,39 +1208,39 @@ export default function BookingModal({
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">조건</dt>
+              <dt className="text-[14px] font-semibold text-muted">조건</dt>
               <dd className="text-sm font-bold text-ink text-right">
                 {terminalSummary} · {parkingTypeLabel(search.isIndoor)} · {formatStayPhrase(breakdown.days)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">이름</dt>
+              <dt className="text-[14px] font-semibold text-muted">이름</dt>
               <dd className="text-sm font-bold text-ink text-right">{form.userName}</dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">연락처</dt>
+              <dt className="text-[14px] font-semibold text-muted">연락처</dt>
               <dd className="text-sm font-bold text-ink text-right">{form.phone}</dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">차량</dt>
+              <dt className="text-[14px] font-semibold text-muted">차량</dt>
               <dd className="text-sm font-bold text-ink text-right">
                 {form.carModel} · {form.carNumber}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">출국</dt>
+              <dt className="text-[14px] font-semibold text-muted">출국</dt>
               <dd className="text-sm font-bold text-ink text-right">
                 {form.departureAirline} {form.departureFlight}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-[13px] font-semibold text-muted">귀국</dt>
+              <dt className="text-[14px] font-semibold text-muted">귀국</dt>
               <dd className="text-sm font-bold text-ink text-right">
                 {form.arrivalAirline} {form.arrivalFlight}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4 border-t border-sky-border/60 pt-2.5">
-              <dt className="text-[13px] font-semibold text-muted">이용요금</dt>
+              <dt className="text-[14px] font-semibold text-muted">이용요금</dt>
               <dd className="text-base font-bold text-gold tabular-nums">{shownPayable.toLocaleString()}원</dd>
             </div>
             <AirportSavingsLine
@@ -1253,8 +1253,8 @@ export default function BookingModal({
           {memberPreview && pointSpendCap >= POINT_STEP_WON ? (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f4f5f7] px-4 py-3">
               <div>
-                <p className="text-[13px] font-semibold text-[#0f1a2e]">포인트</p>
-                <p className="text-[13px] font-medium text-[#0f1a2e]/55">
+                <p className="text-[14px] font-semibold text-[#0f1a2e]">포인트</p>
+                <p className="text-[14px] font-medium text-[#0f1a2e]/55">
                   보유 {pointBalance.toLocaleString()}원 · 5,000원 단위
                 </p>
               </div>
@@ -1268,7 +1268,7 @@ export default function BookingModal({
                 >
                   <Minus size={16} />
                 </button>
-                <span className="min-w-[4.75rem] text-center text-[13px] font-bold tabular-nums text-[#0f1a2e]">
+                <span className="min-w-[4.75rem] text-center text-[14px] font-bold tabular-nums text-[#0f1a2e]">
                   {pointSpendWon > 0 ? `${pointSpendWon.toLocaleString()}원` : '사용 안 함'}
                 </span>
                 <button
@@ -1324,7 +1324,7 @@ export default function BookingModal({
               ) : (
               <>
               <label className="mt-4 block">
-                <span className="mb-1 block text-[13px] font-bold text-muted">비회원 비밀번호 (4자리)</span>
+                <span className="mb-1 block text-[14px] font-bold text-muted">비회원 비밀번호 (4자리)</span>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -1341,7 +1341,7 @@ export default function BookingModal({
                     form.reservationPassword ? 'tracking-widest' : 'tracking-normal'
                   )}
                 />
-                <span className="mt-1 block text-[13px] font-medium text-muted">
+                <span className="mt-1 block text-[14px] font-medium text-muted">
                   비회원 조회·취소에 사용합니다.
                 </span>
               </label>
@@ -1364,12 +1364,12 @@ export default function BookingModal({
           <button
             type="button"
             onClick={backToForm}
-            className="mt-2 w-full py-2 text-[13px] font-semibold text-[#0f1a2e]/70"
+            className="mt-2 w-full py-2 text-[14px] font-semibold text-[#0f1a2e]/70"
           >
             수정
           </button>
 
-          {error ? <p className="mt-2 text-center text-[13px] font-semibold text-rose-500">{error}</p> : null}
+          {error ? <p className="mt-2 text-center text-[14px] font-semibold text-rose-500">{error}</p> : null}
         </div>
       </div>
     );
@@ -1388,40 +1388,40 @@ export default function BookingModal({
 
   const summaryCard = (
     <div className="rounded-2xl bg-white p-4 ring-1 ring-[#0f1a2e]/10">
-      <p className="text-[12px] font-semibold text-muted">인천공항 · {terminalSummary}</p>
+      <p className="text-[13px] font-semibold text-muted">인천공항 · {terminalSummary}</p>
       <p className="mt-0.5 text-[17px] font-bold text-ink">{companyName}</p>
       <ul className="mt-3 space-y-2.5">
         <li className="flex items-start gap-2.5">
           <Calendar size={18} className="mt-0.5 shrink-0 text-ink" aria-hidden />
           <span className="min-w-0 flex-1">
             <span className="flex items-start justify-between gap-2">
-              <span className="text-[13px] font-semibold leading-snug text-ink tabular-nums">
+              <span className="text-[14px] font-semibold leading-snug text-ink tabular-nums">
                 {scheduleLine}
               </span>
               <button
                 type="button"
                 onClick={() => setEditSchedule((v) => !v)}
-                className="shrink-0 text-[13px] font-bold text-brand"
+                className="shrink-0 text-[14px] font-bold text-brand"
               >
                 {editSchedule ? '접기' : '수정'}
               </button>
             </span>
-            <span className="mt-0.5 block text-[12px] font-medium text-muted">
+            <span className="mt-0.5 block text-[13px] font-medium text-muted">
               {lotLabel} · {formatStayPhrase(breakdown.days)}
             </span>
           </span>
         </li>
         <li className="flex items-start gap-2.5">
           <Car size={18} className="mt-0.5 shrink-0 text-ink" aria-hidden />
-          <span className="min-w-0 flex-1 text-[13px] font-semibold text-ink">
+          <span className="min-w-0 flex-1 text-[14px] font-semibold text-ink">
             {transferTitle}
-            <span className="mt-0.5 block text-[12px] font-medium text-muted">{pin.detail}</span>
+            <span className="mt-0.5 block text-[13px] font-medium text-muted">{pin.detail}</span>
           </span>
-          <span className="shrink-0 text-[13px] font-bold tabular-nums text-ink">
+          <span className="shrink-0 text-[14px] font-bold tabular-nums text-ink">
             {payableTotal.toLocaleString()}원
           </span>
         </li>
-        <li className="flex items-center gap-2.5 text-[13px] font-semibold text-ink">
+        <li className="flex items-center gap-2.5 text-[14px] font-semibold text-ink">
           <KeyRound size={18} className="shrink-0" aria-hidden />
           {pin.meetHandoff ? '키를 맡깁니다' : '단기주차장에서 키를 맡깁니다'}
         </li>
@@ -1477,7 +1477,7 @@ export default function BookingModal({
             inactiveClassName="bg-sky-soft text-muted"
           />
           <fieldset>
-            <legend className="text-[13px] font-bold text-muted">주차 공간</legend>
+            <legend className="text-[14px] font-bold text-muted">주차 공간</legend>
             <div className="mt-1 grid grid-cols-2 gap-2">
               {(
                 [
@@ -1500,7 +1500,7 @@ export default function BookingModal({
                     key={id}
                     htmlFor={id}
                     className={cn(
-                      'rounded-xl py-2 text-center text-[13px] font-bold transition-colors',
+                      'rounded-xl py-2 text-center text-[14px] font-bold transition-colors',
                       opt.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
                       selected ? 'bg-sky-deep text-brand' : 'bg-sky-soft text-muted'
                     )}
@@ -1525,7 +1525,7 @@ export default function BookingModal({
       ) : null}
       <div className="mt-3 border-t border-[#0f1a2e]/8 pt-3">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-[13px] font-semibold text-muted">{paymentStepOn ? '결제 금액' : '현장 결제'}</span>
+          <span className="text-[14px] font-semibold text-muted">{paymentStepOn ? '결제 금액' : '현장 결제'}</span>
           <span className="text-[15px] font-bold tabular-nums text-ink">
             {payableTotal.toLocaleString()}원
           </span>
@@ -1535,7 +1535,7 @@ export default function BookingModal({
           displayPriceWon={payableTotal}
           className="mt-1.5 text-right"
         />
-        <p className="mt-1.5 text-[11px] font-medium text-muted">
+        <p className="mt-1.5 text-[13px] font-medium text-muted">
           {PRICE_INCLUSION.bookingLine}
           {insideCancelWindow ? '' : ` · 입고 ${DEFAULT_CANCEL_CUTOFF_HOURS}시간 전 무료 취소`}
         </p>
@@ -1544,11 +1544,11 @@ export default function BookingModal({
   );
 
   const cancelNote = !timeCheck.ok ? (
-    <p role="alert" className="text-center text-[13px] font-semibold text-rose-600">
+    <p role="alert" className="text-center text-[14px] font-semibold text-rose-600">
       {timeCheck.message}
     </p>
   ) : insideCancelWindow ? null : (
-    <p className="text-center text-[13px] font-semibold text-emerald-700">
+    <p className="text-center text-[14px] font-semibold text-emerald-700">
       입고 {DEFAULT_CANCEL_CUTOFF_HOURS}시간 전까지 무료 취소
     </p>
   );
@@ -1618,7 +1618,7 @@ export default function BookingModal({
               <SectionHead>개인 정보</SectionHead>
               <div className="space-y-3">
                 <label className="block">
-                  <span className="mb-1.5 block text-[13px] font-bold text-ink">이름 *</span>
+                  <span className="mb-1.5 block text-[14px] font-bold text-ink">이름 *</span>
                   <input
                     value={form.userName}
                     onChange={(e) => setFormField('userName', e.target.value)}
@@ -1627,7 +1627,7 @@ export default function BookingModal({
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-[13px] font-bold text-ink">휴대전화 *</span>
+                  <span className="mb-1.5 block text-[14px] font-bold text-ink">휴대전화 *</span>
                   <input
                     type="tel"
                     inputMode="tel"
@@ -1637,7 +1637,7 @@ export default function BookingModal({
                     className={FIELD_CLASS}
                   />
                   {form.phone.trim() && !phoneValid ? (
-                    <span className="mt-1 block text-[13px] font-semibold text-rose-500">
+                    <span className="mt-1 block text-[14px] font-semibold text-rose-500">
                       010-1234-5678 형식(숫자 11자리)으로 입력해 주세요.
                     </span>
                   ) : null}
@@ -1649,7 +1649,7 @@ export default function BookingModal({
               <SectionHead>여행 정보</SectionHead>
               <div className="space-y-3">
                 <div>
-                  <p className="mb-2 text-[13px] font-bold text-muted">출국</p>
+                  <p className="mb-2 text-[14px] font-bold text-muted">출국</p>
                   <div className="grid grid-cols-2 gap-2">
                     <AirlineSelect
                       label="항공사"
@@ -1660,7 +1660,7 @@ export default function BookingModal({
                       onChange={(departureAirline) => setFormField('departureAirline', departureAirline)}
                     />
                     <label className="block">
-                      <span className="mb-1.5 block text-[13px] font-bold text-ink">가는 편명 *</span>
+                      <span className="mb-1.5 block text-[14px] font-bold text-ink">가는 편명 *</span>
                       <input
                         value={form.departureFlight}
                         onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase().replace(/\s+/g, ''))}
@@ -1668,7 +1668,7 @@ export default function BookingModal({
                         className={FIELD_CLASS}
                       />
                       {flightNumberHint(form.departureAirline, form.departureFlight) ? (
-                        <span className="mt-1 block text-[12px] font-semibold leading-snug text-amber-800">
+                        <span className="mt-1 block text-[13px] font-semibold leading-snug text-amber-800">
                           {flightNumberHint(form.departureAirline, form.departureFlight)}
                         </span>
                       ) : null}
@@ -1676,7 +1676,7 @@ export default function BookingModal({
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-[13px] font-bold text-muted">귀국</p>
+                  <p className="mb-2 text-[14px] font-bold text-muted">귀국</p>
                   <div className="grid grid-cols-2 gap-2">
                     <AirlineSelect
                       label="항공사"
@@ -1687,7 +1687,7 @@ export default function BookingModal({
                       onChange={(arrivalAirline) => setFormField('arrivalAirline', arrivalAirline)}
                     />
                     <label className="block">
-                      <span className="mb-1.5 block text-[13px] font-bold text-ink">오는 편명 *</span>
+                      <span className="mb-1.5 block text-[14px] font-bold text-ink">오는 편명 *</span>
                       <input
                         value={form.arrivalFlight}
                         onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase().replace(/\s+/g, ''))}
@@ -1695,13 +1695,13 @@ export default function BookingModal({
                         className={FIELD_CLASS}
                       />
                       {flightNumberHint(form.arrivalAirline, form.arrivalFlight) ? (
-                        <span className="mt-1 block text-[12px] font-semibold leading-snug text-amber-800">
+                        <span className="mt-1 block text-[13px] font-semibold leading-snug text-amber-800">
                           {flightNumberHint(form.arrivalAirline, form.arrivalFlight)}
                         </span>
                       ) : null}
                     </label>
                   </div>
-                  <p className="mt-1.5 text-[12px] font-medium text-muted">
+                  <p className="mt-1.5 text-[13px] font-medium text-muted">
                     항공권 편명으로 맞춥니다. 예: KE701
                   </p>
                 </div>
@@ -1712,7 +1712,7 @@ export default function BookingModal({
               <SectionHead>차량 정보</SectionHead>
               <div className="space-y-3">
                 <label className="block">
-                  <span className="mb-1.5 block text-[13px] font-bold text-ink">차량번호 *</span>
+                  <span className="mb-1.5 block text-[14px] font-bold text-ink">차량번호 *</span>
                   <input
                     value={form.carNumber}
                     onChange={(e) => setFormField('carNumber', e.target.value)}
@@ -1720,13 +1720,13 @@ export default function BookingModal({
                     className={FIELD_CLASS}
                   />
                   {form.carNumber.trim() && !carNumberValid ? (
-                    <span className="mt-1 block text-[13px] font-semibold text-rose-500">
+                    <span className="mt-1 block text-[14px] font-semibold text-rose-500">
                       차량번호를 확인해 주세요. 예: 12가3456
                     </span>
                   ) : null}
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-[13px] font-bold text-ink">모델 *</span>
+                  <span className="mb-1.5 block text-[14px] font-bold text-ink">모델 *</span>
                   <input
                     value={form.carModel}
                     onChange={(e) => setFormField('carModel', e.target.value)}
@@ -1737,7 +1737,7 @@ export default function BookingModal({
                 <button
                   type="button"
                   onClick={() => setShowOptionalNotes((v) => !v)}
-                  className="inline-flex items-center gap-0.5 text-[13px] font-bold text-brand"
+                  className="inline-flex items-center gap-0.5 text-[14px] font-bold text-brand"
                 >
                   {showOptionalNotes ? '메모 접기' : '여행지·메모 (선택)'}
                   <ChevronDown
@@ -1748,7 +1748,7 @@ export default function BookingModal({
                 {showOptionalNotes ? (
                   <div className="space-y-2 border-t border-[#0f1a2e]/8 pt-3">
                     <label className="block">
-                      <span className="mb-1.5 block text-[13px] font-bold text-ink">여행지</span>
+                      <span className="mb-1.5 block text-[14px] font-bold text-ink">여행지</span>
                       <input
                         value={form.destination}
                         onChange={(e) => setFormField('destination', e.target.value)}
@@ -1757,7 +1757,7 @@ export default function BookingModal({
                       />
                     </label>
                     <label className="block">
-                      <span className="mb-1.5 block text-[13px] font-bold text-ink">
+                      <span className="mb-1.5 block text-[14px] font-bold text-ink">
                         기사님께 전달할 메시지
                       </span>
                       <textarea
@@ -1784,7 +1784,7 @@ export default function BookingModal({
               />
             </div>
             {error ? (
-              <p className="text-center text-[13px] font-semibold text-rose-500">{error}</p>
+              <p className="text-center text-[14px] font-semibold text-rose-500">{error}</p>
             ) : null}
           </form>
 

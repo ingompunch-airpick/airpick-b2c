@@ -75,7 +75,7 @@ function ConsentSheet({
             <X size={18} className="text-muted" />
           </button>
         </div>
-        <div className="overflow-y-auto px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-[13px] leading-relaxed text-muted">
+        <div className="overflow-y-auto px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-[14px] leading-relaxed text-muted">
           {children}
         </div>
         <div className="border-t border-sky-border/60 p-4">
@@ -122,7 +122,7 @@ export default function BookingConsent({
           onChange={(e) => onMarketingOptInChange(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 rounded border-sky-border text-brand"
         />
-        <span className="text-[13px] font-medium leading-relaxed text-ink">
+        <span className="text-[14px] font-medium leading-relaxed text-ink">
           [선택] 광고성 정보 수신 동의 (문자·카카오톡){' '}
           <button
             type="button"
@@ -136,11 +136,11 @@ export default function BookingConsent({
           </button>
         </span>
       </label>
-      <p className="pl-[26px] text-[12px] font-medium leading-relaxed text-muted">
+      <p className="pl-[26px] text-[13px] font-medium leading-relaxed text-muted">
         할인·이벤트 소식을 보내드려요. 동의하지 않아도 예약할 수 있어요.
       </p>
 
-      <p className="text-[12px] font-medium italic leading-relaxed text-muted">
+      <p className="text-[13px] font-medium italic leading-relaxed text-muted">
         예약을 완료하면{' '}
         <button
           type="button"
@@ -175,7 +175,7 @@ export default function BookingConsent({
         </button>
         에 동의한 것으로 봅니다.
       </p>
-      <p className="text-[11px] font-medium leading-relaxed text-muted">
+      <p className="text-[13px] font-medium leading-relaxed text-muted">
         전문:{' '}
         <a href="/terms/" target="_blank" rel="noopener" className="font-bold text-brand underline-offset-2 hover:underline">
           이용약관

@@ -88,7 +88,7 @@ export default function DateField({
         htmlFor={buttonId}
         className={cn(
           'block',
-          large ? 'mb-1.5 text-[13px] font-medium text-[#0f1a2e]/55 md:mb-1' : 'mb-1 text-[11px] font-bold',
+          large ? 'mb-1.5 text-[14px] font-medium text-[#0f1a2e]/55 md:mb-1' : 'mb-1 text-[13px] font-bold',
           !large && (premium ? 'text-[#0f1a2e]/50' : 'text-muted')
         )}
       >
@@ -143,7 +143,7 @@ export default function DateField({
               <ChevronRight size={20} />
             </button>
           </div>
-          <div className="grid grid-cols-7 text-center text-[12px] font-bold text-[#0f1a2e]/45">
+          <div className="grid grid-cols-7 text-center text-[13px] font-bold text-[#0f1a2e]/45">
             {WEEK.map((w, i) => (
               <span key={w} className={cn('py-1', i === 0 && 'text-rose-500/80')}>
                 {w}

@@ -64,11 +64,11 @@ function PlaceCard({
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
       <button type="button" onClick={onToggle} className="w-full text-left">
-        <p className="text-[11px] font-bold text-brand">{place.title}</p>
+        <p className="text-[13px] font-bold text-brand">{place.title}</p>
         <p className="mt-1 text-[15px] font-black leading-snug text-stone-900">{place.name}</p>
-        <p className="mt-1 text-[13px] font-bold leading-snug text-stone-700">{place.howTo}</p>
-        <p className="mt-1 text-[12px] font-semibold leading-snug text-stone-500">{place.address}</p>
-        <p className="mt-2 text-[11px] font-bold text-stone-400">
+        <p className="mt-1 text-[14px] font-bold leading-snug text-stone-700">{place.howTo}</p>
+        <p className="mt-1 text-[13px] font-semibold leading-snug text-stone-500">{place.address}</p>
+        <p className="mt-2 text-[13px] font-bold text-stone-400">
           {expanded ? '접기' : '지도 앱으로 길찾기'}
         </p>
       </button>
@@ -77,7 +77,7 @@ function PlaceCard({
           <button
             type="button"
             onClick={() => void copy()}
-            className="rounded-lg border border-stone-200 px-3 py-1.5 text-[11px] font-black text-stone-800"
+            className="rounded-lg border border-stone-200 px-3 py-1.5 text-[13px] font-black text-stone-800"
           >
             {copied ? '복사됨' : '주소 복사'}
           </button>
@@ -121,9 +121,9 @@ function HubPage() {
     <div className="min-h-dvh bg-[#f4efe6] px-4 py-6">
       <div className="mx-auto max-w-md space-y-4">
         <header>
-          <p className="text-[11px] font-bold text-brand">에어픽</p>
+          <p className="text-[13px] font-bold text-brand">에어픽</p>
           <h1 className="mt-1 text-xl font-black text-stone-900">찾아오는 길</h1>
-          <p className="mt-1 text-[13px] font-semibold leading-relaxed text-stone-600">
+          <p className="mt-1 text-[14px] font-semibold leading-relaxed text-stone-600">
             예약하신 이용 방법을 골라 주세요. 알림톡 링크로 들어오시면 예약에 맞춰 자동으로
             안내됩니다.
           </p>
@@ -133,11 +133,11 @@ function HubPage() {
           href={HANDOFF_PAGE.drop.path}
           className="block rounded-2xl border border-stone-200 bg-white p-4 shadow-sm active:scale-[0.99]"
         >
-          <p className="text-[11px] font-bold text-brand">방법 1</p>
+          <p className="text-[13px] font-bold text-brand">방법 1</p>
           <p className="mt-1 text-[16px] font-black text-stone-900">
             {HANDOFF_PAGE.drop.choiceLabel}
           </p>
-          <p className="mt-1 text-[12px] font-semibold leading-snug text-stone-500">
+          <p className="mt-1 text-[13px] font-semibold leading-snug text-stone-500">
             가유·시즌·안녕 등 · 단기주차장에 세운 뒤 내립니다.
           </p>
         </a>
@@ -146,11 +146,11 @@ function HubPage() {
           href={HANDOFF_PAGE.curb.path}
           className="block rounded-2xl border border-stone-200 bg-white p-4 shadow-sm active:scale-[0.99]"
         >
-          <p className="text-[11px] font-bold text-brand">방법 2</p>
+          <p className="text-[13px] font-bold text-brand">방법 2</p>
           <p className="mt-1 text-[16px] font-black text-stone-900">
             {HANDOFF_PAGE.curb.choiceLabel}
           </p>
-          <p className="mt-1 text-[12px] font-semibold leading-snug text-stone-500">
+          <p className="mt-1 text-[13px] font-semibold leading-snug text-stone-500">
             출국장 3층에서 기사님을 만납니다.
           </p>
         </a>
@@ -179,11 +179,11 @@ function HandoffPage({
     <div className="min-h-dvh bg-[#f4efe6] px-4 py-6">
       <div className="mx-auto max-w-md space-y-4">
         <header>
-          <a href="/directions" className="text-[11px] font-bold text-brand">
+          <a href="/directions" className="text-[13px] font-bold text-brand">
             ← 이용 방법 다시 고르기
           </a>
           <h1 className="mt-2 text-xl font-black text-stone-900">{meta.headline}</h1>
-          <p className="mt-1 text-[13px] font-semibold leading-relaxed text-stone-600">
+          <p className="mt-1 text-[14px] font-semibold leading-relaxed text-stone-600">
             {meta.lead}
           </p>
         </header>
@@ -203,7 +203,7 @@ function HandoffPage({
                 setTerminal(opt.id);
                 setOpenKey(null);
               }}
-              className={`rounded-full px-3 py-1.5 text-[12px] font-black border ${
+              className={`rounded-full px-3 py-1.5 text-[13px] font-black border ${
                 terminal === opt.id
                   ? 'border-stone-900 bg-stone-900 text-white'
                   : 'border-stone-200 bg-white text-stone-700'
@@ -296,8 +296,8 @@ function TokenDirectionsPage({ token }: { token: string }) {
       <div className="flex min-h-dvh items-center justify-center bg-[#f4efe6] p-4">
         <div className="max-w-md rounded-2xl border border-stone-200 bg-white p-6 text-center shadow-sm">
           <p className="text-sm font-black text-stone-900">가는 길을 표시할 수 없습니다</p>
-          <p className="mt-2 text-xs font-semibold text-stone-500">{error}</p>
-          <a href="/directions" className="mt-4 inline-block text-xs font-bold text-brand underline">
+          <p className="mt-2 text-[13px] font-semibold text-stone-500">{error}</p>
+          <a href="/directions" className="mt-4 inline-block text-[13px] font-bold text-brand underline">
             이용 방법 직접 고르기
           </a>
         </div>
@@ -311,27 +311,27 @@ function TokenDirectionsPage({ token }: { token: string }) {
     <div className="min-h-dvh bg-[#f4efe6] px-4 py-6">
       <div className="mx-auto max-w-md space-y-4">
         <header>
-          <p className="text-[11px] font-bold text-brand">에어픽 · 가는 길</p>
+          <p className="text-[13px] font-bold text-brand">에어픽 · 가는 길</p>
           <h1 className="mt-1 text-xl font-black text-stone-900">
             {meta?.headline || '찾아오는 길'}
           </h1>
-          <p className="mt-1 text-[13px] font-semibold text-stone-600">
+          <p className="mt-1 text-[14px] font-semibold text-stone-600">
             {receipt.companyName} · {receipt.carNumber}
           </p>
         </header>
 
         <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm space-y-2">
-          <p className="text-[11px] font-bold text-stone-400">이용 방법</p>
+          <p className="text-[13px] font-bold text-stone-400">이용 방법</p>
           <p className="text-[15px] font-black text-stone-900">
             {handoff ? handoffPlainLabel(handoff) : '업체 안내에 따라 주세요'}
           </p>
           {place ? (
             <>
-              <p className="text-[13px] font-bold text-stone-700">{place.howTo}</p>
-              <p className="text-[12px] font-semibold text-stone-500">{place.name}</p>
+              <p className="text-[14px] font-bold text-stone-700">{place.howTo}</p>
+              <p className="text-[13px] font-semibold text-stone-500">{place.name}</p>
             </>
           ) : (
-            <p className="text-[13px] font-semibold text-stone-500">
+            <p className="text-[14px] font-semibold text-stone-500">
               이 예약은 지도 목적지가 아직 없습니다. 업체에 문의해 주세요.
             </p>
           )}
@@ -339,14 +339,14 @@ function TokenDirectionsPage({ token }: { token: string }) {
 
         {place ? (
           <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-            <p className="mb-2 text-[11px] font-bold text-stone-400">지도 앱으로 열기</p>
+            <p className="mb-2 text-[13px] font-bold text-stone-400">지도 앱으로 열기</p>
             <MapButtons place={place} />
           </section>
         ) : null}
 
         <a
           href={`/r/${encodeURIComponent(token)}`}
-          className="block text-center text-[12px] font-bold text-brand underline underline-offset-2"
+          className="block text-center text-[13px] font-bold text-brand underline underline-offset-2"
         >
           접수증 보기
         </a>
