@@ -634,7 +634,7 @@ export default function CompanyDetailSheet({
           </section>
         </div>
 
-        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:flex lg:w-80 lg:flex-col lg:justify-end lg:border-l lg:border-t-0 lg:px-6 lg:py-6 lg:rounded-br-3xl">
+        <div className="shrink-0 border-t border-sky-border/50 bg-white px-5 py-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:flex lg:w-80 lg:flex-col lg:justify-start lg:border-l lg:border-t-0 lg:px-6 lg:py-6 lg:rounded-br-3xl">
           <div className="mb-3 flex flex-wrap gap-1.5">
             <span className="rounded-full bg-sky-bg px-2.5 py-1 text-[12px] font-bold text-ink ring-1 ring-sky-border/60">
               {transferTitle}
