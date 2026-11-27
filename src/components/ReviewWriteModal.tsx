@@ -2,6 +2,7 @@ import { ImagePlus, Star, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { cn } from '../utils/cn';
 import { compressImageFileToDataUrl } from '../utils/reviewPhotos';
+import { useBodyScrollLock } from '../lib/scrollLock';
 
 const MAX_PHOTOS = 3;
 
@@ -24,6 +25,7 @@ export default function ReviewWriteModal({
     photoDataUrls: string[]
   ) => Promise<void>;
 }) {
+  useBodyScrollLock();
   const [rating, setRating] = useState(0);
   const [body, setBody] = useState('');
   const [password, setPassword] = useState(initialPassword);

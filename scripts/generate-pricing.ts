@@ -256,7 +256,7 @@ function renderPartnerTable(partnerName: string, rows: Cell[], startYmd: string)
 
   return `<section class="section">
         <h2>${esc(partnerName)}</h2>
-        <div class="card">
+        <div class="card table-scroll">
           <table class="pricing-table">
             <thead>
               <tr>
@@ -327,7 +327,9 @@ function buildHtml(opts: {
     <style>
       .pricing-table th { vertical-align: top; }
       .pricing-day { display: block; font-weight: 700; }
-      .pricing-range { display: block; margin-top: 0.25rem; font-size: 0.72rem; font-weight: 500; color: #5a6578; white-space: nowrap; }
+      .pricing-range { display: block; margin-top: 0.25rem; font-size: 0.8rem; font-weight: 500; color: #5a6578; white-space: nowrap; }
+      .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .table-scroll .pricing-table { min-width: 520px; }
       @media (max-width: 640px) {
         .pricing-range { white-space: normal; }
       }

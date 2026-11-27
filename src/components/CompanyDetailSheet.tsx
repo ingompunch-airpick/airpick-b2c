@@ -35,6 +35,7 @@ import { cn } from '../utils/cn';
 import { APP_CONFIG } from '../constants/appConfig';
 import { AIRPICK_CARE, PRICE_INCLUSION } from '../constants/marketing';
 import { isPaymentStepVisible } from '../lib/paymentMode';
+import { useBodyScrollLock } from '../lib/scrollLock';
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
@@ -311,6 +312,7 @@ export default function CompanyDetailSheet({
   onClose: () => void;
   onBook: () => void;
 }) {
+  useBodyScrollLock();
   const name = displayCompanyName(company.name);
   const [reviewSnapshot, setReviewSnapshot] = useState<CompanyReviewSnapshot | null>(null);
 
@@ -462,7 +464,7 @@ export default function CompanyDetailSheet({
 
         {/* PC(lg↑): 왼쪽 정보 스크롤 · 오른쪽 금액·예약 고정 */}
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 lg:px-6 lg:py-5">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 lg:px-6 lg:py-5">
           <section className="rounded-2xl bg-sky-bg p-4 ring-1 ring-sky-border/60">
             <div className="flex items-center justify-between gap-2">
               <p className="text-[13px] font-bold text-brand">이 상품</p>

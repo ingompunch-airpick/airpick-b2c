@@ -92,6 +92,7 @@ import {
   savePaySummary,
 } from '../lib/paymentMode';
 import { prepareReservationPayment } from '../lib/reservationPayment';
+import { useBodyScrollLock } from '../lib/scrollLock';
 
 const FIELD_CLASS =
   'w-full rounded-lg border border-[#d8dee8] bg-white px-3 py-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-[#b0b6c0] focus:border-brand';
@@ -183,6 +184,7 @@ export default function BookingModal({
   /** 만차 시 다른 업체 비교로 이동 */
   onBrowseOtherCompanies?: () => void;
 }) {
+  useBodyScrollLock();
   const [search, setSearch] = useState<BookingSearch>(() => {
     const base = draftFor(company.id)?.search ?? initialSearch;
     return {

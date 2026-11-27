@@ -240,6 +240,11 @@ details.faq p.answer { font-weight: 700; color: var(--ink); }
   border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top;
 }
 .policy-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+/* 좁은 화면: 표가 화면 밖으로 밀리지 않게 표 안에서만 옆으로 넘긴다 */
+@media (max-width: 640px) {
+  .policy-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .policy-table th, .policy-table td { min-width: 88px; }
+}
 .policy-table th { background: var(--sub); font-weight: 700; }
 
 @media (min-width: 768px) {

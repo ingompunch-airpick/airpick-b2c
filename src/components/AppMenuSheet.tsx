@@ -7,6 +7,7 @@ import {
   SITE_NAV_SECTIONS,
 } from '../constants/siteNav';
 import { trackCtaClick } from '../lib/analytics';
+import { useBodyScrollLock } from '../lib/scrollLock';
 
 /**
  * ≡ 메뉴 — 입점 페이지(/join)와 같은 흰 바탕·굵은 글씨·남색 알약.
@@ -21,6 +22,7 @@ export default function AppMenuSheet({
   /** 주차대행·이심은 앱 안에서 탭만 바꿈 (새로고침 없이) */
   onGoTab?: (tab: 'home' | 'esim') => void;
 }) {
+  useBodyScrollLock();
   const openPage = (href: string) => {
     markReturnToMenu();
     onClose();
