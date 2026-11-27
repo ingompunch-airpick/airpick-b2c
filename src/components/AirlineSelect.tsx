@@ -23,6 +23,9 @@ export default function AirlineSelect({
   referenceDateYmd,
   /** 지금 고른 터미널 — 항공사 터미널과 같으면 안내를 숨긴다 */
   currentTerminal,
+  /** 화면 읽기·AI용 이름 (예: 출국 항공사). 없으면 label */
+  ariaLabel,
+  name,
 }: {
   label: string;
   value: string;
@@ -30,6 +33,8 @@ export default function AirlineSelect({
   required?: boolean;
   referenceDateYmd?: string;
   currentTerminal?: Terminal;
+  ariaLabel?: string;
+  name?: string;
 }) {
   const isCustomValue = !!value && !isKnownAirlineName(value);
   const [otherMode, setOtherMode] = useState(isCustomValue);
@@ -53,6 +58,9 @@ export default function AirlineSelect({
         {required ? ' *' : ''}
       </span>
       <select
+        aria-label={ariaLabel || label}
+        aria-required={required || undefined}
+        name={name}
         value={selectValue}
         onChange={(e) => {
           const next = e.target.value;

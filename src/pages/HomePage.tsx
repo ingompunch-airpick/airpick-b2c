@@ -38,7 +38,7 @@ import {
   type PricedCompany,
 } from '../utils/compareSort';
 import { formatStayPhrase, todayYmd } from '../utils/dates';
-import { maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
+import { arrivalForNewDeparture, maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
 import { displayCompanyName } from '../utils/display';
 import { companyThumbnailUrl } from '../utils/imageUrl';
 import { companyCardPhotoUrl } from '../utils/parkingLocation';
@@ -363,11 +363,15 @@ export default function HomePage({
                     min={today}
                     max={maxDepartureYmd(today)}
                     onChange={(departureDate) => {
-                      const next = { ...search, departureDate };
-                      const arrMax = maxArrivalYmd(departureDate);
-                      if (next.arrivalDate < departureDate) next.arrivalDate = departureDate;
-                      else if (next.arrivalDate > arrMax) next.arrivalDate = arrMax;
-                      onSearchChange(next);
+                      onSearchChange({
+                        ...search,
+                        departureDate,
+                        arrivalDate: arrivalForNewDeparture(
+                          search.departureDate,
+                          search.arrivalDate,
+                          departureDate
+                        ),
+                      });
                     }}
                   />
                   <DateField

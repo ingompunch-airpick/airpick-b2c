@@ -112,3 +112,27 @@ export function checkBookingTimes(
   }
   return { ok: true, hoursUntilCheckIn: (dep.getTime() - now.getTime()) / 3_600_000 };
 }
+
+function addDaysYmd(ymd: string, days: number): string {
+  const dt = parseYmdLocal(ymd);
+  if (!dt) return ymd;
+  dt.setDate(dt.getDate() + days);
+  return formatYmd(dt);
+}
+
+/**
+ * 맡기는 날을 바꿀 때 찾는 날 맞추기 — 기존 일정 길이를 그대로 유지한다.
+ * (전에는 찾는 날이 맡기는 날과 같아져서 「찾는 시간은 맡기는 시간 이후로」 오류가 떴다. 2026-11-28)
+ * 원래 일정이 없거나 이상하면 하루 뒤. 최대 기간을 넘으면 상한으로.
+ */
+export function arrivalForNewDeparture(
+  prevDeparture: string,
+  prevArrival: string,
+  nextDeparture: string
+): string {
+  const diff = calendarDayDiff(prevDeparture, prevArrival);
+  const keep = diff != null && diff >= 1 ? diff : 1;
+  const arr = addDaysYmd(nextDeparture, keep);
+  const max = maxArrivalYmd(nextDeparture);
+  return arr > max ? max : arr;
+}

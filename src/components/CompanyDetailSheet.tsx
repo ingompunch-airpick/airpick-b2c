@@ -426,7 +426,12 @@ export default function CompanyDetailSheet({
         aria-label="닫기"
         onClick={onClose}
       />
-      <div className="relative z-10 flex max-h-full w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl lg:max-w-5xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${name} 상세`}
+        className="relative z-10 flex max-h-full w-full max-w-lg flex-col rounded-t-3xl bg-white shadow-xl sm:rounded-3xl lg:max-w-5xl"
+      >
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-sky-border/50 px-5 py-4">
           <div className="flex min-w-0 gap-3">
             {thumbSrc ? (

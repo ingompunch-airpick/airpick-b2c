@@ -18,7 +18,7 @@ import {
   parseHmToMinutes,
 } from '../../utils/leaveByCalculator';
 import { formatDateDisplay, todayYmd } from '../../utils/dates';
-import { maxArrivalYmd, maxDepartureYmd } from '../../utils/bookingWindow';
+import { arrivalForNewDeparture, maxArrivalYmd, maxDepartureYmd } from '../../utils/bookingWindow';
 import { getParkingDayCount } from '../../utils/pricing';
 import {
   APP_TAB_SOON,
@@ -399,10 +399,8 @@ export default function TripHomeHub({
             min={todayYmd()}
             max={maxDepartureYmd(todayYmd())}
             onChange={(next) => {
+              setArrivalDate(arrivalForNewDeparture(departureDate, arrivalDate, next));
               setDepartureDate(next);
-              const arrMax = maxArrivalYmd(next);
-              if (arrivalDate < next) setArrivalDate(addDaysInput(next, 1));
-              else if (arrivalDate > arrMax) setArrivalDate(arrMax);
             }}
           />
           <TimeField

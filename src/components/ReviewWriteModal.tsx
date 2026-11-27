@@ -74,7 +74,12 @@ export default function ReviewWriteModal({
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-4">
       <button type="button" className="absolute inset-0 cursor-default" aria-label="닫기" onClick={onClose} />
-      <div className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-sky-bg p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl sm:rounded-3xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="후기 쓰기"
+        className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-sky-bg p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl sm:rounded-3xl"
+      >
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[13px] font-bold text-brand">업체 후기</p>

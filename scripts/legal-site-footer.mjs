@@ -12,7 +12,7 @@ export const LEGAL_SITE_FOOTER_HTML = `
           <span aria-hidden="true"> | </span>
           <a href="/refund/">취소·환불 정책</a>
           <span aria-hidden="true"> | </span>
-          <a href="http://pf.kakao.com/_lxhEnn/chat" target="_blank" rel="noopener noreferrer">고객문의</a>
+          <a href="https://pf.kakao.com/_lxhEnn/chat" target="_blank" rel="noopener noreferrer">고객문의</a>
         </p>
         <p>
           상호: 에어픽 공항주차<br />

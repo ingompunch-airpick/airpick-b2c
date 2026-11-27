@@ -23,9 +23,11 @@ export default function AppMenuSheet({
   onGoTab?: (tab: 'home' | 'esim') => void;
 }) {
   useBodyScrollLock();
+  // 다른 페이지로 갈 때는 메뉴를 닫지 않고 바로 이동한다.
+  // 닫으면 뒤로가기 기록을 되돌리는 history.back()이 이동을 취소해 버려서
+  // 메뉴 링크가 눌러도 안 넘어가는 문제가 있었다 (2026-11-28 확인). 돌아오면 메뉴가 다시 열린다.
   const openPage = (href: string) => {
     markReturnToMenu();
-    onClose();
     window.location.assign(href);
   };
 
@@ -37,7 +39,6 @@ export default function AppMenuSheet({
       onGoTab(tab);
       return;
     }
-    onClose();
     window.location.assign(href);
   };
 
@@ -49,7 +50,12 @@ export default function AppMenuSheet({
         aria-label="메뉴 닫기"
         onClick={onClose}
       />
-      <div className="absolute bottom-[var(--app-tab-h,56px)] right-0 top-[var(--app-header-h,60px)] flex w-[min(100%,340px)] flex-col bg-white shadow-xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="메뉴"
+        className="absolute bottom-[var(--app-tab-h,56px)] right-0 top-[var(--app-header-h,60px)] flex w-[min(100%,340px)] flex-col bg-white shadow-xl"
+      >
         <div className="flex items-center justify-between border-b border-[#e5e7eb] px-5 py-3">
           <p className="text-[18px] font-extrabold tracking-tight text-[#0f1a2e]">메뉴</p>
           <button

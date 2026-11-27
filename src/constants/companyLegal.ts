@@ -24,7 +24,7 @@ export const COMPANY_LEGAL = {
   /** Firebase/web.app 리다이렉트·DNS용 퓨니코드 (표기는 siteUrl 우선) */
   siteUrlAscii: 'https://www.xn--oh5b1bw17d.kr',
   /** 카카오 고객센터 채널 */
-  kakaoChatUrl: 'http://pf.kakao.com/_lxhEnn/chat',
+  kakaoChatUrl: 'https://pf.kakao.com/_lxhEnn/chat',
   /** 카카오 채널 프로필 (Organization sameAs) */
   kakaoProfileUrl: 'https://pf.kakao.com/_lxhEnn',
   /** 고객센터 운영 시간 */

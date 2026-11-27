@@ -30,6 +30,7 @@ import { fetchCompanyById, patchCompanyInSessionCache } from '../lib/companies';
 import { assertHourlyCapacityAvailable } from '../lib/hourlyCapacityFirestore';
 import { bookingPolicyMessage, checkBookingPolicy } from '../utils/bookingPolicy';
 import {
+  arrivalForNewDeparture,
   bookingWindowMessage,
   checkBookingTimes,
   checkBookingWindow,
@@ -851,7 +852,7 @@ export default function BookingModal({
     const canFlipOutdoor = companySupportsOutdoor(company) && search.isIndoor;
     const canFlipIndoor = companySupportsIndoor(company) && !search.isIndoor;
     return (
-      <div className={bookingShell}>
+      <div className={bookingShell} role="dialog" aria-modal="true" aria-label="주차대행 예약">
         <div
           role="dialog"
           aria-modal="true"
@@ -927,7 +928,7 @@ export default function BookingModal({
 
   if (completedId) {
     return (
-      <div className={bookingShell}>
+      <div className={bookingShell} role="dialog" aria-modal="true" aria-label="주차대행 예약">
         <div
           role="dialog"
           aria-modal="true"
@@ -1173,7 +1174,7 @@ export default function BookingModal({
             </section>
     );
     return (
-      <div className={bookingShell}>
+      <div className={bookingShell} role="dialog" aria-modal="true" aria-label="주차대행 예약">
         <div
           role="dialog"
           aria-modal="true"
@@ -1438,14 +1439,11 @@ export default function BookingModal({
               max={maxDepartureYmd(today)}
               onChange={(departureDate) => {
                 setSearch((prev) => {
-                  const next = { ...prev, departureDate };
-                  const arrMax = maxArrivalYmd(departureDate);
-                  if (next.arrivalDate < departureDate) {
-                    next.arrivalDate = departureDate;
-                  } else if (next.arrivalDate > arrMax) {
-                    next.arrivalDate = arrMax;
-                  }
-                  return next;
+                  return {
+                    ...prev,
+                    departureDate,
+                    arrivalDate: arrivalForNewDeparture(prev.departureDate, prev.arrivalDate, departureDate),
+                  };
                 });
               }}
             />
@@ -1588,7 +1586,7 @@ export default function BookingModal({
   );
 
   return (
-    <div className={bookingShell}>
+    <div className={bookingShell} role="dialog" aria-modal="true" aria-label="주차대행 예약">
       <div
         role="dialog"
         aria-modal="true"
@@ -1622,6 +1620,9 @@ export default function BookingModal({
                 <label className="block">
                   <span className="mb-1.5 block text-[14px] font-bold text-ink">이름 *</span>
                   <input
+                    name="name"
+                    autoComplete="name"
+                    aria-required="true"
                     value={form.userName}
                     onChange={(e) => setFormField('userName', e.target.value)}
                     placeholder="홍길동"
@@ -1633,6 +1634,10 @@ export default function BookingModal({
                   <input
                     type="tel"
                     inputMode="tel"
+                    name="tel"
+                    autoComplete="tel"
+                    aria-required="true"
+                    aria-invalid={form.phone.trim() && !phoneValid ? true : undefined}
                     value={form.phone}
                     onChange={(e) => setFormField('phone', formatPhoneInput(e.target.value))}
                     placeholder="010-1234-5678"
@@ -1656,6 +1661,8 @@ export default function BookingModal({
                     <AirlineSelect
                       label="항공사"
                       required
+                      ariaLabel="출국 항공사"
+                      name="departure_airline"
                       value={form.departureAirline}
                       referenceDateYmd={search.departureDate}
                       currentTerminal={search.terminal}
@@ -1664,6 +1671,9 @@ export default function BookingModal({
                     <label className="block">
                       <span className="mb-1.5 block text-[14px] font-bold text-ink">가는 편명 *</span>
                       <input
+                        name="departure_flight"
+                        autoComplete="off"
+                        aria-required="true"
                         value={form.departureFlight}
                         onChange={(e) => setFormField('departureFlight', e.target.value.toUpperCase().replace(/\s+/g, ''))}
                         placeholder="KE701"
@@ -1683,6 +1693,8 @@ export default function BookingModal({
                     <AirlineSelect
                       label="항공사"
                       required
+                      ariaLabel="귀국 항공사"
+                      name="return_airline"
                       value={form.arrivalAirline}
                       referenceDateYmd={search.arrivalDate}
                       currentTerminal={search.arrivalTerminal ?? search.terminal}
@@ -1691,6 +1703,9 @@ export default function BookingModal({
                     <label className="block">
                       <span className="mb-1.5 block text-[14px] font-bold text-ink">오는 편명 *</span>
                       <input
+                        name="return_flight"
+                        autoComplete="off"
+                        aria-required="true"
                         value={form.arrivalFlight}
                         onChange={(e) => setFormField('arrivalFlight', e.target.value.toUpperCase().replace(/\s+/g, ''))}
                         placeholder="KE702"
@@ -1716,6 +1731,10 @@ export default function BookingModal({
                 <label className="block">
                   <span className="mb-1.5 block text-[14px] font-bold text-ink">차량번호 *</span>
                   <input
+                    name="car_number"
+                    autoComplete="off"
+                    aria-required="true"
+                    aria-invalid={form.carNumber.trim() && !carNumberValid ? true : undefined}
                     value={form.carNumber}
                     onChange={(e) => setFormField('carNumber', e.target.value)}
                     placeholder="12가 3456"
@@ -1730,6 +1749,8 @@ export default function BookingModal({
                 <label className="block">
                   <span className="mb-1.5 block text-[14px] font-bold text-ink">모델 *</span>
                   <input
+                    name="car_model"
+                    aria-required="true"
                     value={form.carModel}
                     onChange={(e) => setFormField('carModel', e.target.value)}
                     placeholder="예) 그랜저"
@@ -1752,6 +1773,7 @@ export default function BookingModal({
                     <label className="block">
                       <span className="mb-1.5 block text-[14px] font-bold text-ink">여행지</span>
                       <input
+                        name="destination"
                         value={form.destination}
                         onChange={(e) => setFormField('destination', e.target.value)}
                         placeholder="오사카, 싱가포르"
@@ -1763,6 +1785,7 @@ export default function BookingModal({
                         기사님께 전달할 메시지
                       </span>
                       <textarea
+                        name="notes"
                         value={form.customerNotes}
                         onChange={(e) => setFormField('customerNotes', e.target.value)}
                         rows={2}

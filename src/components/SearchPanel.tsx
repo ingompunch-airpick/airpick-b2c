@@ -6,7 +6,7 @@ import TerminalFields from './TerminalFields';
 import type { BookingSearch, Terminal } from '../types';
 import { cn } from '../utils/cn';
 import { formatDateDisplay, todayYmd } from '../utils/dates';
-import { maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
+import { arrivalForNewDeparture, maxArrivalYmd, maxDepartureYmd } from '../utils/bookingWindow';
 import { getParkingDayCount } from '../utils/pricing';
 import { parkingTypeLabel } from '../utils/parkingType';
 import { formatTerminalSummary } from '../utils/terminalLabels';
@@ -96,14 +96,11 @@ export default function SearchPanel({
           min={today}
           max={maxDepartureYmd(today)}
           onChange={(departureDate) => {
-            const next = { ...search, departureDate };
-            const arrMax = maxArrivalYmd(departureDate);
-            if (next.arrivalDate < departureDate) {
-              next.arrivalDate = departureDate;
-            } else if (next.arrivalDate > arrMax) {
-              next.arrivalDate = arrMax;
-            }
-            onChange(next);
+            onChange({
+              ...search,
+              departureDate,
+              arrivalDate: arrivalForNewDeparture(search.departureDate, search.arrivalDate, departureDate),
+            });
           }}
         />
         <DateField
