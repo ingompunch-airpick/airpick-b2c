@@ -1,4 +1,5 @@
 import {
+  Award,
   Building2,
   BusFront,
   Car,
@@ -61,8 +62,14 @@ import {
 } from '../lib/reviews';
 import { useAffiliateOffer } from '../context/AffiliateContext';
 import AirportSavingsLine from '../components/AirportSavingsLine';
+import {
+  exposureWeight,
+  fetchPartnerExposure,
+  type PartnerExposure,
+} from '../lib/partnerExposure';
+import { recommendKey, visitSeed } from '../utils/recommendedOrder';
 
-type HomeListSort = 'reviews' | 'price';
+type HomeListSort = 'recommended' | 'reviews' | 'price';
 
 type LotSearch = { isIndoor: boolean; terminal: Terminal };
 
@@ -135,7 +142,9 @@ export default function HomePage({
   );
   const [memberReservations, setMemberReservations] = useState<Reservation[]>([]);
   const [reviewById, setReviewById] = useState<Record<string, CompanyReviewSnapshot>>({});
-  const [listSort, setListSort] = useState<HomeListSort>('reviews');
+  const [listSort, setListSort] = useState<HomeListSort>('recommended');
+  const [exposure, setExposure] = useState<PartnerExposure | null>(null);
+  const [seed] = useState(visitSeed);
   const [justBooked, setJustBooked] = useState<Reservation | null | undefined>(null);
   const today = todayYmd();
 
@@ -164,6 +173,16 @@ export default function HomePage({
       cancelled = true;
     };
   }, [memberOn, reservationKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchPartnerExposure().then((next) => {
+      if (!cancelled) setExposure(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const usedReservations = useMemo(() => {
     return memberReservations
@@ -243,7 +262,13 @@ export default function HomePage({
     const marks: Record<string, string> = {};
     if (pinnedItems.length === 1) marks[pinnedItems[0].company.id] = '지난번 이용';
     if (pinnedItems.length > 1) marks[pinnedItems[0].company.id] = '지난번';
-    const ordered = [...priced].sort((a, b) => compareHomeCompanies(a, b, reviewById, listSort));
+    const recommend =
+      listSort === 'recommended'
+        ? (id: string) => recommendKey(seed, id, exposureWeight(exposure, id))
+        : undefined;
+    const ordered = [...priced].sort((a, b) =>
+      compareHomeCompanies(a, b, reviewById, listSort, recommend)
+    );
     return {
       ordered,
       pinnedItems: ordered.filter((item) => pinnedIds.has(item.company.id)),
@@ -251,7 +276,7 @@ export default function HomePage({
       marks,
       split: pinnedItems.length > 1,
     };
-  }, [listSort, pastMatches, priced, reviewById]);
+  }, [exposure, listSort, pastMatches, priced, reviewById, seed]);
 
   const showPastLine = Boolean(latestUsed && !reservationMatchesSearch(latestUsed, search));
 
@@ -439,6 +464,7 @@ export default function HomePage({
               <div className="mb-3 flex gap-2">
                 {(
                   [
+                    { id: 'recommended' as const, label: '추천순' },
                     { id: 'reviews' as const, label: '후기 많은 순' },
                     { id: 'price' as const, label: '최저가' },
                   ] as const
@@ -462,6 +488,13 @@ export default function HomePage({
                 })}
               </div>
             ) : null}
+            {priced.length > 1 && listSort === 'recommended' ? (
+              <p className="-mt-1 mb-3 text-[13px] font-medium text-[#0f1a2e]/55">
+                {exposure
+                  ? '추천순은 에어픽 운영 점수와 순환 노출로 정해요.'
+                  : '추천순은 업체를 돌아가며 보여드려요.'}
+              </p>
+            ) : null}
             {showPastLine && latestUsed ? (
               <button
                 type="button"
@@ -481,6 +514,7 @@ export default function HomePage({
                     items={companyGroups.pinnedItems}
                     marks={companyGroups.marks}
                     reviews={reviewById}
+                    recordBadgeId={exposure?.badgeCompanyId ?? null}
                     isIndoor={search.isIndoor}
                     terminal={search.terminal}
                     stayDays={getParkingDayCount(search.departureDate, search.arrivalDate)}
@@ -494,6 +528,7 @@ export default function HomePage({
                     <PriceList
                       items={companyGroups.rest}
                       reviews={reviewById}
+                    recordBadgeId={exposure?.badgeCompanyId ?? null}
                       isIndoor={search.isIndoor}
                       terminal={search.terminal}
                       stayDays={getParkingDayCount(search.departureDate, search.arrivalDate)}
@@ -508,6 +543,7 @@ export default function HomePage({
                 items={companyGroups.ordered}
                 marks={companyGroups.marks}
                 reviews={reviewById}
+                    recordBadgeId={exposure?.badgeCompanyId ?? null}
                 isIndoor={search.isIndoor}
                 terminal={search.terminal}
                 stayDays={getParkingDayCount(search.departureDate, search.arrivalDate)}
@@ -573,9 +609,16 @@ function compareHomeCompanies(
   a: { soldOut?: boolean; price: number; company: Company },
   b: { soldOut?: boolean; price: number; company: Company },
   reviews: Record<string, CompanyReviewSnapshot>,
-  sort: HomeListSort = 'reviews'
+  sort: HomeListSort = 'reviews',
+  recommend?: (companyId: string) => number
 ): number {
   if (Boolean(a.soldOut) !== Boolean(b.soldOut)) return a.soldOut ? 1 : -1;
+  if (sort === 'recommended' && recommend) {
+    // 손님이 들어올 때 정한 순서 — 예약 마감 업체·기준 미달 업체는 아래쪽
+    const diff = recommend(b.company.id) - recommend(a.company.id);
+    if (diff !== 0) return diff;
+    return displayCompanyName(a.company.name).localeCompare(displayCompanyName(b.company.name), 'ko');
+  }
   const partnerOrder = comparePartnerRelativeOrder(a.company.id, b.company.id);
   if (partnerOrder !== 0) return partnerOrder;
   const reviewDiff = (reviews[b.company.id]?.count ?? 0) - (reviews[a.company.id]?.count ?? 0);
@@ -719,6 +762,7 @@ function PriceList({
   onBook,
   marks = {},
   reviews = {},
+  recordBadgeId = null,
 }: {
   items: Array<PricedCompany & { listPrice: number }>;
   isIndoor: boolean;
@@ -728,6 +772,8 @@ function PriceList({
   onBook: (company: Company, price: number) => void;
   marks?: Record<string, string>;
   reviews?: Record<string, CompanyReviewSnapshot>;
+  /** 지난달 운영 점수 1등 (80점 이상) */
+  recordBadgeId?: string | null;
 }) {
   if (items.length === 0) {
     return (
@@ -810,6 +856,12 @@ function PriceList({
                     </p>
                   ) : snapshot && snapshot.count === 0 ? (
                     <p className="mt-1.5 text-[14px] font-medium text-[#0f1a2e]/45">신규 입점</p>
+                  ) : null}
+                  {recordBadgeId === company.id ? (
+                    <p className="mt-1 flex items-center gap-1 text-[13px] font-bold text-[#8a6a1f]">
+                      <Award size={14} strokeWidth={2.25} aria-hidden />
+                      이달의 기록 우수
+                    </p>
                   ) : null}
                 </div>
                 <div className="relative z-20 flex shrink-0 items-center gap-1.5 pt-0.5">

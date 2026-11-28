@@ -8,9 +8,14 @@ const INSURANCE_DISCLAIMER =
 /** 상품명을 비웠을 때만 쓰는 폴백. 업체가 적은 이름은 바꾸지 않는다. */
 export const CANONICAL_INSURANCE_PRODUCT_NAME = '배상책임보험';
 
+/**
+ * 보험사 보장 항목 이름(「탁송운전위험」 등)의 「위험」은 손님에게 위험한 운전처럼 읽혀서
+ * 그런 이름이면 손님 화면엔 「주차대행 보험」으로 보여 준다. 증권 원문은 B2B에 그대로 있다.
+ */
 export function normalizeInsuranceProductName(name?: string): string | undefined {
   const trimmed = name?.trim();
-  return trimmed || undefined;
+  if (!trimmed) return undefined;
+  return trimmed.includes('위험') ? '주차대행 보험' : trimmed;
 }
 
 function resolveDisplayProductName(insurance: CompanyInsurance): string | undefined {

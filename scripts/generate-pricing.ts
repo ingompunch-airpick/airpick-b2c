@@ -729,7 +729,8 @@ function buildProfiles(companies: Company[], startYmd: string, asOf: string) {
         ins.enrolled === true
           ? {
               provider: str(ins.provider) || null,
-              productName: str(ins.productName) || null,
+              // 「탁송운전위험」 등 「위험」이 든 이름은 손님 화면과 같게 「주차대행 보험」
+              productName: str(ins.productName).includes('위험') ? '주차대행 보험' : str(ins.productName) || null,
               coverageLimitText: str(ins.coverageLimitText) || null,
               periodStart: view.insurancePeriodStart || null,
               periodEnd: view.insurancePeriodEnd || null,
