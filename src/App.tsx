@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { consumeOverlayPop, resetOverlayStack, useBackToClose } from './lib/backStack';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from './utils/reservationCancel';
 import {
@@ -76,16 +76,17 @@ import { useAffiliateOffer } from './context/AffiliateContext';
 import { prefetchAppTab } from './utils/prefetchTabs';
 import { setErrorReportContext } from './lib/errorReport';
 import { hasPayTestFlag } from './lib/paymentMode';
+import { lazyWithReload } from './lib/chunkReload';
 
-const ComparePage = lazy(() => import('./pages/ComparePage'));
-const EsimPage = lazy(() => import('./pages/EsimPage'));
-const MyPage = lazy(() => import('./pages/MyPage'));
-const CompanyDetailSheet = lazy(() => import('./components/CompanyDetailSheet'));
-const BookingModal = lazy(() => import('./components/BookingModal'));
-const SupportPage = lazy(() => import('./pages/SupportPage'));
-const EsimGuidePage = lazy(() => import('./pages/EsimGuidePage'));
-const ParkingGuidePage = lazy(() => import('./pages/ParkingGuidePage'));
-const PaymentCompletePage = lazy(() => import('./pages/PaymentCompletePage'));
+const ComparePage = lazyWithReload(() => import('./pages/ComparePage'));
+const EsimPage = lazyWithReload(() => import('./pages/EsimPage'));
+const MyPage = lazyWithReload(() => import('./pages/MyPage'));
+const CompanyDetailSheet = lazyWithReload(() => import('./components/CompanyDetailSheet'));
+const BookingModal = lazyWithReload(() => import('./components/BookingModal'));
+const SupportPage = lazyWithReload(() => import('./pages/SupportPage'));
+const EsimGuidePage = lazyWithReload(() => import('./pages/EsimGuidePage'));
+const ParkingGuidePage = lazyWithReload(() => import('./pages/ParkingGuidePage'));
+const PaymentCompletePage = lazyWithReload(() => import('./pages/PaymentCompletePage'));
 
 const DOCUMENT_TITLE: Record<AppTab, string> = {
   home: AIRPICK_HOME_DOCUMENT_TITLE,

@@ -6,6 +6,7 @@ import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { installGlobalErrorReporting, setErrorReportContext } from './lib/errorReport.ts';
 import { rememberPaymentReviewFlag } from './lib/paymentMode.ts';
+import { installChunkReload } from './lib/chunkReload.ts';
 import AdminReviewsPage from './pages/AdminReviewsPage.tsx';
 import DirectionsPage from './pages/DirectionsPage.tsx';
 import ReceiptPage from './pages/ReceiptPage.tsx';
@@ -20,6 +21,7 @@ function isDirectionsPath(pathname: string): boolean {
 }
 
 installGlobalErrorReporting();
+installChunkReload();
 rememberPaymentReviewFlag();
 setErrorReportContext({ screen: window.location.pathname || '/' });
 

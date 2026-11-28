@@ -8,15 +8,15 @@ export function prefetchAppTab(tab: AppTab): void {
   prefetched.add(tab);
 
   if (tab === 'compare') {
-    void import('../pages/ComparePage');
+    import('../pages/ComparePage').catch(() => prefetched.delete(tab)); // 미리 받기 실패는 조용히 — 실제로 열 때 다시 받는다
     return;
   }
   if (tab === 'esim') {
-    void import('../pages/EsimPage');
+    import('../pages/EsimPage').catch(() => prefetched.delete(tab)); // 미리 받기 실패는 조용히 — 실제로 열 때 다시 받는다
     return;
   }
   if (tab === 'my') {
-    void import('../pages/MyPage');
+    import('../pages/MyPage').catch(() => prefetched.delete(tab)); // 미리 받기 실패는 조용히 — 실제로 열 때 다시 받는다
   }
 }
 
