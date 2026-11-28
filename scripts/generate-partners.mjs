@@ -89,11 +89,16 @@ function pricingSectionHtml(p, meta) {
   }
   if (p.t2Surcharge) notes.push(`2터미널 할증: +${won(p.t2Surcharge)} (예약당 1번, 위 표에 포함)`);
   const h = p.handoff || {};
-  const handoffBits = [
+  const curbBits = [
     h.curbT1 ? `1터미널 +${won(h.curbT1)}` : '',
     h.curbT2 ? `2터미널 +${won(h.curbT2)}` : '',
   ].filter(Boolean);
-  if (handoffBits.length) notes.push(`출국장 인계(Curbside) 선택 시: ${handoffBits.join(' · ')} (위 표에는 미포함)`);
+  if (curbBits.length) notes.push(`출국장 인계비: ${curbBits.join(' · ')} (위 표에 포함)`);
+  const dropBits = [
+    h.dropT1 ? `1터미널 +${won(h.dropT1)}` : '',
+    h.dropT2 ? `2터미널 +${won(h.dropT2)}` : '',
+  ].filter(Boolean);
+  if (dropBits.length) notes.push(`단기주차장 입고 추가요금: ${dropBits.join(' · ')} (해당 상품이면 위 표에 포함)`);
   return `
       <section class="section" id="pricing">
         <h2>요금 예시</h2>
@@ -690,7 +695,7 @@ ${JSON.stringify(graph, null, 2)}
       ${pageChrome('입점 업체')}
 
       <header class="hero">
-        <p class="eyebrow">에어픽 인증 업체</p>
+        <p class="eyebrow">에어픽이 직접 확인한 업체</p>
         <h1>에어픽에서 예약할 수 있는 업체</h1>
         <p class="answer"><strong>${esc(answer)}</strong></p>
         <p>지금 입점한 주차대행이에요. 사설주차장(키 맡김·셔틀)은 준비 중이에요. 아래에서 고른 뒤, 출국·귀국 일정을 넣고 바로 비교해 보세요.</p>

@@ -132,7 +132,7 @@ export default function ItineraryAutofill({ onApply }: { onApply: (v: ItineraryA
           className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-brand/40 bg-brand/5 px-3 py-3 text-[15px] font-bold text-brand transition active:scale-[0.99] disabled:opacity-70"
         >
           {busy ? <Loader2 size={18} className="animate-spin" aria-hidden /> : <Camera size={18} aria-hidden />}
-          {busy ? '항공편 읽는 중…' : '항공권·일정표 사진으로 채우기'}
+          {busy ? '항공편 읽는 중… 20초쯤 걸려요' : '항공권·일정표 사진으로 채우기'}
         </button>
         <p className="mt-1.5 text-center text-[13px] font-medium text-muted">
           여행사 일정표 캡처, e-티켓 PDF도 돼요. 사진은 저장하지 않아요.
@@ -154,7 +154,7 @@ export default function ItineraryAutofill({ onApply }: { onApply: (v: ItineraryA
               onClick={() => void read(() => readItineraryText(pasted))}
               className="mt-1.5 w-full rounded-lg bg-[#0f1a2e] px-3 py-2.5 text-[15px] font-bold text-white disabled:opacity-50"
             >
-              {busy ? '항공편 읽는 중…' : '이 글자로 채우기'}
+              {busy ? '항공편 읽는 중… 20초쯤 걸려요' : '이 글자로 채우기'}
             </button>
           </div>
         ) : (
@@ -263,7 +263,7 @@ export default function ItineraryAutofill({ onApply }: { onApply: (v: ItineraryA
         <p className={cn('text-[14px] font-semibold text-ink', out ? 'mt-1' : 'mt-3')}>
           찾는 시간 · {shortKoreanDate(inb.date)} {koreanClock(inb.time)}
           <span className="block text-[13px] font-medium text-muted">
-            도착 시간으로 맞춰요. 비행기가 늦으면 업체에 자동으로 알려져요.
+            비행기 도착 시간으로 맞춰요. 항공편이 실제로 도착하면 업체에 자동으로 알림이 가요.
           </span>
         </p>
       ) : null}

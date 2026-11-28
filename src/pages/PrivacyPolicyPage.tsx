@@ -9,7 +9,7 @@ const COLLECTED_ITEMS = [
   '예약 비밀번호(4자리, 예약 조회·취소 확인용)',
   '입·출국 일시, 터미널, 항공편 정보(입력 시)',
   '여행지, 요청사항(입력 시)',
-  '서비스 이용 기록, 접속 로그, 쿠키(자동 수집될 수 있음)',
+  '서비스 이용 기록, 접속 로그, 쿠키(자동 수집될 수 있음 · Google Analytics, OpenAI 광고 측정 픽셀)',
 ];
 
 export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
@@ -82,7 +82,9 @@ export default function PrivacyPolicyPage({ onBack }: { onBack: () => void }) {
           결제 처리·취소·환불은 계약 예정 결제대행사에 위탁하며, 카드번호 등은 PG사가 처리하고
           회사는 저장하지 않습니다. 예약 알림은 네이버 클라우드에 위탁합니다. Firestore·손님용
           Functions는 Firebase asia-northeast3(서울)을 쓰고, 카카오·익명 로그인은 Firebase
-          Authentication(Google LLC, 해외 처리 가능)을 사용합니다. 국외이전 상세는
+          Authentication(Google LLC, 해외 처리 가능)을 사용합니다. 「항공권·일정표 사진으로
+          채우기」(선택)는 Google LLC Vertex AI(일본 도쿄)에서 항공편만 읽고, 올린 파일은 저장하지
+          않습니다. 국외이전 상세는
           <a href="/privacy/" className="text-brand underline-offset-2 hover:underline">
             개인정보처리방침
           </a>

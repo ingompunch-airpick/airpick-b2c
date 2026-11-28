@@ -29,6 +29,19 @@ export function formatKoreanDate(value: string): string {
   return `${p.y}.${pad(p.m0 + 1)}.${pad(p.d)} (${wd})`;
 }
 
+/** 칸 안 날짜 — 400px 이상: 2026.11.28 (토) / 그보다 좁으면: 11.28 (토). 한 줄 유지 */
+function DateLabel({ value }: { value: string }) {
+  const p = parseYmd(value);
+  if (!p) return <span className="whitespace-nowrap">날짜 선택</span>;
+  const wd = WEEK[new Date(p.y, p.m0, p.d).getDay()];
+  return (
+    <span className="whitespace-nowrap">
+      <span className="hidden min-[400px]:inline">{p.y}.</span>
+      {pad(p.m0 + 1)}.{pad(p.d)} ({wd})
+    </span>
+  );
+}
+
 /**
  * 날짜 선택 — 칸 어디를 눌러도 에어픽 달력이 열림(브라우저 기본 달력 대신).
  * min·max 밖 날짜는 못 고름. 고르면 바로 닫힘.
@@ -114,7 +127,8 @@ export default function DateField({
           open && 'ring-2 ring-[#c9a962]'
         )}
       >
-        <span>{formatKoreanDate(value)}</span>
+        {/* 아이폰(375·390px) 두 칸 배치에선 연도까지 넣으면 두 줄로 깨져서, 좁은 화면에선 연도를 뺀다 */}
+        <DateLabel value={value} />
         <CalendarDays size={large ? 18 : 16} strokeWidth={2} className="shrink-0 text-[#0f1a2e]/60" aria-hidden />
       </button>
 

@@ -110,9 +110,9 @@ export const AIRPICK_SERVICES = [
   },
 ] as const;
 
-/** 에어픽 인증 업체 — 소개 페이지·FAQ 공통 */
+/** 에어픽이 직접 확인한 업체 — 소개 페이지·FAQ 공통 */
 export const PARTNER_BENEFITS = {
-  title: '에어픽 인증 업체',
+  title: '에어픽이 직접 확인한 업체',
   points: [
     '사업자·보험·주차장·운영을 에어픽에서 확인한 업체예요.',
     '앱에서 바로 예약할 수 있어요.',

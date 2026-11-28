@@ -64,7 +64,7 @@ export default function PriceBreakdownCard({
         )}
         {breakdown.valetFee > 0 && (
           <div className="flex justify-between gap-3 font-semibold text-ink">
-            <span>Curbside</span>
+            <span>출국장 인계비</span>
             <span className="shrink-0 tabular-nums text-brand">
               +{breakdown.valetFee.toLocaleString()}원
             </span>
@@ -72,7 +72,7 @@ export default function PriceBreakdownCard({
         )}
         {breakdown.dropFee > 0 && (
           <div className="flex justify-between gap-3 font-semibold text-ink">
-            <span>Drop-off</span>
+            <span>단기주차장 입고 추가요금</span>
             <span className="shrink-0 tabular-nums text-brand">
               +{breakdown.dropFee.toLocaleString()}원
             </span>

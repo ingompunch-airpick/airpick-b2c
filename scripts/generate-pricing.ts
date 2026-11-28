@@ -23,6 +23,10 @@ import { LEGAL_SITE_FOOTER_HTML } from './legal-site-footer.mjs';
 import { parseVerificationView } from '../src/utils/verification';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../src/utils/reservationCancel';
 import { APP_CONFIG } from '../src/constants/appConfig';
+import { parseParkingProducts, findParkingProduct } from '../src/utils/parkingProducts';
+import { companyMatchesSearch } from '../src/utils/parkingType';
+import { calculateComparePrice } from '../src/utils/compareSort';
+import type { BookingSearch, Terminal } from '../src/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -150,6 +154,13 @@ function companyFromFirestore(id: string, data: Record<string, unknown>): Compan
     peakEndTime: data.peakEndTime ? String(data.peakEndTime) : undefined,
     peakSurcharge: Number(data.peakSurcharge) || undefined,
     pricingProfile: data.pricingProfile ? String(data.pricingProfile) : undefined,
+    // 출국장 인계·비대면 추가요금과 상품 — 앱 목록 금액과 똑같이 계산하려고 (src/lib/companies.ts 와 같은 규칙)
+    valetFeeT1: typeof data.valetFeeT1 === 'number' ? data.valetFeeT1 : undefined,
+    valetFeeT2: typeof data.valetFeeT2 === 'number' ? data.valetFeeT2 : undefined,
+    dropFeeT1: typeof data.dropFeeT1 === 'number' ? data.dropFeeT1 : undefined,
+    dropFeeT2: typeof data.dropFeeT2 === 'number' ? data.dropFeeT2 : undefined,
+    parkingProducts: parseParkingProducts(data.parkingProducts),
+    terminals: Array.isArray(data.terminals) ? (data.terminals as string[]) : ['T1', 'T2'],
     isAirpickPartner: true,
     listingApproved: true,
     isOpen: true,
@@ -175,32 +186,49 @@ function stayHeader(startYmd: string, days: number): { title: string; sub: strin
   };
 }
 
+/**
+ * 앱 홈 목록과 똑같은 금액 — 출국장 인계 상품이 있으면 인계비, 없으면 비대면 추가요금까지 넣는다.
+ * (HomePage 의 handoffSearchPatch + calculateComparePrice 와 같은 규칙)
+ * 그 터미널·실내/야외를 앱에서 고를 수 없으면 null.
+ */
+function appListPrice(
+  company: Company,
+  terminal: Terminal,
+  isIndoor: boolean,
+  startYmd: string,
+  endYmd: string
+): number | null {
+  const lot = { isIndoor, terminal };
+  const faceToFace = findParkingProduct(company, lot, true) != null;
+  const search = {
+    departureDate: startYmd,
+    arrivalDate: endYmd,
+    departureTime: SAMPLE_TIME,
+    arrivalTime: SAMPLE_TIME,
+    terminal,
+    arrivalTerminal: terminal,
+    isIndoor,
+    isCardPayment: false,
+    faceToFace,
+    pickupPointId: faceToFace ? 'depart' : 'short',
+  } as BookingSearch;
+  if (!companyMatchesSearch(company, search)) return null;
+  return calculateComparePrice(company, search, 0);
+}
+
 function buildCells(companies: Company[], startYmd: string): Cell[] {
   const cells: Cell[] = [];
   for (const company of companies) {
-    const outdoorOk = company.supports_outdoor !== false;
-    const indoorOk = company.supports_indoor !== false;
-    /** 가유 등 야외 전용 — supports_indoor false */
-    const modes: { indoor: boolean; parking: '실내' | '야외' }[] = [];
-    if (outdoorOk) modes.push({ indoor: false, parking: '야외' });
-    if (indoorOk) modes.push({ indoor: true, parking: '실내' });
-    if (!modes.length) continue;
-
     const partnerName = displayCompanyName(company.name);
     for (const terminal of ['T1', 'T2'] as const) {
-      for (const mode of modes) {
+      for (const mode of [
+        { indoor: false, parking: '야외' as const },
+        { indoor: true, parking: '실내' as const },
+      ]) {
         for (const days of STAY_DAYS) {
           const arrivalDate = endDateForStay(startYmd, days);
-          const total = calculatePrice(
-            company,
-            startYmd,
-            arrivalDate,
-            mode.indoor,
-            terminal === 'T2',
-            SAMPLE_TIME,
-            SAMPLE_TIME,
-            false
-          );
+          const total = appListPrice(company, terminal, mode.indoor, startYmd, arrivalDate);
+          if (total == null) continue;
           cells.push({
             partnerId: company.id,
             partnerName,
@@ -439,12 +467,12 @@ ${jsonLdForScript(pricingJsonLd({ asOf, startYmd, companies, cells }))}
             </div>
             <div>
               <dt>포함</dt>
-              <dd>터미널(T1/T2) · 실내/야외(업체 지원 범위) · 주간 입출고(심야 할증 없음) · 발렛·비대면 추가요금 0원</dd>
+              <dd>터미널(T1/T2) · 실내/야외(업체 지원 범위) · 주간 입출고(심야 할증 없음) · 출국장 인계비·단기주차장 입고 추가요금(앱 목록과 같은 기준)</dd>
             </div>
             <div>
               <dt>주의</dt>
               <dd>
-                실제 예약 화면 견적이 우선입니다. 심야·대면 인계·성수기 등에 따라 달라질 수 있으며, 최저가 단정이 아닙니다.
+                실제 예약 화면 견적이 우선입니다. 심야 입출고·일정에 따라 달라질 수 있으며, 최저가 단정이 아닙니다.
                 최신 비교는 <a href="/">홈</a>·입점 목록은 <a href="/partners/">/partners/</a>.
               </dd>
             </div>
@@ -463,7 +491,7 @@ ${jsonLdForScript(pricingJsonLd({ asOf, startYmd, companies, cells }))}
             <div>
               <dt>제공 내용</dt>
               <dd>
-                터미널·실내/야외·일정 기준으로 에어픽 인증 업체를 비교하고 예약을 접수합니다. 차량
+                터미널·실내/야외·일정 기준으로 에어픽이 직접 확인한 업체를 비교하고 예약을 접수합니다. 차량
                 인수·이동·보관·반환은 선택한 입점 업체가 제공합니다.
               </dd>
             </div>
@@ -665,28 +693,16 @@ function buildProfiles(companies: Company[], startYmd: string, asOf: string) {
       unknown
     >;
     const lots = lotsOf(data);
-    const modes: { indoor: boolean; parking: '실내' | '야외' }[] = [];
-    if (c.supports_outdoor !== false) modes.push({ indoor: false, parking: '야외' });
-    if (c.supports_indoor !== false) modes.push({ indoor: true, parking: '실내' });
     const examples: { terminal: 'T1' | 'T2'; parking: '실내' | '야외'; days: number; total: number }[] = [];
     for (const terminal of ['T1', 'T2'] as const) {
-      for (const mode of modes) {
+      for (const mode of [
+        { indoor: false, parking: '야외' as const },
+        { indoor: true, parking: '실내' as const },
+      ]) {
         for (const days of PROFILE_DAYS) {
-          examples.push({
-            terminal,
-            parking: mode.parking,
-            days,
-            total: calculatePrice(
-              c,
-              startYmd,
-              endDateForStay(startYmd, days),
-              mode.indoor,
-              terminal === 'T2',
-              SAMPLE_TIME,
-              SAMPLE_TIME,
-              false
-            ),
-          });
+          const total = appListPrice(c, terminal, mode.indoor, startYmd, endDateForStay(startYmd, days));
+          if (total == null) continue;
+          examples.push({ terminal, parking: mode.parking, days, total });
         }
       }
     }

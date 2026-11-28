@@ -1029,7 +1029,7 @@ export default function BookingModal({
             </div>
             {faceToFaceApplied && (
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-[14px] font-semibold text-muted">Curbside</dt>
+                <dt className="text-[14px] font-semibold text-muted">출국장 인계비</dt>
                 <dd className="text-sm font-bold text-brand">
                   +{valetFee.toLocaleString()}원
                 </dd>

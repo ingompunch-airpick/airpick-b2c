@@ -18,6 +18,7 @@ import Header from './components/Header';
 import SiteFooter from './components/SiteFooter';
 import { subscribeCompanies } from './lib/companies';
 import {
+  clearBookingDraft,
   readBookingDraft,
   saveKakaoLoginError,
   saveKakaoProfileDraft,
@@ -152,7 +153,15 @@ export default function App() {
 
   // 창이 열려 있을 때 뒤로가기 = 맨 위 창 닫기 (사이트를 떠나지 않게)
   useBackToClose(Boolean(partnerDetail), () => setPartnerDetail(null));
-  useBackToClose(Boolean(bookingTarget), () => setBookingTarget(null));
+  /**
+   * 손님이 예약 창을 직접 닫으면 임시저장도 지운다.
+   * (안 지우면 새로고침·다른 탭에서 돌아올 때마다 닫은 예약 창이 다시 열렸다. 임시저장은 카카오 로그인 복귀용)
+   */
+  const closeBooking = () => {
+    clearBookingDraft();
+    setBookingTarget(null);
+  };
+  useBackToClose(Boolean(bookingTarget), closeBooking);
   useBackToClose(menuOpen, () => setMenuOpen(false));
   useBackToClose(supportOpen, () => setSupportOpen(false));
   useBackToClose(esimGuideOpen, () => setEsimGuideOpen(false));
@@ -685,7 +694,7 @@ export default function App() {
             company={bookingTarget.company}
             search={search}
             price={bookingTarget.price}
-            onClose={() => setBookingTarget(null)}
+            onClose={closeBooking}
             onBooked={(id) => setLastReservationId(id)}
             onDismiss={() => {
               setBookingTarget(null);

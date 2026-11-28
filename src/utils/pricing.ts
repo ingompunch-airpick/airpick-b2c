@@ -80,7 +80,8 @@ export function mergePartnerPricing(partner: Company): Company {
     surchargePrice: Number(partner.surchargePrice) || d.surchargePrice!,
     surchargeStartTime: partner.surchargeStartTime || d.surchargeStartTime!,
     surchargeEndTime: partner.surchargeEndTime || d.surchargeEndTime!,
-    t2Surcharge: Number(partner.t2Surcharge) ?? d.t2Surcharge!,
+    // Number(undefined) 는 NaN 이라 ?? 로는 기본값이 안 들어갔다
+    t2Surcharge: Number.isFinite(Number(partner.t2Surcharge)) ? Number(partner.t2Surcharge) : d.t2Surcharge!,
   };
 }
 

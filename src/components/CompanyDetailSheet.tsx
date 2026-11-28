@@ -22,9 +22,15 @@ import { companyCardPhotoUrl } from '../utils/parkingLocation';
 import {
   companySupportsIndoor,
   companySupportsOutdoor,
+  companyValetFee,
   parkingTypeLabel,
 } from '../utils/parkingType';
-import { valetHandoffBadge, valetHandoffTitle } from '../utils/parkingProducts';
+import {
+  companyDropFee,
+  findParkingProduct,
+  valetHandoffBadge,
+  valetHandoffTitle,
+} from '../utils/parkingProducts';
 import { getParkingDayCount, getPriceBreakdown } from '../utils/pricing';
 import { resolveCompanyUsageSteps } from '../utils/companyUsageGuide';
 import { DEFAULT_CANCEL_CUTOFF_HOURS } from '../utils/reservationCancel';
@@ -235,14 +241,25 @@ function PriceBreakdownCard({
   search: BookingSearch;
   affiliateDiscountWon: number;
 }) {
+  // 목록 금액(calculateComparePrice)과 같은 규칙 — 출국장 인계비·비대면 추가요금까지 넣어야 총액이 목록과 같다
+  const isT2 = search.terminal === 'T2' || (search.arrivalTerminal ?? search.terminal) === 'T2';
+  const meetFee = companyValetFee(company, search.terminal);
+  const valetFee = search.faceToFace && meetFee != null ? meetFee : 0;
+  const dropFee =
+    !search.faceToFace && findParkingProduct(company, search, false)
+      ? companyDropFee(company, search.terminal)
+      : 0;
   const b = getPriceBreakdown(
     company,
     search.departureDate,
     search.arrivalDate,
     search.isIndoor,
-    search.terminal === 'T2',
+    isT2,
     search.departureTime,
-    search.arrivalTime
+    search.arrivalTime,
+    false,
+    valetFee,
+    dropFee
   );
   const rows: { label: string; detail?: string; won: number; always?: boolean }[] = [
     { label: `기본 요금 (${b.baseDays}일)`, won: b.basePrice, always: true },
@@ -255,6 +272,8 @@ function PriceBreakdownCard({
     },
     { label: '2터미널 할증', won: b.t2Surcharge },
     { label: '혼잡 시간 할증', won: b.peakSurcharge },
+    { label: '출국장 인계비', won: b.valetFee },
+    { label: '단기주차장 입고 추가요금', won: b.dropFee },
   ];
   const sum = rows.reduce((acc, r) => acc + r.won, 0);
   const consistent = Math.round(sum) === Math.round(b.total);
@@ -290,7 +309,7 @@ function PriceBreakdownCard({
         <span className="text-[17px] font-bold tabular-nums text-ink">{won(b.total - discount)}</span>
       </div>
       <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted">
-        발렛(대면 인계) 등 선택한 옵션 요금은 예약 화면 합계에 더해 보여 드려요.
+        예약 화면에서 일정·터미널을 바꾸면 금액이 다시 계산돼요.
       </p>
     </section>
   );
